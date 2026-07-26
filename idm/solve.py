@@ -12,7 +12,7 @@ answer; an unknown kind or a failure returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT
 
 try:
     import mpmath as mp
@@ -490,6 +490,30 @@ def _zt(p): return _ok("z_transform", TR.z_transform(p["x"], complex(p["z"]) if 
 def _cont(p): return _ok("contour_integral", TR.contour_integral(_cfn(p["f"], "z"), complex(p.get("center", 0)), _val(p["radius"])), "finite sum around |z−c|=r")
 @kind("argument_principle", "Th_coqc")
 def _argp(p): return _ok("argument_principle", TR.argument_principle(_cfn(p["f"], "z"), complex(p.get("center", 0)), _val(p["radius"])), "(1/2πi)∮ f'/f = #zeros−#poles")
+
+
+# ================================================================ continuous optimization ==========
+def _mfn(expr, vs):
+    return (lambda x: F.evaluate(str(expr), **dict(zip(vs, x))))
+
+@kind("gradient_descent")
+def _gd(p):
+    vs = p["vars"]; f = _mfn(p["f"], vs)
+    return _ok("gradient_descent", OPT.gradient_descent(f, [_val(v) for v in p["x0"]]), "steepest descent + backtracking line search")
+@kind("newton_min")
+def _nmin(p):
+    vs = p["vars"]; f = _mfn(p["f"], vs)
+    return _ok("newton_min", OPT.newton_min(f, [_val(v) for v in p["x0"]]), "Newton: x ← x − H⁻¹∇f (finite gradient & Hessian)")
+@kind("newton_system")
+def _nsys(p):
+    vs = p["vars"]; Fs = [_mfn(e, vs) for e in p["F"]]
+    return _ok("newton_system", OPT.newton_system(Fs, [_val(v) for v in p["x0"]]), "Newton with finite-difference Jacobian")
+@kind("least_squares", "Th_coqc")
+def _lsq(p): return _ok("least_squares", OPT.least_squares(p["A"], p["b"]), "exact-ℚ normal equations (AᵀA)x=Aᵀb")
+@kind("lagrange_min")
+def _lag(p):
+    vs = p["vars"]; f = _mfn(p["f"], vs); gs = [_mfn(e, vs) for e in p["constraints"]]
+    return _ok("lagrange_min", OPT.lagrange_min(f, gs, [_val(v) for v in p["x0"]]), "Newton on the KKT system (Lagrange multipliers)")
 
 
 # ================================================================ dispatch ==========================

@@ -14,7 +14,7 @@ Submodules: functions · certified · algebra · readouts · rcp · solve · ser
 """
 __version__ = "1.0.0"
 
-from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, rcp, solve as _solve
+from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, rcp, solve as _solve
 
 # top-level convenience surface
 solve = _solve.solve

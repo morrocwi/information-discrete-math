@@ -15,7 +15,9 @@ RCP savings). Method column names the *finite* mechanism (there is always one).
 
 ---
 
-## P0 — The continuum frontier, computed finitely  ← primary focus
+## P0 — The continuum frontier, computed finitely  ← ✅ DONE (all six blocks shipped)
+
+> **Status:** P0.1 Integration · P0.2 ODE/PDE · P0.3 Limits/Series · P0.4 Special functions · P0.5 Transforms/Complex · P0.6 Continuous optimization — all implemented as `idm` solver kinds, verified against references, 169 kinds total.
 
 ### P0.1 Integration (the flagship)
 | kind | classical target | finite method | FIT |

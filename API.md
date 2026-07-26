@@ -48,7 +48,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**164 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**169 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
@@ -68,6 +68,8 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 **Discrete calculus** — `derivative` (`f`,`x`) · `limit` (`seq`) · `ode` (`f`,`x0`,`y0`,`xT`) ·
 `double_integral` (`f`,`ax`,`bx`,`ay`,`by`) · `series_sum` (`term`,`N`) · `zeta` (`s`) ·
 `regularized_sum` (`power`) · `root_find` (`f`,`a`/`b`/`x0`) · `minimize` (`f`,`a`,`b`) · `interpolate` (`points`,`x`)
+
+**Continuous optimization** — `gradient_descent` (`f`,`vars`,`x0`) · `newton_min` · `newton_system` (`F` list) · `least_squares` (`A`,`b` — exact ℚ) · `lagrange_min` (`f`,`constraints`,`vars`,`x0` — KKT)
 
 **Number theory** (exact, `Th_coqc`-tier) — `gcd` · `lcm` · `factorial` · `binomial` · `is_prime` ·
 `factorize` · `divisors` · `totient` · `primes` (`N`) · `modpow` · `mod_inverse` · `crt` · `fibonacci` ·

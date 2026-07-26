@@ -255,3 +255,14 @@ def test_transforms():
     assert abs(f["value"][0]["re"]["float"] - 4) < 1e-9
     rt = idm.solve({"kind": "ifft", "x": [4, 0, 0, 0]})
     assert abs(rt["value"][0]["re"]["float"] - 1) < 1e-9
+
+
+def test_optimization():
+    def near(v, e, tol=1e-4):
+        return all(abs((a["float"] if isinstance(a, dict) else float(a)) - b) < tol for a, b in zip(v, e))
+    assert near(idm.solve({"kind": "gradient_descent", "f": "(x-3)**2+(y+1)**2", "vars": ["x", "y"], "x0": [0, 0]})["value"]["argmin"], [3, -1])
+    assert near(idm.solve({"kind": "newton_min", "f": "(x-1)**2+3*(y-2)**2", "vars": ["x", "y"], "x0": [0, 0]})["value"]["argmin"], [1, 2])
+    assert near(idm.solve({"kind": "newton_system", "F": ["x**2+y**2-1", "x-y"], "vars": ["x", "y"], "x0": [1, 0.5]})["value"]["root"], [2 ** -0.5, 2 ** -0.5])
+    r = idm.solve({"kind": "least_squares", "A": [[1, 0], [1, 1], [1, 2]], "b": [1, 3, 5]})
+    assert r["value"]["x"][0]["exact"] == "1/1" and r["value"]["x"][1]["exact"] == "2/1"
+    assert near(idm.solve({"kind": "lagrange_min", "f": "x**2+y**2", "constraints": ["x+y-1"], "vars": ["x", "y"], "x0": [0.2, 0.9]})["value"]["argmin"], [0.5, 0.5])
