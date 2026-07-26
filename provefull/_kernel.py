@@ -5,8 +5,9 @@ Every function here produces its value with ONLY finite, discrete, rational oper
 finite Taylor/atanh series, argument reduction by halving/squaring, finite sums/products, finite
 quadrature (composite Simpson + Euler–Maclaurin endpoint), Richardson extrapolation on h=1/n. NO
 mpmath transcendental (mp.exp/log/sin/cos/erf/gamma/zeta/pi/quad) is EVER called to produce a value
-returned from this module. `mpmath.mpf` is used only as the exact rational/bignum arithmetic engine
-(the "40-digit rational engine"), and `sqrt` is an algebraic finite operation (allowed).
+returned from this module. `mpmath.mpf` is arbitrary-precision *floating-point* (NOT exact rational);
+we use it only as the high-precision finite arithmetic engine, and `sqrt` is an algebraic finite
+operation (allowed).
 
 This is the continuum-maya bridge in code: the continuum constants (π, e, ln2, √π) are computed ONCE
 here as finite readouts, then every domain (physics, biochem, networks, complexity, cosmology) reads

@@ -1076,9 +1076,13 @@ actual infinity.
 
 ## 11.1 The discrete derivative (replaces the difference-quotient limit)
 
-`D_ε f[n] = (f[n]−f[n−1])/ε` (causal/backward) or the central `(f[n+1]−f[n−1])/2ε`; the ε→0 primitive
-derivative is refused, and **Richardson extrapolation** `(4·D_{ε/2}−D_ε)/3` removes the leading `O(ε)`
-so the finite readout matches `f′` to machine precision. The exact algebraic rules (`Th_coqc`, §8/§10.5)
+`D_ε f[n] = (f[n]−f[n−1])/ε` (causal/backward, error `O(ε)`) or the central `(f[n+1]−f[n−1])/2ε` (error
+`O(ε²)`); the ε→0 primitive derivative is refused, and **Richardson extrapolation** removes the leading
+error term — matched to the scheme's order: `(4·D_{ε/2}−D_ε)/3` for the **central** difference (it kills
+the `O(ε²)` term, lifting the readout to `O(ε⁴)`), or `2·D_{ε/2}−D_ε` for the **backward** difference (it
+kills the `O(ε)` term). Using the `4/3` form on a backward difference would leave an `O(ε)` residue — the
+extrapolation weights must match the difference scheme's leading order — so the finite readout matches `f′`
+to machine precision only when the two are paired correctly. The exact algebraic rules (`Th_coqc`, §8/§10.5)
 are the *native* content: `D_ε(f+g)=D_εf+D_εg`, `D_ε(fg)[n]=f[n]D_εg+g[n−1]D_εf`, chain via the secant
 slope — **zero `O(ε)` residue**, no continuum. *(Validated: 16/16 derivatives, Appendix E.B.)*
 
