@@ -759,12 +759,12 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
 *(In-framework; type-level refusal is a framework-native observation.)*
 - **Count = retained distinctions.** `Counting_λ(S) := |[S]_λ|` (de-duplicated `∼_λ`-classes) — always
   a finite natural, never a primitive `∞`.
-- **Same size** = an admissible bijection `≈_λ`. **Th 10.3 (`Th_coqc`):** for `NoDup` lists,
-  `equinum ⟺ length equal`, by finite induction — axiom-free.
+- **Same size** = an admissible bijection `≈_λ`. **Th 10.3 (`Th_coqc`, witness `formal/IDM_FiniteWitnesses2.v: same_set_same_size`):** for `NoDup` lists,
+  same members ⇒ equal count (equinumerosity = admissible bijection), by finite induction — axiom-free.
 - **Potential infinite** = a `δ_R`-generated tape `Tape(n+1)=σ(Tape n)`, each stage finite with
-  `Counting(Tape n)=n+1`. **Th 10.4 (`Th_coqc`):** `tape_count_succ` ⇒ strict growth ⇒ no terminal
-  stage (an unbounded *process*, no completed object).
-- **Actual infinite refused — analytically.** **Th 10.5 (`Th_coqc`):** `∀ l:list A, ∃n, length l = n`.
+  `Counting(Tape n)=n+1`. **Th 10.4 (`Th_coqc`, witness `formal/IDM_FiniteWitnesses2.v: tape_count_succ` / `tape_no_terminal`):**
+  strict growth ⇒ no terminal stage (an unbounded *process*, no completed object).
+- **Actual infinite refused — analytically.** **Th 10.5 (`Th_coqc`, witness `formal/IDM_FiniteWitnesses2.v: no_infinite_readout`):** `∀ l:list A, ∃n, length l = n`.
   Every readout inhabits `list A`, which has *no infinite inhabitant* — actual `∞` is excluded because
   the readout type never had room for it, not by fiat. *(Cantor-style comparison of two tapes' growth
   is per-schema `finite_diagnostic`, not one closed theorem.)*
@@ -1134,7 +1134,8 @@ The number tower *is* the worked example, so this chapter only makes the abstrac
   dimension `FPdim(τ)=φ` is explicitly **not** an ordinary representation dimension (§4.4, Cor 4.1) — the
   integrality of ordinary dimensions is a `Th_coqc`-elig finite fact.
 - **Lagrange / orbit–counting = finite counting theorems.** `|H|` divides `|G|`; orbit size divides
-  `|G|` — **Th 12.3 (`Th_coqc`-elig):** proved by partitioning the finite Cayley table into cosets, a
+  `|G|` — **Th 12.3 (`Th_coqc` for the cyclic case — witness `formal/IDM_FiniteWitnesses2.v: lagrange_order_div`:
+  the order `n/gcd(g,n)` divides `|ℤ_n|=n`; the general Cayley-coset partition is `Th_coqc`-elig):** a
   decidable finite readout.
 - **Galois solvability = radical-tower reachability (`Dr`).** A readout is "solvable by radicals" iff it
   is reachable from `ℚ` by a finite tower of `⊕,⊗,÷,^,√` (§7 operators). The abstract correspondence
@@ -1581,7 +1582,7 @@ finite-`ε` schemes — **all three computed robustly, none producing its parado
 
 # Appendix B — Machine-checked theorem index (tier · witness)
 
-**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
+**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`

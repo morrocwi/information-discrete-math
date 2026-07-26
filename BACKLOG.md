@@ -56,8 +56,9 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
       axiom-free. Single most-cited result upgraded in-progress → `Th_coqc` (§5.1/§10.8/§13.2/Roadmap).
 - [~] **Machine-check the `Th_coqc-elig` claims → real `.v` witnesses.** DONE (v1.9): `formal/IDM_FiniteWitnesses.v`
       proves 5 axiom-free — Th 10.1 Kuratowski pair injectivity (§10.1), handshake (§15.2), pigeonhole
-      (§15.3), finite-Yoneda (§17.2), semiring distributivity (§12.2). REMAINING: §10.2 cardinality
-      (Th 10.3–10.5), §10.3 `⊨_λ`, §10.4 RDL boundary-tie, more of Parts XII/XIII. *Turns "elig" into `Th_coqc`.*
+      (§15.3), finite-Yoneda (§17.2), semiring distributivity (§12.2). DONE too (v1.13): §10.2
+      cardinality Th 10.3–10.5 + §12.3 Lagrange (cyclic) — `formal/IDM_FiniteWitnesses2.v`. REMAINING:
+      §10.3 `⊨_λ`, §10.4 RDL boundary-tie, more of Parts XIII. *Turns "elig" into `Th_coqc`.*
 - [ ] **v-proofs edition.** Convert the §10.1–10.6 results-first sketches (flagged `[results-first]`) to
       checked proofs; this is the edition-note promise ("proofs next").
 
@@ -74,10 +75,9 @@ closure — they need the completed continuum, which the philosophy treats as a 
 
 ## Tier 4 — discipline hardening (extracted-but-not-yet-ported from cpg_math MathSolver)
 
-- [ ] **Port `consumer_guard` into `idm_discipline.py`:** the R2-CONSUMER `unwrap` (a payload read only
-      after an explicit status branch — a non-ACCEPT read raises) and `resource_admissibility` (the
-      pre-tick OOM gate: estimated dominant cost vs measured host envelope at declared headroom).
-      *Strengthens:* completes the numeric-honesty layer's consumer/resource side.
+- [x] **Port `consumer_guard` into `idm_discipline.py`** — DONE (v1.13): `VerdictNotAccepted` + `unwrap`
+      (payload read only after ACCEPT, else raises) + `resource_admissibility` (pre-tick OOM gate). Self-
+      check extended.
 
 ## Housekeeping (tracked, low priority — consistency not math)
 

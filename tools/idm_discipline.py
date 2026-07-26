@@ -124,9 +124,47 @@ def integrate_positive_decay(gamma: Callable[[float], float], y0: float, dt: flo
     return ys, gs
 
 
+# ── R2-CONSUMER — the consumer obligation (C15): read a verdict's payload ONLY after ACCEPT ──
+class VerdictNotAccepted(RuntimeError):
+    """Raised when a consumer reads a non-ACCEPT verdict's payload — a CODE defect (contract
+    violation by the caller), so it crashes rather than routing as a data condition."""
+    def __init__(self, status, reason=None, where="unwrap"):
+        super().__init__(f"[{where}] payload read on non-ACCEPT verdict (status={status!r}): {reason}")
+
+def unwrap(v: Verdict, *, where: str = "unwrap"):
+    """Read `v.value` only after an explicit ACCEPT. A non-ACCEPT read RAISES (truthiness routing
+    and status-skipping reads are the same violation). This binds the discipline to the CONSUMER,
+    not just the producer."""
+    if v.status != ACCEPT:
+        raise VerdictNotAccepted(v.status, v.reason, where)
+    return v.value
+
+# ── R6-RESOURCE — the resource pre-check (C16): read the dominant cost BEFORE tick 0 ──
+HEADROOM_FRACTION = 0.8
+def resource_admissibility(estimated: float, available: float, *, resource: str,
+                           headroom: float = HEADROOM_FRACTION) -> Verdict:
+    """Gate a launch whose failure would be UNRETAINED (OOM/disk-full kills the process before any
+    record exists): compare the estimated dominant cost to the measured host envelope at a declared
+    headroom. BLOCK ships its computed numbers (a refusal carries its certificate)."""
+    ok = all(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+             for x in (estimated, available, headroom))
+    if not ok or estimated < 0 or available <= 0 or not (0 < headroom <= 1):
+        return Verdict(BLOCK, reason=f"resource pre-check unreadable: est={estimated!r}, avail={available!r}, headroom={headroom!r}")
+    budget = headroom * available
+    nums = {"resource": resource, "estimated": float(estimated), "budget": float(budget), "available": float(available)}
+    if estimated <= budget:
+        return Verdict(ACCEPT, value=nums, reason=f"{resource}: {estimated:.3g} ≤ budget {budget:.3g} — admissible before tick 0")
+    return Verdict(BLOCK, value=nums, reason=f"{resource}: {estimated:.3g} EXCEEDS budget {budget:.3g} (={headroom:g}×{available:.3g}) — refuse the launch, amend pre-readout")
+
+
 if __name__ == "__main__":
     # self-check: each discipline rule fires correctly
     assert bool(Verdict(ACCEPT)) and not bool(Verdict(HOLD)) and not bool(Verdict(BLOCK))
+    assert unwrap(Verdict(ACCEPT, value=42)) == 42
+    try: unwrap(Verdict(HOLD, value=99)); assert False
+    except VerdictNotAccepted: pass
+    assert resource_admissibility(8e9, 16e9, resource="RAM").status == ACCEPT      # 8GB ≤ 0.8×16GB
+    assert resource_admissibility(15e9, 16e9, resource="RAM").status == BLOCK      # 15GB > 12.8GB → OOM risk
     assert eq_eps(1.0, 1.0 + 1e-12, 1e-9) and not eq_eps(1.0, 1.1, 1e-9)
     assert eq_chain_guard([0.0, 0.6, 1.2, 1.8], 1.0).status == BLOCK          # sorites trap caught
     big = [1e16, 1.0, -1e16, 1.0] * 25000
