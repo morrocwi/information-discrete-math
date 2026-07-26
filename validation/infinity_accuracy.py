@@ -78,6 +78,43 @@ show("Catalan G", "Σ(−1)^k/(2k+1)²",
 show("ζ(−1) = −1/12 (regularized)", "1+2+3+… ",
      mp.zeta(-1), mp.mpf(-1)/12, "analytic-continuation readout")
 
+# ---- MULTI-DIMENSIONAL (the dimensions physics actually uses: 3D space, 3+1=4D spacetime, d-dim) ----
+# 3D Gaussian ∫_{ℝ³} e^{−|x|²} d³x = π^{3/2}, via the radial readout ∫₀^∞ 4πr²·e^{−r²} dr (the 4πr² Jacobian IS the 3D).
+show("∫_{ℝ³} e^{−r²} d³x = π^{3/2}  (3D)", "∫∫∫ over ℝ³",
+     trap_improper(lambda r: 4*mp.pi*r**2*mp.e**(-r**2), 12, 6000), mp.pi**mp.mpf(1.5), "3D radial, N=6000")
+# 4D (3+1 spacetime) Gaussian ∫_{ℝ⁴} e^{−|x|²} d⁴x = π², radial ∫₀^∞ 2π²r³ e^{−r²} dr.
+show("∫_{ℝ⁴} e^{−r²} d⁴x = π²  (4D spacetime)", "∫ over ℝ⁴",
+     trap_improper(lambda r: 2*mp.pi**2*r**3*mp.e**(-r**2), 12, 6000), mp.pi**2, "4D radial, N=6000")
+# d-dimensional Gaussian = π^{d/2} via the radial readout ∫₀^∞ S_{d-1}·r^{d-1}·e^{−r²} dr; genuinely d-dim
+# (the S_{d-1} r^{d-1} Jacobian carries every one of the d dimensions), RAM-light for ANY d.
+def gaussian_dD(d, b=16, N=9000):
+    Sd = 2*mp.pi**(mp.mpf(d)/2)/mp.gamma(mp.mpf(d)/2)   # surface area of the unit (d−1)-sphere
+    return trap_improper(lambda r: Sd*r**(mp.mpf(d)-1)*mp.e**(-r**2), b, N)
+for d in (7, 11):    # d=11 = M-theory dimension
+    tag = "M-theory 11D" if d == 11 else "QFT-scale"
+    show(f"∫_{{ℝ^{d}}} e^{{−r²}} d^{d}x = π^{{{d}/2}}  ({tag})", "∫ over ℝ^d",
+         gaussian_dD(d), mp.pi**(mp.mpf(d)/2), f"d={d} radial, N=9000")
+# DIMENSIONAL REGULARIZATION (QFT): the SAME readout at NON-INTEGER d = 4−ε — dim-reg is literally a
+# finite readout π^{d/2}=π^{(4−ε)/2} via Γ, no completed infinity, for ε=0.1 (d=3.9).
+eps = mp.mpf('0.1'); dreg = 4 - eps
+show("∫_{ℝ^{4−ε}} e^{−r²} = π^{(4−ε)/2}  (dim-reg)", "∫ over ℝ^{4−ε}",
+     gaussian_dD(dreg), mp.pi**(dreg/2), "non-integer d=3.9, radial")
+# GENUINE 3D GRID (not radial): the 3D Gaussian summed on a real (x,y,z) lattice = π^{3/2},
+# spectrally accurate (flat tails) → high digits from a modest grid. RAM-light: 31³ ≈ 3e4 points.
+def gaussian_3D_grid(M, L=8):
+    h = mp.mpf(2*L)/M
+    xs = [-mp.mpf(L) + (i+mp.mpf('0.5'))*h for i in range(M)]
+    g = [mp.e**(-x**2) for x in xs]               # separable factors, but summed over the full 3D grid
+    s = mp.mpf(0)
+    for a in g:
+        for b2 in g:
+            ab = a*b2
+            for c in g:
+                s += ab*c
+    return s*h**3
+show("∫_{ℝ³} e^{−r²} d³x = π^{3/2}  (genuine 3D grid)", "Σ over (x,y,z) lattice",
+     gaussian_3D_grid(31), mp.pi**mp.mpf(1.5), "real 3D grid 31³")
+
 print("="*104)
 print("INFINITY-ACCURACY — classically-infinite quantities, reproduced from a FINITE discrete readout")
 print("="*104)

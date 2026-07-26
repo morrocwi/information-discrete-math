@@ -51,7 +51,7 @@ the textbook for the theory.
 | `validation/breadth2_problems.py` | measure/functional/category/statistics/optimization | **34/34** |
 | `validation/paradox_dissolution.py` | topology/manifold/PDE paradoxes dissolved | **21/21** |
 | `validation/discrete_jacobian.py` | discrete Jacobian (retained sensitivity) · collision · retention lift | **9/9** |
-| `validation/infinity_accuracy.py` | classically-infinite quantities reproduced from finite discrete, ≥10 digits | **12/12** |
+| `validation/infinity_accuracy.py` | classically-infinite quantities (1-D…11-D + dim-reg) reproduced from finite discrete, ≥10 digits | **18/18** |
 
 ## Backlog
 
