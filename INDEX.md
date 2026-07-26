@@ -43,6 +43,10 @@ the textbook for the theory.
 | `validation/hundred_continuum_problems.py` | integrals/derivatives/limits/ODEs/special | **100/100** |
 | `validation/breadth_problems.py` | algebra/linear/complex/combinatorics/graph | **48/48** |
 
+## Backlog
+
+Pending work that strengthens the framework (closeable chapters, proof work, frontier, discipline hardening) is tracked in **[BACKLOG.md](BACKLOG.md)** — four full chapters are closeable now (measure/functional analysis · category theory · statistics · optimization).
+
 ## Extensibility contract (how to grow this without breaking it)
 
 1. New chapters go as `# Part N — <title>` **before** `# Appendix A`; keep the spine order.
