@@ -1,0 +1,24 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "yaoharee-lahtee-math",
+  "description": "Information Discrete Math — a readout-first mathematical foundation that keeps continuum concepts (real numbers, limits, angles/degrees, points of zero size, infinity) from being silently injected into your math. Developed by Yaoharee Lahtee.",
+  "owner": {
+    "name": "Yaoharee Lahtee"
+  },
+  "plugins": [
+    {
+      "name": "information-discrete-math",
+      "description": "Load before writing any mathematics, physics, or geometry. Everything an agency reads is a finite, discrete, rational readout; the continuum (ℝ-completeness, h→0, +∞, a point of zero size, a continuum angle) is a NON-READOUT never to be silently injected. Carries the contaminated-concept → discrete-replacement table (angle/degree, zero, infinity, point, distance, continuity, ℝ, π, derivative, operator), a pre-write checklist, and the machine-checked discrete number ladder D→ℤ→ℚ→ℝ with the retained-information operator.",
+      "author": {
+        "name": "Yaoharee Lahtee"
+      },
+      "category": "productivity",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/morrocwi/information-discrete-math.git",
+        "path": "plugins/information-discrete-math",
+        "ref": "main"
+      }
+    }
+  ]
+}
