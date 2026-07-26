@@ -104,6 +104,10 @@ RDL paraconsistent logic) is axiom-free; the continuum rungs that need `Coq.Real
 `+ℝ-axioms` (NOT axiom-free). Use this skill to keep continuum concepts from being *silently*
 injected — not to deny that the continuum is a coherent, useful readout when honestly labelled.
 
+## The full treatise
+
+For the complete foundation — every axiom (RDL logic, RD1–RD9), definition, and major theorem from the retained difference up to the continuum-as-readout and the information operator, each tier-tagged with machine-checked witnesses — see the textbook `textbook/INFORMATION_DISCRETE_MATHEMATICS.md` in this repo.
+
 ---
 *Developed by **Yaoharee Lahtee**. Information Discrete Math — readout-not-truth applied to the
 foundations. AI-assisted; the core stance and results are the author's.*

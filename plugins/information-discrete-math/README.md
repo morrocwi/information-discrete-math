@@ -23,6 +23,11 @@ continuum concepts from being *silently injected* into your mathematics, physics
   graph Laplacian `L_R`, whose Dirichlet energy *is* the retained-information functional; geometry
   and distance are readouts of it.
 
+
+## The textbook
+
+The full foundational treatise — **[textbook/INFORMATION_DISCRETE_MATHEMATICS.md](textbook/INFORMATION_DISCRETE_MATHEMATICS.md)** — carries the foundation from ONE primitive (the retained difference) up through logic (RDL), the number tower `D→ℤ→ℚ→ℝ` (the continuum as a readout of the discrete root), discrete analysis, geometry (distance as retained resistance; angle without trig), and the retained-information operator — every axiom, definition, and major theorem, each tier-tagged, with machine-checked witnesses.
+
 ## Install (via public git)
 
 ```
