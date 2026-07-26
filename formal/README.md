@@ -5,7 +5,7 @@ of the `Th_coqc` corpus is external: `research_universal_solver`, `readout_genes
 
 ## Reproduce
 
-**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 40 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
+**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 41 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
 
 ### Manual
 

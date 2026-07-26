@@ -185,6 +185,76 @@ Proof.
     apply Qle_trans with (y := Qabs (p - v)); [ apply Qabs_nonneg | assumption ].
 Qed.
 
+(** ---------------------------------------------------------------------------------------------
+    ASSEMBLY — iterated squaring certificate (the m-fold range reduction, one theorem).
+
+    Squaring m times is p ↦ p^(2^m). Halving the argument m times lands in |·|≤½ (base certificate),
+    then squaring back m times reconstructs the full-argument readout. This theorem composes
+    sq_error_propagation m times: if |p−v| ≤ e and |v| ≤ a, then after m squarings the error is bounded
+    by the finite, computable errbound a e m. This is the mechanical assembly that carries the finite
+    exponential's certificate from |x|≤½ to ANY x. Axiom-free. *)
+Fixpoint iter_sq (p : Q) (m : nat) : Q :=
+  match m with O => p | S k => iter_sq p k * iter_sq p k end.
+
+Fixpoint valbound (a : Q) (m : nat) : Q :=
+  match m with O => a | S k => valbound a k * valbound a k end.
+
+Fixpoint errbound (a e : Q) (m : nat) : Q :=
+  match m with O => e | S k => (2 * valbound a k + errbound a e k) * errbound a e k end.
+
+Lemma mono_step : forall b1 b2 e, b1 <= b2 -> 0 <= e -> (2 * b1 + e) * e <= (2 * b2 + e) * e.
+Proof.
+  intros b1 b2 e Hb He.
+  apply Qmult_le_compat_r; [ | assumption ].
+  apply Qplus_le_l.
+  setoid_replace (2 * b1) with (b1 * 2) by ring.
+  setoid_replace (2 * b2) with (b2 * 2) by ring.
+  apply Qmult_le_compat_r; [ assumption | apply two_nonneg ].
+Qed.
+
+Lemma valbound_nonneg : forall a m, 0 <= a -> 0 <= valbound a m.
+Proof.
+  intros a m Ha. induction m as [| k IH]; simpl; [ assumption | ].
+  apply Qmult_le_0_compat; assumption.
+Qed.
+
+Lemma errbound_nonneg : forall a e m, 0 <= a -> 0 <= e -> 0 <= errbound a e m.
+Proof.
+  intros a e m Ha He. induction m as [| k IH]; simpl; [ assumption | ].
+  apply Qmult_le_0_compat; [ | assumption ].
+  assert (Hvb : 0 <= 2 * valbound a k)
+    by (apply Qmult_le_0_compat; [ apply two_nonneg | apply valbound_nonneg; assumption ]).
+  apply Qle_trans with (y := 2 * valbound a k); [ assumption | ].
+  rewrite <- (Qplus_0_r (2 * valbound a k)) at 1. apply Qplus_le_r. assumption.
+Qed.
+
+Lemma iter_sq_valbound : forall a v m, Qabs v <= a -> Qabs (iter_sq v m) <= valbound a m.
+Proof.
+  intros a v m Ha.
+  assert (Ha0 : 0 <= a) by (apply Qle_trans with (y := Qabs v); [ apply Qabs_nonneg | assumption ]).
+  induction m as [| k IH]; simpl; [ assumption | ].
+  rewrite (Qabs_Qmult (iter_sq v k) (iter_sq v k)).
+  apply Qle_trans with (y := valbound a k * Qabs (iter_sq v k)).
+  - apply Qmult_le_compat_r; [ apply IH | apply Qabs_nonneg ].
+  - setoid_replace (valbound a k * Qabs (iter_sq v k)) with (Qabs (iter_sq v k) * valbound a k) by ring.
+    apply Qmult_le_compat_r; [ apply IH | apply valbound_nonneg; assumption ].
+Qed.
+
+Theorem iter_sq_certified : forall (a e p v : Q) (m : nat),
+  Qabs v <= a -> Qabs (p - v) <= e ->
+  Qabs (iter_sq p m - iter_sq v m) <= errbound a e m.
+Proof.
+  intros a e p v m Ha He.
+  assert (He0 : 0 <= e) by (apply Qle_trans with (y := Qabs (p - v)); [ apply Qabs_nonneg | assumption ]).
+  induction m as [| k IH]; simpl; [ assumption | ].
+  eapply Qle_trans.
+  - apply (sq_error_propagation (iter_sq p k) (iter_sq v k) (errbound a e k)). apply IH.
+  - apply mono_step.
+    + apply iter_sq_valbound; assumption.
+    + apply errbound_nonneg; [ | assumption ].
+      apply Qle_trans with (y := Qabs v); [ apply Qabs_nonneg | assumption ].
+Qed.
+
 (** Sanity checks that these are computable finite readouts (not just abstract). *)
 Example geom_half_3 : geom_sum (1 # 2) 3 == 7 # 4.
 Proof. reflexivity. Qed.

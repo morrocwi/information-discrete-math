@@ -83,11 +83,23 @@ Halving `m` times (until the reduced argument is `≤ ½`, where `exp_tail_certi
 back `m` times therefore keeps a controlled, finite error — the mechanism that extends the exponential's
 certificate from `|x| ≤ ½` to any `x`.
 
+### 6. Iterated-squaring assembly — machine-checked, axiom-free (`Th_coqc`)
+
+The `m`-fold range reduction is now a single Coq theorem (`iter_sq_certified`): with `iter_sq p m` =
+`p^(2^m)`, if `|p − v| ≤ e` and `|v| ≤ a`, then after `m` squarings
+
+    |iter_sq p m − iter_sq v m| ≤ errbound a e m,
+
+where `errbound` is the finite, computable bound obtained by iterating `sq_error_propagation` `m` times
+(`errbound a e (S k) = (2·valbound a k + errbound a e k)·errbound a e k`). Composed with
+`exp_tail_certified` at the halved argument (`|x/2^m| ≤ ½`) and the halving identity `exp(x)=exp(x/2)²`,
+this carries the finite exponential's certificate from `|x|≤½` to **any** `x`, with a fully finite error
+bound — machine-checked, axiom-free.
+
 ## What is still open (`+ℝ-Open` / next work)
 
-- Assemble the two Coq pieces (`exp_tail_certified` at `|x|≤½` + `m`-fold `sq_error_propagation`) into a
-  single `exp_certified_all_x` theorem with the composed bound — mechanical, not yet written.
-- Formalize the Simpson and Euler–Maclaurin remainder inequalities (needs a real-analysis layer).
+- Formalize the Simpson and Euler–Maclaurin remainder inequalities (needs a real-analysis layer — a
+  different style from this repo's ℚ-only core).
 - A general Richardson **a-priori** certificate (not just the a-posteriori contraction test).
 
 The honest position: the **geometric-series certified readout is proved end-to-end and axiom-free**; the
