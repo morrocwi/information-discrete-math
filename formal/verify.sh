@@ -101,6 +101,11 @@ declare -a THMS=(
   "factorial_is_fold:IDM_Reduction"
   "witness_qr_sound:IDM_Reduction"
   "witness_dlog_sound:IDM_Reduction"
+  "relax_nonincreasing:IDM_Reduction"
+  "relax_idempotent:IDM_Reduction"
+  "weak_duality_2:IDM_Reduction"
+  "sat_reduces_to_decision:IDM_Reduction"
+  "sat_model_sound:IDM_Reduction"
 )
 
 fail=0

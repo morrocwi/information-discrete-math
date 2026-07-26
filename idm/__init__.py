@@ -7,7 +7,7 @@
     idm.shortest_path(W)             # min-plus all-pairs
 
 A readout-first foundation: everything read is a finite, discrete, rational readout; the continuum is
-reconstructed, never assumed. The finite core is machine-checked axiom-free in `formal/` (92 theorems).
+reconstructed, never assumed. The finite core is machine-checked axiom-free in `formal/` (97 theorems).
 This package is a clean facade over the repository's verified modules — same code CI runs.
 
 Submodules: functions · certified · algebra · readouts · exact · analysis · discrete · integrate ·

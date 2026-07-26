@@ -224,6 +224,29 @@ Proof.
   - cbn [fold fact]. rewrite IH, <- Nat2Z.inj_mul. f_equal. lia.
 Qed.
 
+(* ---- branch kernel 8: BELLMAN–FORD / DP convergence ----
+   iterative relaxation over the min-plus semiring is (i) non-increasing — a step
+   never worsens the estimate — and (ii) idempotent per edge — re-relaxing the same
+   candidate changes nothing. Together these are why the DP/Bellman fixpoint is
+   reached in finitely many rounds. *)
+Lemma relax_nonincreasing : forall d cand : Z, Z.min d cand <= d.
+Proof. intros; lia. Qed.
+
+Lemma relax_idempotent : forall d cand : Z, Z.min (Z.min d cand) cand = Z.min d cand.
+Proof. intros; lia. Qed.
+
+(* ---- A2 × A3 bridge: LP WEAK DUALITY ----
+   a dual-feasible y (each c_j ≤ y·A_j, y ≥ 0) is a CERTIFICATE (A3) that bounds the
+   primal objective computed by the simplex (A2): for any primal-feasible x ≥ 0 with
+   Ax ≤ b, the objective c·x is ≤ y·b. Shown for two variables — the general case is
+   the same argument summed over columns. *)
+Theorem weak_duality_2 : forall c1 c2 x1 x2 a1 a2 b y,
+  0 <= x1 -> 0 <= x2 -> 0 <= y ->
+  c1 <= y * a1 -> c2 <= y * a2 ->        (* dual feasibility, per column *)
+  a1 * x1 + a2 * x2 <= b ->             (* primal feasibility: A x ≤ b *)
+  c1 * x1 + c2 * x2 <= y * b.           (* weak duality: c·x ≤ y·b *)
+Proof. intros; nia. Qed.
+
 Close Scope Z_scope.
 
 (* ============================ A3 · the one DECISION ============================ *)
@@ -329,4 +352,27 @@ Theorem witness_dlog_sound : forall g h p,
 Proof.
   intros g h p H. apply witness_sound in H. destruct H as [w [_ Hc]].
   unfold dlog_check in Hc. apply Nat.eqb_eq in Hc. exists w. exact Hc.
+Qed.
+
+(* ---- A3 flagship instance: BOOLEAN SATISFIABILITY (the `sat` kernel) ----
+   the canonical decision problem. An assignment is a bit-pattern `a : nat` (bit v =
+   truth of variable v); a literal is (polarity, var); a clause is satisfied if some
+   literal is true; a CNF if every clause is. Searching the 2^n assignments with the
+   ONE decision schema yields a satisfying model (soundness = a real model exists). *)
+Definition lit : Type := (bool * nat)%type.
+Definition lit_true (a : nat) (l : lit) : bool := Bool.eqb (Nat.testbit a (snd l)) (fst l).
+Definition clause_sat (a : nat) (cl : list lit) : bool := existsb (lit_true a) cl.
+Definition cnf_sat (a : nat) (f : list (list lit)) : bool := forallb (clause_sat a) f.
+
+Theorem sat_reduces_to_decision : forall f n,
+  decide (fun a => cnf_sat a f) (2 ^ n) = true -> exists a, cnf_sat a f = true.
+Proof.
+  intros f n H. apply witness_sound in H. destruct H as [a [_ Ha]]. exists a. exact Ha.
+Qed.
+
+(* a returned model is a genuine proof: every clause is satisfied by it. *)
+Theorem sat_model_sound : forall a f,
+  cnf_sat a f = true -> forall cl, In cl f -> clause_sat a cl = true.
+Proof.
+  intros a f H cl Hin. unfold cnf_sat in H. rewrite forallb_forall in H. apply H. exact Hin.
 Qed.
