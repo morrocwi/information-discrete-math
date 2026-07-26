@@ -13,18 +13,32 @@ Start it:  python3 -m idm.server   (or)  idm-serve   (or)  python3 -c "import id
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from . import __version__
-from .solve import solve
+from .solve import solve, kinds
 
 EXAMPLES = {
-    "constant":       {"kind": "constant", "name": "pi"},
+    "constant":         {"kind": "constant", "name": "pi"},
     "geometric_series": {"kind": "geometric_series", "r": "1/3", "eps": "1e-12"},
-    "exp":            {"kind": "exp", "x": 0.4, "eps": "1e-20"},
-    "integral":       {"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": "1e-8"},
-    "derivative":     {"kind": "derivative", "f": "exp(x)", "x": 1},
-    "limit":          {"kind": "limit", "seq": "(1 + 1/n)**n"},
-    "ode":            {"kind": "ode", "f": "y", "x0": 0, "y0": 1, "xT": 1},
-    "shortest_path":  {"kind": "shortest_path", "matrix": [[0, 3, None], [3, 0, 1], [None, 1, 0]], "source": 0, "target": 2},
-    "readouts":       {"kind": "readouts", "data": [3, -1, 4, 1, -5, 9, 2, -6]},
+    "exp":              {"kind": "exp", "x": 0.4, "eps": "1e-20"},
+    "integral":         {"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": "1e-8"},
+    "double_integral":  {"kind": "double_integral", "f": "exp(-(x+y))", "ax": 0, "bx": 1, "ay": 0, "by": 1},
+    "derivative":       {"kind": "derivative", "f": "exp(x)", "x": 1},
+    "limit":            {"kind": "limit", "seq": "(1 + 1/n)**n"},
+    "ode":              {"kind": "ode", "f": "y", "x0": 0, "y0": 1, "xT": 1},
+    "zeta":             {"kind": "zeta", "s": -1},
+    "regularized_sum":  {"kind": "regularized_sum", "power": 1},
+    "root_find":        {"kind": "root_find", "f": "x*x - 2", "a": 0, "b": 2},
+    "minimize":         {"kind": "minimize", "f": "(x-3)**2 + 1", "a": 0, "b": 6},
+    "factorize":        {"kind": "factorize", "n": 360360},
+    "is_prime":         {"kind": "is_prime", "n": 1000003},
+    "fibonacci":        {"kind": "fibonacci", "n": 100},
+    "partition":        {"kind": "partition", "n": 100},
+    "crt":              {"kind": "crt", "residues": [2, 3, 2], "moduli": [3, 5, 7]},
+    "matrix_determinant": {"kind": "matrix_determinant", "matrix": [[1, 2, 3], [4, 5, 6], [7, 8, 10]]},
+    "solve_linear":     {"kind": "solve_linear", "A": [[2, 1], [1, 3]], "b": [3, 5]},
+    "eigenvalues":      {"kind": "eigenvalues", "matrix": [[2, 0, 0], [0, 3, 0], [0, 0, 5]]},
+    "rational_roots":   {"kind": "rational_roots", "coeffs": [-6, 11, -6, 1]},
+    "shortest_path":    {"kind": "shortest_path", "matrix": [[0, 3, None], [3, 0, 1], [None, 1, 0]], "source": 0, "target": 2},
+    "readouts":         {"kind": "readouts", "data": [3, -1, 4, 1, -5, 9, 2, -6]},
 }
 INDEX = {
     "name": "Information Discrete Mathematics — Solver API",
@@ -35,7 +49,7 @@ INDEX = {
         "GET /openapi.json": "OpenAPI 3 description",
         "POST /solve": "solve a structured problem; body examples below",
     },
-    "problem_kinds": sorted(EXAMPLES.keys()),
+    "problem_kinds": kinds(),
     "examples": EXAMPLES,
 }
 OPENAPI = {
@@ -77,6 +91,8 @@ class _Handler(BaseHTTPRequestHandler):
                              "engine": "finite-discrete (mpmath rational core)"})
         elif self.path == "/openapi.json":
             self._send(200, OPENAPI)
+        elif self.path.rstrip("/") == "/kinds":
+            self._send(200, {"count": len(kinds()), "kinds": kinds()})
         else:
             self._send(404, {"status": "HOLD", "reason": f"no route {self.path}"})
 

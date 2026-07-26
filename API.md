@@ -48,17 +48,30 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-| `kind` | required fields | returns |
-|---|---|---|
-| `constant` | `name` (`pi`/`e`/`ln2`) | the finite readout of the constant |
-| `geometric_series` | `r`, `eps` | CERTIFIED value + exact ℚ error `r^N/(1-r)` |
-| `exp` | `x`, `eps` | CERTIFIED for `|x|≤½`, else HOLD |
-| `integral` | `f`, `a`, `b`, `eps` | CERTIFIED by finite stability, or HOLD |
-| `derivative` | `f`, `x` | finite central difference + Richardson |
-| `limit` | `seq` | Richardson on `h=1/n` |
-| `ode` | `f`, `x0`, `y0`, `xT` | finite RK4 |
-| `shortest_path` · `critical_path` · `widest_path` · `minimax_path` · `reachability` · `path_count` | `matrix`, opt. `source`/`target` | semiring all-pairs (Th_coqc laws) |
-| `readouts` | `data`, opt. `only` | the finite scalar dashboard |
+**52 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+
+**Certified computation** (ships a proven bound + ACCEPT/HOLD)
+`geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
+
+**Constants & functions** — `constant` (`name`) · `function` (`name`,`x`) · `evaluate` (`expr`,`vars`)
+
+**Discrete calculus** — `derivative` (`f`,`x`) · `limit` (`seq`) · `ode` (`f`,`x0`,`y0`,`xT`) ·
+`double_integral` (`f`,`ax`,`bx`,`ay`,`by`) · `series_sum` (`term`,`N`) · `zeta` (`s`) ·
+`regularized_sum` (`power`) · `root_find` (`f`,`a`/`b`/`x0`) · `minimize` (`f`,`a`,`b`) · `interpolate` (`points`,`x`)
+
+**Number theory** (exact, `Th_coqc`-tier) — `gcd` · `lcm` · `factorial` · `binomial` · `is_prime` ·
+`factorize` · `divisors` · `totient` · `primes` (`N`) · `modpow` · `mod_inverse` · `crt` · `fibonacci` ·
+`bernoulli` · `partition` · `catalan` · `stirling2` · `bell` · `continued_fraction`
+
+**Exact linear algebra** — `matrix_multiply` · `matrix_determinant` · `matrix_inverse` · `solve_linear`
+(`A`,`b`) · `char_poly` · `eigenvalues` (exact-ℚ char poly + Durand–Kerner)
+
+**Polynomials** — `poly_eval` · `rational_roots` (exact) · `poly_roots` (all complex)
+
+**Optimization / paths** (tropical semirings, `Th_coqc` laws) — `shortest_path` · `critical_path` ·
+`widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
+
+**Engineering readouts** — `readouts` (`data`, opt. `only`)
 
 String `f`/`seq` are evaluated in a **locked finite namespace** — `exp`/`log`/`sin`/`cos`/`erf`/`sqrt`/`pi`
 resolve to the framework's finite functions, no Python builtins, so even a user's `exp(-x**2)` is

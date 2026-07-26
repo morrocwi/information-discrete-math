@@ -56,3 +56,49 @@ def test_unknown_kind_holds():
 def test_server_module_imports():
     from idm import server
     assert "/solve" in server.OPENAPI["paths"]
+
+
+def _val(r):
+    v = r["value"]
+    if isinstance(v, dict):
+        return v.get("float", v.get("exact", v))
+    return v
+
+
+def test_number_theory():
+    assert idm.solve({"kind": "factorize", "n": 360360})["value"] == {"2": 3, "3": 2, "5": 1, "7": 1, "11": 1, "13": 1}
+    assert idm.solve({"kind": "is_prime", "n": 1000003})["value"] is True
+    assert idm.solve({"kind": "gcd", "a": 1071, "b": 462})["value"] == 21
+    assert idm.solve({"kind": "fibonacci", "n": 50})["value"] == 12586269025
+    assert idm.solve({"kind": "partition", "n": 100})["value"] == 190569292
+    assert idm.solve({"kind": "catalan", "n": 10})["value"] == 16796
+    assert idm.solve({"kind": "totient", "n": 36})["value"] == 12
+    assert idm.solve({"kind": "crt", "residues": [2, 3, 2], "moduli": [3, 5, 7]})["value"] == 23
+    assert idm.solve({"kind": "mod_inverse", "a": 3, "m": 11})["value"] == 4
+    assert idm.solve({"kind": "bernoulli", "n": 6})["value"]["exact"] == "1/42"
+
+
+def test_linear_algebra():
+    assert idm.solve({"kind": "matrix_determinant", "matrix": [[1, 2, 3], [4, 5, 6], [7, 8, 10]]})["value"]["exact"] == "-3/1"
+    r = idm.solve({"kind": "solve_linear", "A": [[2, 1], [1, 3]], "b": [3, 5]})
+    assert r["status"] == "ok"
+    assert idm.solve({"kind": "matrix_inverse", "matrix": [[1, 0], [0, 1]]})["value"] == [[{"exact": "1/1", "float": 1.0}, {"exact": "0/1", "float": 0.0}], [{"exact": "0/1", "float": 0.0}, {"exact": "1/1", "float": 1.0}]]
+    assert idm.solve({"kind": "matrix_inverse", "matrix": [[1, 1], [1, 1]]})["status"] == "HOLD"  # singular
+    eig = idm.solve({"kind": "eigenvalues", "matrix": [[2, 0, 0], [0, 3, 0], [0, 0, 5]]})
+    reals = sorted(round(e["re"]["float"]) for e in eig["value"])
+    assert reals == [2, 3, 5]
+    assert idm.solve({"kind": "rational_roots", "coeffs": [-6, 11, -6, 1]})["value"] == \
+        [{"exact": "1/1", "float": 1.0}, {"exact": "2/1", "float": 2.0}, {"exact": "3/1", "float": 3.0}]
+
+
+def test_analysis():
+    assert abs(_val(idm.solve({"kind": "zeta", "s": 2})) - 3.141592653589793 ** 2 / 6) < 1e-6
+    assert idm.solve({"kind": "zeta", "s": -1})["value"]["exact"] == "-1/12"
+    assert abs(float(_val(idm.solve({"kind": "regularized_sum", "power": 1}))) + 1 / 12) < 1e-4
+    assert abs(float(_val(idm.solve({"kind": "root_find", "f": "x*x - 2", "a": 0, "b": 2}))) - 2 ** 0.5) < 1e-9
+    assert _val(idm.solve({"kind": "interpolate", "points": [[0, 1], [1, 3], [2, 7]], "x": 3})) == 13
+    assert idm.solve({"kind": "minimize", "f": "(x-3)**2 + 1", "a": 0, "b": 6})["status"] == "ok"
+
+
+def test_registry_size():
+    assert len(idm.kinds()) >= 45          # a genuinely comprehensive solver

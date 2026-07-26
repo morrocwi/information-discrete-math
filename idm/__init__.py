@@ -14,10 +14,11 @@ Submodules: functions · certified · algebra · readouts · rcp · solve · ser
 """
 __version__ = "1.0.0"
 
-from . import functions, certified, algebra, readouts, rcp, solve as _solve
+from . import functions, certified, algebra, readouts, exact, analysis, rcp, solve as _solve
 
 # top-level convenience surface
 solve = _solve.solve
+kinds = _solve.kinds
 
 # finite elementary + calculus
 exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,
