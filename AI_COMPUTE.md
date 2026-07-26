@@ -23,6 +23,7 @@ computation — that is what the tools below do.
 | alternating/oscillatory sum | `accelerate_alt(terms)` | Euler transform |
 | `ζ`-type / slowly-convergent sum | `em_sum(term, N, tail)` | Euler–Maclaurin partial sum |
 | exact arithmetic / algebra / linear systems | `sympy` over `ℚ` | exact, no floats — see §3 |
+| honest float compute (equality, sums, root-find, verdicts) | `tools/idm_discipline.py` | `eq_eps`, `sum_neumaier`, `solve_obstruction`, `Verdict` |
 | group / counting / graph invariant | finite enumeration or `L_R` (§3) | native discrete tier |
 
 If a step seems to need a real number, a completed limit, an angle, or `∞` as a *primitive* — **stop**,
@@ -65,6 +66,7 @@ sp.Matrix([[2,1],[1,3]]).solve(sp.Matrix([3,5]))
 ```
 textbook/INFORMATION_DISCRETE_MATHEMATICS.md   the full theory (Parts 0–XV + Appendices A–E)
 tools/idm_tools.py                             THE TOOLS (nouns) — import and call; self-check: python3 tools/idm_tools.py
+tools/idm_discipline.py                        THE NUMERIC-HONESTY DISCIPLINE — Verdict/eq_eps/Neumaier/CostLedger/fail-closed solve
 METHOD.md                                      THE PROCESS (verb) — the 6-step loop
 AI_COMPUTE.md                                  this file — the AI quick-start
 validation/thousand_problems.py                1000/1000 grade-school→PhD

@@ -50,3 +50,27 @@ That is the whole method. Six steps, one pass, no continuum ever formed — vali
   result honest — every answer states exactly how it is known and where it stops. Same answers as the
   classical pipeline, obtained without the continuum, and *with* an explicit honesty fence the classical
   pipeline lacks.
+
+## The numeric-honesty discipline (`tools/idm_discipline.py`)
+
+When you compute on a floating substrate (not exact `ℚ`), six operational rules keep the readout
+honest. They are extracted and merged from the earlier `cpg_math` MathSolver v0.1.0 (benchmark 6/6),
+now folded into this framework:
+
+1. **Declared resolution** — never compare resolution-bounded readouts with `==`; use `eq_eps(a,b,eps)`,
+   and never chain it as if transitive (`eq_chain_guard` BLOCKs the sorites trap).
+2. **Verdicts, fail-closed** — every solve/fit/convergence returns `Verdict(ACCEPT/HOLD/BLOCK)`; budget
+   exhaustion or degeneracy is `HOLD`, never a silent answer. A `Verdict` is truthy only on `ACCEPT`.
+3. **Admissibility by construction** — evolve the *record* in coordinates that cannot leave the
+   admissible set (log/sigmoid/mod, e.g. `integrate_positive_decay`); a readout underflow to 0 is a
+   correct zero-at-resolution verdict, not a violation; clipping is a *reported* repair, never silent.
+4. **Carry the residual** — accumulate with `sum_neumaier` (retains the translation residual on the
+   dominant branch — beats naive and even Kahan on large-swing inputs); check admissibility at the
+   record level, not the readout level.
+5. **Discrete-exact first** — sequence/cost bookkeeping via the causal calculus (`D_ε`, `I_ε`, FTCC is
+   exact, `idm_tools`); form a continuum only through a declared A8-stability gate.
+6. **Cost ledger** — when complexity matters, produce a `CostLedger`, not an adjective.
+
+Boundary (inherited): this is a discipline layer ON the classical substrate — classical mathematics is
+not wrong, not replaced. Valid-in-discipline ≠ true-about-world; an ACCEPT is a readout at the declared
+resolution, not a truth certificate.
