@@ -27,6 +27,30 @@ scattered in the book and only needs elevation to a dedicated, tier-honest Part.
       root/optimum via obstruction-zeroing (`solve_obstruction`, `idm_discipline`). *Strengthens:* gives
       the framework its optimization chapter, grounded in tools it already ships. Tier: `Th_coqc-elig`.
 
+## Capstone — the continuum-maya bridge (construct the continuum *as a readout*, then compute with it)
+
+- [ ] **Part XX — The continuum-maya bridge (`Dr` → `Th_coqc`-elig).** *Is it possible to build a formal
+      bridge that CONSTRUCTS a continuum layer from the discrete — a continuum that is explicitly a
+      readout/appearance (maya), not an ultimate object — and then compute continuum results with it,
+      identically?* Yes; the pieces exist and this makes the two-truths a theorem, not a stance:
+      - **The construction (discrete → continuum-maya):** the number ladder already does the object
+        side (`ℝ` = regular Cauchy of `ℚ`, §III). The bridge adds the *operational* side: a map
+        `Λ: (discrete finite-ε data) → (continuum-appearance value)` defined as the **A8-stable readout**
+        of the finite-ε computation (`limit_eps`/Euler–Maclaurin/Richardson). `Λ` is total on
+        A8-stable inputs and **refuses** (HOLD) where no plateau exists — so the continuum it builds is
+        exactly the *computable appearance*, never a completed non-readout.
+      - **Faithfulness (compute continuum identically):** prove `Λ` reproduces the classical continuum
+        operation on every A8-stable case — derivative, integral, limit, ODE, special value — which is
+        already *witnessed* at 100/100 (Appendix E). The bridge upgrades that empirical 100/100 into a
+        stated **faithfulness theorem**: `Λ(discrete op) = classical continuum op` wherever the latter
+        exists, with the divergence set = exactly the `+ℝ-Open` non-readouts.
+      - **Maya clause (honesty):** the constructed continuum is labelled a **readout of the discrete**
+        (conventional truth, §0.3), never the ultimate object; the bridge is one-way faithful
+        (discrete → appearance) and *predicts* the readout on the Open frontier rather than closing it.
+      *Strengthens:* turns the framework's central claim ("the continuum is a readout of the discrete")
+      from a discipline/stance into a constructive, testable bridge with a faithfulness theorem — the
+      natural capstone. Founder request 2026-07-26.
+
 ## Tier 2 — strengthen warrant (proof work; raises existing tiers, no new breadth)
 
 - [ ] **Prove the keystone Th 5.1 `B(Φ,Φ)=I(Φ)` in Coq.** Currently a design target / in-progress
