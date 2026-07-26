@@ -16,7 +16,7 @@ returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT, symbolic as SYM, combopt as CO, interval as IVL, stats as ST, geometry as GEO, crypto as CY
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT, symbolic as SYM, combopt as CO, interval as IVL, stats as ST, geometry as GEO, crypto as CY, hilbert as HB, hilbert_open as HBO
 
 try:
     import mpmath as mp
@@ -719,6 +719,63 @@ def _rdec(p): return _ok("rsa_decrypt", CY.rsa_decrypt(p["c"], p["d"], p["n"]), 
 def _ecadd(p): return _ok("ec_add", CY.ec_add(p["P"], p["Q"], p["a"], p["p"]), "exact elliptic-curve point addition over F_p")
 @kind("ec_mul", "Th_coqc")
 def _ecmul(p): return _ok("ec_mul", CY.ec_mul(p["k"], p["P"], p["a"], p["p"]), "exact EC scalar multiply (double-and-add) over F_p")
+
+
+# ===================== H1 · Hilbert-space mathematical core (finite-dim exact / finite_diagnostic) ==
+# Each handler returns hilbert.py's dict verbatim; when the function resolves its own per-instance tier
+# (orthonormal_basis, spectral_decomposition, operator_norm, is_completely_positive, is_separable_ppt),
+# that tier is carried through and the registry default is not applied. The exact/decidable kinds are
+# registered Th_coqc (their finite-dim laws are machine-checked in formal/IDM_Hilbert.v).
+def _hb(name, fn, *argnames, tier="exact"):
+    @kind(name, tier)
+    def _h(p, _fn=fn, _an=argnames):
+        r = _fn(*[p[a] for a in _an])
+        if isinstance(r, dict) and r.get("status") in ("HOLD", "+R_OPEN"):
+            return {"kind": name, "status": r["status"], **{k: v for k, v in r.items() if k != "status"},
+                    "tier": r.get("tier", "finite_diagnostic")}
+        out = {"kind": name, "status": "ok", "value": r["value"], "method": r["method"]}
+        if "tier" in r: out["tier"] = r["tier"]                 # per-instance tier wins over the registry default
+        if "error_bound" in r: out["error_bound"] = r["error_bound"]
+        return out
+    return _h
+
+_hb("inner_product", HB.inner_product, "u", "v", tier="Th_coqc")
+_hb("norm_squared", HB.norm_squared, "v", tier="Th_coqc")
+_hb("cauchy_schwarz_check", HB.cauchy_schwarz_check, "u", "v", tier="exact")
+_hb("is_orthogonal", HB.is_orthogonal, "u", "v", tier="Th_coqc")
+_hb("gram_matrix", HB.gram_matrix, "vectors", tier="Th_coqc")
+_hb("gram_schmidt", HB.gram_schmidt, "vectors", tier="exact")
+_hb("orthonormal_basis", HB.orthonormal_basis, "vectors", tier="exact")
+_hb("projection_matrix", HB.projection_matrix, "basis", tier="exact")
+_hb("project", HB.project, "v", "basis", tier="exact")
+_hb("is_idempotent", HB.is_idempotent, "M", tier="Th_coqc")
+_hb("adjoint", HB.adjoint, "M", tier="Th_coqc")
+_hb("is_self_adjoint", HB.is_self_adjoint, "M", tier="Th_coqc")
+_hb("is_unitary", HB.is_unitary, "M", tier="Th_coqc")
+_hb("is_normal", HB.is_normal, "M", tier="Th_coqc")
+_hb("gershgorin_bound", HB.gershgorin_bound, "M", tier="exact")
+_hb("operator_norm", HB.operator_norm, "M", tier="finite_diagnostic")
+_hb("characteristic_poly", HB.characteristic_poly, "M", tier="exact")
+_hb("spectral_decomposition", HB.spectral_decomposition, "M", tier="exact")
+_hb("tensor_product", HB.tensor_product, "a", "b", tier="Th_coqc")
+_hb("partial_trace", HB.partial_trace, "M", "dims", "keep", tier="Th_coqc")
+_hb("choi_matrix", HB.choi_matrix, "cp_map_generators", tier="exact")
+_hb("is_completely_positive", HB.is_completely_positive, "choi", tier="finite_diagnostic")
+_hb("is_separable_ppt", HB.is_separable_ppt, "rho", "dims", tier="finite_diagnostic")
+
+# +ℝ-Open frontier — wired ONLY through the +R_OPEN status path, never a certified tier (the fence).
+def _hbo(name, fn, *argnames):
+    @kind(name, "+ℝ-Open")
+    def _h(p, _fn=fn, _an=argnames):
+        r = _fn(*[p[a] for a in _an])
+        return {"kind": name, **r}
+    return _h
+
+_hbo("completeness_readout", HBO.completeness_readout, "cauchy_seq", "N")
+_hbo("l2_readout", HBO.l2_readout, "seq", "N")
+_hbo("L2_readout", HBO.L2_readout, "values_on_mesh", "weights")
+_hbo("infinite_orthonormal_basis_readout", HBO.infinite_orthonormal_basis_readout, "vectors", "N")
+_hbo("infinite_spectral_readout", HBO.infinite_spectral_readout, "operator_description")
 
 
 # ================================================================ dispatch ==========================

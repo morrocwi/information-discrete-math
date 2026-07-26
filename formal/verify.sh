@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -116,6 +116,19 @@ declare -a THMS=(
   "tautology_sound:IDM_Reduction"
   "cnf_tautology_sound:IDM_Reduction"
   "witness_crt_sound:IDM_Reduction"
+  "Qsq_nonneg:IDM_Hilbert"
+  "inner_sym:IDM_Hilbert"
+  "inner_linear_l:IDM_Hilbert"
+  "inner_pos:IDM_Hilbert"
+  "parallelogram_law:IDM_Hilbert"
+  "pythagoras_orthogonal:IDM_Hilbert"
+  "cauchy_schwarz_2:IDM_Hilbert"
+  "adjoint_involutive:IDM_Hilbert"
+  "adjoint_of_product:IDM_Hilbert"
+  "hermitian_2x2_discriminant_nonneg:IDM_Hilbert"
+  "hermitian_2x2_gap_is_discriminant:IDM_Hilbert"
+  "projection_idempotent:IDM_Hilbert"
+  "projection_self_adjoint:IDM_Hilbert"
 )
 
 fail=0

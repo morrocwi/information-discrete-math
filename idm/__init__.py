@@ -7,7 +7,7 @@
     idm.shortest_path(W)             # min-plus all-pairs
 
 A readout-first foundation: everything read is a finite, discrete, rational readout; the continuum is
-reconstructed, never assumed. The finite core is machine-checked axiom-free in `formal/` (107 theorems).
+reconstructed, never assumed. The finite core is machine-checked axiom-free in `formal/` (120 theorems).
 This package is a clean facade over the repository's verified modules — same code CI runs.
 
 Submodules: functions · certified · algebra · readouts · exact · analysis · discrete · integrate ·
@@ -16,7 +16,7 @@ crypto · parse · rcp · solve · server.
 """
 __version__ = "1.2.2"
 
-from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, parse as _parse, rcp, solve as _solve
+from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, hilbert, hilbert_open, parse as _parse, rcp, solve as _solve
 
 # top-level convenience surface
 solve = _solve.solve

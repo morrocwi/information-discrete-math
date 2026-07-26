@@ -13,8 +13,8 @@ import os, sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import idm
 
-_ALLOWED_STATUS = {"ok", "CERTIFIED", "HOLD"}
-_ALLOWED_TIER = {"Th_coqc", "exact", "finite_diagnostic"}
+_ALLOWED_STATUS = {"ok", "CERTIFIED", "HOLD", "+R_OPEN"}
+_ALLOWED_TIER = {"Th_coqc", "exact", "finite_diagnostic", "+ℝ-Open"}
 _COQ_BACKED = idm.solve.__globals__["_COQ_BACKED"]
 
 # ---- a valid input for every kind (status should be ok/CERTIFIED, not HOLD) ----
@@ -170,6 +170,36 @@ FIXTURES = {
     "certified_min": {"expr": "(x-3)**2+1", "var": "x", "a": 0, "b": 6},
     # readouts
     "readouts": {"data": [3, -1, 4, 1, -5, 9]},
+    # H1 · Hilbert-space mathematical core (finite-dim exact / finite_diagnostic)
+    "inner_product": {"u": [1, 2, 3], "v": [4, 5, 6]},
+    "norm_squared": {"v": [3, 4]},
+    "cauchy_schwarz_check": {"u": [1, 2], "v": [3, 4]},
+    "is_orthogonal": {"u": [1, 0], "v": [0, 1]},
+    "gram_matrix": {"vectors": [[1, 0], [1, 1]]},
+    "gram_schmidt": {"vectors": [[1, 1, 0], [1, 0, 1]]},
+    "orthonormal_basis": {"vectors": [[3, 4]]},
+    "projection_matrix": {"basis": [[1, 0, 0]]},
+    "project": {"v": [1, 2, 3], "basis": [[1, 0, 0], [0, 1, 0]]},
+    "is_idempotent": {"M": [[1, 0], [0, 0]]},
+    "adjoint": {"M": [[2, [0, 1]], [[0, -1], 3]]},
+    "is_self_adjoint": {"M": [[2, 0], [0, 3]]},
+    "is_unitary": {"M": [[0, 1], [1, 0]]},
+    "is_normal": {"M": [[2, 0], [0, 3]]},
+    "gershgorin_bound": {"M": [[2, 1], [1, 3]]},
+    "operator_norm": {"M": [[3, 0], [0, 4]]},
+    "characteristic_poly": {"M": [[2, 0], [0, 3]]},
+    "spectral_decomposition": {"M": [[2, 1], [1, 2]]},
+    "tensor_product": {"a": [1, 2], "b": [3, 4]},
+    "partial_trace": {"M": [[1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], "dims": [2, 2], "keep": 0},
+    "choi_matrix": {"cp_map_generators": [[[1, 0], [0, 1]]]},
+    "is_completely_positive": {"choi": [[1, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [1, 0, 0, 1]]},
+    "is_separable_ppt": {"rho": [["1/2", 0, 0, "1/2"], [0, 0, 0, 0], [0, 0, 0, 0], ["1/2", 0, 0, "1/2"]], "dims": [2, 2]},
+    # H1 · +ℝ-Open frontier (returns +R_OPEN, never certified)
+    "completeness_readout": {"cauchy_seq": ["1", "3/2", "7/5", "17/12"], "N": 3},
+    "l2_readout": {"seq": ["1", "1/2", "1/4", "1/8", "1/16"], "N": 5},
+    "L2_readout": {"values_on_mesh": [1, 1, 1], "weights": ["1/3", "1/3", "1/3"]},
+    "infinite_orthonormal_basis_readout": {"vectors": [[1, 0], [0, 1], [1, 1]], "N": 2},
+    "infinite_spectral_readout": {"operator_description": "d/dx on L2"},
 }
 
 
@@ -182,20 +212,26 @@ def test_fixtures_cover_every_kind():
 def test_every_kind_invocable_and_well_formed():
     """each kind, on valid input, returns a well-formed result: a status in the allowed set, a tier in
     the allowed set, and (unless HOLD) a value. The vast majority must actually COMPUTE, not HOLD."""
-    holds, computed, bad = [], 0, []
+    holds, computed, opens, bad = [], 0, 0, []
     for k in sorted(idm.kinds()):
         r = idm.solve(dict(kind=k, **FIXTURES[k]))
         if not isinstance(r, dict) or r.get("status") not in _ALLOWED_STATUS:
             bad.append((k, r)); continue
         if r["status"] == "HOLD":
             holds.append(k)
+        elif r["status"] == "+R_OPEN":                # a +ℝ-fenced frontier readout: NO value by design
+            opens += 1
+            assert "value" not in r, f"{k}: +R_OPEN must NOT carry a certified value (the fence)"
+            assert r.get("tier") == "+ℝ-Open" and "approximant" in r, f"{k}: malformed +R_OPEN"
         else:
             computed += 1
             assert "value" in r, f"{k}: non-HOLD result without a value"
             assert r.get("tier") in _ALLOWED_TIER, f"{k}: bad tier {r.get('tier')}"
     assert not bad, f"malformed results: {bad}"
-    # a valid-input fixture should compute for the overwhelming majority of kinds
-    assert computed >= int(0.95 * len(idm.kinds())), f"only {computed}/{len(idm.kinds())} computed; HOLDs: {holds}"
+    # a valid-input fixture should resolve (compute exactly OR return a fenced frontier readout) for the
+    # overwhelming majority of kinds
+    assert computed + opens >= int(0.95 * len(idm.kinds())), \
+        f"only {computed} computed + {opens} +R_OPEN of {len(idm.kinds())}; HOLDs: {holds}"
 
 
 def test_tier_honesty_invariant():

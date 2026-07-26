@@ -37,6 +37,7 @@
 - **Part XIX** — Optimization (gradient = `D_ε`; convexity; Lagrange; exact-`ℚ` linear programming)
 - **Part XX** — The continuum-maya bridge (the continuum constructed as a readout, `Λ`, and computed with; exact FTCC core)
 - **Part XXI** — The frontier without the continuum: paradox dissolution (topology · manifolds · PDE — the decisive stance)
+- **Part XXI.5** — The Hilbert-space mathematical core (finite-dim exact; operators, spectral, tensor/partial-trace, CP/PPT; the `+ℝ` fence)
 - **Part XXII** — The root design: three axioms that generate the solver (`READOUT · FOLD · DECISION` + the `KEYSTONE` bridge; the 230-kind branch map; reductions machine-checked in `IDM_Reduction.v`)
 - **Appendices A/B/C** — contaminated-concept table · machine-checked theorem index · axiom-dependence discipline
 - **Appendices D/E** — validation: 1000 problems ประถม→ปริญญาเอก (1000/1000) · 100 continuous problems reproduced from the discrete (100/100)
@@ -1741,6 +1742,87 @@ its own declared target — §10.9.)*
 (non-measurable set · smooth-limit curvature · reached `+∞`), never in the *computation*. Refuse the
 object, keep the computation: topology by `μ_λ`/`L_R`, geometry by discrete Gauss–Bonnet, PDE by
 finite-`ε` schemes — **all three computed robustly, none producing its paradox.**
+
+---
+
+# Part XXI.5 — The Hilbert-space mathematical core (finite-dim exact, `+ℝ`-fenced)
+
+A **Hilbert space is pure mathematics** — linear algebra / functional analysis / operator theory —
+*not* physics. This Part builds it as an operator-theoretic **information architecture**, provable
+entirely inside mathematics; the physical interpretation (§8) is a detachable `Dr` layer that no theorem
+here needs. Witnesses: `idm/hilbert.py` (+ `idm/hilbert_open.py` for the frontier), `formal/IDM_Hilbert.v`
+(13 theorems, axiom-free), `HILBERT_PLUS_R_FRONTIER.md`.
+
+## 21.5.1 The thesis
+The mathematical core is `Core = (H, ⟨·,·⟩, 𝒪, 𝒯)` — the space, its operator algebra, and the
+information-transformation rules. We claim only the mathematical level: organize, reduce, and compute
+information over a complete inner-product space. **No** particle/wave/measurement/quantum claim is made.
+
+## 21.5.2 The construction tower (each arrow tier-tagged)
+`Set → Field → Vector Space → Inner-Product Space → Normed Space → (Complete Space) → Hilbert Space`.
+Our build climbs to the **finite-dimensional exact** rung and stops: `(Complete Space)` is the `I1`
+(ℝ-completeness) rung, boxed as `+ℝ` — entered only as a readout (§21.5.7).
+
+## 21.5.3 The operator ladder (finite `n×n` throughout)
+`Linear → Bounded → Adjoint → Self-adjoint → Unitary → Normal → Spectral theory`.
+
+## 21.5.4 The finite-dim exact core
+Over ℚ or the Gaussian rationals ℚ[i] (an exact `QC` pair — **never** IEEE `complex`), finite `n`:
+- **inner product** `⟨u,v⟩ = Σ conj(uᵢ)vᵢ`, exact; sesquilinear + PSD — machine-checked (`inner_sym`,
+  `inner_linear_l`, `inner_pos`). **Cauchy–Schwarz** (`cauchy_schwarz_2`), **parallelogram law**,
+  **Pythagoras** (`pythagoras_orthogonal`) — all axiom-free ℚ.
+- **Gram–Schmidt**, split as *orthogonalize* (exact ℚ[i], field division only — no √) then *normalize*.
+  **Normalization is exact iff every squared norm is a perfect square in ℚ, else `finite_diagnostic`
+  (a certified numeric √).** This per-instance split is the honesty core, not a blanket "`n ≤ k` ⇒ exact".
+- **projection** `P=A(A*A)⁻¹A*` (exact), idempotent + self-adjoint (`projection_idempotent`,
+  `projection_self_adjoint`). **adjoint / self-adjoint / unitary / normal** — decidable exact ℚ[i]
+  equalities; `(A*)* = A` and `(AB)* = B*A*` machine-checked (`adjoint_involutive`, `adjoint_of_product`).
+- **characteristic polynomial** — exact ℚ[i] coefficients (Faddeev–LeVerrier), always exact regardless
+  of root rationality. **spectral decomposition** of a Hermitian/normal matrix: `exact` **only if every
+  eigenvalue is found rational** (via `characteristic_poly` + `rational_roots`) and eigenvectors
+  normalize exactly; **otherwise a certified numeric eigensolver with a proven residual `‖MV−VΛ‖ ≤ ε`,
+  tier `finite_diagnostic`** — decided per call, never a general-`n` "real spectrum" claim. The Hermitian
+  `2×2` reality-of-spectrum content *is* machine-checked, as a fixed instance:
+  `hermitian_2x2_discriminant_nonneg` (`0 ≤ (a−c)²+4b²`) and `hermitian_2x2_gap_is_discriminant`
+  (`(λ₁−λ₂)² = discriminant`, Vieta). **operator norm** is *always* `finite_diagnostic` (largest singular
+  value, certified residual); a separate exact sqrt-free `gershgorin_bound` gives an operator-norm *upper
+  bound*, never the true sup norm.
+
+## 21.5.5 Composite systems (operator algebra, physics-neutral names)
+**tensor product** (Kronecker, exact ℚ[i]), **partial trace** (exact block sum), **Choi matrix** of a
+finite completely-positive-map generator list, **complete positivity** = the Choi matrix is PSD — tested
+by the **eigenvalue sign**, *not* Sylvester leading principal minors (those test positive-definiteness;
+`diag(0,−1)` passes the leading minors yet is not PSD — a worked example of tier discipline catching a
+wrong proof).
+
+## 21.5.6 Separability as an open-in-general decision problem
+The **Peres–Horodecki (PPT)** test: a *negative* partial-transpose eigenvalue is an **exact witness of
+entanglement** (any dimensions); PPT is necessary-and-sufficient only in `2×2`/`2×3` (`finite_diagnostic`
+"separable" there); outside that range a positive partial transpose is inconclusive and returns **HOLD**,
+never "separable" — this domain's own instance of *diagnose, don't overclaim*.
+
+## 21.5.7 The `+ℝ` fence (completeness / infinite dimension)
+Completeness, `ℓ²`, `L²(X,μ)`, infinite orthonormal bases, and the infinite-dim spectral theorem are
+`+ℝ-Open`: **never formed**, only named readouts of finite ℚ-approximants (`idm/hilbert_open.py`). The
+fence is **code-enforced** — `hilbert.py` never imports `hilbert_open.py` (AST-tested), and the open
+readouts return `status:"+R_OPEN"` with no `value` field, so `solve()` cannot emit an infinite-dim result
+as certified. Full statement: [`HILBERT_PLUS_R_FRONTIER.md`](../HILBERT_PLUS_R_FRONTIER.md).
+
+## 21.5.8 Physics → math dictionary (`Dr`, detachable, boxed)
+Optional and removable; no theorem in §21.5.4–§21.5.6 depends on it:
+| physics language | pure-math object | | physics language | pure-math object |
+|---|---|---|---|---|
+| quantum state | unit vector in `H` | | superposition | linear combination |
+| observable | self-adjoint operator | | entanglement | non-separable tensor element |
+| evolution | unitary `x_{t+1}=Ux_t`, `U*U=I` | | gate | unitary operator |
+| measurement | projection / spectral decomposition | | channel | completely-positive linear map |
+| amplitude | (complex) coefficient | | collapse | projection / conditional update |
+
+## 21.5.9 What this Part is NOT
+No quantum-computer, quantum-simulation, or empirical-physics claim. §21.5.8 is not evidence for the
+theorems, and the theorems do not require §21.5.8 to be meaningful. Naming: *Hilbert-space computational
+architecture* / *operator-theoretic information architecture* — never "quantum computer / simulates
+nature."
 
 ---
 
