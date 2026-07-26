@@ -8,6 +8,7 @@ of the `Th_coqc` corpus is external: `research_universal_solver`, `readout_genes
 ```
 cd formal
 coqc -q IDM_Keystone.v
+coqc -q IDM_Bridge.v
 coqc -q IDM_FiniteWitnesses.v
 printf 'Require Import IDM_FiniteWitnesses.\nPrint Assumptions kuratowski_pair_inj.\nPrint Assumptions handshake_lemma.\nPrint Assumptions pigeonhole.\nPrint Assumptions finite_yoneda.\nPrint Assumptions semiring_distrib.\n' > _chk.v
 coqc -q _chk.v   # every result prints "Closed under the global context" = axiom-free
@@ -25,5 +26,6 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 | `pigeonhole` | §15.3 | a `NoDup` list of values `< n` has length `≤ n` |
 | `finite_yoneda` | §17.2 | maps agreeing on every point of a finite domain have equal readout-vectors |
 | `semiring_distrib` | §12.2 | `a·(b+c) = a·b + a·c` on `D≅ℕ` |
+| `FTCC_exact` / `FTCC_eps_exact` (`IDM_Bridge.v`) | §20.2 | continuum-maya exact core: `I_ε(D_ε f)=f[N]−f[0]` (zero residue) |
 
 All checked axiom-free under Coq 8.20 (`Print Assumptions` = *Closed under the global context*).

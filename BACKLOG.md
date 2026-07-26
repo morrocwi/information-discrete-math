@@ -26,7 +26,8 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
 
 ## Capstone — the continuum-maya bridge (construct the continuum *as a readout*, then compute with it)
 
-- [ ] **Part XX — The continuum-maya bridge (`Dr` → `Th_coqc`-elig).** *Is it possible to build a formal
+- [x] **Part XX — The continuum-maya bridge — DONE (v1.11).** Written as Part XX; `Λ` map + faithfulness
+      (exact FTCC core `Th_coqc` `formal/IDM_Bridge.v`; numeric 100/100) + maya clause. Original scope: *Is it possible to build a formal
       bridge that CONSTRUCTS a continuum layer from the discrete — a continuum that is explicitly a
       readout/appearance (maya), not an ultimate object — and then compute continuum results with it,
       identically?* Yes; the pieces exist and this makes the two-truths a theorem, not a stance:
@@ -65,8 +66,9 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
 Writing these as explicit "open by design" chapters strengthens completeness/honesty without claiming
 closure — they need the completed continuum, which the philosophy treats as a readout, not a premise.
 
-- [ ] **Topology / manifolds / differential geometry** as a declared-open frontier chapter (§10.9).
-- [ ] **PDE via the continuum limit `L_R→□`** (d'Alembertian) as a declared-open chapter (§10.9).
+- [x] **Topology / manifolds / differential geometry** — DONE (v1.11): Part XXI decisive stance +
+      paradox dissolution (Banach–Tarski, discrete Gauss–Bonnet), computed 16/16.
+- [x] **PDE** — DONE (v1.11): Part XXI, Navier–Stokes/blow-up dissolved, finite-ε heat/wave well-posed.
 - [ ] **Named open problems** chapter: Hauptvermutung, strong LLN, topos completeness, exact `π`/`φ`
       objects (all listed in §10.9) — each stated, predicted, fenced.
 

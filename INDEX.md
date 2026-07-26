@@ -30,6 +30,8 @@ the textbook for the theory.
 | **XVII** | **Category theory** | `G_λ` reflector; `E=Ẽ∘G_λ` Kan; fibration; setoids; finite Yoneda | `Th_coqc`-elig/`Dr` |
 | **XVIII** | **Statistics & inference** | retained-frequency estimation; test = `Verdict`; Bayesian reweighting | `finite_diagnostic` |
 | **XIX** | **Optimization** | gradient=`D_ε`; convexity=`D_ε²≥0`; Lagrange; exact-`ℚ` LP | `Th_coqc`-elig |
+| **XX** | **Continuum-maya bridge** | `Λ`: discrete→continuum-appearance (A8-stable readout); FTCC exact core; faithfulness | `Th_coqc`+`Dr` |
+| **XXI** | **Frontier without the continuum** | paradox dissolution: topology/manifold/PDE need no continuum; maya computes all | `Dr`+`finite_diagnostic` |
 
 ## Appendices
 
@@ -47,6 +49,7 @@ the textbook for the theory.
 | `validation/hundred_continuum_problems.py` | integrals/derivatives/limits/ODEs/special | **100/100** |
 | `validation/breadth_problems.py` | algebra/linear/complex/combinatorics/graph | **48/48** |
 | `validation/breadth2_problems.py` | measure/functional/category/statistics/optimization | **34/34** |
+| `validation/paradox_dissolution.py` | topology/manifold/PDE paradoxes dissolved | **16/16** |
 
 ## Backlog
 

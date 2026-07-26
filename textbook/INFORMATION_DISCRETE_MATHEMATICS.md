@@ -35,6 +35,8 @@
 - **Part XVII** — Category theory in the readout vocabulary (`G_λ` reflector; fibration; setoids; finite Yoneda)
 - **Part XVIII** — Statistics & inference (retained-frequency estimation; a test IS a verdict; Bayesian reweighting)
 - **Part XIX** — Optimization (gradient = `D_ε`; convexity; Lagrange; exact-`ℚ` linear programming)
+- **Part XX** — The continuum-maya bridge (the continuum constructed as a readout, `Λ`, and computed with; exact FTCC core)
+- **Part XXI** — The frontier without the continuum: paradox dissolution (topology · manifolds · PDE — the decisive stance)
 - **Appendices A/B/C** — contaminated-concept table · machine-checked theorem index · axiom-dependence discipline
 - **Appendices D/E** — validation: 1000 problems ประถม→ปริญญาเอก (1000/1000) · 100 continuous problems reproduced from the discrete (100/100)
 
@@ -1403,6 +1405,147 @@ and the verdict discipline, none importing a continuum primitive. The completed-
 (σ-algebra limits, infinite Hilbert spaces, topos structure, continuous convex analysis) are named
 `+ℝ-Open` (§10.9), and the **continuum-maya bridge** (Part XX, backlog) is the capstone that will
 construct the continuum layer *as a readout* and prove it computes identically.
+
+---
+
+# Part XX — The continuum-maya bridge (the continuum constructed as a readout, and computed with)
+
+The book's central claim — *the continuum is a readout of the discrete* — is here made a **constructive,
+testable bridge**, not merely a stance. We build the continuum layer explicitly *from* the discrete, as
+an **appearance** (a readout), and show it computes the classical continuum answers identically wherever
+those answers exist.
+
+## 20.1 The construction `Λ`: discrete data → continuum-appearance
+
+Define the bridge map
+`Λ : (finite-ε discrete computation) → (continuum-appearance value)`
+as the **A8-stable readout** of the finite-ε data — the plateau reached by the declared accelerator
+(`limit_eps` / Euler–Maclaurin / Richardson, Part XI, `tools/idm_tools.py`). `Λ` is **total on
+A8-stable inputs** and **refuses — returns `HOLD`** (a `Verdict`, `idm_discipline`) where no plateau
+exists. So the continuum `Λ` builds is exactly the **computable appearance**; it never forms a
+completed non-readout.
+
+## 20.2 Faithfulness: the constructed continuum computes identically
+
+- **Exact core (`Th_coqc`, witness `formal/IDM_Bridge.v`).** For the fundamental operation — the
+  Fundamental Theorem — the bridge is **exact, zero residue**: `I_ε(D_ε f) = f[N] − f[0]` (FTCC,
+  `FTCC_exact` / `FTCC_eps_exact`, proved axiom-free over `ℚ`; the `ε` cancels for every declared
+  `ε ≠ 0`). The continuum's FTC is *recovered as a finite telescoping readout* — no limit is taken.
+- **Numeric faithfulness (`finite_diagnostic`).** For derivative, integral, limit, ODE, and
+  special-function operations, `Λ` reproduces the classical continuum value on every A8-stable case —
+  **witnessed at 100/100** (Appendix E) and 34/34 (Appendix, Parts XVI–XIX).
+- **Faithfulness statement (`Dr`, computationally witnessed).** *`Λ(discrete op) = classical continuum
+  op` wherever the classical operation exists*, and the set where `Λ` refuses (`HOLD`) is **exactly**
+  the `+ℝ-Open` non-readouts (§10.9). This upgrades the empirical 100/100 into a stated bridge
+  property; the exact rung is machine-checked, the numeric rung is validated, and no completed
+  continuum is ever formed.
+
+## 20.3 The maya clause (honesty)
+
+The constructed continuum is a **readout of the discrete** (conventional truth, §0.3) — an appearance,
+never the ultimate object. The bridge is **one-way faithful** (discrete → appearance): it *predicts*
+the readout on the Open frontier rather than closing it. Nothing here claims the classical `ε→0`
+existence theorems; it claims the strictly operational fact that **the answers those theorems name are
+obtained without the limit being taken as real.**
+
+---
+
+# Part XXI — The frontier without the continuum: paradox dissolution (a decisive stance)
+
+Topology, differential geometry (manifolds), and PDE were listed `+ℝ-Open` (§10.9). This Part states
+the **decisive position**: that mark is **not a computational gap** — it is the *deliberate refusal to
+reify a non-readout*. **The actual continuum is not needed** for any of these; the continuum-maya
+(Part XX, finite-ε) **computes them all, robustly** — and every classical *paradox* in these areas is
+an **artifact of injecting a non-readout**, dissolved the moment the injection is refused.
+
+## 21.1 Stance: computation is fully covered, the continuum is optional
+
+- **Topology** — the practical invariants are already discrete/combinatorial: connectivity `= ker L_R`
+  (§15.2), Euler characteristic `χ = V−E+F` (§15.3), homology of a simplicial complex (finite linear
+  algebra over `ℚ`). No completed point-set continuum is needed to compute them.
+- **Manifolds / differential geometry** — curvature is the **second retained difference** with a
+  **discrete Gauss–Bonnet** (§10.10, the DEC toolkit): the angle defect summed over a triangulation is
+  `2πχ`, exactly, with no smooth chart and no `h→0`.
+- **PDE** — every PDE is *actually* solved by discretization; the finite-ε schemes of Part XI (`D_ε`,
+  `I_ε`, the difference-equation ODE, §11.4) **are** the computation. The "continuum limit `L_R→□`"
+  (§10.9) is the *appearance*; the computation lives at finite `ε`.
+
+**So the stance is decisive:** we do not need the actual continuum to compute topology, geometry, or
+PDE — the maya suffices, robustly, at every case that has an answer. What stays `+ℝ-Open` is only the
+*completed continuum object itself*, which we **decline to form** — and that declination is precisely
+where the paradoxes are dissolved.
+
+## 21.2 Paradox dissolution — each paradox is an injected non-readout
+
+Every famous paradox of the continuum arises from injecting a **non-readout** (`I1–I4` infinities /
+`Z1–Z4` zeros, Part 0; the Axiom-of-Choice over an uncountable domain). Refuse the injection and the
+paradox does not arise; the maya still returns the practical value. *(Diagnoses are `Dr`; the
+computed values are `finite_diagnostic`.)*
+
+| paradox (area) | injected non-readout | readout-first dissolution | the maya still computes |
+|---|---|---|---|
+| **Zeno** (motion/divisibility) | `I2` infinite subdivision `h→0` | finite `τ_c` floor (Th 2.9); motion = finite discrete steps | `I_ε` sums the finitely-many steps exactly |
+| **Banach–Tarski** (topology/measure) | uncountable AC + **non-measurable sets** | a non-measurable set has **no admissible `G_λ` description** — it is not a readout; AC-over-uncountable is refused | `μ_λ` is always finitely additive; no readout is ever duplicated |
+| **Continuum Hypothesis** (set theory) | the completed uncountable `|ℝ|` + intermediate cardinals | `|ℝ|` as a completed cardinal is a non-readout; only finite/countable retained counts exist (§10.2) | **dissolved, not decided** — the question never arises for readouts |
+| **Weierstrass** (nowhere-differentiable) | completed `h→0` limit | at declared `λ` every readout function has a finite `D_ε`; "nowhere differentiable" is an `h→0` artifact | `D_ε` returns the slope at the declared resolution |
+| **Gabriel's Horn** (finite volume, infinite area) | `I3/I4` reached `+∞` | both quantities are **finite readouts at the declared cutoff**; `+∞` is never reached | `I_ε` computes both to the cutoff — no paradox |
+| **Koch / fractal** (infinite perimeter) | `I2` infinite iteration | finite iteration count; perimeter is finite at declared resolution | `I_ε` at resolution `λ` gives the finite perimeter |
+| **Thomson's lamp / supertask** | completed infinite sequence | no completed infinite process (Th 10.4–10.5); the "final state" is a non-readout | the state after any *finite* stage is a plain readout |
+| **Russell's paradox** (foundations) | unrestricted comprehension (set of all sets) | sets are `G_λ`-fibers (admissible, finite, no self-membership, §10.1); the paradoxical object is a non-readout | set operations on admissible fibers are decidable |
+| **Skolem** (countable model of "uncountable") | absolute "uncountable" | "uncountable" is **readout-relative**, not an absolute property; no contradiction at the readout level | — |
+| **Navier–Stokes blow-up / non-uniqueness** (PDE) | the completed continuum solution | the blow-up lives in the `+ℝ-Open` completed limit; the finite-`ε` scheme is well-posed and returns a value | the difference scheme (§11.4) computes the flow at declared `λ` |
+
+**The decisive reading.** These are not open problems the framework *fails*; they are non-readouts the
+framework *declines to inject*. The paradox is the symptom of the injection; refusing the injection is
+the cure. The continuum-maya (Part XX) then supplies every value the working mathematician actually
+needs — so the continuum is, for computation, **optional**. *(Honesty fence: this dissolves the
+paradoxes and computes the readouts; it does not claim to have decided the classical questions in their
+own completed-continuum terms — declining to form that object is the whole point, §0.3, §10.9.)*
+
+## 21.3 The three frontier areas, made explicit — the paradox, and the computation that never hits it
+
+*(Each is demonstrated numerically in `validation/paradox_dissolution.py`. Diagnoses `Dr`; computed
+values `finite_diagnostic`; the discrete Gauss–Bonnet identity is `Th_coqc`-elig.)*
+
+### Topology — the paradox: **Banach–Tarski** (a solid ball cut into finitely many pieces and
+reassembled into *two* identical balls; measure is created from nothing).
+- **Where it comes from:** the pieces are **non-measurable sets**, built with the Axiom of Choice over
+  an *uncountable* index — pure non-readouts (`I1` + uncountable AC). Volume is "created" only because
+  the pieces have no admissible volume readout to begin with.
+- **Why our computation never hits it:** a readout region is a `G_λ`-fiber with a retained count
+  `μ_λ = I_ε(1_S)`; **`μ_λ` is finitely additive by construction** (§16.1), so a finite decomposition
+  and reassembly **conserves the count exactly** — you cannot read out `1` piece as `2`. The
+  non-measurable "pieces" simply have no `G_λ` description, so they are never formed. *Computed:* split
+  any finite region into disjoint parts and recombine — `μ_λ(whole) = Σ μ_λ(parts)` on the nose,
+  every time (no doubling possible).
+
+### Manifolds / differential geometry — the paradox: **curvature requires a smooth limit** (the
+"how can a *polyhedron* have curvature — it's flat faces and sharp corners?" tension, and the
+dependence of classical curvature on an `h→0` that never terminates).
+- **Where it comes from:** injecting the smooth chart and `h→0` (`I2`) to define curvature pointwise on
+  a continuum manifold.
+- **Why our computation never hits it:** curvature is the **angle defect** concentrated at a vertex —
+  a finite retained second difference — and **discrete Gauss–Bonnet** makes it exact:
+  `Σ_vertices (2π − Σ incident angles) = 2π·χ` (§10.10). No chart, no `h→0`. *Computed:* for a
+  tetrahedron the vertex defects sum to `4π = 2π·2` (χ = 2); for a cube likewise `2π·2` — the total
+  curvature is exact and matches the Euler characteristic, with the surface built of flat faces.
+
+### PDE — the paradox: **Navier–Stokes blow-up / ill-posedness** (does a smooth solution exist for all
+time, or can it become singular — infinite velocity — in finite time?).
+- **Where it comes from:** the question is posed in the **completed continuum**; the "blow-up" is a
+  reached `+∞` (`I3`) inside an idealized `ℝ³×ℝ` that is itself a non-readout.
+- **Why our computation never hits it:** a PDE **is** a difference equation (§11.4); the finite-`ε`
+  scheme `y[n+1] = y[n] + I_ε(field)` is **well-posed at the declared resolution** and returns a finite
+  readout at every step — there is no `+∞` to reach. *Computed:* the heat equation `uₜ = uₓₓ` by the
+  explicit finite-`ε` stencil decays a bump smoothly to its declared floor; the transport/wave step
+  advances at finite speed — both return finite fields for all `n`, no blow-up. The completed-continuum
+  existence/uniqueness question stays `+ℝ-Open` **by choice** — it asks about a non-readout — while the
+  value the engineer needs is computed without paradox.
+
+**Summary of the stance for the three areas:** the paradox is always in the *completed-continuum object*
+(non-measurable set · smooth-limit curvature · reached `+∞`), never in the *computation*. Refuse the
+object, keep the computation: topology by `μ_λ`/`L_R`, geometry by discrete Gauss–Bonnet, PDE by
+finite-`ε` schemes — **all three computed robustly, none producing its paradox.**
 
 ---
 
