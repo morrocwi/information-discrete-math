@@ -161,6 +161,28 @@ approximating. Exact `Fraction` arithmetic, no external optimizer or continuum l
 This is the concrete answer to *"what does readout‑first save?"* — orders of magnitude of compute (hence
 energy), with a preservation certificate on every run.
 
+**Native retained tree, not junction tree.** RCP has a clean **Retained Fold Tree (RFT)** derived from
+one‑distinction closure, retained boundary records, and terminal‑relevance unfolding, plus
+boundary‑neutral **Retained Closure Fusion (RCF)**. It builds no maximal cliques and runs no clique
+calibration; the FTCC fold is its engine and junction tree stays a comparator only. Architecture,
+equations, resource gates, the 230‑kind map, and the claim boundary:
+[`RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md`](RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md) (`finite_diagnostic`).
+
+**Native sensitivity, not an autodiff wrapper.** **Retained Readout Pullback (RRP)** unfolds terminal
+relevance into only the *declared* parameter statistics, so one closure run returns `Z`, axis moments,
+`∂Z`, and `∂log Z` for every linear and pair‑coupling parameter — no junction tree, no autodiff tape.
+In the recorded 101‑repeat CPU benchmark the adaptive native path agreed with Autograd and JAX to
+`≤ 8.89×10⁻¹⁶` and was the faster hot call on all seven measured order‑4 cases (a measured‑workload
+result, not universal superiority). Derivation + machine‑readable evidence:
+[`RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md`](RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md) ·
+[`benchmarks/retained_readout_pullback_results.json`](benchmarks/retained_readout_pullback_results.json).
+
+The full lineage — RCP 1.0 → reverse lineage → query pruning → RFT/RCF → RRP/CRRP → topology‑only
+compilation → Balanced Retained‑Cut Fusion — is consolidated in
+[`RCP_MATHEMATICAL_EVOLUTION_STANDALONE.md`](RCP_MATHEMATICAL_EVOLUTION_STANDALONE.md). Tier boundary held
+throughout: root readout stance `Dr`, the FTCC fold `Th_coqc`, and every executor/benchmark
+`finite_diagnostic` — no physical or universal‑speed claim.
+
 ## What it is (and what it is not)
 
 **Is:** a readout‑first foundation where everything read is a *finite discrete rational readout*, plus a
