@@ -14,7 +14,7 @@ Submodules: functions · certified · algebra · readouts · exact · analysis �
 diffeq · series · special · transforms · optimize · symbolic · combopt · interval · stats · geometry ·
 crypto · parse · rcp · solve · server.
 """
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, parse as _parse, rcp, solve as _solve
 

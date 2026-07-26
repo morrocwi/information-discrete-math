@@ -1,7 +1,7 @@
 {
   "name": "information-discrete-math",
   "description": "Information Discrete Math — a readout-first mathematical foundation. Loads before any math/physics/geometry to keep continuum concepts (real numbers, limits, angles/degrees, points of zero size, infinity, singularities) from being silently injected. Carries the contaminated-concept → discrete-replacement table, a pre-write checklist, and the machine-checked discrete number ladder D→ℤ→ℚ→ℝ with the retained-information operator.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": {
     "name": "Yaoharee Lahtee"
   }

@@ -17,7 +17,7 @@
         "source": "git-subdir",
         "url": "https://github.com/morrocwi/information-discrete-math.git",
         "path": "plugins/information-discrete-math",
-        "ref": "v1.2.1"
+        "ref": "v1.2.2"
       }
     }
   ]

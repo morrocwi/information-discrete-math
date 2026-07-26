@@ -10,7 +10,7 @@
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
 [![Coq](https://img.shields.io/badge/Coq-8.20%20·%20101%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
-[![release](https://img.shields.io/badge/release-v1.2.1-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.2.1)
+[![release](https://img.shields.io/badge/release-v1.2.2-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.2.2)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 </div>
