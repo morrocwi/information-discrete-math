@@ -1004,7 +1004,7 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
   its retained average. **Native, not imported.**
 - **Channel = coarse-graining `G_λ`.** a noisy channel is exactly a `G_λ` that discards sub-resolution
   distinctions; capacity = the most retained distinction that survives it.
-- **Data-processing inequality = coarse-graining monotonicity (`Th_coqc`-elig).** post-processing
+- **Data-processing inequality = coarse-graining monotonicity (`Dr`; the entropic `log`-form is `+ℝ-Open` — `log` over `ℚ→ℝ` needs the continuum).** post-processing
   (another admissible map through `G_λ`) can never *increase* retained distinguishability:
   `I(X;Z) ≤ I(X;Y)` for `X→Y→Z` — a one-line consequence of `E = Ẽ∘G_λ` (composition of coarse-grainings
   loses, never gains). This makes the DPI a theorem about admissible descriptions.
@@ -1175,9 +1175,32 @@ completion only as a declared readout (A8).
 ## 13.3 Solving linear systems (exact, no continuum)
 
 `Ax=b` over `ℚ` is solved by finite Gaussian elimination — an **exact `Th_coqc`-elig** procedure with
-no rounding and no limit. Eigenvalue/eigenvector computation for the finite `L_R` is a finite readout;
-the only `+ℝ-Open` step is the completion to real spectra of an infinite operator (the continuum limit
-`L_R→□`, §10.9).
+no rounding and no limit. A **local discrete matrix library** ships the machine-checked core of this
+Part: matrix algebra `(A·B)ᵀ=Bᵀ·Aᵀ`, `I·A=A`, and the Laplacian facts of §15.2 —
+`formal/IDM_Matrix.v` (`transpose_mmul`, `mid_left`, `laplacian_symmetric`, `laplacian_rowsum_zero`,
+`laplacian_ones_in_kernel`), all axiom-free. Eigenvalue/eigenvector computation for the finite `L_R` is
+a finite readout; the completion to **real spectra** of an infinite operator (the real spectral theorem,
+the continuum limit `L_R→□`) is `+ℝ-Open` **by our own philosophy** — real eigenvalues need ℝ-completeness
+(§10.9), so it was never finite "warrant" work but a declared frontier.
+
+## 13.4 The averaging projector — parameter reduction by symmetry (`Th_coqc`)
+
+A symmetry can *eliminate free parameters*, and the mechanism is a single linear operator: the
+**averaging / Reynolds projector**. For a finite symmetry group `G` acting on matrices, the average
+`Π(X) = (1/|G|)·Σ_{g∈G} g·X·g⁻¹` is an **idempotent projector** onto the `G`-invariant subspace, and the
+number of surviving free parameters equals that subspace's dimension `= (1/|G|)·Σ_g tr ρ(g)`. When the
+only invariant is the trace, `Π` collapses to the **isotropy twirl** `Π(X) = (tr X / n)·I`, whose image
+is the **one-dimensional scalar line** `ℚ·I` (`Th_coqc`, witnesses `formal/IDM_Matrix.v:
+twirl_image_scalar`, `scalar_line_one_dim`). So a full metric on an `n`-dimensional retained space —
+`n(n+1)/2` free symmetric components — averaged by a symmetry whose only invariant is the trace, retains
+**exactly one scalar**.
+
+This is the mathematics behind a **parameter economy**: the same operator that reads out isotropy is the
+one that cuts the parameter count. *(It is the abstract content extracted from the Standard-Model
+parameter-economy program — the `B_4=(ℤ_2)⁴⋊S_4` signed-permutation twirl forcing an isotropic scalar
+metric, and the chiral projector `P₊=½(I+Γ̂)` with eigenvalues `1,0,1,0` halving the retained
+degrees of freedom — told here purely as the idempotent-projector / invariant-dimension theorem, tier
+`Th_coqc` for the finite scalar-image fact, `Dr` for the general invariant-dimension reading.)*
 
 ---
 
@@ -1242,7 +1265,7 @@ A graph *is* the retained structure. `L_R=D_W−W` is its Laplacian (Part V); th
 graph-theoretic invariant is an `L_R` readout:
 
 - **Connectivity = `ker L_R`.** The number of connected components equals `dim ker L_R` (constant-on-
-  component vectors) — the kernel is literally the indistinguishability space (§V). `Th_coqc`-elig.
+  component vectors) — the kernel is literally the indistinguishability space (§V). The **constants-in-kernel** direction is machine-checked (`Th_coqc`, witness `formal/IDM_Matrix.v: laplacian_ones_in_kernel`, via row-sum zero `laplacian_rowsum_zero`); the full rank-nullity count of components over `ℚ` is `Th_coqc`-elig.
 - **Spectral gap = `λ₂(L_R)`** controls mixing/expansion — the same spectral quantity that the
   particle-graph diagnosis reads (`falsify_particle_graph`, memory) and that the `π`/`φ` transfer
   selects (§4.4).
@@ -1292,7 +1315,7 @@ the one place the continuum enters, and it is fenced `+ℝ-Open`.
   retained metric `⟨f,g⟩_G = I_ε(f̄ g)` (Part XIII). **Cauchy–Schwarz** `|⟨f,g⟩| ≤ ‖f‖₂‖g‖₂` is a finite
   `Th_coqc`-elig inequality over `ℚ` (discrete sum form).
 - **Bounded operator = finite retained coupling.** On the `ℚ`-space, an operator is a finite matrix;
-  `L_R` is self-adjoint, and the **spectral theorem holds exactly** for the finite `L_R` (`Th_coqc`-elig, finite linear algebra; orthonormal
+  `L_R` is self-adjoint (`Th_coqc`, witness `formal/IDM_Matrix.v: laplacian_symmetric`) and positive semidefinite (§5.1 `keystone_nonneg`). The full **real spectral theorem** (orthogonal diagonalization with *real* eigenvalues) is **`+ℝ-Open` by our own philosophy** — real eigenvalues require ℝ-completeness — while the finite-`ℚ` structure (symmetry, PSD, rational eigenpairs where they exist) is machine-checked; orthonormal
   retained-mode basis, real `ℚ`-approx eigenvalues — Part XIII). The completion to an infinite Hilbert
   space and its spectral measure are `+ℝ-Open`.
 - **Riesz representation (finite).** Every admissible linear functional on the finite `ℚ`-space is

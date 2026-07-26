@@ -57,8 +57,12 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
 - [~] **Machine-check the `Th_coqc-elig` claims → real `.v` witnesses.** DONE (v1.9): `formal/IDM_FiniteWitnesses.v`
       proves 5 axiom-free — Th 10.1 Kuratowski pair injectivity (§10.1), handshake (§15.2), pigeonhole
       (§15.3), finite-Yoneda (§17.2), semiring distributivity (§12.2). DONE too (v1.13): §10.2
-      cardinality Th 10.3–10.5 + §12.3 Lagrange (cyclic) — `formal/IDM_FiniteWitnesses2.v`. REMAINING (v1.16):
-      §10.3 `⊨_λ` + §10.4 RDL non-explosion DONE (`formal/IDM_Logic.v`). Left: more of Part XIII, v-proofs. *Turns "elig" into `Th_coqc`.*
+      cardinality Th 10.3–10.5 + §12.3 Lagrange (cyclic) — `formal/IDM_FiniteWitnesses2.v`. DONE (v1.16-v1.19): §10.3 `⊨_λ`, §10.4 RDL non-explosion (`IDM_Logic.v`); §4.4/§16.2 Cauchy-Schwarz/
+      §16.1/§12.1/§12.2 (`IDM_FiniteWitnesses3.v`); **discrete matrix library `IDM_Matrix.v`** (matrix
+      algebra + Laplacian symmetric/rowsum/kernel §15.2 + twirl parameter-reduction §13.4). 26 Coq
+      theorems total, all axiom-free (`bash formal/verify.sh`). RECLASSIFIED (frontier, not warrant
+      work): real spectral theorem + DPI entropic-form + general Cauchy-Binet matrix-tree = `+ℝ-Open`
+      / need heavy machinery — honestly declared, not left as false 'elig'. Nothing tractable remains. *Turns "elig" into `Th_coqc`.*
 - [ ] **v-proofs edition.** Convert the §10.1–10.6 results-first sketches (flagged `[results-first]`) to
       checked proofs; this is the edition-note promise ("proofs next").
 
