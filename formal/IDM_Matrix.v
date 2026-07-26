@@ -160,6 +160,51 @@ Theorem twirl_image_scalar :
   forall n A, exists c, forall i j, twirl n A i j = scalarM c i j.
 Proof. intros n A. exists (trace n A / inject_Z (Z.of_nat n)). intros; reflexivity. Qed.
 
+(* sum of a constant: Σ_{k<n} c = n·c *)
+Lemma Sum_const : forall n c, Sum n (fun _ => c) == inject_Z (Z.of_nat n) * c.
+Proof.
+  induction n as [| m IH]; intro c; simpl Sum.
+  - replace (inject_Z (Z.of_nat 0)) with 0 by reflexivity. ring.
+  - rewrite IH. replace (Z.of_nat (S m)) with (Z.of_nat m + 1)%Z by lia.
+    rewrite inject_Z_plus. replace (inject_Z 1) with 1 by reflexivity. ring.
+Qed.
+
+(* trace of a scalar matrix c·I over n indices is n·c *)
+Lemma trace_scalarM : forall n c, trace n (scalarM c) == inject_Z (Z.of_nat n) * c.
+Proof.
+  intros n c. unfold trace, scalarM.
+  rewrite (Sum_ext n (fun k => if Nat.eqb k k then c else 0) (fun _ => c)).
+  - apply Sum_const.
+  - intro k. rewrite Nat.eqb_refl. reflexivity.
+Qed.
+
+(* The twirl is a GENUINE (non-trivial) idempotent projector: Π(Π(A)) = Π(A), n ≥ 1.
+   This is the substantive Reynolds/parameter-reduction fact — not merely that the image
+   happens to be scalar by definition, but that re-averaging changes nothing. *)
+Lemma inject_nat_nonzero : forall n, (n <> 0)%nat -> ~ inject_Z (Z.of_nat n) == 0.
+Proof.
+  intros n Hn Hc.
+  assert (Hz : Z.of_nat n = 0%Z).
+  { apply inject_Z_injective. rewrite Hc. reflexivity. }
+  apply Hn. lia.
+Qed.
+
+(* re-averaging a scalar matrix returns the same trace scale (n ≠ 0) *)
+Lemma trace_twirl : forall n A, (n <> 0)%nat -> trace n (twirl n A) == trace n A.
+Proof.
+  intros n A Hn. unfold twirl. rewrite trace_scalarM. field.
+  apply inject_nat_nonzero; exact Hn.
+Qed.
+
+Theorem twirl_idempotent :
+  forall n A i j, (n <> 0)%nat -> twirl n (twirl n A) i j == twirl n A i j.
+Proof.
+  intros n A i j Hn. unfold twirl at 1. unfold scalarM at 1.
+  destruct (Nat.eqb i j) eqn:E.
+  - rewrite (trace_twirl n A Hn). unfold twirl, scalarM. rewrite E. reflexivity.
+  - unfold twirl, scalarM. rewrite E. reflexivity.
+Qed.
+
 (* the scalar line is 1-dimensional: any two scalar matrices agreeing at (0,0) agree everywhere *)
 Theorem scalar_line_one_dim :
   forall c d, scalarM c 0%nat 0%nat = scalarM d 0%nat 0%nat -> forall i j, scalarM c i j = scalarM d i j.
