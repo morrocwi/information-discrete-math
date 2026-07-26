@@ -599,7 +599,9 @@ machine-checked core. No external validation is invoked (horizontal-knowledge po
 ## 10.1 The pair–product–relation–function layer, from `δ_R` (closes the biggest "not-standalone" blocker)
 
 Built strictly from prior primitives (number tower, `G_λ`-fibers, `∼_λ`, `δ_R`) — a strict DAG, no
-forward reference. *(In-framework construction; `Th_coqc`-eligible sketch.)*
+forward reference. **Base already machine-checked (economize):** the semiring the pair layer stands on
+is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `mul_add` distributive,
+`Th_coqc`); only the Kuratowski pair / product / function step below is the new sketch.
 
 - **Singleton / pair fibers.** for `a,b` in fiber `X` at resolution `λ`: `{a}_λ`, `{a,b}_λ` are
   sub-fibers selected by finitely many `∼_λ`-classes (fiber-formation is already licensed, §0.5.3).
@@ -634,7 +636,10 @@ forward reference. *(In-framework construction; `Th_coqc`-eligible sketch.)*
 ## 10.3 Finite satisfaction `⊨_λ` (and an honest downgrade)
 
 - **Th 10.6 (`Th_coqc`-elig):** `⊨_λ` — a decidable, computable Tarski recursion of satisfaction on a
-  finite domain + finite formula at a fixed coarse-graining level.
+  finite domain + finite formula at a fixed coarse-graining level. **Existing witness to REUSE (economize):**
+  the readout-bivalence consistency layer is already machine-checked — `formal/RD_ConPA_ReadoutBivalence.v`
+  (`soundnessC_param`, `consistencyC_param`, `Con_PA_classical_param`, `Th_coqc`); only the general
+  finite `⊨_λ` recursion is the new sketch, and it builds on that file.
 - **Downgrade (honest):** the earlier "`D ⊨ PA`" (full first-order Peano) and "`D ≡ ℕ`" (elementary
   equivalence / nonstandard models) are **`+ℝ-Open`** — they quantify over the completed standard model
   and are NOT reproven here; only `⊨_λ` is claimed.
@@ -650,18 +655,108 @@ forward reference. *(In-framework construction; `Th_coqc`-eligible sketch.)*
 
 Every base definition is finite-`ε` over `ℚ`; the `ε→0` continuum statement is gated behind a **named,
 declared** stability proof (finite-`ε` Cauchy for limits/series/derivatives; discrete Euler–Maclaurin
-for tails).
-- **Sequence limit / series convergence / continuity algebra** — `finite_diagnostic` (limits `+ℝ-Open`
-  until a stability witness): a `(δ_R, ε)`-continuity pair closed under sum/product/composition; series
-  = finite partial sums + Euler–Maclaurin tail bound (§9.2).
-- **Genuinely new (Th 10.8, `Th_coqc` AS STATED):** in the native *causal / secant* form the `D_ε`
-  rules are **EXACT** finite-`ε` identities over `ℚ` (zero `O(ε)` residue):
+for integral tails). The uniform pattern below, repeated five times, **is** the rung: (1) a *decidable*
+finite-`ε` predicate over `ℚ`, (2) a *stability witness* (a computable modulus map, or an explicit
+Euler–Maclaurin remainder bound), (3) only then a *declared* `ε→0` readout — never a bare limit
+primitive. This closes the panel-flagged stub with all five sub-rungs stated, not just sketched.
+
+### 10.5.1 Sequence limit (finite-`ε` Cauchy first)
+
+- **Def 10.5a (`ε`-stability).** For `a : D → ℚ` and `ε ∈ ℚ_{>0}`, `a` is **`ε`-stable from `N`** iff
+  `∀ m,n ≥ N, |a_m ⊖ a_n| ≤ ε`. `N_ε(a)` := least such `N`, when it exists — a **decidable, bounded
+  search** for any concrete computable bound, hence checkable per `(a, ε)` instance. **Tier:
+  `finite_diagnostic`.**
+- **Th 10.10 (declared-stability limit, `Th_coqc`-elig scaffold / `+ℝ-Open` at the quantifier).** If
+  `ε ↦ N_ε(a)` is itself an admissible (computable) *modulus map* — witnessed, not merely asserted to
+  exist for every `ε` — define the readout limit `L(a)` as the `∼_λ`-class of the eventual band
+  `⋂_ε [a_{N_ε}⊖ε, a_{N_ε}⊕ε]`. This is the `ε→0` statement, licensed **only** once the modulus map is
+  exhibited — the Bishop "Cauchy-with-modulus" move (§10.7), re-derived here as the A8 stability
+  declaration. **Per-witnessed-instance: `finite_diagnostic`. The unrestricted "`∀` sequence `∃`
+  modulus" existence claim (classical Cauchy completeness with no witness supplied) stays `+ℝ-Open`** —
+  ties to §10.9.
+
+### 10.5.2 Series convergence (partial sums + Euler–Maclaurin tail)
+
+- **Def.** `S_n := I_1 a[n]` (§8.2 antidifference / discrete FTC) — the finite partial sum, already
+  primitive, no new object.
+- **Th 10.11 (series = sequence-limit stability of `(S_n)`).** Convergence of `Σ a` is *by definition*
+  `ε`-stability (10.5a) of the partial-sum sequence `(S_n)` — no independent series primitive is
+  introduced, closing a common redundancy. **Tier: `finite_diagnostic`**, same status as 10.5a.
+- **Euler–Maclaurin upgrade.** For `a` extending to a `D_ε`-differentiable `f` (10.5.4), §9.2's exact
+  remainder `R_{m,ε}` gives an **explicit, computable** `N_ε` formula — replacing an existential
+  Cauchy claim with a constructed witness. This is the concrete route by which many closed-form series
+  move from `+ℝ-Open` (bare existence) to `finite_diagnostic` (explicit modulus) — the "Euler–Maclaurin-
+  based" stability condition this rung is scoped to supply.
+
+### 10.5.3 Continuity algebra (`(δ_R, ε)`-continuity, closed under `+ · ∘`)
+
+- **Def 10.5b.** `f = Ẽ∘G_λ` is **`ε`-continuous at `x` with modulus `η`** iff `∀x'` with `x' ∼_η x`
+  (i.e. `|x'⊖x| ≤ η`), `|f(x')⊖f(x)| ≤ ε` — a finite, decidable pointwise bound, no limit invoked.
+- **Th 10.12 (algebra closure, `Th_coqc`-elig).** Explicit bound arithmetic, each step a triangle-
+  inequality identity in `ℚ` (decidable order, no LEM/choice/funext — `field_simplify`-class):
+  - sum: `(f+g)` is `(ε₁+ε₂)`-continuous at modulus `min(η₁,η₂)`;
+  - product (bounded `f,g`): `(f·g)` is `(|f(x)|ε₂+|g(x)|ε₁+ε₁ε₂)`-continuous at `min(η₁,η₂)`;
+  - composition: `(g∘f)` is `ε₂`-continuous at the modulus `η₁` that `f` needs to land inside `g`'s own
+    `(ε₂, η₂)` pair — a finite chain of two decidable searches, not an infinite regress.
+  *Proof sketch (why axiom-free-eligible):* every inequality above is a finite arithmetic fact over
+  `ℚ` reached by `⊖`-triangle-inequality plus case-split on the (decidable) order `≤` — no non-
+  constructive step, so the Coq witness needs only `Qorder`/`field_simplify; lra`-class tactics, no
+  classical axiom.
+- **Continuum rung.** "`∀ε>0 ∃η>0`" continuity is licensed exactly as 10.5a: `Th_coqc`-eligible **once**
+  `η(ε)` is an admissible modulus map (available in closed form for the `D_ε`-algebra-closed primitives
+  of Th 10.8); **`+ℝ-Open` in general** — unwitnessed `ε–δ` existence is the named Open item (§10.9).
+
+### 10.5.4 Derivative (`D_ε` exact algebra ⊢ declared-stability rung)
+
+- **Primitive (unchanged).** `D_ε f := (f[n]⊖f[n−1])/ε` (causal secant, §8.1/§0.5.4).
+- **Th 10.8 (restated, `Th_coqc` AS STATED — the exact finite-`ε` algebra, zero `O(ε)` residue):**
   `D_ε(f+g)=D_εf+D_εg` · `D_ε(f·g)[n]=f[n]D_εg[n]+g[n−1]D_εf[n]` ·
   `D_ε(g∘f)[n]=Δg[f[n−1],f[n]]·D_εf[n]` (secant slope across the actual jump) ·
   **FTCC** `I_ε(D_εf)[N]=f[N]−f[0]` exactly (telescoping). Each discharges by `field_simplify; ring` /
-  finite induction — no `Reals`, axiom-free. *Open:* general `ε–δ` existence without a stability
-  witness stays `+ℝ-Open`; the secant≈difference-quotient step is the one place classical intuition can
-  silently diverge if resolution is not matched — flagged, not smoothed.
+  finite induction — no `Reals`, axiom-free.
+- **Def 10.5c (finite-`ε` differentiability, the new rung).** `f` is **finite-`ε` differentiable at `x`**
+  iff the `ε`-indexed family `(D_{ε_k} f(x))_k`, `ε_k → 0` an admissible refinement sequence, is
+  `ε'`-stable in the sense of 10.5a — i.e. the difference-quotient family must itself pass the Cauchy-
+  stability test **before** `f'(x) := lim_{ε→0} D_ε f(x)` is licensed. This is the declared-stability
+  gate the task asks for, applied to the derivative.
+- **Th 10.13.** For `f` built from primitives closed under Th 10.8's algebra, the modulus for Def 10.5c
+  is computable *from the algebra itself* (chain of secant bounds through `+ · ∘`) — **`finite_diagnostic`,
+  `Th_coqc`-eligible per closed-form `f`.** General existence for an arbitrary admissible `f` — no
+  algebraic modulus supplied — stays **`+ℝ-Open`**: this is the one place, flagged already at Th 10.8,
+  where the secant-slope reading of `D_ε(g∘f)` can silently diverge from the naive difference-quotient
+  reading if resolution is not matched between `f` and `g`; restated here explicitly as the derivative
+  rung's Open boundary, not smoothed over.
+
+### 10.5.5 Integral (`I_ε` exact FTCC ⊢ Euler–Maclaurin-certified rung)
+
+- **Primitive (unchanged).** `I_ε f[a,b]` = the retained aggregation / antidifference (§8.2), with
+  **FTCC** `I_ε(D_εf)[N]=f[N]⊖f[0]` exact (Th 10.8) — no `O(ε)` residue, algebraic telescoping.
+- **Def 10.5d (finite-`ε` integrability, the new rung).** `f` is **finite-`ε` integrable on `[a,b]`**
+  iff the family `(I_ε f[a,b])`, indexed by an admissible shrinking `ε`, is Cauchy-stable (10.5a) — and
+  that stability is **certified**, not asserted, via the §9.2 exact Euler–Maclaurin identity
+  `I_ε f[a,b] = (ε/2)[f(b)+f(a)] + Σ_{k=1}^m (B_{2k}/(2k)!) ε^{2k} [D_ε^{2k−1}f(b) − D_ε^{2k−1}f(a)] +
+  R_{m,ε}`, giving an **explicit computable bound** `|I_ε f − I_{ε/2} f| ≤` (Bernoulli-term sum) `+
+  R_{m,ε}` — this is the "Euler–Maclaurin/FTCC-based" stability condition the task names, made literal.
+- **Th 10.14.** For `f` with a declared bound on `D_ε^{2k−1}f` over `[a,b]` up to order `m` (an
+  explicit, checkable `finite_diagnostic` hypothesis — a finite list of numeric bounds, not a
+  quantifier), `R_{m,ε} → 0` as `ε→0` is machine-checkable at each declared `m`: **`finite_diagnostic`,
+  upgrading to `Th_coqc`-eligible for polynomial/rational `f`** where the Bernoulli tail is exactly
+  finite (`m` can be taken large enough that `R_{m,ε}=0` identically — no genuine limit needed for this
+  class). `∫_a^b f := lim_{ε→0} I_ε f[a,b]` is licensed **only** after this certificate is produced.
+  **General `f` with unbounded higher `D_ε`-derivatives stays `+ℝ-Open`** — no certificate, no license.
+
+### 10.5.6 Summary (the rung, once)
+
+| Sub-rung | Finite-`ε` primitive | Stability witness | `ε→0` readout tier |
+|---|---|---|---|
+| 10.5.1 limit | `ε`-stability `N_ε(a)` (Def 10.5a) | computable modulus map `ε↦N_ε` | `finite_diagnostic` (witnessed) / `+ℝ-Open` (bare `∃`) |
+| 10.5.2 series | partial sum `S_n=I_1a[n]` + 10.5a | Euler–Maclaurin `R_{m,ε}` (explicit `N_ε`) | `finite_diagnostic` |
+| 10.5.3 continuity | `(ε,η)`-continuity (Def 10.5b) | `η(ε)` modulus, closed under `+·∘` (Th 10.12) | `Th_coqc`-elig (algebra) / `+ℝ-Open` (unwitnessed `ε–δ`) |
+| 10.5.4 derivative | `D_ε f` exact algebra (Th 10.8) | Def 10.5c Cauchy-stability of the `D_ε` family | `finite_diagnostic`/`Th_coqc`-elig (closed-form `f`) / `+ℝ-Open` (general) |
+| 10.5.5 integral | `I_ε f` exact FTCC (Th 10.8) | Def 10.5d Euler–Maclaurin remainder bound | `finite_diagnostic`/`Th_coqc`-elig (poly/rational `f`) / `+ℝ-Open` (general) |
+
+*Open (named, tied to §10.9):* general `ε–δ` / Cauchy-modulus existence with **no** exhibited witness,
+for an unrestricted admissible `f` — the frontier this skeleton fences rather than hides.
 
 ## 10.6 Probability and measure as retained frequency (a discrete measure theory)
 
@@ -677,7 +772,11 @@ for tails).
 - **Causal set theory** (Bombelli–Lee–Meyer–Sorkin 1987, *PRL* 59, 521; Sorkin 2003, gr-qc/0309009),
   `finite_diagnostic`. **ADOPT re-adapted:** an admissible causal order `≺_λ` over `∼_λ`-fibers plus
   `δ_R` counting fixes the readout geometry — `Vol_λ(interval(x,y)) := #{z : x≺_λ z≺_λ y}` restates
-  "order + number = geometry"; `I_ε` over the chain recovers the finite-`ε` line-element. **Local
+  "order + number = geometry"; `I_ε` over the chain recovers the finite-`ε` line-element. **This is
+  already machine-checked IN-HOUSE (`Th_coqc`, economize — do not re-derive): `formal/InfoCausalPartialOrder_attempt.v`**
+  proves `rank` (= minimal-step), `prec_irrefl` / `prec_trans_thm` / `prec_asymm` (a strict partial
+  order), and `in_diamond` (the interval `0≺z≺3`) with its members counted — the diamond-volume-by-
+  counting identity as an internal theorem, not merely an external citation. **Local
   finiteness** re-adapted: a `G_λ`-fiber between any causal pair is finite — a *structural* reason
   sub-`λ` resolution is unreachable, strengthening A8. **CONFLICT (do not blend):** causets take
   discreteness as ontological substrate; we do not (discreteness is a readout fact at declared `λ`;
