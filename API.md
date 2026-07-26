@@ -48,10 +48,12 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**104 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**110 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
+
+**Integration flagship** (double-exponential DE quadrature — absorbs endpoint singularities and infinite ranges, a-posteriori certified) — `integral` (auto: finite/singular/infinite, `a`/`b` may be `inf`/`-inf`) · `improper_integral` · `singular_integral` · `oscillatory_integral` · `gauss_quadrature` (`n`) · `residue_integral` (`num`,`den`) · `multidim_integral` (`f`,`vars`,`bounds`)
 
 **Constants & functions** — `constant` (`name`) · `function` (`name`,`x`) · `evaluate` (`expr`,`vars`)
 

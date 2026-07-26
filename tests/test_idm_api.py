@@ -141,3 +141,23 @@ def test_discrete_structures():
 
 def test_lots_of_kinds():
     assert len(idm.kinds()) >= 100          # comprehensive
+
+
+def test_integration_flagship():
+    import mpmath as mp
+    # doubly-infinite: √π
+    r = idm.solve({"kind": "integral", "f": "1/exp(x*x)", "a": "-inf", "b": "inf"})
+    assert r["status"] == "CERTIFIED" and abs(_val(r) - float(mp.sqrt(mp.pi))) < 1e-8
+    # semi-infinite Planck integral = π⁴/15
+    r = idm.solve({"kind": "improper_integral", "f": "x**3/(exp(x)-1)", "a": "1e-14", "b": "inf", "eps": "1e-8"})
+    assert r["status"] == "CERTIFIED" and abs(_val(r) - float(mp.pi**4 / 15)) < 1e-6
+    # endpoint singularity 1/√x on (0,1] = 2
+    r = idm.solve({"kind": "singular_integral", "f": "1/sqrt(x)", "a": "1e-30", "b": 1})
+    assert r["status"] == "CERTIFIED" and abs(_val(r) - 2) < 1e-8
+    # rational via residues = π
+    r = idm.solve({"kind": "residue_integral", "num": [1], "den": [1, 0, 1]})
+    assert abs(r["value"]["re"]["float"] - float(mp.pi)) < 1e-9
+    # Gauss quadrature and multi-D
+    assert abs(_val(idm.solve({"kind": "gauss_quadrature", "f": "x*x", "a": 0, "b": 1})) - 1 / 3) < 1e-12
+    r = idm.solve({"kind": "multidim_integral", "f": "1/exp(x+y)", "vars": ["x", "y"], "bounds": [[0, 1], [0, 1]]})
+    assert abs(_val(r) - float((1 - 1 / mp.e) ** 2)) < 1e-8
