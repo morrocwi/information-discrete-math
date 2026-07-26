@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -64,6 +64,16 @@ declare -a THMS=(
   "minplus_distrib:IDM_Tropical"
   "maxplus_distrib:IDM_Tropical"
   "bottleneck_distrib:IDM_Tropical"
+  "orient_swap_bc:IDM_Geometry"
+  "orient_swap_ab:IDM_Geometry"
+  "orient_cyclic:IDM_Geometry"
+  "orient_coincident_ab:IDM_Geometry"
+  "orient_coincident_ac:IDM_Geometry"
+  "orient_coincident_bc:IDM_Geometry"
+  "orient_translation:IDM_Geometry"
+  "orient_scale:IDM_Geometry"
+  "orient_collinear_mid:IDM_Geometry"
+  "orient_collinear_aff:IDM_Geometry"
 )
 
 fail=0

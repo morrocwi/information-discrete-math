@@ -387,3 +387,44 @@ def test_p2_crypto():
     assert m == 65
     # elliptic-curve scalar multiply over F_p
     assert idm.solve({"kind": "ec_mul", "k": 3, "P": [5, 1], "a": 2, "p": 17})["status"] == "ok"
+
+
+def test_nl_parser():
+    from idm.parse import parse, parse_and_solve
+    # world-language → correct structured kind
+    assert parse("integrate x^2 from 0 to 1")["kind"] == "integral"
+    assert parse("is 97 prime?")["kind"] == "is_prime"
+    assert parse("eigenvalues of [[2,0],[0,3]]")["kind"] == "eigenvalues"
+    assert parse("limit of sin(x)/x as x -> 0")["kind"] == "limit"
+    assert parse("factorize 360360")["kind"] == "factorize"
+    assert parse("gcd of 48 and 36")["kind"] == "gcd"
+    assert parse("solve x^2 - 2 = 0 for x")["kind"] == "symbolic_solve"
+    # never mis-routes: a non-math request HOLDs
+    assert parse("do my laundry")["status"] == "HOLD"
+    assert parse("")["status"] == "HOLD"
+    # end-to-end translate-then-solve
+    r = parse_and_solve("integrate x^2 from 0 to 1")
+    assert r["status"] in ("ok", "CERTIFIED") and abs(r["value"]["float"] - 1 / 3) < 1e-6
+    assert parse_and_solve("is 97 prime?")["value"] is True
+
+
+def test_server_endpoints():
+    import threading, time, json, urllib.request
+    from http.server import ThreadingHTTPServer
+    from idm.server import _Handler
+    httpd = ThreadingHTTPServer(("127.0.0.1", 8801), _Handler)
+    th = threading.Thread(target=httpd.serve_forever, daemon=True); th.start(); time.sleep(0.3)
+    try:
+        oa = json.loads(urllib.request.urlopen("http://127.0.0.1:8801/openapi.json", timeout=5).read())
+        assert oa["openapi"] == "3.0.3" and "/parse" in oa["paths"] and "/solve" in oa["paths"]
+        docs = urllib.request.urlopen("http://127.0.0.1:8801/docs", timeout=5).read().decode()
+        assert "SwaggerUIBundle" in docs
+        def post(path, obj):
+            r = urllib.request.Request("http://127.0.0.1:8801" + path, data=json.dumps(obj).encode(),
+                                       headers={"Content-Type": "application/json"})
+            return json.loads(urllib.request.urlopen(r, timeout=10).read())
+        assert post("/solve", {"kind": "factorize", "n": 84})["status"] == "ok"
+        assert post("/solve", {"text": "is 97 prime?"})["value"] is True     # NL through /solve
+        assert post("/parse", {"text": "do my laundry"})["status"] == "HOLD"
+    finally:
+        httpd.shutdown()

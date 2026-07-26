@@ -149,7 +149,11 @@ current four. The world-class edge is not "it computes the integral" (SciPy does
 
 ---
 
-## Cross-cutting (what actually makes it "world-class")
+## Cross-cutting  ← ✅ DONE (NL parser · OpenAPI/Swagger · Coq geometry predicate)
+
+> **Status:** idm/parse.py (rule-based world-language → structured kind, HOLD-not-misroute); idm/server.py now serves OpenAPI 3 + interactive Swagger UI at /docs + /parse endpoint + NL through /solve (zero web-framework dependency); formal/IDM_Geometry.v machine-checks the exact orientation predicate the geometry solver uses (10 theorems axiom-free, 65 total).
+
+### original
 
 1. **Certificate + provenance + tier on every result** (extend the `Readout` contract everywhere).
 2. **Correctness/benchmark suite** vs SymPy / SciPy / Wolfram — same shape as the RCP competitor

@@ -7,7 +7,7 @@
 **The continuum, computed as a readout of the discrete.** _by Yaoharee Lahtee_
 
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
-[![Coq](https://img.shields.io/badge/Coq-8.20%20·%2055%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
+[![Coq](https://img.shields.io/badge/Coq-8.20%20·%2065%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
 [![release](https://img.shields.io/badge/release-v1.1-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.1)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
@@ -95,7 +95,7 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
 | **1. Be surprised (0 deps)** | `python3 prove_it_lite.py` | 8 continuum frontiers from stdlib float |
 | **2. Be surprised (precise)** | `python3 prove_it.py` | the 10 roots to 40 digits |
 | **3. See the breadth** | `python3 prove_it_full.py` | 1278 problems across 5 domains |
-| **4. Be convinced** | `bash formal/verify.sh` | **55 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
+| **4. Be convinced** | `bash formal/verify.sh` | **65 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules, and the exact geometric orientation predicate the geometry solver branches on |
 | **5. Read the details** | [`textbook/…`](textbook/INFORMATION_DISCRETE_MATHEMATICS.md) | the full derivations, tier‑tagged; [`INDEX.md`](INDEX.md) is the map |
 
 **Every claim carries an honesty tier — evaluate each on its own tier, never promote evidence across tiers:**
@@ -184,18 +184,32 @@ idm.certified.geom_series(1/3, 1e-12)   # (value, proven bound, ACCEPT/HOLD)
 idm.shortest_path(W)                    # min-plus all-pairs (Th_coqc laws)
 ```
 
-Or run it as a **zero-dependency REST service** and `POST /solve`:
+Ask it in **plain language** — the request is *translated* into a structured problem before any math runs
+(and it returns `HOLD` rather than mis‑route a request it can't recognize):
+
+```python
+idm.parse_and_solve("integrate x^2 from 0 to 1")   # → CERTIFIED · 1/3, echoing the structured form
+idm.parse("eigenvalues of [[2,0],[0,3]]")          # → {"kind":"eigenvalues","matrix":[[2,0],[0,3]]}
+```
+
+Or run it as a **zero-dependency REST service** with an interactive **Swagger UI** — the same surface as a
+FastAPI app, no web-framework dependency:
 
 ```bash
 python3 -m idm.server        # idm solver API on http://127.0.0.1:8737
+# open http://127.0.0.1:8737/docs   ← interactive OpenAPI 3 / Swagger UI
 curl -s -X POST localhost:8737/solve -d '{"kind":"constant","name":"pi"}'
+curl -s -X POST localhost:8737/solve -d '{"text":"is 97 prime?"}'   # natural language
 ```
 
-The `idm` package solves **199 problem kinds** — the entire continuum frontier (integration, ODE/PDE,
-limits/series, special functions, transforms, continuous optimization) plus an exact symbolic CAS and a
-deep exact/discrete backbone (number theory, normal forms, DP, graphs, exact‑ℚ LP, SAT) — each a certified
-finite readout, tier‑tagged, with an `ACCEPT`/`HOLD` verdict where a bound is proven. Full reference:
-[`API.md`](API.md) · roadmap: [`SOLVER_ROADMAP.md`](SOLVER_ROADMAP.md).
+The `idm` package solves **230 problem kinds** — the entire continuum frontier (integration, ODE/PDE,
+limits/series, special functions, transforms, continuous optimization) plus an exact symbolic CAS, a deep
+exact/discrete backbone (number theory, normal forms, DP, graphs, exact‑ℚ LP, SAT), a **rigorous
+certification layer** (interval‑arithmetic enclosures, IVT‑proven roots, Gershgorin discs), and
+**statistics · exact‑ℚ computational geometry · cryptographic number theory** — each a certified finite
+readout, tier‑tagged, with an `ACCEPT`/`HOLD` verdict where a bound is proven. A natural‑language front‑end
+translates world‑language requests into structured kinds, and an OpenAPI 3 / Swagger UI serves it all.
+Full reference: [`API.md`](API.md) · roadmap: [`SOLVER_ROADMAP.md`](SOLVER_ROADMAP.md).
 
 ## Install as a Claude Code skill
 

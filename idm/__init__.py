@@ -14,11 +14,13 @@ Submodules: functions · certified · algebra · readouts · rcp · solve · ser
 """
 __version__ = "1.1.0"
 
-from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, rcp, solve as _solve
+from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, parse as _parse, rcp, solve as _solve
 
 # top-level convenience surface
 solve = _solve.solve
 kinds = _solve.kinds
+parse = _parse.parse                     # world-language → structured problem (or HOLD)
+parse_and_solve = _parse.parse_and_solve  # translate, then solve
 
 # finite elementary + calculus
 exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,

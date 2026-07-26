@@ -142,3 +142,11 @@ curl -s -X POST http://127.0.0.1:8737/solve \
 ```
 
 A solver error is returned as a `HOLD` result, never a crash — the API refuses rather than fabricates.
+
+---
+
+## Cross-cutting (world-class UX)
+
+- **Natural-language front-end** — `idm.parse(text)` translates a world-language request into a structured `{kind,…}` (echoing the source so it's checkable), or returns HOLD with candidate kinds; `idm.parse_and_solve(text)` translates then solves. It never mis-routes: an unrecognized request HOLDs.
+- **OpenAPI 3 / Swagger UI** — `python3 -m idm.server` serves `POST /solve` (structured *or* `{text:…}`), `POST /parse`, `GET /kinds`, `GET /openapi.json`, and an interactive **Swagger UI at `/docs`** — the same surface as a FastAPI app, with zero web-framework dependency (stdlib `http.server`).
+- **Coq end-to-end for the exact geometry predicate** — `formal/IDM_Geometry.v` machine-checks (axiom-free) the algebraic soundness of the orientation determinant the geometry solver branches on: antisymmetry, cyclic invariance, translation invariance, positive-scale sign preservation, and exact-zero-on-boundary (why `point_in_polygon` detects the boundary with no epsilon). 65 theorems total in `formal/`.
