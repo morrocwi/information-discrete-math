@@ -617,8 +617,11 @@ def _chr(p): return _ok("chromatic_number", CO.chromatic_number(int(p["n"]), p["
 @kind("linear_program")
 def _lp(p):
     r = CO.linear_program(p["c"], p["A"], p["b"], p.get("sense", "max"))
-    return {"kind": "linear_program", "status": r["status"], "value": _norm(r), "tier": "Th_coqc",
-            "method": "simplex, exact rational pivoting (Bland's rule)"}
+    # the LP verdict (optimal / infeasible / unbounded) is a computed OUTCOME, kept in value; the
+    # top-level status is 'ok' because the solve itself succeeded (detecting infeasibility is a result,
+    # not a refusal).
+    return {"kind": "linear_program", "status": "ok", "value": _norm(r), "tier": "exact",
+            "method": "two-phase exact rational simplex (Bland's rule)"}
 @kind("sat", "Th_coqc")
 def _sat(p):
     r = CO.sat(p["clauses"], p.get("n_vars"))
