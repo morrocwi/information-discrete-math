@@ -12,7 +12,7 @@ answer; an unknown kind or a failure returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR
 
 try:
     import mpmath as mp
@@ -462,6 +462,34 @@ _spec("dirichlet_beta", SP.dirichlet_beta, "s"); _spec("hurwitz_zeta", SP.hurwit
 
 @kind("laguerre_L")
 def _lag(p): return _ok("laguerre_L", SP.laguerre_L(int(p["n"]), _val(p["x"]), _val(p.get("alpha", 0))), "finite recurrence — associated Laguerre")
+
+
+# ================================================================ transforms & complex ============
+_CNS = {"exp": mp.exp, "log": mp.log, "ln": mp.log, "sin": mp.sin, "cos": mp.cos, "sqrt": mp.sqrt,
+        "pi": mp.pi, "e": mp.e, "abs": abs, "j": mp.mpc(0, 1)} if _HAVE else {}
+def _cfn(expr, var):
+    return expr if callable(expr) else (lambda v: eval(compile(str(expr), "<c>", "eval"), {"__builtins__": {}}, {**_CNS, var: v}))
+def _fnv(expr, var):
+    return expr if callable(expr) else (lambda v: F.evaluate(str(expr), **{var: v}))
+
+@kind("laplace_transform")
+def _lap_t(p): return _ok("laplace_transform", TR.laplace_transform(_fnv(p["f"], "t"), _val(p["s"])), "∫_0^∞ f e^{−st} dt (exp–sinh DE)")
+@kind("mellin_transform")
+def _mel(p): return _ok("mellin_transform", TR.mellin_transform(_fnv(p["f"], "t"), _val(p["s"])), "∫_0^∞ t^{s−1} f dt (exp–sinh DE)")
+@kind("fourier_transform")
+def _four(p): return _ok("fourier_transform", TR.fourier_transform(_fnv(p["f"], "t"), _val(p["omega"]), int(p.get("T", 30))), "∫ f e^{−iωt} dt (finite window DE)")
+@kind("inverse_laplace")
+def _ilap(p): return _ok("inverse_laplace", TR.inverse_laplace(_cfn(p["F"], "s"), _val(p["t"])), "fixed-Talbot deformed contour")
+@kind("fft")
+def _fft(p): return _ok("fft", TR.fft(p["x"]), "radix-2 Cooley–Tukey")
+@kind("ifft")
+def _ifft(p): return _ok("ifft", TR.ifft(p["x"]), "inverse DFT")
+@kind("z_transform")
+def _zt(p): return _ok("z_transform", TR.z_transform(p["x"], complex(p["z"]) if isinstance(p["z"], (int, float)) else p["z"]), "Σ x[n] z^{−n}")
+@kind("contour_integral")
+def _cont(p): return _ok("contour_integral", TR.contour_integral(_cfn(p["f"], "z"), complex(p.get("center", 0)), _val(p["radius"])), "finite sum around |z−c|=r")
+@kind("argument_principle", "Th_coqc")
+def _argp(p): return _ok("argument_principle", TR.argument_principle(_cfn(p["f"], "z"), complex(p.get("center", 0)), _val(p["radius"])), "(1/2πi)∮ f'/f = #zeros−#poles")
 
 
 # ================================================================ dispatch ==========================

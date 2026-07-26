@@ -239,3 +239,19 @@ def test_special_functions():
 
 def test_kind_count_155():
     assert len(idm.kinds()) >= 150
+
+
+def test_transforms():
+    import mpmath as mp
+    assert abs(_val(idm.solve({"kind": "laplace_transform", "f": "sin(t)", "s": 2})) - 0.2) < 1e-5
+    assert abs(_val(idm.solve({"kind": "laplace_transform", "f": "t", "s": 2})) - 0.25) < 1e-5
+    assert abs(_val(idm.solve({"kind": "mellin_transform", "f": "1/exp(t)", "s": 5})) - 24) < 1e-3
+    assert abs(_val(idm.solve({"kind": "inverse_laplace", "F": "1/(s-2)", "t": 1})) - float(mp.e ** 2)) < 1e-3
+    assert abs(_val(idm.solve({"kind": "inverse_laplace", "F": "1/(s*s+1)", "t": float(mp.pi / 2)})) - 1) < 1e-4
+    z = idm.solve({"kind": "z_transform", "x": [1, 1, 1], "z": 2})
+    assert abs(z["value"]["re"]["float"] - 1.75) < 1e-9
+    assert idm.solve({"kind": "argument_principle", "f": "z*z", "center": 0, "radius": 1})["value"] == 2
+    f = idm.solve({"kind": "fft", "x": [1, 1, 1, 1]})
+    assert abs(f["value"][0]["re"]["float"] - 4) < 1e-9
+    rt = idm.solve({"kind": "ifft", "x": [4, 0, 0, 0]})
+    assert abs(rt["value"][0]["re"]["float"] - 1) < 1e-9

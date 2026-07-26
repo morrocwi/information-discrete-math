@@ -48,10 +48,12 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**155 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**164 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
+
+**Transforms & complex analysis** — `laplace_transform` (`f`,`s`) · `inverse_laplace` (`F`,`t` — fixed Talbot) · `mellin_transform` · `fourier_transform` (`f`,`omega`) · `fft` / `ifft` (`x`) · `z_transform` (`x`,`z`) · `contour_integral` (`f`,`center`,`radius`) · `argument_principle` (#zeros−#poles) · `residue_integral`
 
 **Special functions** (finite series / recurrences / AGM / continued fractions) — `gamma` · `beta` · `digamma` · `bessel_J`/`bessel_I` · `legendre_P` · `hermite_H` · `laguerre_L` · `chebyshev_T`/`_U` · `erf`/`erfc` · `Ei`/`E1`/`li` · `Si`/`Ci` · `fresnel_S`/`_C` · `elliptic_K`/`elliptic_E` (AGM) · `hyp2f1`/`hyp1f1` · `airy_Ai` · `lambert_W` · `polylog` · `dirichlet_eta`/`dirichlet_beta` · `hurwitz_zeta`
 
