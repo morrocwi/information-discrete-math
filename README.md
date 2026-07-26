@@ -91,7 +91,7 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
 | **1. Be surprised (0 deps)** | `python3 prove_it_lite.py` | 8 continuum frontiers from stdlib float |
 | **2. Be surprised (precise)** | `python3 prove_it.py` | the 10 roots to 40 digits |
 | **3. See the breadth** | `python3 prove_it_full.py` | 1278 problems across 5 domains |
-| **4. Be convinced** | `bash formal/verify.sh` | **43 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
+| **4. Be convinced** | `bash formal/verify.sh` | **55 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
 | **5. Read the details** | [`textbook/…`](textbook/INFORMATION_DISCRETE_MATHEMATICS.md) | the full derivations, tier‑tagged; [`INDEX.md`](INDEX.md) is the map |
 
 **Every claim carries an honesty tier — evaluate each on its own tier, never promote evidence across tiers:**
@@ -113,7 +113,13 @@ divergent inputs instead of fabricating an answer. Full statement + what's prove
 ## What it is (and what it is not)
 
 **Is:** a readout‑first foundation where everything read is a *finite discrete rational readout*, plus a
-runnable toolkit (`tools/idm_tools.py`, `tools/idm_discipline.py`) and a machine‑checked core (`formal/`).
+runnable toolkit (`tools/idm_tools.py`, `tools/idm_discipline.py`, `tools/certified_readout.py`,
+`tools/aggregate.py`) and a machine‑checked core (`formal/`). Optimization and engineering readouts are
+first‑class: `tools/aggregate.py` solves shortest/critical/widest paths and reachability as linear
+algebra over the **min‑plus / max‑plus / bottleneck semirings** (laws machine‑checked in
+`formal/IDM_Tropical.v`), and reads the values engineers use — MIN, MAX, AVG, MEDIAN, PEAK, RMS,
+variance/σ, crest & form factor, L1/L2/L∞, moving averages, prefix sums, rate/curvature — all as finite
+aggregations, no continuum.
 
 **Is not:** a proof that continuum mathematics is *unnecessary for everything*, and **not** a physical
 theory. The claim is about **computation**: the answers standard analysis names are obtained without
