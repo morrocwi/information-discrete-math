@@ -810,6 +810,38 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
   `RDL_Distinguishability.v`, `RDL_CausalOrder.v`, `RDL_GenesisLink.v`, `RDL_SpineGraph*.v`,
   `URCF_RD_All.v`, `DEC_TOOLKIT.md`.)*
 
+## 10.10 Geometry from the causal graph (network/graph theory + the QG export, reconciled)
+
+*(From the resume run: network/spectral-graph reconciliation + the causal-quantum-gravity spine export.)*
+
+- **Resistance distance = our distance (Th 10.10, `Th_coqc`).** `d_λ(i,j) := (e_i − e_j)ᵀ L_R⁺ (e_i − e_j) ∈ ℚ`
+  (`L_R⁺` the pseudoinverse) — the graph resistance distance IS the retained-resistance metric of §4.1,
+  now a *forced rational geometry* of the causal graph. Distance stops being primitive. *(Klein–Randić
+  1993; Doyle–Snell 1984.)*
+- **`L_R` structural facts to REUSE (Th_coqc).** `L_R` rational, symmetric, PSD; **nullity = number of
+  connected components** (`lap_kills_constants` generalized); **Kirchhoff / matrix-tree** (spanning-tree
+  count = any cofactor); `L_sym`, `L_rw` are rescalings of the same operator. *(Spectral/algebraic graph
+  theory: Chung 1997; Godsil–Royle 2001.)*
+- **Random walk / heat kernel = `D_ε` / `I_ε` / FTCC (`finite_diagnostic`).** the discrete heat step
+  `(1 − τ L_R)` and the random walk on the graph are instances of the causal calculus (Part VIII) — the
+  transition operator is `I_ε` of the Laplacian flow; no new machinery.
+- **Discrete curvature = second `δ_R` (Th_coqc, exploratory).** curvature is the second retained
+  difference; a **discrete Gauss–Bonnet** and a **discrete Bianchi** (abelian, from commuting finite
+  differences) hold; **Forman–Ricci** `F(e)=4−deg(u)−deg(v)` is native graph curvature with *zero*
+  continuum limit — offered *after the source repo's honest retraction of eight attempts to force a
+  Schwarzschild curvature onto `L_R`* (a worked non-readout-discipline case study). *(Forman 2003;
+  Bombelli et al. for the order-signature.)*
+- **Discrete Lorentzian signature + boost-invariant box symbol (Th_coqc).** a sign (−1 timelike / +1
+  spacelike) on each causal edge gives a causal bilinear form invariant under order-preserving
+  relabelling ("discrete boosts"): `box_quad(a_tt,a_xx) = −2a_tt + 2a_xx` transforms exactly as
+  `(g²(1−v²))·box_quad` (`=1` under the Minkowski constraint) — self-adjointness, Euclidean reduction,
+  and boost-invariance all `Th_coqc/ℚ`. **Fences:** box=dispersion is a *bounded restatement* (M,K
+  posited), NOT a one-root derivation; the continuum `□`-limit is `Open`; QNM ~0.1–1.2% match is
+  `finite_diagnostic` only (transcendental target = non-readout). *(cqg spine export.)*
+- **Spectral ceiling / `τ_c` floor (Th_coqc).** a Rayleigh-quotient bound gives the spectral ceiling
+  without any eigenvalue-existence theory — the exact `λ₂` (Cheeger/Fiedler) as a real number stays
+  `+ℝ-Open`; use Sturm brackets for a `ℚ`-enclosure instead.
+
 ## 10.9 The honest Open frontier (`+ℝ-Open` / `Dr` — named, not hidden)
 
 Continuum limit `L_R → □` (d'Alembertian) · a full **topos** completeness of the substrate ·
