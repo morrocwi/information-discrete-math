@@ -1106,8 +1106,7 @@ change no distinction any reader can detect (gauge-type redundancies, §III of t
 - **Group axioms are theorems, not decrees.** Composition of readout-preserving relabelings is
   readout-preserving (closure); it is associative because relabeling-composition is; the empty relabel
   is the identity; readout-preservation is reversible (each `g` has `g⁻¹`). **Th 12.1
-  (`Th_coqc`-elig):** `(Aut(F,O), ∘)` satisfies the group axioms — each step a finite decidable check
-  on `∼_λ`-classes. No axiom is imported; the group *is* the symmetry of a reading.
+  (`Th_coqc`, witness `formal/IDM_FiniteWitnesses3.v: aut_assoc`/`aut_id_left`/`aut_id_right`/`aut_inv_left`/`aut_inv_right` — bijective readout-preserving relabelings are closed under `∘`, with identity and two-sided inverse):** `(Aut(F,O), ∘)` satisfies the group axioms. No axiom is imported; the group *is* the symmetry of a reading.
 - **Finite groups only, as readouts.** A group is presented by its finite Cayley table — a finite
   readout. Infinite/continuous groups (Lie groups) are `+ℝ-Open`: their finite-dimensional
   *representations* are the readouts we admit (§12.3), not the completed manifold.
@@ -1120,7 +1119,7 @@ The number tower *is* the worked example, so this chapter only makes the abstrac
 
 - A **ring** = a carrier with `⊕` (an abelian group, §7) and `⊗` (a monoid, §7) linked by distributivity
   — all of which are the retained-operator laws of Part VII. **`D` is a commutative semiring** (RD1–9,
-  `Th_coqc`); **`ℤ` is a ring** (Grothendieck completion, §III); **`ℚ` is a field** (field of fractions,
+  `Th_coqc`); **`ℤ` is a ring** (Grothendieck completion, §III; distributivity witness `formal/IDM_FiniteWitnesses3.v: ring_distrib_Z`); **`ℚ` is a field** (field of fractions,
   `÷` total except `÷0` refused, §7). **Th 12.2 (`Th_coqc`-elig, mined):** these hold with the ring/field
   axioms as *derived* identities of `⊕,⊗,÷`, not primitives.
 - **`÷0` is the one refused operation** — a field is "`ℚ` minus the non-readout `1/0`", exactly the

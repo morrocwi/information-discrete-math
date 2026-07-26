@@ -16,6 +16,7 @@ coqc -q IDM_Bridge.v
 coqc -q IDM_FiniteWitnesses.v
 coqc -q IDM_FiniteWitnesses2.v
 coqc -q IDM_Logic.v
+coqc -q IDM_FiniteWitnesses3.v
 printf 'Require Import IDM_FiniteWitnesses.\nPrint Assumptions kuratowski_pair_inj.\nPrint Assumptions handshake_lemma.\nPrint Assumptions pigeonhole.\nPrint Assumptions finite_yoneda.\nPrint Assumptions semiring_distrib.\n' > _chk.v
 coqc -q _chk.v   # every result prints "Closed under the global context" = axiom-free
 rm -f _chk.v *.vo *.glob *.vos *.vok
@@ -39,6 +40,11 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 | `lagrange_order_div` (`IDM_FiniteWitnesses2.v`) | §12.3 | order `n/gcd(g,n)` divides `|ℤ_n|=n` |
 | `finite_satisfaction_dec` (`IDM_Logic.v`) | §10.3 Th 10.6 | finite Tarski satisfaction / model-checking is decidable |
 | `rdl_non_explosion` (`IDM_Logic.v`) | §10.4 / Part I | Belnap–Dunn countermodel: `p∧¬p` designated, `q` not (non-explosion) |
+| `no_fibonacci_integer_dim` (`IDM_FiniteWitnesses3.v`) | §4.4 Cor 4.1 | `d²=1+d` has no integer solution (φ not an ordinary dim) |
+| `cauchy_schwarz_2` (`IDM_FiniteWitnesses3.v`) | §16.2 | Cauchy–Schwarz over ℚ (2-D, Lagrange identity) |
+| `measure_additive` (`IDM_FiniteWitnesses3.v`) | §16.1 | μ_λ finitely additive (disjoint counts add) |
+| `ring_distrib_Z` (`IDM_FiniteWitnesses3.v`) | §12.2 | ℤ ring distributivity (+ and −) |
+| `aut_assoc`/`aut_id_*`/`aut_inv_*` (`IDM_FiniteWitnesses3.v`) | §12.1 | readout automorphisms form a group |
 | `FTCC_exact` / `FTCC_eps_exact` (`IDM_Bridge.v`) | §20.2 | continuum-maya exact core: `I_ε(D_ε f)=f[N]−f[0]` (zero residue) |
 
 All checked axiom-free under Coq 8.20 (`Print Assumptions` = *Closed under the global context*).
