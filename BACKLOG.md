@@ -86,7 +86,7 @@ closure — they need the completed continuum, which the philosophy treats as a 
 
 ## New extraction tasks (queued — translate to information language first, then formalize)
 
-- [ ] **Discrete Jacobian, sharper version.** Extract the discrete Jacobian/retention math from
+- [x] **Discrete Jacobian, sharper version — DONE (v1.23).** §8.8 + validation/discrete_jacobian.py (9/9): exact constant det J_F=−2, 3-to-1 readout collision, retention lift restores injectivity, told as retained-sensitivity D_ε. ORIGINAL: Extract the discrete Jacobian/retention math from
       `~/Downloads/jacobian_retention_clean_two_turns.m` (exact polynomial images in readout space
       `(P,Q,R)`; retention lift `(P,Q,ψ)`) and `~/Downloads/URR_C_MASTER_0_4_DETAILED.yaml` (URR-C:
       linear hidden-elimination / return-kernel exact algebra). Restate as the **retained sensitivity

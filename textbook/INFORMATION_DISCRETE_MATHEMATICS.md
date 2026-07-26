@@ -658,12 +658,45 @@ readout. Results and definitions are stated here; proofs are v-proofs (next vers
 - The continuum derivative `f'(x)=lim_{h→0} Δf/h` and integral `∫` are recovered as **readouts** of
   `Δ / Σ` under `h→0` sampling — the final rung, flagged `+ℝ`, never the primitive. `InfoContinuumLimit`.
 
-## 8.8 The information reading (why it is *information* calculus)
+## 8.8 The discrete Jacobian (retained sensitivity), readout collision, and the retention lift
+
+For a readout map `F:ℚ^m→ℚ^k` the **discrete Jacobian** `J_F` is the exact rational matrix of retained
+sensitivities `J_F[i,l] = ∂F_i/∂x_l` — the multivariate `D_ε`, computed by exact-algebra with no limit.
+It is the *retained-distinction sensitivity* of each readout coordinate to each source coordinate.
+
+- **Local distinction-preservation.** `det J_F ≠ 0` means `F` is locally injective (étale) — no retained
+  distinction is lost to first order. This can hold *everywhere and be exact*: the polynomial map
+  `P=(1+xy)³z+y²(1+xy)(4+3xy)`, `Q=y+3x(1+xy)²z+3xy²(4+3xy)`, `R=2x−3x²y−x³z` has the **constant**
+  `det J_F = −2` (`Th_coqc`-elig / exact-algebra; validated `validation/discrete_jacobian.py`). A constant
+  nonzero Jacobian determinant is a purely finite, conjecture-free readout.
+- **Readout collision.** Local injectivity does **not** give global injectivity: the same `F` sends the
+  three distinct sources `(0,0,−¼)`, `(1,−3⁄2,13⁄2)`, `(−1,3⁄2,13⁄2)` all to the **one** readout
+  `(−¼,0,0)`. A readout can collapse distinct sources — it *loses distinction* globally while preserving
+  it locally.
+- **The retention lift.** The distinction the readout discarded is restored by **retaining an extra
+  coordinate** `ψ`: the lifted map `s ↦ (F(s), ψ(s))` is injective exactly where `F` alone collides
+  (`ψ∈{−1,0,1}` separates the three). *Retention is the injectivity a readout loses* — the discrete,
+  exact-algebra form of "carry the retained coordinate" (`Dr`; the `det`, collision, and lift are all
+  finite exact facts). *(Bridge to standard mathematics: this is a polynomial endomorphism with constant
+  Jacobian — the setting of the Jacobian-conjecture literature — read here through retained distinction:
+  the map is étale, the fibres are finite, and the retained lift trivialises the fibre.)*
+
+## 8.9 The information reading (why it is *information* calculus)
 
 `Δ` = local change of distinction, `Σ` = accumulated retained record, `L_R` = information diffusion;
 energy and action are readouts of the information functional (Th 5.1). **Discrete calculus is the
 calculus of retained-information flow** — continuum calculus is what a finite reader reconstructs
 from it.
+
+**The unifying stepper (a discrete damped wave on the graph).** The results of §5, §8, and §21.3 are one
+operator: `𝓜 := M·∂²_ε + D·∂_ε + L_R` on a finite weighted graph (`M,D>0` scalars) — a **discrete
+telegrapher's / damped-wave equation** `M Φ'' + D Φ' + L_R Φ = S`. Its structure is forced from the root:
+the second-order term gives a *finite propagation speed* `√(D/τ_c)` with the **forced ratio** `τ_c = M/D`
+(a readout, not a free dial — §21.3); the first-order term gives strict energy decay; and `L_R ⪰ 0` (the
+keystone, §5.1 `keystone_nonneg`) makes the homogeneous energy non-increasing (`relaxation_dissipation`).
+So one graph operator carries diffusion, waves, damping, and the no-blow-up bound — a single discrete
+object, no continuum. *(Extracted from the readout-genesis master-equation forcing ledger; told here as
+the pure mathematics of the operator `M∂²+D∂+L_R`, tiers as in §5/§21.3.)*
 
 ---
 

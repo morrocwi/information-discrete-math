@@ -49,7 +49,8 @@ the textbook for the theory.
 | `validation/hundred_continuum_problems.py` | integrals/derivatives/limits/ODEs/special | **100/100** |
 | `validation/breadth_problems.py` | algebra/linear/complex/combinatorics/graph | **48/48** |
 | `validation/breadth2_problems.py` | measure/functional/category/statistics/optimization | **34/34** |
-| `validation/paradox_dissolution.py` | topology/manifold/PDE paradoxes dissolved | **16/16** |
+| `validation/paradox_dissolution.py` | topology/manifold/PDE paradoxes dissolved | **21/21** |
+| `validation/discrete_jacobian.py` | discrete Jacobian (retained sensitivity) · collision · retention lift | **9/9** |
 
 ## Backlog
 
