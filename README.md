@@ -29,6 +29,25 @@ discrete*.
 If those numbers match the textbook constants (they do), the claim **"you don't need continuum
 mathematics to compute these"** is demonstrated — by you, on your machine, not by this README.
 
+## The proposition (what is actually new)
+
+This is **not** "do the discrete branch of mathematics." University *discrete mathematics* (logic,
+sets, graphs, combinatorics, number theory) is a **subject that sits beside analysis**: the moment you
+need a derivative, an integral, or a limit, you leave it and step into the continuum — real numbers,
+`h → 0`, `∫`, `∞`. And it is **not** numerical analysis, which *approximates* a continuum believed to
+be the real thing.
+
+**We invert it.** The discrete is what is real; **the continuum is a *readout* — a name for the value
+you read off a finite discrete process.** Every derivative, integral, limit, series, ODE and PDE here
+is computed with finite, discrete, rational operations only. `π`, `e`, `ζ`, `Γ` never *produce* an
+answer — the completed infinity is **never formed**. The number you wanted is still there, to 8–40
+digits, because it was always a readout, not a place you had to travel to.
+
+> **You do not need continuum mathematics to compute mathematical answers.**
+> `prove_it.py` shows it by running; the `formal/` Coq core certifies the discrete laws that make it
+> exact (e.g. `I_ε(D_ε f) = f[N] − f[0]`, machine-checked axiom-free). The claim is about
+> *computation*, and on that axis it is demonstrated, not asserted.
+
 ## Then: 3 steps from surprised → convinced
 
 | step | command | what you get |
