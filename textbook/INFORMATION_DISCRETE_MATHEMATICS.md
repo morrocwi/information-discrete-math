@@ -1554,7 +1554,7 @@ the entire standard analytic toolkit, `Λ` reproduces the classical value from f
 | divergent-series value | regularization = finite retained readout (Part IX) | App D |
 
 The exact rung is machine-checked (FTCC, the `D_ε` rules); the numeric rung is **100/100** (App E) plus
-**18/18 across dimensions** (§20.6). The classical object is **never formed** — only its readout is.
+**6/6 dimensional cases up to 11-D + non-integer `d`** (§20.6; 18/18 in that suite overall). The classical object is **never formed** — only its readout is.
 
 ## 20.6 Multi-dimensional integration and dimensional regularization as finite readouts
 
@@ -1567,13 +1567,16 @@ integer **or non-integer** —
 `∫₀^∞ (2π^{d/2}/Γ(d/2))·r^{d−1}·e^{−r²} dr` (the surface factor `2π^{d/2}/Γ(d/2)` carries all `d`
 dimensions). No completed infinity, no infinite lattice. *Validated (`finite_diagnostic`, ≥10 digits,
 RAM-light): `d=3` (space), `d=4` (spacetime), `d=7`, `d=11` (M-theory), and `d=4−ε` (dimensional
-regularization), plus a genuine 3-D lattice grid — **18/18**, `validation/infinity_accuracy.py`.*
+regularization), plus a genuine 3-D lattice grid — **6/6 dimensional cases** (18/18 in that suite
+overall; the other 12 rows are 1-D classical-infinite checks), `validation/infinity_accuracy.py`.*
 
 - **Cor 20.2a (dimensional regularization is a readout, not magic, `Dr`).** QFT's dimensional
   regularization — evaluating a loop integral at `d=4−ε` — **is** the maya at a declared *non-integer*
   dimension: `π^{(4−ε)/2}` is a finite `Γ`-readout defined for any complex `d`. The regulator `ε` is a
   readout parameter; the `ε→0` renormalized limit is the declared `+ℝ-Open` step, taken only after A8
-  stability. The framework does not *inherit* dim-reg from physics — it *is* dim-reg's finite content.
+  stability. The framework does not *inherit* dim-reg from physics — the Gaussian/`Γ` object here is a
+  **representative instance** of dim-reg's finite content (same radial-integral + `Γ`-in-`d` mechanism);
+  the general propagator-power loop `∫d^dk/(k²+Δ)^n` reduces to the same `Γ`-readout but is not computed here.
 
 ## 20.7 Worked examples, and the completeness verdict
 
@@ -1584,7 +1587,7 @@ regularization), plus a genuine 3-D lattice grid — **18/18**, `validation/infi
 
 **Verdict — the continuum-maya is complete as a computational replacement (`Dr`, witnessed).** Across the
 standard toolkit and across the dimensions physics uses, the maya reproduces every classically-continuum
-value from a finite discrete readout — `100/100` (1-D toolkit) + `18/18` (multi-D, up to 11-D and
+value from a finite discrete readout — `100/100` (1-D toolkit) + `6/6` multi-D dimensional cases up to 11-D and
 non-integer `d`) + the exact machine-checked core. **Anything the continuum computes, the maya computes
 finitely; the completed continuum is dispensable for computation.** *(Honest fence, unchanged: this is
 computational replacement, not a claim to decide the continuum's *existence/uniqueness* questions — those
