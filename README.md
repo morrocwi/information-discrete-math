@@ -53,7 +53,7 @@ digits, because it was always a readout, not a place you had to travel to.
 | step | command | what you get |
 |---|---|---|
 | **1. Be surprised** | `python3 prove_it.py` | the 10 roots reproduced from finite discrete (above) |
-| **2. Be convinced** | `bash formal/verify.sh` | **34 theorems, machine-checked axiom-free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
+| **2. Be convinced** | `bash formal/verify.sh` | **35 theorems, machine-checked axiom-free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
 | **3. Read the details** | [`textbook/…`](textbook/INFORMATION_DISCRETE_MATHEMATICS.md) | the full derivations, tier-tagged; [`INDEX.md`](INDEX.md) is the map |
 
 More validation you can run: `python3 validation/*.py` (1000 grade-school→PhD, 100 continuous reproduced

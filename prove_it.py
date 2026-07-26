@@ -34,6 +34,8 @@ def arctan_finite(x, N=400):                # arctan via Σ (-1)^k x^{2k+1}/(2k+
     x = R(x); s = R(0); p = x; x2 = x * x
     for k in range(N): s += (R(-1) ** k) * p / (2 * k + 1); p *= x2
     return s
+PI_OURS = 16 * arctan_finite(R(1) / 5) - 4 * arctan_finite(R(1) / 239)   # π as a FINITE readout (Machin),
+#   computed once here and reused downstream (4-D integral, heat kernel) so NO mp.pi ever makes an answer.
 def D_eps(f, x, h=None):                    # derivative = finite central difference (the framework's D_ε)
     if h is None: h = R(10) ** R(-12)
     return (f(x + h) - f(x - h)) / (2 * h)
@@ -56,7 +58,7 @@ def rec(root, name, ours, std, how): rows.append((root, name, ours, std, digits(
 # e  and  π  themselves
 rec("constant e", "e = Σ 1/k!", exp_finite(1), E_STD, "finite Taylor sum")
 rec("constant π", "π = 16·arctan(1/5) − 4·arctan(1/239)",
-    16 * arctan_finite(R(1) / 5) - 4 * arctan_finite(R(1) / 239), PI_STD, "finite Machin arctan series")
+    PI_OURS, PI_STD, "finite Machin arctan series")
 # derivative
 rec("derivative", "d/dx e^x at x=1", D_eps(lambda t: exp_finite(t), R(1)), E_STD,
     "finite Taylor e^x + finite-difference D_ε (checked vs independent e)")
@@ -68,11 +70,11 @@ def gauss(L=6, N=6000):
 rec("integral (1-D)", "∫_{-∞}^∞ e^{-x²} dx = √π", gauss(), SQRT(PI_STD), "finite Riemann sum, series integrand")
 # integral (multi-D — 4-D spacetime)
 def gauss4d(L=8, N=8000):                   # ∫_{ℝ⁴} e^{-r²} = π², radial ∫ 2π²r³e^{-r²}dr (all 4 dims via r³)
-    h = R(L) / N; s = R(0)
+    h = R(L) / N; s = R(0)                  # the 2π² solid-angle uses our FINITE π (PI_OURS), not mp.pi
     for i in range(N + 1):
-        r = i * h; s += (R(1) if 0 < i < N else R(1) / 2) * 2 * PI_STD ** 2 * r ** 3 * negexp(r * r)
+        r = i * h; s += (R(1) if 0 < i < N else R(1) / 2) * 2 * PI_OURS ** 2 * r ** 3 * negexp(r * r)
     return s * h
-rec("integral (4-D)", "∫_{ℝ⁴} e^{-r²} d⁴x = π²", gauss4d(), PI_STD ** 2, "finite radial Riemann sum (4-D)")
+rec("integral (4-D)", "∫_{ℝ⁴} e^{-r²} d⁴x = π²", gauss4d(), PI_STD ** 2, "finite radial Riemann sum (4-D), finite π")
 # limit
 rec("limit", "lim (1+1/n)^n = e", richardson(lambda n: (1 + R(1) / n) ** n), E_STD, "finite + Richardson (A8 plateau)")
 # infinite series
@@ -89,11 +91,11 @@ def rk4_exp(N=200):
     return y
 rec("ODE", "y'=y, y(0)=1 ⇒ y(1)=e", rk4_exp(), E_STD, "finite RK4 (= I_ε of the field)")
 # PDE (heat) — finite stencil + Richardson
-def heat_exact(x, t): return negexp((R(x) * R(x)) / (4 * t)) / SQRT(4 * PI_STD * t)
+def heat_exact(x, t, pi=PI_STD): return negexp((R(x) * R(x)) / (4 * t)) / SQRT(4 * pi * t)  # pi=PI_OURS for 'ours'
 def heat_grid(dx, t0, t1, L=6):
     r = R(1) / 4; dt = r * dx * dx; ns = int(round(float((t1 - t0) / dt)))
     Nn = int(round(2 * L / float(dx))) + 1; mid = Nn // 2
-    u = [heat_exact(-R(L) + i * dx, t0) for i in range(Nn)]
+    u = [heat_exact(-R(L) + i * dx, t0, PI_OURS) for i in range(Nn)]   # seed with our finite π (no mp.pi in 'ours')
     for _ in range(ns):
         u = [u[0]] + [u[i] + r * (u[i - 1] - 2 * u[i] + u[i + 1]) for i in range(1, Nn - 1)] + [u[Nn - 1]]
     return u[mid]

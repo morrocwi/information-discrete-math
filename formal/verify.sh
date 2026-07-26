@@ -48,6 +48,10 @@ declare -a THMS=(
 
 fail=0
 
+# clean BEFORE compiling: stale/partial .vo from a prior or concurrent run can poison
+# Print Assumptions and cause false NOT-CLOSED failures. Idempotent from a fresh tree.
+rm -f ./*.vo ./*.glob ./*.vos ./*.vok ./.*.aux ./chk_*.v 2>/dev/null
+
 echo "== no Admitted/Axiom/admit =="
 if grep -nE "Admitted|Axiom |^Axiom|Parameter |\badmit\b" ./*.v; then echo "  FOUND Admitted/Axiom/admit — FAIL"; fail=1; else echo "  clean (no Admitted/Axiom/admit)"; fi
 
@@ -59,9 +63,10 @@ done
 echo "== axiom-freedom (Print Assumptions) =="
 for t in "${THMS[@]}"; do
   name="${t%%:*}"; file="${t##*:}"
-  printf 'Require Import %s.\nPrint Assumptions %s.\n' "$file" "$name" > _chk_$$.v
-  out=$(coqc -q _chk_$$.v 2>/dev/null)
-  rm -f _chk_$$.v
+  chk=$(mktemp chk_XXXXXX.v)                 # collision-proof temp (multi-agent workspace safe)
+  printf 'Require Import %s.\nPrint Assumptions %s.\n' "$file" "$name" > "$chk"
+  out=$(coqc -q "$chk" 2>/dev/null)
+  rm -f "$chk" "${chk%.v}.vo" "${chk%.v}.glob" ".${chk%.v}.aux" 2>/dev/null
   if echo "$out" | grep -q "Closed under the global context"; then
     echo "  axiom-free  $name"
   else
