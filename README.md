@@ -1,11 +1,15 @@
 <div align="center">
 
-# 🧮 Information Discrete Mathematics
+<img src="assets/logo.png" alt="Information Discrete Mathematics mascot — a scholarly cat in tweed and spectacles" width="180">
+
+# Information Discrete Mathematics
 
 **The continuum, computed as a readout of the discrete.** _by Yaoharee Lahtee_
 
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
-[![Coq](https://img.shields.io/badge/Coq-8.20%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
+[![Coq](https://img.shields.io/badge/Coq-8.20%20·%2055%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
+[![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
+[![release](https://img.shields.io/badge/release-v1.0-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.0)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 </div>
