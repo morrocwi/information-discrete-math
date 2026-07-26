@@ -79,8 +79,7 @@ experiment, which we do NOT make).
 
 ## 5. Deliverables (the detailed todo list)
 
-**Phase H0 — design (ultracode).** Independent designs of the Mathematical-Core architecture; judge &
-synthesize; fix the finite-exact vs `+ℝ`-readout boundary; decide the solver-kind surface.
+**Phase H0 — design (ultracode).** ✅ DONE (2026-07-27, run wf_23301c3c-2a8). Synthesized build spec: [`HILBERT_H1_BUILD_SPEC.md`](HILBERT_H1_BUILD_SPEC.md). The adversarial tier-honesty critique caught and fixed real bugs (Sylvester-minors≠PSD, a vacuous Coq theorem, a general-3×3 real-spectrum overclaim, Frobenius/Gershgorin conflation) and code-enforces the +ℝ fence via a two-file split.
 
 **Phase H1 — `idm` solver kinds (finite-dim, exact ℚ/ℂ).** New module `idm/hilbert.py` + registry kinds:
 `inner_product`, `norm`, `gram_matrix`, `gram_schmidt` (exact ℚ), `orthonormal_basis`, `projection`
