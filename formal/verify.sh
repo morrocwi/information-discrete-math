@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -74,6 +74,17 @@ declare -a THMS=(
   "orient_scale:IDM_Geometry"
   "orient_collinear_mid:IDM_Geometry"
   "orient_collinear_aff:IDM_Geometry"
+  "ftcc_Z:IDM_Reduction"
+  "foldmin_le_init:IDM_Reduction"
+  "foldmin_le_elem:IDM_Reduction"
+  "sum_is_fold:IDM_Reduction"
+  "path_is_fold:IDM_Reduction"
+  "pivot_preserves:IDM_Reduction"
+  "witness_sound:IDM_Reduction"
+  "witness_complete:IDM_Reduction"
+  "decide_dec:IDM_Reduction"
+  "witness_composite_sound:IDM_Reduction"
+  "composite_has_factor:IDM_Reduction"
 )
 
 fail=0
