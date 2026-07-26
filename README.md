@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Information Discrete Mathematics mascot — a scholarly cat in tweed and spectacles" width="180">
+<img src="assets/mascot.png" alt="Information Discrete Mathematics mascot — a scholarly cat in tweed and spectacles" width="180">
 
 # Information Discrete Mathematics
 
