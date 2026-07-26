@@ -48,6 +48,9 @@ declare -a THMS=(
 
 fail=0
 
+echo "== no Admitted/Axiom/admit =="
+if grep -nE "Admitted|Axiom |^Axiom|Parameter |\badmit\b" ./*.v; then echo "  FOUND Admitted/Axiom/admit — FAIL"; fail=1; else echo "  clean (no Admitted/Axiom/admit)"; fi
+
 echo "== compiling =="
 for f in "${FILES[@]}"; do
   if coqc -q "$f.v" >/dev/null 2>&1; then echo "  ok   $f.v"; else echo "  FAIL $f.v"; fail=1; fi

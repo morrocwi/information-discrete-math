@@ -1,0 +1,12 @@
+[project]
+name = "information-discrete-math"
+version = "1.0.0"
+description = "Readout-first mathematics: the continuum computed as a readout of the discrete."
+authors = [{ name = "Yaoharee Lahtee" }]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = ["mpmath>=1.3.0", "sympy>=1.12"]
+[project.urls]
+Homepage = "https://github.com/morrocwi/information-discrete-math"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
