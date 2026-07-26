@@ -1,486 +1,174 @@
 {
-  "benchmark": "retained_readout_pullback_vs_autograd_and_jax_jit",
+  "benchmark": "native_retained_readout_pullback_self_check",
+  "method": "one upward FTCC fold + one downward relevance unfold (RRP); no autodiff, no junction tree",
+  "reference": "independent tilted-factor contraction + central finite differences",
+  "tier": "finite_diagnostic",
+  "order": 4,
+  "repeats": 21,
+  "tolerance": 1e-09,
+  "worst_abs_difference": 1.8621632014159673e-10,
+  "verdict": "ACCEPT",
   "cases": [
     {
-      "adaptive_native_retained_readout_pullback": {
-        "autodiff": false,
-        "compile_plus_first_execution_seconds": 1.4215880470001139,
-        "execution_substrate": "Numba/LLVM compiled sparse closure",
-        "jax_dependency": false,
-        "maximum_seconds": 9.671299994806759e-05,
-        "median_seconds": 5.5621999308641534e-05,
-        "minimum_seconds": 5.0795999413821846e-05,
-        "plan_signature": "c6b5c7c497b5f4d6",
-        "structural_witness": {
-          "autodiff": false,
-          "closure_count": 2,
-          "coupling_count": 6,
-          "dimension": 5,
-          "jax_dependency": false,
-          "largest_joint_length": 64,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-plan-v1",
-          "quadrature_order": 4
-        },
-        "topology_cache_hit": true
-      },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 2.220446049250313e-16,
-        "adaptive_native_partition_abs_difference": 1.1102230246251565e-16,
-        "adaptive_native_partition_gradient_max_abs_difference": 5.551115123125783e-17,
-        "jax_log_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "jax_partition_abs_difference": 0.0,
-        "jax_partition_gradient_max_abs_difference": 5.551115123125783e-17,
-        "log_partition_gradient_max_abs_difference": 1.6653345369377348e-16,
-        "partition_abs_difference": 1.1102230246251565e-16,
-        "partition_gradient_max_abs_difference": 5.551115123125783e-17
-      },
+      "family": "sparse",
+      "dimension": 5,
       "coupling_count": 6,
-      "dimension": 5,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.002344792000258167,
-        "median_seconds": 0.0011942629998884513,
-        "minimum_seconds": 0.001129366999521153,
-        "path_search_seconds_last_call": 0.0003188229993611458
-      },
-      "external_over_native_median_ratio": 5.699968015908406,
-      "family": "sparse",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.17089077000036923,
-        "maximum_seconds": 0.00041770000007090857,
-        "median_seconds": 0.0001350799993815599,
-        "minimum_seconds": 9.992800005420577e-05,
-        "path_search_seconds": 0.0003188229993611458,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 2.428535490643063,
-      "jax_over_native_median_ratio": 0.6447086413425981,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.0003792529996644589,
-        "median_seconds": 0.00020952100021531805,
-        "minimum_seconds": 0.00018689700027607614
-      },
       "order": 4,
-      "parameter_count": 11
+      "parameter_count": 11,
+      "closure_count": 5,
+      "native_rft": {
+        "median_seconds": 0.000747371930629015,
+        "minimum_seconds": 0.0007401780458167195,
+        "maximum_seconds": 0.0008241978939622641,
+        "pullback_work_elements": 164,
+        "retained_basis_elements": 41,
+        "autodiff": false,
+        "junction_tree": false
+      },
+      "agreement_vs_reference": {
+        "partition_abs_difference": 0.0,
+        "axis_moment_max_abs_difference": 1.1102230246251565e-16,
+        "coupling_moment_max_abs_difference": 8.326672684688674e-17,
+        "log_partition_gradient_vs_central_fd": 7.032208149126973e-11
+      }
     },
     {
-      "adaptive_native_retained_readout_pullback": {
-        "autodiff": false,
-        "compile_plus_first_execution_seconds": 0.0013611409995064605,
-        "execution_substrate": "Numba/LLVM compiled sparse closure",
-        "jax_dependency": false,
-        "maximum_seconds": 0.00017690299955575028,
-        "median_seconds": 6.832200051576365e-05,
-        "minimum_seconds": 6.066999958420638e-05,
-        "plan_signature": "32c3a9b492f7b296",
-        "structural_witness": {
-          "autodiff": false,
-          "closure_count": 3,
-          "coupling_count": 9,
-          "dimension": 7,
-          "jax_dependency": false,
-          "largest_joint_length": 64,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-plan-v1",
-          "quadrature_order": 4
-        },
-        "topology_cache_hit": true
-      },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 3.3306690738754696e-16,
-        "adaptive_native_partition_abs_difference": 1.6653345369377348e-16,
-        "adaptive_native_partition_gradient_max_abs_difference": 8.326672684688674e-17,
-        "jax_log_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "jax_partition_abs_difference": 0.0,
-        "jax_partition_gradient_max_abs_difference": 5.551115123125783e-17,
-        "log_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "partition_abs_difference": 5.551115123125783e-17,
-        "partition_gradient_max_abs_difference": 5.551115123125783e-17
-      },
+      "family": "sparse",
+      "dimension": 7,
       "coupling_count": 9,
-      "dimension": 7,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.002507553000214102,
-        "median_seconds": 0.001661907999732648,
-        "minimum_seconds": 0.0015309430000343127,
-        "path_search_seconds_last_call": 0.0003608349998103222
-      },
-      "external_over_native_median_ratio": 5.997264646538668,
-      "family": "sparse",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.18181125299997802,
-        "maximum_seconds": 0.0004083969997736858,
-        "median_seconds": 0.00015098400035640225,
-        "minimum_seconds": 0.0001125979997596005,
-        "path_search_seconds": 0.0003608349998103222,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 2.2098884578411364,
-      "jax_over_native_median_ratio": 0.5448502610710699,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.0005393710007410846,
-        "median_seconds": 0.00027711099937732797,
-        "minimum_seconds": 0.0002418690000922652
-      },
       "order": 4,
-      "parameter_count": 16
+      "parameter_count": 16,
+      "closure_count": 7,
+      "native_rft": {
+        "median_seconds": 0.001144699053838849,
+        "minimum_seconds": 0.0011317080352455378,
+        "maximum_seconds": 0.0012033659731969237,
+        "pullback_work_elements": 244,
+        "retained_basis_elements": 61,
+        "autodiff": false,
+        "junction_tree": false
+      },
+      "agreement_vs_reference": {
+        "partition_abs_difference": 0.0,
+        "axis_moment_max_abs_difference": 1.6653345369377348e-16,
+        "coupling_moment_max_abs_difference": 8.326672684688674e-17,
+        "log_partition_gradient_vs_central_fd": 1.71399672233008e-10
+      }
     },
     {
-      "adaptive_native_retained_readout_pullback": {
-        "autodiff": false,
-        "compile_plus_first_execution_seconds": 0.0014343200000439538,
-        "execution_substrate": "Numba/LLVM compiled sparse closure",
-        "jax_dependency": false,
-        "maximum_seconds": 0.00015522099965892266,
-        "median_seconds": 7.912700039014453e-05,
-        "minimum_seconds": 7.27280003047781e-05,
-        "plan_signature": "c89cf8c309e81668",
-        "structural_witness": {
-          "autodiff": false,
-          "closure_count": 4,
-          "coupling_count": 12,
-          "dimension": 9,
-          "jax_dependency": false,
-          "largest_joint_length": 64,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-plan-v1",
-          "quadrature_order": 4
-        },
-        "topology_cache_hit": true
-      },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "adaptive_native_partition_abs_difference": 5.551115123125783e-17,
-        "adaptive_native_partition_gradient_max_abs_difference": 5.551115123125783e-17,
-        "jax_log_partition_gradient_max_abs_difference": 2.220446049250313e-16,
-        "jax_partition_abs_difference": 1.1102230246251565e-16,
-        "jax_partition_gradient_max_abs_difference": 6.938893903907228e-17,
-        "log_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "partition_abs_difference": 5.551115123125783e-17,
-        "partition_gradient_max_abs_difference": 5.551115123125783e-17
-      },
-      "coupling_count": 12,
+      "family": "sparse",
       "dimension": 9,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.002892334000534902,
-        "median_seconds": 0.002025046999733604,
-        "minimum_seconds": 0.0019230549996791524,
-        "path_search_seconds_last_call": 0.00047713799995108275
-      },
-      "external_over_native_median_ratio": 6.193656623068632,
-      "family": "sparse",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.23936821200004488,
-        "maximum_seconds": 0.0003058849997614743,
-        "median_seconds": 0.00016291199972329196,
-        "minimum_seconds": 0.00011348899988661287,
-        "path_search_seconds": 0.00047713799995108275,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 2.058867376749227,
-      "jax_over_native_median_ratio": 0.4982704036974251,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.000647711000056006,
-        "median_seconds": 0.00032695499976398423,
-        "minimum_seconds": 0.0002940559998023673
-      },
+      "coupling_count": 12,
       "order": 4,
-      "parameter_count": 21
+      "parameter_count": 21,
+      "closure_count": 9,
+      "native_rft": {
+        "median_seconds": 0.0015524320770055056,
+        "minimum_seconds": 0.0015344839775934815,
+        "maximum_seconds": 0.0022926110541447997,
+        "pullback_work_elements": 324,
+        "retained_basis_elements": 81,
+        "autodiff": false,
+        "junction_tree": false
+      },
+      "agreement_vs_reference": {
+        "partition_abs_difference": 0.0,
+        "axis_moment_max_abs_difference": 2.220446049250313e-16,
+        "coupling_moment_max_abs_difference": 1.1102230246251565e-16,
+        "log_partition_gradient_vs_central_fd": null
+      }
     },
     {
-      "adaptive_native_retained_readout_pullback": {
-        "autodiff": false,
-        "compile_plus_first_execution_seconds": 0.0019255189999967115,
-        "execution_substrate": "Numba/LLVM compiled sparse closure",
-        "jax_dependency": false,
-        "maximum_seconds": 0.00012288200014154427,
-        "median_seconds": 8.805000015854603e-05,
-        "minimum_seconds": 7.986899981915485e-05,
-        "plan_signature": "2bcf3ff7ad5ed936",
-        "structural_witness": {
-          "autodiff": false,
-          "closure_count": 5,
-          "coupling_count": 15,
-          "dimension": 11,
-          "jax_dependency": false,
-          "largest_joint_length": 64,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-plan-v1",
-          "quadrature_order": 4
-        },
-        "topology_cache_hit": true
-      },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 3.3306690738754696e-16,
-        "adaptive_native_partition_abs_difference": 2.7755575615628914e-17,
-        "adaptive_native_partition_gradient_max_abs_difference": 4.163336342344337e-17,
-        "jax_log_partition_gradient_max_abs_difference": 1.6653345369377348e-16,
-        "jax_partition_abs_difference": 2.7755575615628914e-17,
-        "jax_partition_gradient_max_abs_difference": 4.163336342344337e-17,
-        "log_partition_gradient_max_abs_difference": 1.6653345369377348e-16,
-        "partition_abs_difference": 0.0,
-        "partition_gradient_max_abs_difference": 2.7755575615628914e-17
-      },
-      "coupling_count": 15,
+      "family": "sparse",
       "dimension": 11,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.0028555700000651996,
-        "median_seconds": 0.0024778679999144515,
-        "minimum_seconds": 0.0023915299998407136,
-        "path_search_seconds_last_call": 0.0008280090005428065
-      },
-      "external_over_native_median_ratio": 5.255844733286912,
-      "family": "sparse",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.2523508869999205,
-        "maximum_seconds": 0.0003048630005650921,
-        "median_seconds": 0.00021327600006770808,
-        "minimum_seconds": 0.00014583699976356002,
-        "path_search_seconds": 0.0008280090005428065,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 2.4222146471740555,
-      "jax_over_native_median_ratio": 0.4523830735660912,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.0006760040005246992,
-        "median_seconds": 0.0004714500000773114,
-        "minimum_seconds": 0.00042818500060093356
-      },
+      "coupling_count": 15,
       "order": 4,
-      "parameter_count": 26
-    },
-    {
-      "adaptive_native_retained_readout_pullback": {
+      "parameter_count": 26,
+      "closure_count": 11,
+      "native_rft": {
+        "median_seconds": 0.001981328008696437,
+        "minimum_seconds": 0.0019291560165584087,
+        "maximum_seconds": 0.0028465220239013433,
+        "pullback_work_elements": 404,
+        "retained_basis_elements": 101,
         "autodiff": false,
-        "compile_plus_first_execution_seconds": 0.0006030450003891019,
-        "execution_substrate": "NumPy balanced retained-cut fusion",
-        "jax_dependency": false,
-        "maximum_seconds": 0.0003423990001465427,
-        "median_seconds": 0.00011610300043685129,
-        "minimum_seconds": 9.538099948258605e-05,
-        "plan_signature": "c5fe7db2a7c2326c",
-        "structural_witness": {
-          "autodiff": false,
-          "coupling_count": 10,
-          "dimension": 5,
-          "jax_dependency": false,
-          "left_width": 2,
-          "mass_elements": 1024,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-balanced-cut-v1",
-          "quadrature_order": 4,
-          "retained_working_elements": 1776,
-          "right_width": 3
-        },
-        "topology_cache_hit": true
+        "junction_tree": false
       },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 3.3306690738754696e-16,
-        "adaptive_native_partition_abs_difference": 1.1102230246251565e-16,
-        "adaptive_native_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "jax_log_partition_gradient_max_abs_difference": 2.7755575615628914e-16,
-        "jax_partition_abs_difference": 1.1102230246251565e-16,
-        "jax_partition_gradient_max_abs_difference": 8.326672684688674e-17,
-        "log_partition_gradient_max_abs_difference": 1.6653345369377348e-16,
+      "agreement_vs_reference": {
         "partition_abs_difference": 0.0,
-        "partition_gradient_max_abs_difference": 8.326672684688674e-17
-      },
-      "coupling_count": 10,
+        "axis_moment_max_abs_difference": 2.7755575615628914e-16,
+        "coupling_moment_max_abs_difference": 8.326672684688674e-17,
+        "log_partition_gradient_vs_central_fd": null
+      }
+    },
+    {
+      "family": "complete",
       "dimension": 5,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.08861562600031903,
-        "median_seconds": 0.00136670900064928,
-        "minimum_seconds": 0.001268123000045307,
-        "path_search_seconds_last_call": 0.00042840599962801207
-      },
-      "external_over_native_median_ratio": 6.75752289275743,
-      "family": "complete",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.2133493780002027,
-        "maximum_seconds": 0.0015901810002105776,
-        "median_seconds": 0.00028054699942003936,
-        "minimum_seconds": 0.00018642700069904095,
-        "path_search_seconds": 0.00042840599962801207,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 2.4163630428537424,
-      "jax_over_native_median_ratio": 1.3871297914733025,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.0003643709997049882,
-        "median_seconds": 0.0002022499993472593,
-        "minimum_seconds": 0.0001846939994720742
-      },
+      "coupling_count": 10,
       "order": 4,
-      "parameter_count": 15
+      "parameter_count": 15,
+      "closure_count": 5,
+      "native_rft": {
+        "median_seconds": 0.007421617046929896,
+        "minimum_seconds": 0.007392004015855491,
+        "maximum_seconds": 0.007459330023266375,
+        "pullback_work_elements": 1364,
+        "retained_basis_elements": 341,
+        "autodiff": false,
+        "junction_tree": false
+      },
+      "agreement_vs_reference": {
+        "partition_abs_difference": 0.0,
+        "axis_moment_max_abs_difference": 3.885780586188048e-16,
+        "coupling_moment_max_abs_difference": 3.3306690738754696e-16,
+        "log_partition_gradient_vs_central_fd": 1.8621632014159673e-10
+      }
     },
     {
-      "adaptive_native_retained_readout_pullback": {
-        "autodiff": false,
-        "compile_plus_first_execution_seconds": 0.00040671399983693846,
-        "execution_substrate": "NumPy balanced retained-cut fusion",
-        "jax_dependency": false,
-        "maximum_seconds": 0.0002957090000563767,
-        "median_seconds": 0.00016364299972337903,
-        "minimum_seconds": 0.0001461670008211513,
-        "plan_signature": "ffaa8c99a9609a85",
-        "structural_witness": {
-          "autodiff": false,
-          "coupling_count": 21,
-          "dimension": 7,
-          "jax_dependency": false,
-          "left_width": 3,
-          "mass_elements": 16384,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-balanced-cut-v1",
-          "quadrature_order": 4,
-          "retained_working_elements": 21056,
-          "right_width": 4
-        },
-        "topology_cache_hit": true
-      },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 9.992007221626409e-16,
-        "adaptive_native_partition_abs_difference": 5.551115123125783e-17,
-        "adaptive_native_partition_gradient_max_abs_difference": 3.0531133177191805e-16,
-        "jax_log_partition_gradient_max_abs_difference": 8.881784197001252e-16,
-        "jax_partition_abs_difference": 5.551115123125783e-17,
-        "jax_partition_gradient_max_abs_difference": 2.7755575615628914e-16,
-        "log_partition_gradient_max_abs_difference": 8.881784197001252e-16,
-        "partition_abs_difference": 5.551115123125783e-17,
-        "partition_gradient_max_abs_difference": 2.7755575615628914e-16
-      },
-      "coupling_count": 21,
+      "family": "complete",
       "dimension": 7,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.0038388599996324047,
-        "median_seconds": 0.002405672000350023,
-        "minimum_seconds": 0.0023102899995137705,
-        "path_search_seconds_last_call": 0.000961157000347157
-      },
-      "external_over_native_median_ratio": 2.638075939294935,
-      "family": "complete",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.35661399099990376,
-        "maximum_seconds": 0.0006071110001357738,
-        "median_seconds": 0.0003378310002517537,
-        "minimum_seconds": 0.0002518940000300063,
-        "path_search_seconds": 0.000961157000347157,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 2.064439058333206,
-      "jax_over_native_median_ratio": 0.3704677251023499,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.0012677719996645465,
-        "median_seconds": 0.0009119039996221545,
-        "minimum_seconds": 0.0008605679995525861
-      },
+      "coupling_count": 21,
       "order": 4,
-      "parameter_count": 28
+      "parameter_count": 28,
+      "closure_count": 7,
+      "native_rft": {
+        "median_seconds": 0.16517112497240305,
+        "minimum_seconds": 0.16059435496572405,
+        "maximum_seconds": 0.18500752397812903,
+        "pullback_work_elements": 21844,
+        "retained_basis_elements": 5461,
+        "autodiff": false,
+        "junction_tree": false
+      },
+      "agreement_vs_reference": {
+        "partition_abs_difference": 0.0,
+        "axis_moment_max_abs_difference": 3.885780586188048e-16,
+        "coupling_moment_max_abs_difference": 1.2490009027033011e-15,
+        "log_partition_gradient_vs_central_fd": null
+      }
     },
     {
-      "adaptive_native_retained_readout_pullback": {
-        "autodiff": false,
-        "compile_plus_first_execution_seconds": 0.0005308979998517316,
-        "execution_substrate": "NumPy balanced retained-cut fusion",
-        "jax_dependency": false,
-        "maximum_seconds": 0.0005180790003578295,
-        "median_seconds": 0.00029384600020421203,
-        "minimum_seconds": 0.00026981000064552063,
-        "plan_signature": "07beda48c6d1e5bc",
-        "structural_witness": {
-          "autodiff": false,
-          "coupling_count": 28,
-          "dimension": 8,
-          "jax_dependency": false,
-          "left_width": 4,
-          "mass_elements": 65536,
-          "parameter_values_in_plan_key": false,
-          "plan_version": "rrp-balanced-cut-v1",
-          "quadrature_order": 4,
-          "retained_working_elements": 74752,
-          "right_width": 4
-        },
-        "topology_cache_hit": true
-      },
-      "agreement": {
-        "adaptive_native_log_partition_gradient_max_abs_difference": 2.498001805406602e-16,
-        "adaptive_native_partition_abs_difference": 1.6653345369377348e-16,
-        "adaptive_native_partition_gradient_max_abs_difference": 1.1102230246251565e-16,
-        "jax_log_partition_gradient_max_abs_difference": 1.942890293094024e-16,
-        "jax_partition_abs_difference": 1.1102230246251565e-16,
-        "jax_partition_gradient_max_abs_difference": 9.71445146547012e-17,
-        "log_partition_gradient_max_abs_difference": 2.220446049250313e-16,
-        "partition_abs_difference": 1.1102230246251565e-16,
-        "partition_gradient_max_abs_difference": 1.1102230246251565e-16
-      },
-      "coupling_count": 28,
-      "dimension": 8,
-      "external_opt_einsum_autograd": {
-        "maximum_seconds": 0.07829708699955518,
-        "median_seconds": 0.0031259309998858953,
-        "minimum_seconds": 0.003023158999894804,
-        "path_search_seconds_last_call": 0.0013939990003564162
-      },
-      "external_over_native_median_ratio": 1.4545160555793277,
       "family": "complete",
-      "faster_hot_call": "adaptive_native_retained_readout_pullback",
-      "jax_jit_reverse_mode": {
-        "compile_plus_first_execution_seconds": 0.5068475910002235,
-        "maximum_seconds": 0.0007734279997748672,
-        "median_seconds": 0.00042302799920435064,
-        "minimum_seconds": 0.0003070359998673666,
-        "path_search_seconds": 0.0013939990003564162,
-        "platform": "cpu",
-        "precision": "float64"
-      },
-      "jax_over_adaptive_native_median_ratio": 1.4396248337917206,
-      "jax_over_native_median_ratio": 0.1968376835012632,
-      "native_retained_readout_pullback": {
-        "maximum_seconds": 0.005423812000117323,
-        "median_seconds": 0.0021491210000021965,
-        "minimum_seconds": 0.002053278000857972
-      },
+      "dimension": 8,
+      "coupling_count": 28,
       "order": 4,
-      "parameter_count": 36
+      "parameter_count": 36,
+      "closure_count": 8,
+      "native_rft": {
+        "median_seconds": 0.7472594360588118,
+        "minimum_seconds": 0.7245757490163669,
+        "maximum_seconds": 0.7877229750156403,
+        "pullback_work_elements": 87380,
+        "retained_basis_elements": 21845,
+        "autodiff": false,
+        "junction_tree": false
+      },
+      "agreement_vs_reference": {
+        "partition_abs_difference": 0.0,
+        "axis_moment_max_abs_difference": 2.886579864025407e-15,
+        "coupling_moment_max_abs_difference": 2.0539125955565396e-15,
+        "log_partition_gradient_vs_central_fd": null
+      }
     }
-  ],
-  "declared_outputs": [
-    "partition",
-    "all linear-parameter gradients",
-    "all coupling-parameter gradients",
-    "all log-partition parameter gradients"
-  ],
-  "environment": {
-    "autograd": "1.8.0",
-    "jax": "0.11.0",
-    "jax_backend": "cpu",
-    "jaxlib": "0.11.0",
-    "numba": "0.66.0",
-    "numpy": "2.3.5",
-    "opt_einsum": "3.4.0",
-    "python": "3.12.13"
-  },
-  "method_boundary": {
-    "adaptive_native": "native structural dispatch: compiled sparse RRP via Numba/LLVM, balanced retained-cut dense fusion under an explicit finite resource gate, or retained-basis fallback; topology-only plan key, no autodiff, and no JAX dependency",
-    "external": "opt_einsum greedy contraction plus Autograd reverse mode",
-    "jax": "opt_einsum greedy path plus JAX x64 JIT reverse mode; compile time reported separately",
-    "native": "finite retained closure plus declared sufficient-statistic readouts; no autodiff and no junction-tree internals",
-    "timing": "hot structural-path calls in deterministic rotated interleaving; factor construction and sensitivity execution included"
-  },
-  "order": 4,
-  "repeats": 101,
-  "tolerance": 1e-10,
-  "verdict": "ACCEPT"
+  ]
 }

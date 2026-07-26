@@ -168,14 +168,18 @@ calibration; the FTCC fold is its engine and junction tree stays a comparator on
 equations, resource gates, the 230‑kind map, and the claim boundary:
 [`RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md`](RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md) (`finite_diagnostic`).
 
-**Native sensitivity, not an autodiff wrapper.** **Retained Readout Pullback (RRP)** unfolds terminal
-relevance into only the *declared* parameter statistics, so one closure run returns `Z`, axis moments,
-`∂Z`, and `∂log Z` for every linear and pair‑coupling parameter — no junction tree, no autodiff tape.
-In the recorded 101‑repeat CPU benchmark the adaptive native path agreed with Autograd and JAX to
-`≤ 8.89×10⁻¹⁶` and was the faster hot call on all seven measured order‑4 cases (a measured‑workload
-result, not universal superiority). Derivation + machine‑readable evidence:
-[`RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md`](RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md) ·
-[`benchmarks/retained_readout_pullback_results.json`](benchmarks/retained_readout_pullback_results.json).
+**Native sensitivity, not an autodiff wrapper.** **Retained Readout Pullback (RRP)** does one upward
+FTCC fold + one downward relevance unfold (`benchmarks/retained_fold_tree.py`), returning `Z`, every
+axis moment, every coupling cross moment, and every parameter gradient (`∂Z`, `∂log Z`) in a single
+pass — no junction tree, no autodiff tape. The in‑repo benchmark
+(`benchmarks/retained_readout_pullback_benchmark.py`) is **self‑checking**: it cross‑verifies every
+readout against an *independent* tilted‑factor contraction and the log‑partition gradients against
+central finite differences. Run it yourself — the recorded verdict is `ACCEPT`, worst `|Δ|` `1.86×10⁻¹⁰`
+across seven sparse/complete order‑4 cases ([`…results.json`](benchmarks/retained_readout_pullback_results.json)).
+The pure‑Python executor is exact but not fast on dense graphs; a Numba/LLVM compiled path
+(`benchmarks/compiled_retained_readout_pullback.py`) lowers the same native semantics for speed, with no
+autodiff and no JAX dependency. Derivation:
+[`RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md`](RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md) (`finite_diagnostic`).
 
 The full lineage — RCP 1.0 → reverse lineage → query pruning → RFT/RCF → RRP/CRRP → topology‑only
 compilation → Balanced Retained‑Cut Fusion — is consolidated in
