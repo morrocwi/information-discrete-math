@@ -73,6 +73,65 @@ non-readout**. Name it before deferring:
 
 ---
 
+# Part 0.5 — The reader, resolution, and coarse-graining (the substrate)
+
+Before number or logic can be *used*, we fix **who reads** and **at what resolution**. This Part
+supplies the collection / function / equality substrate — *grounded in coarse-graining, not assumed* —
+and the finite-resolution discipline that lets analysis proceed without ever injecting the continuum.
+*(Integrates the author's earlier* **Causal Calculus: Primitive Aggregation under Finite Causal
+Access** *— Lahtee 2026, DOI 10.5281/zenodo.18164015 — whose still-usable core is extracted here.)*
+
+## 0.5.1 Access & coarse-graining (Def 0.5.1)
+
+`IR` — the world, **never read directly**. Access map **`A : IR → I_acc`** to the accessible
+information states. Coarse-grain family **`G_λ : I_acc → I_λ`**, `λ` a resolution. A reader sees only
+`I_λ` — what survives coarse-graining at its resolution.
+
+## 0.5.2 Admissible description (Def 0.5.2 — the formal readout)
+
+`E` is **admissible at resolution `λ`** iff there is `Ẽ` with **`E = Ẽ ∘ G_λ`** — the result does NOT
+distinguish what `G_λ` discards. **Consequence:** answers are free of any `ε→0` limit; sub-resolution
+differences are *not perceived*. This is `readout-not-truth` made operational: a reading is admissible
+exactly when it **factors through the coarse-graining**.
+
+## 0.5.3 The collection / function / equality substrate (induced by `G_λ`)
+
+- **collections / sets** := the fibers of `G_λ` (a "set" is a class of `I_acc`-states identified at
+  resolution `λ`).
+- **functions / maps** := **admissible maps** — those that factor through `G_λ`.
+- **equivalence `∼_λ`** := `G_λ(x)=G_λ(y)` (indistinguishable at `λ`); **ordered pairs / products /
+  quotients** are the corresponding admissible constructions.
+- **equality `=`** := mutual indistinguishability to every reader — the finest `∼_λ` — now
+  **non-circular**: grounded in the coarse-grain fibers, not defined using `=` itself (this repairs
+  Def 7.2). *This is the sets-and-functions layer a foundation needs, **induced by coarse-graining
+  rather than posited**.*
+
+## 0.5.4 Causal order (S2)
+
+reference `s_0`; **`t(s) := min #steps(s_0 → s)`** — the minimal-step metric (= distance as retained
+resistance, Def 4.1); **`s ⪯ s' ⟺ t(s) ≤ t(s')`**; the **causal index** `n := t(s_n)` generates the
+tape; resolutions `ε_t, ε_x > 0`.
+
+## 0.5.5 The layer & infinity discipline (the tier system, operationalized)
+
+- Layers: **S1** (pre-theoretic — descriptions, resolution, admissibility) · **S2** (causal order) ·
+  **S3+** (constructed operators / equations at declared finite resolution).
+- **A11** — declare the layer of every result. **A8 (infinity discipline)** — *work at finite `ε`
+  first; take `ε→0` (or `N→∞`) ONLY after a stability proof, and declare it.* **CMG** — effective,
+  resolution-dependent scope; no fundamental claims. **A8 is the analysis discipline that lets the
+  whole calculus be built without ever making an actual infinity primitive.**
+
+## 0.5.6 Honest metatheory note (declared, not hidden)
+
+This substrate still uses ordinary **finitary logic** (propositional connectives, quantifiers,
+induction on indices) as its meta-language, and the machine-checked corpus is verified in **Coq's
+type theory (CIC)**. "One primitive" means the **philosophical** primitive (`δ_R` — retained
+distinction under finite access); the *metalogic* in which its theorems are proved is declared here,
+not smuggled. The refusal of the continuum is a refusal to make it a **primitive appearance**, not a
+denial that a finitary metatheory is in use.
+
+---
+
 # Part I — Retained-Distinction Logic (RDL)
 
 The logic must tolerate a local contradiction without collapse, because a reader may hold conflicting
