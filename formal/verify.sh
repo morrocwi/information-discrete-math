@@ -110,6 +110,12 @@ declare -a THMS=(
   "fold_right_perm:IDM_Reduction"
   "fold_split_even_odd:IDM_Reduction"
   "modpow_is_fold:IDM_Reduction"
+  "foldmax_in:IDM_Reduction"
+  "sum_list_perm:IDM_Reduction"
+  "prod_list_perm:IDM_Reduction"
+  "tautology_sound:IDM_Reduction"
+  "cnf_tautology_sound:IDM_Reduction"
+  "witness_crt_sound:IDM_Reduction"
 )
 
 fail=0

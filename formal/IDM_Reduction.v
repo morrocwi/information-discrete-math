@@ -166,6 +166,31 @@ Proof.
   - assert (i = k \/ i < k)%nat as [->|Hlt] by lia; [lia | specialize (IH i Hlt); lia].
 Qed.
 
+(* critical-/widest-path EXACTNESS (mirror of foldmin_in): the accumulated maximum
+   is attained — it equals the start value or an actual element. *)
+Lemma foldmax_in : forall v0 f N,
+  fold Z.max v0 f N = v0 \/ exists i, (i < N)%nat /\ fold Z.max v0 f N = f i.
+Proof.
+  intros v0 f N. induction N as [| k IH]; simpl.
+  - left. reflexivity.
+  - destruct (Z.max_spec (fold Z.max v0 f k) (f k)) as [[_ Heq] | [_ Heq]]; rewrite Heq.
+    + right. exists k. split; [lia | reflexivity].
+    + destruct IH as [H0 | [i [Hi Hfi]]].
+      * left. exact H0.
+      * right. exists i. split; [lia | exact Hfi].
+Qed.
+
+(* set-aggregation is ORDER-INDEPENDENT: Σ and Π over a multiset are well-defined,
+   direct corollaries of fold_right_perm (both (+) and (×) are assoc-commutative).
+   This is what makes `describe`/statistics and combinatorial products unambiguous. *)
+Theorem sum_list_perm : forall xs ys : list Z,
+  Permutation xs ys -> fold_right Z.add 0 xs = fold_right Z.add 0 ys.
+Proof. intros xs ys H. apply (fold_right_perm Z.add 0); [intros; lia | intros; lia | exact H]. Qed.
+
+Theorem prod_list_perm : forall xs ys : list Z,
+  Permutation xs ys -> fold_right Z.mul 1 xs = fold_right Z.mul 1 ys.
+Proof. intros xs ys H. apply (fold_right_perm Z.mul 1); [intros; ring | intros; ring | exact H]. Qed.
+
 (* ---- branch kernel 5: the INNER PRODUCT (matrix-multiply / convolution / dot) ----
    every entry of a matrix product, every convolution tap, and dot/cross are the
    SAME fold over (+) of pointwise products; scaling a factor scales the result
@@ -432,4 +457,37 @@ Proof.
   intros g p N Hp. induction N as [| k IH]; simpl.
   - reflexivity.
   - rewrite IH, Nat.mul_mod_idemp_l by exact Hp. f_equal. lia.
+Qed.
+
+(* ---- the UNIVERSAL counterpart of the witness search: TAUTOLOGY / TRUTH TABLE ----
+   where DECISION asks "does SOME witness exist?", `truth_table` asks "do ALL rows
+   hold?" — a bounded forall over the 2^n assignments. A `true` verdict PROVES the
+   property for every row (the tautology / valid-formula kernel). *)
+Definition all_rows (check : nat -> bool) (bound : nat) : bool := forallb check (seq 0 bound).
+
+Theorem tautology_sound : forall check bound,
+  all_rows check bound = true -> forall w, (w < bound)%nat -> check w = true.
+Proof.
+  intros check bound H w Hw. unfold all_rows in H. rewrite forallb_forall in H.
+  apply H. apply in_seq. lia.
+Qed.
+
+(* instance: a CNF checked true on every assignment is a tautology (all 2^n rows). *)
+Theorem cnf_tautology_sound : forall f n,
+  all_rows (fun a => cnf_sat a f) (2 ^ n) = true -> forall a, (a < 2 ^ n)%nat -> cnf_sat a f = true.
+Proof. intros f n. apply tautology_sound. Qed.
+
+(* ---- A3 branch instance 5: CHINESE REMAINDER (the `crt` kernel) ----
+   a witness x meeting every congruence x ≡ rᵢ (mod mᵢ) is a solution of the
+   simultaneous system — found by the one bounded search. *)
+Definition crt_check (rs ms : list nat) (x : nat) : bool :=
+  forallb (fun rm => Nat.eqb (x mod snd rm) (fst rm mod snd rm)) (combine rs ms).
+
+Theorem witness_crt_sound : forall rs ms bound,
+  decide (crt_check rs ms) bound = true ->
+  exists x, forall r m, In (r, m) (combine rs ms) -> (x mod m = r mod m)%nat.
+Proof.
+  intros rs ms bound H. apply witness_sound in H. destruct H as [x [_ Hc]].
+  exists x. intros r m Hin. unfold crt_check in Hc. rewrite forallb_forall in Hc.
+  specialize (Hc (r, m) Hin). simpl in Hc. apply Nat.eqb_eq in Hc. exact Hc.
 Qed.
