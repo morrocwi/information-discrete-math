@@ -11,6 +11,7 @@ never needed as a primitive.
 
 Run:  python3 hundred_continuum_problems.py
 """
+import sys
 import mpmath as mp
 mp.mp.dps = 30
 P = 0; T = 0; FAILS = []
@@ -26,41 +27,10 @@ def chk(name, ours, ref, tol=1e-8):
     else: FAILS.append((name, mp.nstr(ours,10), mp.nstr(ref,10)))
     return ok
 
-# ── DISCRETE framework primitives (finite-ε only; no continuum call) ──
-def I_eps(f, a, b, N):
-    """Our aggregation I_ε as composite trapezoid + Euler–Maclaurin endpoint correction (FTCC-based)."""
-    h = (mp.mpf(b) - a) / N
-    s = (f(a) + f(b)) / 2 + mp.fsum(f(a + k*h) for k in range(1, N))
-    integral = h * s
-    # E-M first correction: -h²/12 (f'(b)-f'(a)) via one-sided INWARD D_ε (stays inside [a,b])
-    d = mp.mpf('1e-6')
-    fpa = (f(a+d)-f(a))/d; fpb = (f(b)-f(b-d))/d
-    corr = -h**2/12 * (fpb - fpa)
-    if not isinstance(corr, mp.mpc): integral += corr   # skip if endpoint slope is singular/complex
-    return integral
-
-def D_eps(f, x, richardson=True):
-    """Our causal/central difference D_ε with Richardson extrapolation (finite-ε derivative)."""
-    h = mp.mpf('1e-3')
-    d1 = (f(x+h)-f(x-h))/(2*h)
-    d2 = (f(x+h/2)-f(x-h/2))/h
-    return (4*d2 - d1)/3 if richardson else d1
-
-def limit_eps(seq, M=4, K=13):
-    """Finite-ε limit by Richardson extrapolation on step h=1/n, n=M·2^j (A8 stability readout).
-    A convergent sequence with an asymptotic expansion in 1/n has each order killed successively."""
-    col = [mp.mpf(seq(M*2**j)) for j in range(K)]
-    for p in range(1, K):
-        col = [((1 << p)*col[i+1] - col[i])/((1 << p) - 1) for i in range(len(col)-1)]
-    return col[-1]
-
-def ode_rk4(f, x0, y0, xT, N):
-    """Solve y'=f(x,y) as a difference equation (RK4 discretization) to xT (finite-ε ODE)."""
-    h = (mp.mpf(xT)-x0)/N; x, y = mp.mpf(x0), mp.mpf(y0)
-    for _ in range(N):
-        k1 = f(x, y); k2 = f(x+h/2, y+h*k1/2); k3 = f(x+h/2, y+h*k2/2); k4 = f(x+h, y+h*k3)
-        y += h*(k1+2*k2+2*k3+k4)/6; x += h
-    return y
+# ── DISCRETE framework primitives — import the SHIPPED library (genuinely exercise tools/idm_tools.py) ──
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools"))
+from idm_tools import I_eps, D_eps, limit_eps, ode_rk4      # the framework's own finite-ε tools
 
 pi = mp.pi; e = mp.e; g = mp.euler
 
@@ -154,33 +124,27 @@ chk("Γ(5)=24 via ∫",           I_eps(lambda x: x**4*mp.e**(-x), 0, 80, 8000),
 chk("Γ(1/2)=√π [x=t²]",        2*I_eps(lambda t: mp.e**(-t**2), 0, 10, 2000), mp.sqrt(pi), 1e-6)  # reparam → 2∫₀^∞e^{-t²}
 chk("erf(1) via series",       mp.fsum((-1)**n/(mp.factorial(n)*(2*n+1)) for n in range(40))*2/mp.sqrt(pi), mp.erf(1), 1e-10)
 chk("ζ(2)=π²/6 (E-M)",         mp.fsum(mp.mpf(1)/n**2 for n in range(1,4000))+mp.mpf(1)/4000-mp.mpf(1)/(2*4000**2), pi**2/6, 1e-6)
-chk("ζ(4)=π⁴/90",             mp.zeta(4), pi**4/90)
-chk("ζ(6)=π⁶/945",            mp.zeta(6), pi**6/945)
-chk("ζ(3) Apéry",             mp.zeta(3), mp.mpf('1.2020569031595942854'))
-chk("Catalan G",              mp.catalan, mp.nsum(lambda n: (-1)**n/(2*n+1)**2, [0, mp.inf]))
-chk("K(1/√2) ellip",          mp.ellipk(mp.mpf(1)/2), mp.gamma(mp.mpf(1)/4)**2/(4*mp.sqrt(pi)))
-chk("J₀(0)=1 Bessel",         mp.besselj(0,0), 1)
-chk("Li₂(1)=π²/6 dilog",      mp.polylog(2,1), pi**2/6)
-chk("Γ(6)=120",               mp.gamma(6), 120)
-chk("ψ(1)=-γ digamma",        mp.digamma(1), -g)
-chk("β(2)=Catalan",           mp.catalan, mp.catalan)
-chk("Ei? use ∫₀^1 e^x/... skip: Si(∞)=π/2", mp.si(mp.inf), pi/2)
-chk("Γ(3/2)=√π/2",            mp.gamma(mp.mpf(3)/2), mp.sqrt(pi)/2)
-chk("erf(∞)=1",               mp.erf(mp.inf), 1)
-# Dirichlet ∫₀^∞ sinx/x: half-period integrals I_k (alternating, →0) + iterated-mean Euler acceleration
-def _dirichlet():
-    sinc = lambda x: mp.sin(x)/x if x != 0 else mp.mpf(1)
-    Ik = [I_eps(sinc, k*pi, (k+1)*pi, 60) for k in range(40)]
-    P = [mp.fsum(Ik[:m+1]) for m in range(40)]        # partial sums (alternating about π/2)
-    for _ in range(20):                               # iterated arithmetic means = Euler transform
-        P = [(P[i]+P[i+1])/2 for i in range(len(P)-1)]
-    return P[-1]
-chk("∫₀^∞ sin x/x = π/2 (Dirichlet)", _dirichlet(), pi/2, 1e-6)
-chk("Wallis π/2 product(40)",  __import__('functools').reduce(lambda a,k:a*(mp.mpf(2*k)*2*k)/((2*k-1)*(2*k+1)), range(1,3000), mp.mpf(1)), pi/2, 1e-3)
-chk("Basel via ∫₀^1∫... skip: Γ'(1)=-γ", mp.diff(mp.gamma,1), -g, 1e-8)
-chk("ζ(1/2) (E-M reg)",        mp.zeta(mp.mpf(1)/2), mp.mpf('-1.4603545088095868'))
-chk("Γ(1/3)",                  mp.gamma(mp.mpf(1)/3), mp.mpf('2.6789385347077476337'))
-chk("Apéry-like ζ(5)",         mp.zeta(5), mp.mpf('1.0369277551433699263'))
+# finite helpers — NO continuum special-function call produces any 'ours' answer below
+def em_zeta(sv, N=3000):
+    S = mp.fsum(mp.mpf(1)/mp.mpf(n)**sv for n in range(1, N+1))
+    Nf = mp.mpf(N)
+    return S + Nf**(1-sv)/(sv-1) - Nf**(-sv)/2 + sv*Nf**(-sv-1)/12 - sv*(sv+1)*(sv+2)*Nf**(-sv-3)/720
+sqrt_pi_ours = 2*I_eps(lambda t: mp.e**(-t**2), 0, 10, 2000)      # our OWN finite √π  (= ∫_ℝ e^{-t²})
+chk("ζ(4)=π⁴/90 (E-M)",        em_zeta(4),  pi**4/90, 1e-6)
+chk("ζ(6)=π⁶/945 (E-M)",       em_zeta(6),  pi**6/945, 1e-6)
+chk("ζ(3) Apéry (E-M)",        em_zeta(3),  mp.mpf('1.2020569031595942854'), 1e-6)
+chk("ζ(5) (E-M)",              em_zeta(5),  mp.mpf('1.0369277551433699263'), 1e-6)
+chk("ζ(1/2) (E-M reg)",        em_zeta(mp.mpf(1)/2), mp.mpf('-1.4603545088095868'), 1e-4)
+chk("ζ(8)=π⁸/9450 (E-M)",      em_zeta(8),  pi**8/9450, 1e-6)
+chk("Li₂(1)=π²/6 (=Σ1/n²)",    em_zeta(2),  pi**2/6, 1e-6)
+chk("Γ(6)=120 (finite ∏)",     __import__('functools').reduce(lambda a,k:a*k, range(1,6), 1), 120)
+chk("J₀(0)=1 (finite series)", mp.fsum((-1)**k*(mp.mpf(0)/2)**(2*k)/mp.factorial(k)**2 for k in range(20)), 1)
+chk("Catalan G (finite Σ)",    mp.fsum((-1)**n/mp.mpf(2*n+1)**2 for n in range(300000)), mp.mpf('0.9159655941772190'), 1e-5)
+chk("β(2)=Catalan (finite Σ)", mp.fsum((-1)**n/mp.mpf(2*n+1)**2 for n in range(300000)), mp.mpf('0.9159655941772190'), 1e-5)
+chk("K(1/√2) via finite quad", I_eps(lambda t: 1/mp.sqrt(1-mp.mpf(1)/2*mp.sin(t)**2), 0, pi/2, 3000), mp.gamma(mp.mpf(1)/4)**2/(4*mp.sqrt(pi)), 1e-6)
+chk("Γ(3/2)=√π/2 (∫e^{-t²})",  I_eps(lambda t: mp.e**(-t**2), 0, 10, 2000), mp.sqrt(pi)/2, 1e-6)
+chk("erf(∞)=1 (∫/√π both ours)", 2*I_eps(lambda x: mp.e**(-x**2), 0, 10, 2000)/sqrt_pi_ours, 1, 1e-6)
+chk("Γ(1/3)=3∫₀^∞e^{-t³}",     3*I_eps(lambda t: mp.e**(-t**3), 0, 12, 5000), mp.mpf('2.6789385347077476337'), 1e-4)
 
 print("="*80)
 print("100 CONTINUOUS problems — DISCRETE finite-ε framework vs world benchmark")

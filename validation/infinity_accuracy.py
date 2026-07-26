@@ -75,8 +75,12 @@ show("ln 2 (as Σ(−1)^{k+1}/k)", "Σ_{k=1}^∞",
      richardson_limit(lambda n: mp.fsum((-1)**(k+1)/mp.mpf(k) for k in range(1, n+1)), M=2, K=12), mp.log(2), "Richardson")
 show("Catalan G", "Σ(−1)^k/(2k+1)²",
      mp.fsum((-1)**k/mp.mpf(2*k+1)**2 for k in range(100000)), mp.catalan, "N=1e5")
+def zeta_m1_finite(e=mp.mpf(1)/100):
+    S1 = mp.fsum(n*mp.e**(-e*n) for n in range(1, int(80/float(e))))
+    S2 = mp.fsum(n*mp.e**(-(e/2)*n) for n in range(1, int(160/float(e))))
+    return (4*(S2 - 4/e**2) - (S1 - 1/e**2))/3          # remove 1/ε² pole via Richardson → −1/12
 show("ζ(−1) = −1/12 (regularized)", "1+2+3+… ",
-     mp.zeta(-1), mp.mpf(-1)/12, "analytic-continuation readout")
+     zeta_m1_finite(), mp.mpf(-1)/12, "finite smoothed sum Σ n·e^{−εn}, pole removed (no zeta call)")
 
 # ---- MULTI-DIMENSIONAL (the dimensions physics actually uses: 3D space, 3+1=4D spacetime, d-dim) ----
 # 3D Gaussian ∫_{ℝ³} e^{−|x|²} d³x = π^{3/2}, via the radial readout ∫₀^∞ 4πr²·e^{−r²} dr (the 4πr² Jacobian IS the 3D).
@@ -88,7 +92,9 @@ show("∫_{ℝ⁴} e^{−r²} d⁴x = π²  (4D spacetime)", "∫ over ℝ⁴",
 # d-dimensional Gaussian = π^{d/2} via the radial readout ∫₀^∞ S_{d-1}·r^{d-1}·e^{−r²} dr; genuinely d-dim
 # (the S_{d-1} r^{d-1} Jacobian carries every one of the d dimensions), RAM-light for ANY d.
 def gaussian_dD(d, b=16, N=9000):
-    Sd = 2*mp.pi**(mp.mpf(d)/2)/mp.gamma(mp.mpf(d)/2)   # surface area of the unit (d−1)-sphere
+    z = mp.mpf(d)/2
+    gam = trap_improper(lambda t: t**(z-1)*mp.e**(-t) if t>0 else mp.mpf(0), 60, 8000)  # Γ(z) finite quadrature
+    Sd = 2*mp.pi**(mp.mpf(d)/2)/gam                     # surface area of the unit (d−1)-sphere (Γ computed finitely)
     return trap_improper(lambda r: Sd*r**(mp.mpf(d)-1)*mp.e**(-r**2), b, N)
 for d in (7, 11):    # d=11 = M-theory dimension
     tag = "M-theory 11D" if d == 11 else "QFT-scale"
