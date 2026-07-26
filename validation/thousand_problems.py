@@ -41,6 +41,14 @@ def check(level, ok, example=None):
     if example and level not in EXAMPLES:
         EXAMPLES[level] = example
 
+def exact_eq(a, b):
+    # ROBUST exact comparison for exact values — never uses the nsimplify float-heuristic
+    def toR(x):
+        if isinstance(x, Q): return sp.Rational(x.numerator, x.denominator)
+        return sp.Rational(x)          # int / sympy Integer|Rational
+    if isinstance(a, tuple): return all(exact_eq(x, y) for x, y in zip(a, b))
+    return toR(a) == toR(b)
+
 def approx(a, b, tol=1e-9):
     a = mp.mpf(a); b = mp.mpf(b)
     return abs(a - b) <= tol * max(1, abs(b))
@@ -59,7 +67,7 @@ def level1():
             ours, ref = Q(a, b) + Q(c, d), sp.Rational(a, b) + sp.Rational(c, d)
         else:  # order of operations a + b*c
             ours, ref = Q(a) + Q(b) * Q(c), a + b * c
-        ok = sp.nsimplify(ours) == sp.nsimplify(ref)
+        ok = exact_eq(ours, ref)
         check('L1 ประถม (arithmetic/fractions)', ok,
               f"a⊕(b⊗c) with a={a},b={b},c={c} → {Q(a)+Q(b)*Q(c)} (= exact ℚ readout)")
 
@@ -94,8 +102,7 @@ def level2():
             a, n = random.randint(2, 5), random.randint(2, 6)
             x = a ** n
             ours, ref = int(round(math.log(x, a))), n
-        ok = sp.simplify(sp.sympify(ours) - sp.sympify(ref)) == 0 if not isinstance(ours, tuple) \
-             else all(sp.simplify(sp.sympify(o) - sp.sympify(r)) == 0 for o, r in zip(ours, ref))
+        ok = exact_eq(ours, ref)
         check('L2 มัธยม (algebra/series/number)', ok,
               "aⁿ, √, quadratic roots, Σ arith/geom, gcd, mod, discrete-log — all exact ℚ")
 
@@ -122,7 +129,7 @@ def level3():
             N, p = random.randint(3, 30), random.randint(1, 5)
             ours = sum(Q(i) ** p for i in range(1, N + 1))
             ref = sp.summation(sp.symbols('i')**p, (sp.symbols('i'), 1, N))
-            ok = sp.nsimplify(ours) == ref; ex="Faulhaber Σi^p = exact rational (falling powers, Δn^{(k)}=k n^{(k-1)})"
+            ok = exact_eq(ours, ref); ex="Faulhaber Σi^p = exact rational (falling powers, Δn^{(k)}=k n^{(k-1)})"
         elif k == 'binom':   # C(n,k) and Δ of falling factorial
             n, kk = random.randint(2, 20), random.randint(0, 8); kk = min(kk, n)
             ours, ref = math.comb(n, kk), int(sp.binomial(n, kk))

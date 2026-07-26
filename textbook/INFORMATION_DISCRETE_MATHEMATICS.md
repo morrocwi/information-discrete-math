@@ -976,18 +976,21 @@ regularization-residue / asymptotics) and checked against an **independent refer
 
 | level | area | pass |
 |---|---|---|
-| **L1 ประถม** | arithmetic, fractions, order (`⊕⊗÷`) | 199/200 |
+| **L1 ประถม** | arithmetic, fractions, order (`⊕⊗÷`) | 200/200 |
 | **L2 มัธยม** | `^`,`√`, quadratics, arith/geom series, gcd, mod, discrete-`log` | 200/200 |
-| **L3 ปริญญาตรี** | FTCC & causal product rule (exact `ℚ`), Faulhaber `Σiᵖ`, binomial, determinants, Stirling | 199/200 |
+| **L3 ปริญญาตรี** | FTCC & causal product rule (exact `ℚ`), Faulhaber `Σiᵖ`, binomial, determinants, Stirling | 200/200 |
 | **L4 ปริญญาโท** | `ζ(2k)` & `γ` via Euler–Maclaurin, recurrences, roots of unity, Chebyshev/LLN, Bernoulli | 200/200 |
 | **L5 ปริญญาเอก** | `ζ(−1)=−1/12`, Abel/η sums, Apéry `ζ(3)`, Ramanujan `1/π`, partition asymptotics, continued fractions, Catalan, saddle-point Stirling | 200/200 |
-| | **TOTAL** | **998/1000 (99.8%)** |
+| | **TOTAL** | **1000/1000 (100%)** |
 
 **Honest reading (tier-aware).** L1–L3 are largely **exact `ℚ`** — there the framework's *own*
 computation *is* the answer, so these validate the operator and discrete-calculus layers (FTCC and the
 causal product rule hold with **zero residue**, `Th_coqc`). L4–L5 are **genuine numeric-vs-reference**:
 finite-`ε` partial sums + Euler–Maclaurin reproduce `ζ(2k)`, `γ`, `ζ(3)` to `~1e-8`; regularization
 gives `ζ(−1)=−1/12`, `1−1+1−…=1/2` (`finite_diagnostic`, post-A8-stability); Hardy–Ramanujan `p(n)` and
-Stirling are **leading-order** (few-%), disclosed as such. The 2 misses are small-`n` asymptotic
-tolerance edges — recorded, not hidden. *The framework computes the standard mathematics, grade-school
+Stirling are **leading-order** (few-%), disclosed as such. An earlier draft showed 2 misses; detailed analysis found the CAUSE was **not the mathematics** but a
+fragile test-harness step (`sympy.nsimplify`, a float→symbolic *heuristic*, was misused to compare
+exact large rationals). Replaced by exact `ℚ` equality (`exact_eq`) — the robust long-term fix — after
+which the suite is **1000/1000**. *(The lesson is itself the framework's: an exact readout must be
+compared as an exact readout, never through a floating-point guess.)* *The framework computes the standard mathematics, grade-school
 to frontier, without ever making the continuum a primitive.*
