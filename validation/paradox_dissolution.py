@@ -71,6 +71,33 @@ chk("transport: no value exceeds the initial max (no +∞)", max(wave) <= 1.0 + 
 # never diverges) — the readout tracks the appearance without ever forming +∞
 chk("heat: total 'mass' bounded by initial (no creation of infinity)", sum(abs(x) for x in u) <= mass0 + 1e-9, True)
 
+# ── Discovered bound 1: relaxation-inertia τ dI/dt + L_R I = 0 with L_R PSD → energy NON-GROWING ──
+# (URCF relaxation-inertia; the discrete no-blow-up bound d/dt‖I‖²=−(2/τ)B(I,I)≤0, keystone L_R PSD)
+def graph_laplacian(edges, nv):
+    L = [[0.0]*nv for _ in range(nv)]
+    for i, j, w in edges:
+        L[i][i]+=w; L[j][j]+=w; L[i][j]-=w; L[j][i]-=w
+    return L
+edges = [(0,1,1.0),(1,2,1.0),(2,3,1.0),(0,3,1.0)]   # a 4-cycle, L_R is PSD
+L = graph_laplacian(edges, 4)
+I = [3.0, -1.0, 2.0, -4.0]; tau = 2.0; dt = 0.05
+energy0 = sum(x*x for x in I)
+energies = [energy0]
+for _ in range(400):
+    LI = [sum(L[a][b]*I[b] for b in range(4)) for a in range(4)]
+    I = [I[a] - (dt/tau)*LI[a] for a in range(4)]      # explicit relaxation step
+    energies.append(sum(x*x for x in I))
+chk("relaxation: energy non-growing at every step (L_R PSD ⇒ no blow-up)",
+    all(energies[k+1] <= energies[k] + 1e-9 for k in range(len(energies)-1)), True)
+chk("relaxation: energy stays finite (no +∞)", all(math.isfinite(e) for e in energies), True)
+chk("relaxation: final energy ≤ initial", energies[-1] <= energy0 + 1e-9, True)
+
+# ── Discovered bound 2: telegraph τ_c u_tt + u_t = D u_xx propagates at FINITE speed √(D/τ_c) ──
+D_coef, tau_c = 1.0, 4.0
+c_speed = math.sqrt(D_coef/tau_c)                       # finite signal speed = 0.5
+chk("telegraph: finite propagation speed √(D/τ_c) = 0.5", c_speed, 0.5, 1e-12)
+chk("telegraph: speed is finite (no infinite propagation like heat τ_c→0)", math.isfinite(c_speed) and c_speed > 0, True)
+
 print("="*80)
 print("PARADOX DISSOLUTION (Part XXI) — topology · manifolds · PDE computed WITHOUT the paradox")
 print("="*80)

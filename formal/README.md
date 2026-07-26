@@ -22,6 +22,7 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 |---|---|---|
 | `keystone_B_eq_I` (`IDM_Keystone.v`) | §5.1 Th 5.1 | **keystone** `B(Φ,Φ)=I(Φ)`: `ΦᵀL_RΦ = Σ_edges w·(Φi−Φj)²` |
 | `keystone_nonneg` (`IDM_Keystone.v`) | §5.1 | `L_R` positive semidefinite (retained metric is a seminorm) |
+| `relaxation_dissipation` (`IDM_Keystone.v`) | §21.3 | no-blow-up: `d/dt‖I‖²=−(2/τ)B(I,I)≤0` for `τ dI/dt+L_R I=S` |
 | `kuratowski_pair_inj` | §10.1 Th 10.1 | Kuratowski ordered-pair injectivity `(a,b)=(c,d) ⟺ a=c ∧ b=d` |
 | `handshake_lemma` | §15.2 | endpoint multiset of an edge list has length `2·|E|` (Σ deg = 2|E|) |
 | `pigeonhole` | §15.3 | a `NoDup` list of values `< n` has length `≤ n` |

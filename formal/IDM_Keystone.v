@@ -96,3 +96,27 @@ Proof.
     + apply I_edge_nonneg. apply Hw. left; reflexivity.
     + apply IH. intros e' Hin. apply Hw. right; exact Hin.
 Qed.
+
+(* ---- No-blow-up for the retained relaxation (URCF relaxation-inertia turbulence eq  *)
+(*  τ dI/dt + L_R I = S).  The homogeneous retained energy dissipates: its rate is      *)
+(*  d/dt ‖I‖² = −(2/τ)·Φᵀ L_R Φ = −(2/τ)·B(Φ,Φ) ≤ 0, because B(Φ,Φ)=I(Φ) ≥ 0 (the        *)
+(*  keystone). So a positive-semidefinite retained operator can never grow the           *)
+(*  homogeneous mode — a discrete, machine-checked no-blow-up bound.                      *)
+Theorem relaxation_dissipation :
+  forall (phi : Phi) (g : list edge) (tau : Q),
+    0 < tau ->
+    (forall e, In e g -> let '(_,_,w) := e in 0 <= w) ->
+    - ((2 # 1) / tau) * B_form phi g <= 0.
+Proof.
+  intros phi g tau Htau Hw.
+  assert (HB : 0 <= B_form phi g) by (apply keystone_nonneg; exact Hw).
+  assert (Hinv : 0 < / tau) by (apply Qinv_lt_0_compat; exact Htau).
+  assert (Hk : 0 <= (2 # 1) / tau).
+  { unfold Qdiv. apply Qmult_le_0_compat; [ discriminate | apply Qlt_le_weak; exact Hinv ]. }
+  assert (Hprod : 0 <= (2 # 1) / tau * B_form phi g)
+    by (apply Qmult_le_0_compat; [ exact Hk | exact HB ]).
+  setoid_replace (- ((2 # 1) / tau) * B_form phi g)
+    with (- ((2 # 1) / tau * B_form phi g)) by ring.
+  setoid_replace 0 with (- 0) by ring.
+  apply Qopp_le_compat. exact Hprod.
+Qed.

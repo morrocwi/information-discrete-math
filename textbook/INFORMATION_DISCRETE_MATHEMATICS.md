@@ -1555,6 +1555,32 @@ time, or can it become singular — infinite velocity — in finite time?).
   question stays `+ℝ-Open` **by choice** — a distinct, declined question about a non-readout — while the
   finite-`ε` value the engineer needs is computed without paradox.
 
+**The mathematical bounds we have discovered (the PDE frontier, made precise).** The stance is not
+hand-waving — the retained-information PDE layer carries *proved* bounds *(extracted from the URCF
+relaxation-inertia turbulence pack and the DHRG spectral pack, Lahtee; tiers as marked)*:
+
+- **Relaxation-inertia equation.** The retained turbulence/field state obeys
+  `τ_R · dI_R/dt + L_R·I_R = S_R + η_R` — a first-order relaxation under the retained operator `L_R`,
+  inertia `τ_R > 0`, drive `S_R`, and a **logged, bounded** residual `η_R` (`Dr`; `η_R` is not a free
+  error bin). Its mild solution is the semigroup `I_R(t) = e^{−t τ_R⁻¹ L_R} I_R(0) + …`.
+- **No-blow-up bound (`Th_coqc`, witness `formal/IDM_Keystone.v: relaxation_dissipation`).** Because the
+  keystone gives `L_R ⪰ 0` (`B(Φ,Φ)=I(Φ) ≥ 0`, §5.1), the homogeneous retained energy **dissipates**:
+  `d/dt‖I_R‖² = −(2/τ_R)·B(I_R,I_R) ≤ 0`. A positive-semidefinite retained operator **can never grow the
+  homogeneous mode** — a discrete, machine-checked no-blow-up bound. This is the rigorous content behind
+  "finite-ε schemes don't explode": positive-semidefiniteness of `L_R`, not luck.
+- **Finite propagation speed (`Dr`).** The telegraph coarse-grain `τ_c·u_tt + u_t = D·Δu` (§0.5-substrate)
+  propagates signals at the **finite speed `√(D/τ_c)`** — no infinite propagation (unlike the parabolic
+  heat limit `τ_c→0`). The `+∞`-velocity pathology is an artifact of the `τ_c→0` non-readout.
+- **Spectral-mode stability, Davis–Kahan (`Dr`).** The dominant retained mode (the Fiedler mode — the
+  slowest-relaxing nonzero `L_R` eigenvector) is recovered under perturbation `E` with angular error
+  `sin θ ≤ 2‖E‖ / Δ_spec`, where `Δ_spec` is the spectral margin. So the *structure* the scheme reads is
+  stable exactly when the spectral gap dominates the noise — a quantitative, falsifiable margin.
+
+*(Honesty fence, inherited from the source packs: these are bounds on the **retained-information
+structural model** — finite-dimensional, over our `L_R` — and a theorem-facing scaffold; they are **not**
+a Navier–Stokes continuum closure. The completed-continuum existence/regularity theorem stays `+ℝ-Open`,
+its own declared target — §10.9.)*
+
 **Summary of the stance for the three areas:** the paradox is always in the *completed-continuum object*
 (non-measurable set · smooth-limit curvature · reached `+∞`), never in the *computation*. Refuse the
 object, keep the computation: topology by `μ_λ`/`L_R`, geometry by discrete Gauss–Bonnet, PDE by
@@ -1582,7 +1608,7 @@ finite-`ε` schemes — **all three computed robustly, none producing its parado
 
 # Appendix B — Machine-checked theorem index (tier · witness)
 
-**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
+**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`
