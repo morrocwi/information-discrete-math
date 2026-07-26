@@ -12,7 +12,7 @@ answer; an unknown kind or a failure returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP
 
 try:
     import mpmath as mp
@@ -439,6 +439,29 @@ def _l1(p): return _ok("limit_oneside", SER.limit_oneside(_fn(p["f"]), _val(p["a
 def _linf(p): return _ok("limit_infinity", SER.limit_infinity(_fn(p["f"])), "Richardson on 1/n of f(n)")
 @kind("lhopital")
 def _lh(p): return _ok("lhopital", SER.lhopital(_fn(p["num"]), _fn(p["den"]), _val(p["a"])), "L'Hôpital via finite derivatives")
+
+
+# ================================================================ special functions ================
+def _spec(name, fn, *argnames):
+    @kind(name)
+    def _h(p, _fn=fn, _an=argnames):
+        return _ok(name, _fn(*[_val(p[a]) if a not in ("n",) else int(p[a]) for a in _an]), f"finite series/recurrence — {name}")
+    return _h
+_spec("gamma", SP.gamma, "z"); _spec("beta", SP.beta, "a", "b"); _spec("digamma", SP.digamma, "x")
+_spec("bessel_J", SP.bessel_J, "n", "x"); _spec("bessel_I", SP.bessel_I, "n", "x")
+_spec("legendre_P", SP.legendre_P, "n", "x"); _spec("hermite_H", SP.hermite_H, "n", "x")
+_spec("chebyshev_T", SP.chebyshev_T, "n", "x"); _spec("chebyshev_U", SP.chebyshev_U, "n", "x")
+_spec("erf", SP.erf, "x"); _spec("erfc", SP.erfc, "x")
+_spec("Ei", SP.Ei, "x"); _spec("E1", SP.E1, "x"); _spec("li", SP.li, "x")
+_spec("Si", SP.Si, "x"); _spec("Ci", SP.Ci, "x"); _spec("fresnel_S", SP.fresnel_S, "x"); _spec("fresnel_C", SP.fresnel_C, "x")
+_spec("elliptic_K", SP.elliptic_K, "m"); _spec("elliptic_E", SP.elliptic_E, "m")
+_spec("hyp2f1", SP.hyp2f1, "a", "b", "c", "x"); _spec("hyp1f1", SP.hyp1f1, "a", "b", "x")
+_spec("airy_Ai", SP.airy_Ai, "x"); _spec("lambert_W", SP.lambert_W, "x")
+_spec("polylog", SP.polylog, "s", "x"); _spec("dirichlet_eta", SP.dirichlet_eta, "s")
+_spec("dirichlet_beta", SP.dirichlet_beta, "s"); _spec("hurwitz_zeta", SP.hurwitz_zeta, "s", "a")
+
+@kind("laguerre_L")
+def _lag(p): return _ok("laguerre_L", SP.laguerre_L(int(p["n"]), _val(p["x"]), _val(p.get("alpha", 0))), "finite recurrence — associated Laguerre")
 
 
 # ================================================================ dispatch ==========================

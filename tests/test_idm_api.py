@@ -208,3 +208,34 @@ def test_limits_series():
     assert abs(_val(idm.solve({"kind": "limit_oneside", "f": "sin(x)/x", "a": 0, "side": "+"})) - 1) < 1e-8
     assert abs(_val(idm.solve({"kind": "limit_infinity", "f": "(1+1/x)**x"})) - float(mp.e)) < 1e-6
     assert abs(_val(idm.solve({"kind": "lhopital", "num": "exp(x)-1", "den": "x", "a": 0})) - 1) < 1e-8
+
+
+def test_special_functions():
+    import mpmath as mp
+    checks = [
+        ({"kind": "gamma", "z": 5}, 24),
+        ({"kind": "beta", "a": 2, "b": 3}, float(mp.mpf(1) / 12)),
+        ({"kind": "bessel_J", "n": 0, "x": 1}, float(mp.besselj(0, 1))),
+        ({"kind": "bessel_I", "n": 0, "x": 1}, float(mp.besseli(0, 1))),
+        ({"kind": "legendre_P", "n": 3, "x": 0.5}, float(mp.legendre(3, mp.mpf("0.5")))),
+        ({"kind": "hermite_H", "n": 3, "x": 1}, float(mp.hermite(3, 1))),
+        ({"kind": "chebyshev_T", "n": 4, "x": 0.5}, float(mp.chebyt(4, mp.mpf("0.5")))),
+        ({"kind": "erf", "x": 1}, float(mp.erf(1))),
+        ({"kind": "Ei", "x": 1}, float(mp.ei(1))),
+        ({"kind": "Si", "x": 1}, float(mp.si(1))),
+        ({"kind": "elliptic_K", "m": 0.5}, float(mp.ellipk(mp.mpf("0.5")))),
+        ({"kind": "elliptic_E", "m": 0.5}, float(mp.ellipe(mp.mpf("0.5")))),
+        ({"kind": "hyp2f1", "a": 1, "b": 1, "c": 2, "x": 0.5}, float(2 * mp.log(2))),
+        ({"kind": "hyp1f1", "a": 1, "b": 2, "x": 1}, float(mp.e - 1)),
+        ({"kind": "airy_Ai", "x": 1}, float(mp.airyai(1))),
+        ({"kind": "lambert_W", "x": 1}, float(mp.lambertw(1))),
+        ({"kind": "polylog", "s": 2, "x": 0.5}, float(mp.polylog(2, mp.mpf("0.5")))),
+        ({"kind": "dirichlet_eta", "s": 1}, float(mp.log(2))),
+        ({"kind": "dirichlet_beta", "s": 2}, float(mp.catalan)),
+    ]
+    for prob, exact in checks:
+        assert abs(_val(idm.solve(prob)) - exact) < 1e-6, prob["kind"]
+
+
+def test_kind_count_155():
+    assert len(idm.kinds()) >= 150
