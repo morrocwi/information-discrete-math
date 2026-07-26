@@ -91,7 +91,7 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
 | **1. Be surprised (0 deps)** | `python3 prove_it_lite.py` | 8 continuum frontiers from stdlib float |
 | **2. Be surprised (precise)** | `python3 prove_it.py` | the 10 roots to 40 digits |
 | **3. See the breadth** | `python3 prove_it_full.py` | 1278 problems across 5 domains |
-| **4. Be convinced** | `bash formal/verify.sh` | **35 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
+| **4. Be convinced** | `bash formal/verify.sh` | **37 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
 | **5. Read the details** | [`textbook/…`](textbook/INFORMATION_DISCRETE_MATHEMATICS.md) | the full derivations, tier‑tagged; [`INDEX.md`](INDEX.md) is the map |
 
 **Every claim carries an honesty tier — evaluate each on its own tier, never promote evidence across tiers:**
@@ -101,6 +101,14 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
   is what the `prove_it*` suites are; agreement ≠ formal proof).
 - `Dr` — design / interpretive narrative.
 - `+ℝ-Open` — honestly unsolved, or genuinely needs the completed continuum.
+
+**Beyond agreement — certified readouts + knowing when to refuse.** `tools/certified_readout.py` returns
+not just a value but a **certificate** `(q, error‑bound B, status)`: `CERTIFIED` ships a proven bound
+`|q − target| ≤ B ≤ ε`, and `HOLD` refuses to emit a number when the tool's hypotheses fail. The
+geometric‑series case is machine‑checked axiom‑free (`formal/IDM_Certified.v`); the adversarial
+`validation/negative_controls.py` confirms the tools **say HOLD** on `1/log n`, oscillatory, and
+divergent inputs instead of fabricating an answer. Full statement + what's proved vs open:
+[`THEOREM.md`](THEOREM.md).
 
 ## What it is (and what it is not)
 

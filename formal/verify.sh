@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -44,6 +44,8 @@ declare -a THMS=(
   "Deps_product:IDM_Calculus"
   "FTCC_telescope:IDM_Calculus"
   "summation_by_parts:IDM_Calculus"
+  "geom_certified_identity:IDM_Certified"
+  "geom_certified_defect:IDM_Certified"
 )
 
 fail=0

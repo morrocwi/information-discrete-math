@@ -15,7 +15,7 @@ jobs:
       - name: prove_it_full (1278 problems, 5 domains)
         run: python3 prove_it_full.py
       - name: tool self-checks
-        run: python3 tools/idm_tools.py && python3 tools/idm_discipline.py && python3 tools/framework_compliance.py
+        run: python3 tools/idm_tools.py && python3 tools/idm_discipline.py && python3 tools/framework_compliance.py && python3 tools/certified_readout.py
       - name: validations
         run: for f in validation/*.py; do echo "== $f =="; python3 "$f" || exit 1; done
       - name: pytest
