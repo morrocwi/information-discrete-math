@@ -1,0 +1,30 @@
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Coq build artifacts
+*.vo
+*.vok
+*.vos
+*.glob
+*.aux
+.*.aux
+.lia.cache
+.nia.cache
+formal/.lia.cache
+
+# scratch / verify.sh temp files
+formal/chk_*.v
+
+# editor / OS
+.DS_Store
+*.swp
+.venv/
+venv/
