@@ -106,6 +106,10 @@ declare -a THMS=(
   "weak_duality_2:IDM_Reduction"
   "sat_reduces_to_decision:IDM_Reduction"
   "sat_model_sound:IDM_Reduction"
+  "op_swap:IDM_Reduction"
+  "fold_right_perm:IDM_Reduction"
+  "fold_split_even_odd:IDM_Reduction"
+  "modpow_is_fold:IDM_Reduction"
 )
 
 fail=0

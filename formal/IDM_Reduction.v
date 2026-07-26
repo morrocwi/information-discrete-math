@@ -26,7 +26,7 @@
 (*    witness_composite_sound  a found divisor PROVES compositeness           *)
 (* ===================================================================== *)
 
-Require Import ZArith Arith Lia List Bool Factorial.
+Require Import ZArith Arith Lia List Bool Factorial Permutation.
 Import ListNotations.
 
 (* ============================ A2 · the one FOLD ============================ *)
@@ -36,6 +36,29 @@ Fixpoint fold {A : Type} (op : A -> A -> A) (e : A) (f : nat -> A) (N : nat) : A
   | O => e
   | S k => op (fold op e f k) (f k)
   end.
+
+(* ---- the DEEP semiring law: a fold over an associative-COMMUTATIVE operation is
+   invariant under any REORDERING of its inputs. This is the formal justification
+   that the A2 accumulation is well-defined independent of traversal order — the
+   licence to reorder, chunk, and parallelise a fold (over a `list`, via Permutation). *)
+Section FoldPerm.
+  Context {A : Type} (op : A -> A -> A) (e : A).
+  Hypothesis op_assoc : forall x y z, op x (op y z) = op (op x y) z.
+  Hypothesis op_comm  : forall x y, op x y = op y x.
+
+  Lemma op_swap : forall x y z, op x (op y z) = op y (op x z).
+  Proof. intros x y z. rewrite op_assoc, (op_comm x y), <- op_assoc. reflexivity. Qed.
+
+  Theorem fold_right_perm : forall xs ys,
+    Permutation xs ys -> fold_right op e xs = fold_right op e ys.
+  Proof.
+    intros xs ys H. induction H; simpl.
+    - reflexivity.
+    - rewrite IHPermutation. reflexivity.
+    - apply op_swap.
+    - rewrite IHPermutation1, IHPermutation2. reflexivity.
+  Qed.
+End FoldPerm.
 
 (* ---- branch kernel 1: the ANALYSIS / SUMMATION branch = fold over (+) ---- *)
 Open Scope Z_scope.
@@ -247,6 +270,24 @@ Theorem weak_duality_2 : forall c1 c2 x1 x2 a1 a2 b y,
   c1 * x1 + c2 * x2 <= y * b.           (* weak duality: c·x ≤ y·b *)
 Proof. intros; nia. Qed.
 
+(* ---- branch kernel 9: the FFT divide-and-conquer SPLIT ----
+   the sum over [0,2n) decomposes into the sub-fold over the EVEN indices plus the
+   sub-fold over the ODD indices — the Danielson–Lanczos reindexing at the heart of
+   the fast Fourier transform. (Honest fence: the full FFT additionally combines the
+   two halves with roots-of-unity twiddle factors, a complex `+ℝ` readout not claimed
+   here; this certifies the recursive fold decomposition the algorithm is built on.) *)
+Theorem fold_split_even_odd : forall f n,
+  fold Z.add 0 f (2 * n) =
+  fold Z.add 0 (fun k => f (2 * k)%nat) n + fold Z.add 0 (fun k => f (2 * k + 1)%nat) n.
+Proof.
+  intros f n. induction n as [| m IH].
+  - reflexivity.
+  - replace (2 * S m)%nat with (S (S (2 * m))) by lia.
+    cbn [fold]. rewrite IH.
+    replace (S (2 * m))%nat with (2 * m + 1)%nat by lia.
+    ring.
+Qed.
+
 Close Scope Z_scope.
 
 (* ============================ A3 · the one DECISION ============================ *)
@@ -375,4 +416,20 @@ Theorem sat_model_sound : forall a f,
   cnf_sat a f = true -> forall cl, In cl f -> clause_sat a cl = true.
 Proof.
   intros a f H cl Hin. unfold cnf_sat in H. rewrite forallb_forall in H. apply H. exact Hin.
+Qed.
+
+(* ---- crypto forward map: MODULAR EXPONENTIATION is a fold over (× mod p) ----
+   the RSA / elliptic-curve / discrete-log forward map g^N mod p is the SAME generic
+   accumulation, now over the multiplicative operation of the ring ℤ/pℤ. *)
+Fixpoint modpow_fold (g p N : nat) : nat :=
+  match N with
+  | O => 1 mod p
+  | S k => (modpow_fold g p k * g) mod p
+  end.
+
+Theorem modpow_is_fold : forall g p N, p <> 0 -> modpow_fold g p N = (g ^ N) mod p.
+Proof.
+  intros g p N Hp. induction N as [| k IH]; simpl.
+  - reflexivity.
+  - rewrite IH, Nat.mul_mod_idemp_l by exact Hp. f_equal. lia.
 Qed.
