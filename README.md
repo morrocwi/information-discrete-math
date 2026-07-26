@@ -174,6 +174,26 @@ tier, classify each criticism precisely, and end with a bias audit. It exists be
 have repeatedly mis‑framed this as a physics claim or as needing to prove itself against an unexamined
 continuum default.
 
+## Use it as a library & solver API
+
+```python
+import idm
+idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e-8})
+# → CERTIFIED · value √π to 30 digits · finite-stability bound · method disclosed
+idm.certified.geom_series(1/3, 1e-12)   # (value, proven bound, ACCEPT/HOLD)
+idm.shortest_path(W)                    # min-plus all-pairs (Th_coqc laws)
+```
+
+Or run it as a **zero-dependency REST service** and `POST /solve`:
+
+```bash
+python3 -m idm.server        # idm solver API on http://127.0.0.1:8737
+curl -s -X POST localhost:8737/solve -d '{"kind":"constant","name":"pi"}'
+```
+
+The `idm` package is a clean facade over the CI-verified modules; every answer is tier-tagged and, where
+a bound is proven, certified with an `ACCEPT`/`HOLD` verdict. Full reference: [`API.md`](API.md).
+
 ## Install as a Claude Code skill
 
 ```
