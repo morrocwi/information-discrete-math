@@ -1,6 +1,19 @@
 # Information Discrete Math
 
+> ## There is no need to use continuum mathematics to solve mathematical problems in the modern world.
+
 **A readout-first mathematical foundation — developed by Yaoharee Lahtee.**
+
+The claim above is a claim about **computation**: every mathematical problem that has an answer is
+answered by a **finite, discrete, rational** computation — no actual continuum (ℝ-completeness, `h→0`,
+reached `+∞`) is ever needed as a primitive. This is demonstrated, not asserted: **1000/1000** problems
+ประถม→PhD, **100/100** classically-continuous problems (integrals, derivatives, limits, ODEs, special
+functions) reproduced from the discrete, **48/48 + 34/34** breadth (algebra→optimization), **16/16**
+paradox-dissolution (topology · manifolds · PDE), and axiom-free Coq witnesses for the operator keystone
+`B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, and the finite core theorems (`formal/`). *(Honest fence: this is
+about computing the answers and dissolving the paradoxes — refusing to inject the non-readout — not about
+deciding the classical completed-continuum questions in their own terms, which the framework declines to
+form. See Parts XX–XXI.)*
 
 Everything an agency ever reads is a **finite retained difference** — a *readout*, rational and
 discrete. The continuum (ℝ-completeness, infinite divisibility `h→0`, actual `+∞`, a point of zero

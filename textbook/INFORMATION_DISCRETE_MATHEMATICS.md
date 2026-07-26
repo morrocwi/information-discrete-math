@@ -961,7 +961,7 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
 - **Random walk / heat kernel = `D_ε` / `I_ε` / FTCC (`finite_diagnostic`).** the discrete heat step
   `(1 − τ L_R)` and the random walk on the graph are instances of the causal calculus (Part VIII) — the
   transition operator is `I_ε` of the Laplacian flow; no new machinery.
-- **Discrete curvature = second `δ_R` (Th_coqc, exploratory).** curvature is the second retained
+- **Discrete curvature = second `δ_R`** (combinatorial defect-sum `Th_coqc`-elig; the `2π`/radian-angle Gauss–Bonnet form is a `+ℝ-Open` continuum readout, §4.4). curvature is the second retained
   difference; a **discrete Gauss–Bonnet** and a **discrete Bianchi** (abelian, from commuting finite
   differences) hold; **Forman–Ricci** `F(e)=4−deg(u)−deg(v)` is native graph curvature with *zero*
   continuum limit — offered *after the source repo's honest retraction of eight attempts to force a
@@ -1454,9 +1454,12 @@ obtained without the limit being taken as real.**
 
 Topology, differential geometry (manifolds), and PDE were listed `+ℝ-Open` (§10.9). This Part states
 the **decisive position**: that mark is **not a computational gap** — it is the *deliberate refusal to
-reify a non-readout*. **The actual continuum is not needed** for any of these; the continuum-maya
-(Part XX, finite-ε) **computes them all, robustly** — and every classical *paradox* in these areas is
-an **artifact of injecting a non-readout**, dissolved the moment the injection is refused.
+reify a non-readout*. **The actual continuum is not needed for *computing* any of these** — the
+continuum-maya (Part XX, finite-ε) **computes them all, robustly**; for *stating and deciding* the
+classical completed-continuum existence/uniqueness/cardinality questions themselves we take no position
+and form no such object (they stay `+ℝ-Open` **by choice**). Every classical *paradox* in these areas is
+an **artifact of injecting a non-readout into the computation**, dissolved the moment the injection is
+refused — the classical question about the *object* is not thereby answered, only declined.
 
 ## 21.1 Stance: computation is fully covered, the continuum is optional
 
@@ -1464,9 +1467,12 @@ an **artifact of injecting a non-readout**, dissolved the moment the injection i
   (§15.2), Euler characteristic `χ = V−E+F` (§15.3), homology of a simplicial complex (finite linear
   algebra over `ℚ`). No completed point-set continuum is needed to compute them.
 - **Manifolds / differential geometry** — curvature is the **second retained difference** with a
-  **discrete Gauss–Bonnet** (§10.10, the DEC toolkit): the angle defect summed over a triangulation is
-  `2πχ`, exactly, with no smooth chart and no `h→0`.
-- **PDE** — every PDE is *actually* solved by discretization; the finite-ε schemes of Part XI (`D_ε`,
+  **discrete Gauss–Bonnet** (§10.10, DEC toolkit): the vertex angle defects sum to `2πχ`. The **π-free
+  content** is combinatorial and `Th_coqc`-elig — *the total defect is a topological invariant fixed by
+  `χ`*; writing it with `2π` and radian incident angles is the **continuum readout** (route (ii) of §4.4,
+  `+ℝ-Open`), a `finite_diagnostic` value at declared precision, not an exact `ℚ` readout.
+- **PDE** — every PDE is *actually computed* by discretization (not "solved" in the classical
+  existence/uniqueness sense); the finite-ε schemes of Part XI (`D_ε`,
   `I_ε`, the difference-equation ODE, §11.4) **are** the computation. The "continuum limit `L_R→□`"
   (§10.9) is the *appearance*; the computation lives at finite `ε`.
 
@@ -1493,7 +1499,7 @@ computed values are `finite_diagnostic`.)*
 | **Thomson's lamp / supertask** | completed infinite sequence | no completed infinite process (Th 10.4–10.5); the "final state" is a non-readout | the state after any *finite* stage is a plain readout |
 | **Russell's paradox** (foundations) | unrestricted comprehension (set of all sets) | sets are `G_λ`-fibers (admissible, finite, no self-membership, §10.1); the paradoxical object is a non-readout | set operations on admissible fibers are decidable |
 | **Skolem** (countable model of "uncountable") | absolute "uncountable" | "uncountable" is **readout-relative**, not an absolute property; no contradiction at the readout level | — |
-| **Navier–Stokes blow-up / non-uniqueness** (PDE) | the completed continuum solution | the blow-up lives in the `+ℝ-Open` completed limit; the finite-`ε` scheme is well-posed and returns a value | the difference scheme (§11.4) computes the flow at declared `λ` |
+| **Navier–Stokes blow-up / non-uniqueness** (PDE) | the completed continuum solution | the blow-up lives in the `+ℝ-Open` completed limit; the finite-`ε` scheme (run within its stability bound) returns a finite value at declared `λ` — the classical existence question is declined, not decided | the difference scheme (§11.4) computes the flow at declared `λ` |
 
 **The decisive reading.** These are not open problems the framework *fails*; they are non-readouts the
 framework *declines to inject*. The paradox is the symptom of the injection; refusing the injection is
@@ -1505,7 +1511,7 @@ own completed-continuum terms — declining to form that object is the whole poi
 ## 21.3 The three frontier areas, made explicit — the paradox, and the computation that never hits it
 
 *(Each is demonstrated numerically in `validation/paradox_dissolution.py`. Diagnoses `Dr`; computed
-values `finite_diagnostic`; the discrete Gauss–Bonnet identity is `Th_coqc`-elig.)*
+values `finite_diagnostic`; the discrete Gauss–Bonnet identity's π-free/combinatorial content is `Th_coqc`-elig, its `2π`/radian-angle form is a `+ℝ-Open` continuum readout — §4.4.)*
 
 ### Topology — the paradox: **Banach–Tarski** (a solid ball cut into finitely many pieces and
 reassembled into *two* identical balls; measure is created from nothing).
@@ -1525,22 +1531,28 @@ dependence of classical curvature on an `h→0` that never terminates).
 - **Where it comes from:** injecting the smooth chart and `h→0` (`I2`) to define curvature pointwise on
   a continuum manifold.
 - **Why our computation never hits it:** curvature is the **angle defect** concentrated at a vertex —
-  a finite retained second difference — and **discrete Gauss–Bonnet** makes it exact:
-  `Σ_vertices (2π − Σ incident angles) = 2π·χ` (§10.10). No chart, no `h→0`. *Computed:* for a
-  tetrahedron the vertex defects sum to `4π = 2π·2` (χ = 2); for a cube likewise `2π·2` — the total
-  curvature is exact and matches the Euler characteristic, with the surface built of flat faces.
+  a finite retained second difference — and **discrete Gauss–Bonnet** ties it to topology:
+  `Σ_vertices (2π − Σ incident angles) = 2π·χ` (§10.10). No chart, no `h→0`. *Computed (`finite_diagnostic`
+  — the `2π`/radian-angle form is the continuum readout, route (ii) of §4.4, `+ℝ-Open`):* for a
+  tetrahedron the vertex defects sum to `4π = 2π·2` (χ = 2); for a cube likewise `2π·2`. The **exact,
+  π-free** statement is combinatorial: the total defect is a topological invariant fixed by `χ`, with the
+  surface built of flat faces.
 
 ### PDE — the paradox: **Navier–Stokes blow-up / ill-posedness** (does a smooth solution exist for all
 time, or can it become singular — infinite velocity — in finite time?).
 - **Where it comes from:** the question is posed in the **completed continuum**; the "blow-up" is a
   reached `+∞` (`I3`) inside an idealized `ℝ³×ℝ` that is itself a non-readout.
 - **Why our computation never hits it:** a PDE **is** a difference equation (§11.4); the finite-`ε`
-  scheme `y[n+1] = y[n] + I_ε(field)` is **well-posed at the declared resolution** and returns a finite
-  readout at every step — there is no `+∞` to reach. *Computed:* the heat equation `uₜ = uₓₓ` by the
-  explicit finite-`ε` stencil decays a bump smoothly to its declared floor; the transport/wave step
-  advances at finite speed — both return finite fields for all `n`, no blow-up. The completed-continuum
-  existence/uniqueness question stays `+ℝ-Open` **by choice** — it asks about a non-readout — while the
-  value the engineer needs is computed without paradox.
+  scheme `y[n+1] = y[n] + I_ε(field)`, **run at a resolution satisfying the scheme's own declared
+  stability bound (A8 — e.g. `r=αΔt/Δx² ≤ 1/2` for the explicit heat stencil)**, returns a finite readout
+  at every step *inside that stability window* — there is no `+∞` to reach. *(Outside the window the
+  explicit scheme itself diverges numerically; that is a discretization-stability failure, orthogonal to
+  and not evidence of a continuum blow-up.)* *Computed (`finite_diagnostic`, at a stable `r`):* the LINEAR
+  MODEL PDEs — heat `uₜ=uₓₓ` (explicit stencil, `r=0.25`) decaying a bump to its declared floor, and a
+  transport step advancing at finite speed — return finite fields for all `n`, no blow-up. **Navier–Stokes
+  itself (nonlinear, vortex-stretching) is not run here**; its completed-continuum existence/uniqueness
+  question stays `+ℝ-Open` **by choice** — a distinct, declined question about a non-readout — while the
+  finite-`ε` value the engineer needs is computed without paradox.
 
 **Summary of the stance for the three areas:** the paradox is always in the *completed-continuum object*
 (non-measurable set · smooth-limit curvature · reached `+∞`), never in the *computation*. Refuse the

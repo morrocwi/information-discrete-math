@@ -14,8 +14,10 @@ def chk(name, ours, ref, tol=0):
     else: FAILS.append((name, str(ours), str(ref)))
 
 # ═══════ TOPOLOGY — Banach–Tarski dissolved: μ_λ is finitely additive, no doubling ═══════
-# A readout region = a finite set of cells; μ_λ = retained count. Cut into disjoint parts and
-# reassemble → the count is CONSERVED. You cannot read out 1 ball as 2.
+# NOTE (honest scope): this does NOT refute the classical geometric proof; it shows that in a finite-
+# readout framework the paradox's non-measurable pieces are never FORMED (they have no G_λ description),
+# so any actual decomposition conserves the retained count. Finite additivity on finite sets cannot fail
+# by construction — that is exactly the point: no readout region can be read out as two copies.
 region = set(range(1000))                       # a finite readout region, μ = 1000
 parts = [set(range(0,250)), set(range(250,600)), set(range(600,1000))]   # disjoint decomposition
 chk("BanachTarski: disjoint parts partition the region", set().union(*parts), region)
@@ -43,7 +45,11 @@ chk("Gauss–Bonnet octahedron: Σdefect = 4π", total_defect(octa), 4*math.pi, 
 # curvature is FINITE at every vertex — no h→0, no smooth chart needed
 chk("each vertex defect is finite (tetra = π)", all(math.isfinite(2*math.pi-sum(a)) for a in tetra), True)
 
-# ═══════ PDE — Navier–Stokes/blow-up dissolved: finite-ε schemes are well-posed, no +∞ reached ═══════
+# ═══════ PDE — blow-up dissolved: finite-ε schemes return finite fields within their stability window ═══════
+# NOTE (honest scope): these are LINEAR MODEL PDEs (heat, transport), run at a stable stencil ratio
+# (r ≤ 1/2). They are NOT Navier–Stokes (nonlinear, vortex-stretching) — NS's own blow-up question is a
+# distinct, declined +ℝ-Open question about the completed continuum. Outside the stability window an
+# explicit scheme diverges numerically (a discretization failure, not a continuum blow-up).
 # Heat equation u_t = u_xx by the explicit finite-ε stencil: a bump decays smoothly, no blow-up.
 def heat_step(u, r):
     return [u[i] + r*(u[i-1] - 2*u[i] + u[i+1]) for i in range(1, len(u)-1)]
