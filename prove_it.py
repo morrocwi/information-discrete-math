@@ -26,6 +26,10 @@ except Exception:
 
 # ---------- finite-discrete primitives (NO continuum function is ever called to make an answer) ----------
 def exp_finite(x, N=60):                    # e^x from Σ_{k<=N} x^k/k!  (finite Taylor sum)
+    # DEMONSTRATION primitive, valid for the SMALL |x| used in this script's worked examples — a fixed
+    # 60-term Taylor sum with no argument reduction, so accuracy degrades for large |x| (e.g. |x|≳30).
+    # This is a limitation of the demo, not of finite computation: the packaged solver's certified
+    # exponential (idm.certified / idm.exp) uses range reduction and reports its error bound or HOLDs.
     x = R(x); term = R(1); s = R(1)
     for k in range(1, N + 1): term = term * x / k; s += term
     return s
