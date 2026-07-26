@@ -26,6 +26,10 @@ the textbook for the theory.
 | **XIII** | **Linear algebra** | the algebra of `L_R`; ℚ-vector space; metric; det; exact solve | mixed |
 | **XIV** | **Complex analysis** | `i`=quarter-turn; roots of unity; holomorphy=closing transport; residue | mixed |
 | **XV** | **Combinatorics & graph theory** | native `δ_R`=edge; `L_R` connectivity; matrix-tree; Euler χ | `Th_coqc`-elig |
+| **XVI** | **Measure & functional analysis** | discrete measure `μ_λ=I_ε(1_S)`; `L^p`; finite spectral theorem; Riesz | mixed |
+| **XVII** | **Category theory** | `G_λ` reflector; `E=Ẽ∘G_λ` Kan; fibration; setoids; finite Yoneda | `Th_coqc`-elig/`Dr` |
+| **XVIII** | **Statistics & inference** | retained-frequency estimation; test = `Verdict`; Bayesian reweighting | `finite_diagnostic` |
+| **XIX** | **Optimization** | gradient=`D_ε`; convexity=`D_ε²≥0`; Lagrange; exact-`ℚ` LP | `Th_coqc`-elig |
 
 ## Appendices
 

@@ -31,6 +31,10 @@
 - **Part XIII** — Linear algebra as the algebra of `L_R` (ℚ-vector space; metric; determinant; exact solve)
 - **Part XIV** — Complex analysis as the rotation-readout of retained phase (`i` = quarter-turn; roots of unity; holomorphy; residue)
 - **Part XV** — Combinatorics & graph theory (the native home of `δ_R`; `L_R` connectivity; matrix–tree; Euler χ)
+- **Part XVI** — Measure theory & functional analysis (discrete measure; `L^p`; finite spectral theorem; Riesz)
+- **Part XVII** — Category theory in the readout vocabulary (`G_λ` reflector; fibration; setoids; finite Yoneda)
+- **Part XVIII** — Statistics & inference (retained-frequency estimation; a test IS a verdict; Bayesian reweighting)
+- **Part XIX** — Optimization (gradient = `D_ε`; convexity; Lagrange; exact-`ℚ` linear programming)
 - **Appendices A/B/C** — contaminated-concept table · machine-checked theorem index · axiom-dependence discipline
 - **Appendices D/E** — validation: 1000 problems ประถม→ปริญญาเอก (1000/1000) · 100 continuous problems reproduced from the discrete (100/100)
 
@@ -1248,6 +1252,137 @@ algebra, linear algebra, complex analysis, and combinatorics/graph theory — ea
 `L_R`, and the Part VII operators, none importing a continuum primitive. The remaining declared frontier
 (topology/topos, Hauptvermutung, completed continuum limits, exact `π`/`φ` objects) stays `+ℝ-Open`
 (§10.9), stated and predicted, never smuggled in.
+
+---
+
+# Part XVI — Measure theory and functional analysis (the discrete floor of analysis)
+
+Measure and function-space theory are usually built on a completed σ-algebra and a complete normed
+space. Here both are **readouts of the discrete**: a measure is a retained count, an integral is `I_ε`
+against it, and the operator theory is the finite spectral theory of `L_R` (Part XIII). Completeness is
+the one place the continuum enters, and it is fenced `+ℝ-Open`.
+
+## 16.1 Measure = retained count; integral = `I_ε` against it
+
+- **Discrete measure.** `μ_λ(S) := I_ε(1_S)` — the retained count of admissible cells in `S` (§10.6).
+  It is **finitely additive by construction** (`Th_coqc`-elig): disjoint fibers add their counts.
+  σ-additivity is the **A8-stable limit** of finite additivity — stated, and `+ℝ-Open` for the completed
+  σ-algebra (a countable union that "lands" is a non-readout).
+- **Integral.** `∫ f dμ_λ := I_ε(f·1_S)` — the Lebesgue integral is the readout of this finite retained
+  sum; the classical `∫` is recovered by the continuum-maya bridge (Part XX target) wherever A8-stable.
+- **Measurable function = admissible map** `E=Ẽ∘G_λ` (§0.5) — measurability is just admissibility at
+  the declared resolution; no separate σ-algebra machinery is imported.
+
+## 16.2 `L^p`, the retained inner product, and finite functional analysis
+
+- **`L^p` norm = retained-`p` aggregation** `‖f‖_p := (I_ε |f|^p)^{1/p}`; `‖·‖_2` comes from the positive
+  retained metric `⟨f,g⟩_G = I_ε(f̄ g)` (Part XIII). **Cauchy–Schwarz** `|⟨f,g⟩| ≤ ‖f‖₂‖g‖₂` is a finite
+  `Th_coqc`-elig inequality over `ℚ` (discrete sum form).
+- **Bounded operator = finite retained coupling.** On the `ℚ`-space, an operator is a finite matrix;
+  `L_R` is self-adjoint, and the **spectral theorem holds exactly** for the finite `L_R` (orthonormal
+  retained-mode basis, real `ℚ`-approx eigenvalues — Part XIII). The completion to an infinite Hilbert
+  space and its spectral measure are `+ℝ-Open`.
+- **Riesz representation (finite).** Every admissible linear functional on the finite `ℚ`-space is
+  `f ↦ ⟨v,f⟩_G` for a unique retained `v` — `Th_coqc`-elig, by finite linear algebra. The infinite-
+  dimensional Riesz theorem is `+ℝ-Open`.
+
+---
+
+# Part XVII — Category theory in the readout vocabulary
+
+The substrate's universal properties are categorical, and §10.7 already identified the pieces. This Part
+makes them a chapter: category theory here is the theory of **admissible maps between retained
+structures**, with `G_λ` the organizing functor. It is the abstract restatement of the readout-first
+principle, not an external framework imported on top.
+
+## 17.1 The category of retained structures
+
+- **Category `𝓡`.** Objects = retained structures (`G_λ`-fibers); morphisms = admissible maps
+  `E=Ẽ∘G_λ`; composition = map composition (associative); identities = the trivial relabel. A finite
+  presentation is a finite readout (`Th_coqc`-elig).
+- **`G_λ` is an idempotent reflector** (endofunctor with `G_λ∘G_λ ≅ G_λ`, `finite_diagnostic`, §10.7) —
+  coarse-graining is a categorical reflection onto the admissible subcategory.
+- **`E=Ẽ∘G_λ` is a Kan-extension / comma factorization** (`Th_coqc`-elig): every admissible description
+  factors uniquely through the reflector.
+
+## 17.2 Fibrations, congruences, and the finite Yoneda reading
+
+- **Sets-as-`G_λ`-fibers = a Grothendieck fibration** (indexed-set semantics); **`=_λ` = a coequalizer /
+  smallest congruence** (§10.7). **Admissible descriptions are setoids** — the direct Coq vehicle
+  (`Th_coqc`).
+- **Functor = readout-preserving map; natural transformation = an admissible family** of such maps.
+- **Finite Yoneda (the readout-first principle, categorically):** a retained object is determined, up to
+  `∼_λ`, by the family of its admissible readouts `⟨O(g·−)⟩` — "an object *is* its readouts"
+  (`Th_coqc`-elig for finite presentations; the full enriched Yoneda is `Dr`).
+- **`+ℝ-Open`:** a **topos** structure on the substrate is explicitly **not** claimed (§10.7 caveat).
+
+---
+
+# Part XVIII — Statistics and inference (bounded-reader inference, fail-closed)
+
+Above probability (§10.6) sits inference: estimating and testing from finite retained data. In this
+framework inference is done by a **bounded reader** who returns a **verdict**, never an omniscient
+pronouncement on a "true parameter" — the bounded-judge law (Part 0.5) applied to statistics, unified
+with the numeric-honesty discipline (`idm_discipline`).
+
+## 18.1 Estimation as retained-frequency readout
+
+- **Estimator = retained readout.** The sample mean is `Ĉ_N = I_ε(sample)/N`; consistency is the **A8
+  plateau** of `Ĉ_N` (the LLN of §10.6). A **confidence interval** is a **declared-resolution interval**
+  around the retained estimate — its width is the declared `ε`, not a claim about a completed sampling
+  distribution.
+- **Bayesian update = retained reweighting.** Posterior `∝` prior `×` likelihood is a reweighting of
+  retained-distinction mass; the **Born-rule normalization** `p_i=|a_i|²/Σ|a_j|²` (Part V, `Th_coqc`) is
+  the special normalized case. Tier `finite_diagnostic`/`Dr`.
+
+## 18.2 A hypothesis test IS a verdict
+
+A test returns a **`Verdict(ACCEPT/HOLD/BLOCK)`** (`idm_discipline`), fail-closed:
+
+- **ACCEPT** — the effect reads **distinct at the declared resolution** (`¬ eq_eps` on the retained
+  contrast); **HOLD** — underpowered / budget-exhausted / assumptions unread (never a silent "no
+  effect"); **BLOCK** — a modelling assumption is violated (e.g. a sorites/non-transitivity trap in the
+  comparison chain, `eq_chain_guard`). The `p`-value is a declared-resolution overlap fraction, not a
+  gate to be crossed. This eliminates the silent-wrong-answer class (a `HOLD` is not a `NULL`).
+- **Bounded-judge law.** The tester is itself a bounded reader; "significance" is a readout at declared
+  resolution, never a truth certificate (`Dr`).
+
+---
+
+# Part XIX — Optimization (retained stationarity, obstruction-zeroing)
+
+Optimization is finding where a retained cost stops changing, at a declared resolution. Its objects are
+the tools this book already ships: the gradient is `D_ε`, the search is `I_ε` of the descent field, and
+the stopping test is a fail-closed verdict.
+
+## 19.1 Gradient, convexity, stationarity
+
+- **Gradient = `D_ε`.** The objective `J` is a retained cost readout; its gradient is the finite
+  difference `D_ε J` (exact in the causal form, §8). **Stationarity** is `D_ε J = 0` at the declared
+  resolution — solved by **obstruction-zeroing** (`solve_obstruction`, `idm_discipline`), which returns
+  `ACCEPT` only when the residual reads zero and `HOLD` otherwise.
+- **Convexity = nonnegative retained second difference.** `D_ε² J ≥ 0` (a decidable `ℚ` sign check)
+  guarantees a **unique retained minimum** (`Th_coqc`-elig) — convexity is a finite readout, not a
+  statement about a smooth Hessian over `ℝ`.
+
+## 19.2 Constrained optimization and linear programming
+
+- **Lagrange multipliers = retained stationarity on the admissible fiber.** Constrained optimality is
+  `D_ε J = Σ λ_k D_ε g_k` on the `G_λ`-fiber cut out by the constraints; the KKT conditions are the
+  corresponding retained-verdict (`Dr`/`Th_coqc`-elig).
+- **Linear programming = exact `ℚ` vertex enumeration.** The optimum sits at a polytope vertex; simplex
+  is an **admissible path on the polytope graph** (ties to `L_R`/graph, Part XV) with exact `ℚ`
+  pivots — `Th_coqc`-elig, no floating error.
+- **Gradient descent = `I_ε` of the negative-gradient field** (an ODE, §11.4); convergence is the **A8
+  plateau**, reported as a fail-closed verdict (`HOLD` if the budget ends before the plateau). Continuous
+  convex analysis over `ℝ` (subdifferentials, completed minimizers) stays `+ℝ-Open`.
+
+**Breadth closure (extended).** With Parts XVI–XIX the foundation adds measure/functional analysis,
+category theory, statistics/inference, and optimization — each derived from `δ_R`, `L_R`, `I_ε`/`D_ε`,
+and the verdict discipline, none importing a continuum primitive. The completed-continuum pieces
+(σ-algebra limits, infinite Hilbert spaces, topos structure, continuous convex analysis) are named
+`+ℝ-Open` (§10.9), and the **continuum-maya bridge** (Part XX, backlog) is the capstone that will
+construct the continuum layer *as a readout* and prove it computes identically.
 
 ---
 
