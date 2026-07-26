@@ -287,6 +287,45 @@ Every operator used anywhere is **defined here from the primitive**, with its do
 recursion, its governing theorems, and its discrete-honest boundary (which inputs are refused
 non-readouts). Nothing is imported from an outside textbook — this Part closes the operator set.
 
+## 7.0 The information language of every operator (the PRIMARY meaning — the old language is refused)
+
+**Principle (Pr 7.0, `Dr`).** Every mathematical operator is, first, a **mode of retained
+distinction** — an operation on *readouts*, not on continuum quantities. Its ordinary textbook
+meaning ("add magnitudes", "multiply lengths", "the angle between two vectors") is only the machine
+**shadow**. This book gives each operator its **information meaning** as the primary reading; the
+recursions in 7.1–7.5 are merely its machine realization. **No operator keeps its old-world
+semantics.**
+
+| operator | information meaning (the new language — read this first) |
+|---|---|
+| `¬` | **obstruction reversal** — flip which side of a distinction is retained |
+| `∧` | **joint retention** — both distinctions held at once (the meet of two records) |
+| `∨` | **admissible retention** — either distinction suffices (the join) |
+| `→` | **retained transport** — a distinction at `p` carried, by a reader-transform, to one at `q` |
+| `↔` | **mutual transport** — each record inferable from the other |
+| `∀` | **retention across the whole tape** — holds at every retained position |
+| `∃` | **a constructible witness distinction** — a reader can exhibit one |
+| `=` | **mutual indistinguishability** — no reader can tell them apart (`O(x)=O(y)` for every `O`) |
+| `≠` / `#` | **a witnessed distinction** — some reader does tell them apart |
+| `≺` | **retained precedence** — the arrow of accumulated record ("came before") |
+| `⊕` (`+`) | **accumulation** — merge two retained records into one longer record (total distinctions retained) |
+| `⊖` (`−`) | **cancellation / debt** of retained distinction — remove record; below the ground the record becomes **signed** (a directed debt) — this is *what `ℤ` is* |
+| `⊗` (`×`) | **replication / composition** of distinction-structure — lay `b` copies of `a`'s pattern end to end; the tensor of two retained patterns (distinctions of distinctions) |
+| `÷` | **equal partition** of a retained record into `b` indistinguishable parts (the inverse of replication); `÷0` = partition into *no* parts = no reader-record = **refused** |
+| `^` | **self-composition** — iterate the replication-operator on its own output; the retained record of a process re-reading itself |
+| `√` / `ⁿ√` | **generator readout** — recover the pattern whose self-composition yields the record; usually a **non-readout** (no finite record generates it), only its approach appears |
+| `\|·\|` | **magnitude of retained distinction**, direction discarded |
+| `Δ` | **local change** of retained distinction (the increment of record between adjacent ticks) |
+| `Σ` | **accumulated retained record** (the total distinction up to a tick) |
+| `⟨·,·⟩_G` | **shared retained distinction** — the co-retention of two records |
+| overlap fraction | **readable co-retention** (Born-rule) — the only "angle", and it is not an angle |
+
+**In one line:** arithmetic is the **bookkeeping of accumulated, replicated, partitioned, and
+cancelled retained distinction**; logic is the **algebra of distinction combinators**; comparison is
+**reader-(in)distinguishability**. The continuum readings — length, magnitude, area, angle — are
+refused as primary and appear only as later readouts (Part III, VIII). *(This is the operator layer
+of the project's readout lexicon; keep the two in sync.)*
+
 ## 7.1 Logic operators (on RDL judgements — Part I)
 
 - **`¬` negation** — `¬p` flips `p`'s obstruction polarity; NOT `ex falso` (Ax-RDL3). `¬¬p ⊢ p`
