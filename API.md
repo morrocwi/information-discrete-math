@@ -48,7 +48,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**204 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**230 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Symbolic (exact CAS)** — `symbolic_diff` (`expr`,`var`) · `simplify` · `expand` · `symbolic_integrate` (polynomial + elementary, HOLD when no elementary antiderivative) · `symbolic_solve` (linear/quadratic radicals, rational roots) · `symbolic_series` (exact Taylor)
 
@@ -84,6 +84,12 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 
 **Optimization / paths** (tropical semirings, `Th_coqc` laws) — `shortest_path` · `critical_path` ·
 `widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
+
+**P2 · statistics & probability** (exact ℚ where possible) — `binomial` · `poisson` · `hypergeometric` · `geometric` · `normal` · `describe` · `z_test` · `t_test` · `chi_square_test` · `regression` (exact ℚ polynomial least-squares) · `multiple_regression` · `markov_absorbing` · `stationary` · `bayes_update`
+
+**P2 · computational geometry** (EXACT rational predicates — no epsilon) — `orient` · `convex_hull` · `point_in_polygon` · `segments_intersect` · `closest_pair` · `in_circle` (Delaunay)
+
+**P2 · cryptographic number theory** (exact, certificate-bearing) — `primality_certificate` (deterministic Miller–Rabin + checkable base-set certificate) · `modinv` · `rsa_keygen` · `rsa_encrypt` · `rsa_decrypt` · `ec_add` · `ec_mul` (elliptic curve over F_p)
 
 **P1 · rigorous certification** (interval arithmetic — guaranteed enclosures) — `interval_enclose` · `verified_range` (rigorous [min,max]) · `certified_root` (root proven by IVT, else HOLD) · `certified_min` (global-minimum bracket) · `gershgorin` (eigenvalue discs)
 

@@ -12,7 +12,7 @@ answer; an unknown kind or a failure returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT, symbolic as SYM, combopt as CO, interval as IVL
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT, symbolic as SYM, combopt as CO, interval as IVL, stats as ST, geometry as GEO, crypto as CY
 
 try:
     import mpmath as mp
@@ -631,6 +631,73 @@ def _cmin(p): return _ok("certified_min", IVL.certified_min(p["expr"], p["var"],
                          "rigorous global-minimum bracket by interval branch-and-bound")
 @kind("gershgorin", "Th_coqc")
 def _gersh(p): return _ok("gershgorin", IVL.gershgorin(p["matrix"]), "Gershgorin discs enclosing every eigenvalue")
+
+
+# ===================== P2 · statistics & probability (exact ℚ where possible) =======================
+@kind("binomial")
+def _binom(p): return _ok("binomial", ST.binomial(p["n"], p.get("k"), p.get("p", "1/2")), "exact binomial pmf/cdf over ℚ")
+@kind("poisson")
+def _pois(p): return _ok("poisson", ST.poisson(p["lam"], p.get("k")), "Poisson pmf/cdf, finite readout of e^{-λ}")
+@kind("hypergeometric")
+def _hyp(p): return _ok("hypergeometric", ST.hypergeometric(p["N"], p["K"], p["n"], p["k"]), "exact hypergeometric pmf/cdf over ℚ")
+@kind("geometric")
+def _geo(p): return _ok("geometric", ST.geometric(p["p"], p.get("k")), "exact geometric pmf/cdf over ℚ")
+@kind("normal")
+def _norm_d(p): return _ok("normal", ST.normal(p["x"], p.get("mu", 0), p.get("sigma", 1)), "normal pdf/cdf via erf (finite readout)")
+@kind("describe")
+def _desc(p): return _ok("describe", ST.describe(p["data"]), "exact sample moments over ℚ")
+@kind("z_test")
+def _zt(p): return _ok("z_test", ST.z_test(p["sample_mean"], p["mu0"], p["sigma"], p["n"]), "one-sample z-test, p via erfc")
+@kind("t_test")
+def _tt(p): return _ok("t_test", ST.t_test(p["sample_mean"], p["mu0"], p["sample_std"], p["n"]), "one-sample t-test, p via regularized incomplete beta")
+@kind("chi_square_test")
+def _cst(p): return _ok("chi_square_test", ST.chi_square_test(p["observed"], p["expected"]), "Pearson χ², statistic exact ℚ")
+@kind("regression")
+def _reg(p): return _ok("regression", ST.regression(p["x"], p["y"], p.get("degree", 1)), "exact polynomial least-squares over ℚ")
+@kind("multiple_regression")
+def _mreg(p): return _ok("multiple_regression", ST.multiple_regression(p["X"], p["y"]), "exact multiple linear least-squares over ℚ")
+@kind("markov_absorbing")
+def _mabs(p): return _ok("markov_absorbing", ST.markov_absorbing(p["P"], p["absorbing"]), "absorbing chain expected steps, exact ℚ fundamental matrix")
+@kind("stationary")
+def _stat(p): return _ok("stationary", ST.stationary(p["P"]), "stationary distribution, exact ℚ")
+@kind("bayes_update")
+def _bayes(p):
+    r = ST.bayes_update(p["prior"], p["likelihood"])
+    return {"kind": "bayes_update", "status": r.get("status", "ok"), "value": _norm(r), "method": "exact rational Bayes renormalization"}
+
+# ===================== P2 · computational geometry (EXACT rational predicates) =======================
+@kind("orient", "Th_coqc")
+def _ori(p): return _ok("orient", GEO.orient(p["a"], p["b"], p["c"]), "exact sign of the orientation determinant")
+@kind("convex_hull", "Th_coqc")
+def _hull(p): return _ok("convex_hull", GEO.convex_hull(p["points"]), "exact monotone-chain hull (rational orientation)")
+@kind("point_in_polygon", "Th_coqc")
+def _pip(p): return _ok("point_in_polygon", GEO.point_in_polygon(p["point"], p["polygon"]), "exact ray-crossing with boundary test")
+@kind("segments_intersect", "Th_coqc")
+def _segx(p): return _ok("segments_intersect", GEO.segments_intersect(p["p1"], p["p2"], p["p3"], p["p4"]), "exact orientation-sign intersection test")
+@kind("closest_pair", "Th_coqc")
+def _cpair(p): return _ok("closest_pair", GEO.closest_pair(p["points"]), "exact squared-distance closest pair")
+@kind("in_circle", "Th_coqc")
+def _incir(p): return _ok("in_circle", GEO.in_circle(p["a"], p["b"], p["c"], p["d"]), "exact in-circle (Delaunay) determinant sign")
+
+# ===================== P2 · cryptographic number theory (exact, certificate-bearing) ================
+@kind("primality_certificate", "Th_coqc")
+def _isp(p): return _ok("primality_certificate", CY.is_prime(p["n"]), "deterministic Miller–Rabin with a checkable base-set certificate")
+@kind("modinv")
+def _minv(p):
+    r = CY.modinv(int(p["a"]), int(p["m"]))
+    return {"kind": "modinv", "status": r.get("status", "ok"), "value": _norm(r), "method": "extended Euclidean inverse"}
+@kind("rsa_keygen")
+def _rkg(p):
+    r = CY.rsa_keygen(p["p"], p["q"], p.get("e", 65537))
+    return {"kind": "rsa_keygen", "status": r.get("status", "ok"), "value": _norm(r), "method": "exact RSA keypair"}
+@kind("rsa_encrypt")
+def _renc(p): return _ok("rsa_encrypt", CY.rsa_encrypt(p["m"], p["e"], p["n"]), "exact modular exponentiation")
+@kind("rsa_decrypt")
+def _rdec(p): return _ok("rsa_decrypt", CY.rsa_decrypt(p["c"], p["d"], p["n"]), "exact modular exponentiation")
+@kind("ec_add", "Th_coqc")
+def _ecadd(p): return _ok("ec_add", CY.ec_add(p["P"], p["Q"], p["a"], p["p"]), "exact elliptic-curve point addition over F_p")
+@kind("ec_mul", "Th_coqc")
+def _ecmul(p): return _ok("ec_mul", CY.ec_mul(p["k"], p["P"], p["a"], p["p"]), "exact EC scalar multiply (double-and-add) over F_p")
 
 
 # ================================================================ dispatch ==========================

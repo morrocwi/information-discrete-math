@@ -336,3 +336,54 @@ def test_rigorous_certification():
     # single-shot interval enclosure
     e = idm.solve({"kind": "interval_enclose", "expr": "x**2", "box": {"x": [1, 2]}})["value"]
     assert e["lo"]["float"] <= 1 and e["hi"]["float"] >= 4
+
+
+def test_p2_statistics():
+    # exact binomial pmf over ℚ
+    assert idm.solve({"kind": "binomial", "n": 10, "k": 3, "p": "1/2"})["value"]["pmf"]["exact"] == "15/128"
+    # normal cdf via erf (finite readout) — Φ(1.96)≈0.975
+    assert abs(idm.solve({"kind": "normal", "x": 1.96})["value"]["cdf"]["float"] - 0.975) < 1e-3
+    # exact linear regression: y=1+2x recovered as rationals with R²=1
+    r = idm.solve({"kind": "regression", "x": [0, 1, 2, 3], "y": [1, 3, 5, 7]})["value"]
+    assert r["coeffs"][0]["exact"] == "1/1" and r["coeffs"][1]["exact"] == "2/1" and r["r_squared"]["exact"] == "1/1"
+    # exact stationary distribution of a 2-state chain
+    assert idm.solve({"kind": "stationary", "P": [["1/2", "1/2"], ["1/4", "3/4"]]})["value"]["stationary"][0]["exact"] == "1/3"
+    # absorbing chain expected steps (exact ℚ)
+    ab = idm.solve({"kind": "markov_absorbing", "P": [[1, 0, 0], ["1/2", 0, "1/2"], [0, 0, 1]], "absorbing": [0, 2]})
+    assert ab["status"] == "ok"
+    # exact Bayes renormalization
+    assert idm.solve({"kind": "bayes_update", "prior": ["1/2", "1/2"], "likelihood": ["9/10", "1/10"]})["value"]["posterior"][0]["exact"] == "9/10"
+    # χ² and t-test produce p-values
+    assert idm.solve({"kind": "t_test", "sample_mean": 105, "mu0": 100, "sample_std": 15, "n": 30})["status"] == "ok"
+    assert idm.solve({"kind": "chi_square_test", "observed": [10, 20, 30, 40], "expected": [25, 25, 25, 25]})["status"] == "ok"
+
+
+def test_p2_geometry_exact():
+    # exact orientation sign (no epsilon)
+    assert idm.solve({"kind": "orient", "a": [0, 0], "b": [1, 0], "c": [0, 1]})["value"]["orientation"] == 1
+    # exact convex hull: square + interior point → 4 vertices
+    assert idm.solve({"kind": "convex_hull", "points": [[0, 0], [1, 0], [1, 1], [0, 1], ["1/2", "1/2"]]})["value"]["vertices"] == 4
+    # exact point-in-polygon + boundary
+    assert idm.solve({"kind": "point_in_polygon", "point": [2, 1], "polygon": [[0, 0], [4, 0], [4, 3], [0, 3]]})["value"]["inside"]
+    # exact segment intersection
+    assert idm.solve({"kind": "segments_intersect", "p1": [0, 0], "p2": [2, 2], "p3": [0, 2], "p4": [2, 0]})["value"]["intersect"]
+    # exact squared-distance closest pair
+    assert idm.solve({"kind": "closest_pair", "points": [[0, 0], [5, 5], [1, 0], [10, 10]]})["value"]["distance_squared"]["exact"] == "1/1"
+    # exact in-circle (Delaunay) predicate
+    assert idm.solve({"kind": "in_circle", "a": [0, 0], "b": [1, 0], "c": [0, 1], "d": ["1/4", "1/4"]})["value"]["in_circle"] == 1
+
+
+def test_p2_crypto():
+    # deterministic primality with a checkable certificate (base set returned for independent checking)
+    c97 = idm.solve({"kind": "primality_certificate", "n": 97})["value"]
+    assert c97["prime"] and "certificate" in c97
+    assert not idm.solve({"kind": "primality_certificate", "n": 91})["value"]["prime"]
+    assert idm.solve({"kind": "primality_certificate", "n": 2**61 - 1})["value"]["prime"]   # Mersenne
+    assert idm.solve({"kind": "modinv", "a": 3, "m": 11})["value"]["inverse"] == 4
+    # RSA round-trip (exact modular arithmetic)
+    kp = idm.solve({"kind": "rsa_keygen", "p": 61, "q": 53, "e": 17})["value"]
+    ct = idm.solve({"kind": "rsa_encrypt", "m": 65, "e": kp["public"]["e"], "n": kp["public"]["n"]})["value"]["cipher"]
+    m = idm.solve({"kind": "rsa_decrypt", "c": ct, "d": kp["private"]["d"], "n": kp["private"]["n"]})["value"]["message"]
+    assert m == 65
+    # elliptic-curve scalar multiply over F_p
+    assert idm.solve({"kind": "ec_mul", "k": 3, "P": [5, 1], "a": 2, "p": 17})["status"] == "ok"

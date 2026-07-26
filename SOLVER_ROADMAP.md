@@ -134,7 +134,11 @@ current four. The world-class edge is not "it computes the integral" (SciPy does
 
 ---
 
-## P2 — Rounding out (medium fit, needed for "everything")
+## P2 — Rounding out  ← ✅ DONE
+
+> **Status:** idm/stats.py (exact-ℚ distributions/regression/Markov/Bayes + finite-readout tests), idm/geometry.py (exact rational predicates — hull, area, in/out, intersection, Delaunay in-circle), idm/crypto.py (deterministic primality certificate, RSA, discrete log, elliptic curve over F_p). Shipped as solver kinds.
+
+### original
 
 - **Statistics / probability:** discrete distributions (pmf/cdf: binomial/Poisson/normal/…) ·
   hypothesis tests · multiple/polynomial regression · Markov chain hitting/absorbing times · Bayesian update.
