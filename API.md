@@ -57,7 +57,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 
 **Transforms & complex analysis** — `laplace_transform` (`f`,`s`) · `inverse_laplace` (`F`,`t` — fixed Talbot) · `mellin_transform` · `fourier_transform` (`f`,`omega`) · `fft` / `ifft` (`x`) · `z_transform` (`x`,`z`) · `contour_integral` (`f`,`center`,`radius`) · `argument_principle` (#zeros−#poles) · `residue_integral`
 
-**Special functions** (finite series / recurrences / AGM / continued fractions) — `gamma` · `beta` · `digamma` · `bessel_J`/`bessel_I` · `legendre_P` · `hermite_H` · `laguerre_L` · `chebyshev_T`/`_U` · `erf`/`erfc` · `Ei`/`E1`/`li` · `Si`/`Ci` · `fresnel_S`/`_C` · `elliptic_K`/`elliptic_E` (AGM) · `hyp2f1`/`hyp1f1` · `airy_Ai` · `lambert_W` · `polylog` · `dirichlet_eta`/`dirichlet_beta` · `hurwitz_zeta`
+**Special functions** (finite series / recurrences / AGM / continued fractions) — `gamma` · `beta` · `digamma` · `bessel_J`/`bessel_I` · `legendre_P` · `hermite_H` · `laguerre_L` · `chebyshev_T`/`chebyshev_U` · `erf`/`erfc` · `Ei`/`E1`/`li` · `Si`/`Ci` · `fresnel_S`/`fresnel_C` · `elliptic_K`/`elliptic_E` (AGM) · `hyp2f1`/`hyp1f1` · `airy_Ai` · `lambert_W` · `polylog` · `dirichlet_eta`/`dirichlet_beta` · `hurwitz_zeta`
 
 **Limits & series** — `taylor_series` (`f`,`x0`,`n`) · `laurent_series` · `fourier_series` (`f`,`n`) · `pade` (`coeffs`,`m`,`n`) · `series_accelerate` (`term` — Wynn ε) · `convergence_test` (`term` → CONVERGES/DIVERGES/**HOLD** on the harmonic/Bertrand boundary) · `limit_oneside` · `limit_infinity` · `lhopital`
 

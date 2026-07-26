@@ -6,6 +6,7 @@
 
 **The continuum, computed as a readout of the discrete.** _by Yaoharee Lahtee_
 
+[![solver](https://img.shields.io/badge/solver-230%20kinds%20·%20call%20it-brightgreen)](API.md)
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
 [![Coq](https://img.shields.io/badge/Coq-8.20%20·%2065%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
@@ -15,6 +16,23 @@
 </div>
 
 ---
+
+> [!TIP]
+> **It's a ready-to-use math solver, not just a manifesto.** The `idm` package computes across **230
+> problem kinds** — integrals, ODE/PDE, limits & series, special functions, transforms, optimization,
+> an exact symbolic CAS, number theory, linear algebra, graphs/DP, exact‑ℚ LP & SAT, **rigorous
+> interval certification**, statistics, exact‑ℚ geometry, and cryptographic number theory — each a
+> tier‑honest finite readout that returns `CERTIFIED` / `ok` / `HOLD` (it refuses rather than guess).
+> Call it three ways:
+>
+> ```bash
+> pip install mpmath sympy
+> python3 -c "import idm; print(idm.solve({'kind':'integral','f':'exp(-x**2)','a':'-inf','b':'inf'}))"  # √π, CERTIFIED
+> python3 -c "import idm; print(idm.parse_and_solve('is 97 prime?'))"                                   # plain language
+> python3 -m idm.server   # REST + OpenAPI 3 · interactive Swagger UI at http://127.0.0.1:8737/docs
+> ```
+>
+> Full catalogue of every kind and its arguments: **[`API.md`](API.md)** · [jump to the solver section ↓](#use-it-as-a-library--solver-api)
 
 > [!IMPORTANT]
 > **Scope — mathematics and mathematical computation, not empirical physics.** Equations drawn from
