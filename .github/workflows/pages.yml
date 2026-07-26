@@ -1,0 +1,38 @@
+name: pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Deploy the single self-contained landing page (index.html) as a static site.
+# The repo is a full research/code tree, so the legacy Jekyll builder chokes trying to
+# render every .md through Liquid (e.g. a literal {{a} in the textbook). We publish only
+# index.html with a .nojekyll marker — no Jekyll, no Liquid, nothing else exposed.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble static site (index.html only — no Jekyll)
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
