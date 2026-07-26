@@ -51,10 +51,19 @@ Implemented with proven-on-paper bounds in `tools/certified_readout.py`:
 These are `finite_diagnostic`/`Dr`: the bounds are standard and the code enforces them, but the
 remainder inequalities are not yet Coq-checked.
 
+### 3. Geometric-majorant tail bound — machine-checked, axiom-free (`Th_coqc`)
+
+The *mechanism* behind the `exp`/Simpson-tail certificates is now Coq-checked
+(`formal/IDM_Certified.v : geom_majorant_tail`): for any run of nonnegative terms that contracts by a
+ratio ρ (`t_{k+1} ≤ ρ·t_k`), every finite tail obeys `(1 − ρ)·Σ_{j<M} t_{N+j} ≤ t_N`, i.e. the tail is
+`≤ t_N/(1 − ρ)` — a finite, division-free stability certificate, `Closed under the global context`.
+The finite exponential is the instance `t_k = x^k/k!`, `ρ = x` (since `t_{k+1}/t_k = x/(k+1) ≤ x`).
+
 ## What is still open (`+ℝ-Open` / next work)
 
-- Formalize in Coq the `exp_certified` Taylor-tail bound and the range-reduction (`exp(x)=exp(x/2)²`)
-  certificate, giving a second fully machine-checked end-to-end algorithm over the rationals/reals.
+- Instantiate `geom_majorant_tail` in Coq for the specific exp terms (the ℚ fact `x/(k+1) ≤ x` for
+  `0 ≤ x ≤ ½`) and add the range-reduction (`exp(x)=exp(x/2)²`) certificate — closing a second fully
+  machine-checked end-to-end algorithm.
 - Formalize the Simpson and Euler–Maclaurin remainder inequalities (needs a real-analysis layer).
 - A general Richardson **a-priori** certificate (not just the a-posteriori contraction test).
 

@@ -47,6 +47,37 @@ Proof.
   intros r n. rewrite geom_certified_identity. ring.
 Qed.
 
+(** ---------------------------------------------------------------------------------------------
+    GENERAL GEOMETRIC-MAJORANT TAIL BOUND — the certificate mechanism behind exp/Simpson/Richardson.
+
+    If a run of nonnegative terms contracts by a ratio ρ (t_{k+1} ≤ ρ·t_k), then ANY finite tail of M
+    terms starting at N is bounded: (1 − ρ)·Σ_{j<M} t_{N+j} ≤ t_N, i.e. the tail ≤ t_N/(1−ρ). This is
+    the exact, finite, division-free stability certificate the readout ships (the finite exponential's
+    Taylor tail is the instance t_k = x^k/k!, ρ = x ≤ ½). Proved by a clean induction — no completed
+    sum, no reals, axiom-free. *)
+Fixpoint tailsum (t : nat -> Q) (N M : nat) : Q :=
+  match M with
+  | O => 0
+  | S m => t N + tailsum t (S N) m
+  end.
+
+Theorem geom_majorant_tail : forall (rho : Q) (t : nat -> Q),
+  (forall k, 0 <= t k) ->
+  (forall k, t (S k) <= rho * t k) ->
+  forall (M N : nat), (1 - rho) * tailsum t N M <= t N.
+Proof.
+  intros rho t Hpos Hrat.
+  induction M as [| m IHm]; intro N.
+  - simpl. rewrite Qmult_0_r. apply Hpos.
+  - simpl. rewrite Qmult_plus_distr_r.
+    apply (Qle_trans _ ((1 - rho) * t N + rho * t N)).
+    + apply Qplus_le_r.
+      apply (Qle_trans _ (t (S N))).
+      * apply IHm.
+      * apply Hrat.
+    + apply Qle_lteq. right. ring.
+Qed.
+
 (** Sanity checks that these are computable finite readouts (not just abstract). *)
 Example geom_half_3 : geom_sum (1 # 2) 3 == 7 # 4.
 Proof. reflexivity. Qed.

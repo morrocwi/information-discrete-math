@@ -46,6 +46,7 @@ declare -a THMS=(
   "summation_by_parts:IDM_Calculus"
   "geom_certified_identity:IDM_Certified"
   "geom_certified_defect:IDM_Certified"
+  "geom_majorant_tail:IDM_Certified"
 )
 
 fail=0
