@@ -15,7 +15,7 @@
 [![Closed under the global context](https://img.shields.io/badge/Print_Assumptions-Closed_under_the_global_context-success)](formal/)
 [![validation](https://img.shields.io/badge/validation-1212_checks_green-brightgreen)](validation/)
 [![continuum](https://img.shields.io/badge/continuum_reproduced-100%2F100-blueviolet)](validation/hundred_continuum_problems.py)
-[![chapters](https://img.shields.io/badge/chapters-Parts_0–XXI-orange)](textbook/INFORMATION_DISCRETE_MATHEMATICS.md)
+[![chapters](https://img.shields.io/badge/chapters-Parts_0--XXI-orange)](textbook/INFORMATION_DISCRETE_MATHEMATICS.md)
 [![tiers](https://img.shields.io/badge/every_claim-tier--tagged-yellow)](textbook/INFORMATION_DISCRETE_MATHEMATICS.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![author](https://img.shields.io/badge/by-Yaoharee_Lahtee-ff69b4)](#)
