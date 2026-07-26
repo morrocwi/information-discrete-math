@@ -771,7 +771,7 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
 
 ## 10.3 Finite satisfaction `⊨_λ` (and an honest downgrade)
 
-- **Th 10.6 (`Th_coqc`-elig):** `⊨_λ` — a decidable, computable Tarski recursion of satisfaction on a
+- **Th 10.6 (`Th_coqc`, witness `formal/IDM_Logic.v: finite_satisfaction_dec` / `sat_dec`):** `⊨_λ` — a decidable, computable Tarski recursion of satisfaction on a
   finite domain + finite formula at a fixed coarse-graining level. **Existing witness to REUSE (economize):**
   the readout-bivalence consistency layer is already machine-checked — `formal/RD_ConPA_ReadoutBivalence.v`
   (`soundnessC_param`, `consistencyC_param`, `Con_PA_classical_param`, `Th_coqc`); only the general
@@ -782,7 +782,7 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
 
 ## 10.4 RDL boundary-tie — making the logic load-bearing
 
-- **Th 10.7 (`Th_coqc`-elig):** `D`'s semiring closure **requires RDL's non-explosion**, not classical
+- **Th 10.7 (RDL non-explosion is `Th_coqc`, witness `formal/IDM_Logic.v: rdl_non_explosion` — a Belnap–Dunn 4-valued countermodel where `p∧¬p` is designated but `q` is not, with `classical_would_explode` as the 2-valued control; that `D`'s semiring closure *requires* this is the `Dr` boundary-tie):** `D`'s semiring closure **requires RDL's non-explosion**, not classical
   logic — a boundary distinction (a state at the semiring frontier) is held without collapse only
   because `ex falso` is refused (Ax-RDL3). This is the one rung that makes Part I (logic) *load-bearing*
   for Part II (number), answering the review's "RDL is decorative" finding.
@@ -1616,7 +1616,7 @@ finite-`ε` schemes — **all three computed robustly, none producing its parado
 
 # Appendix B — Machine-checked theorem index (tier · witness)
 
-**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
+**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_Logic.v`: `finite_satisfaction_dec` (§10.3 Th 10.6, finite model-checking decidable) + `rdl_non_explosion` (§10.4/Part I, paraconsistent countermodel). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`

@@ -11,6 +11,7 @@ coqc -q IDM_Keystone.v
 coqc -q IDM_Bridge.v
 coqc -q IDM_FiniteWitnesses.v
 coqc -q IDM_FiniteWitnesses2.v
+coqc -q IDM_Logic.v
 printf 'Require Import IDM_FiniteWitnesses.\nPrint Assumptions kuratowski_pair_inj.\nPrint Assumptions handshake_lemma.\nPrint Assumptions pigeonhole.\nPrint Assumptions finite_yoneda.\nPrint Assumptions semiring_distrib.\n' > _chk.v
 coqc -q _chk.v   # every result prints "Closed under the global context" = axiom-free
 rm -f _chk.v *.vo *.glob *.vos *.vok
@@ -32,6 +33,8 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 | `tape_count_succ` (`IDM_FiniteWitnesses2.v`) | §10.2 Th 10.4 | a σ-generated tape strictly grows ⇒ no terminal stage |
 | `same_set_same_size` (`IDM_FiniteWitnesses2.v`) | §10.2 Th 10.3 | NoDup + same members ⇒ equal count (equinumerosity) |
 | `lagrange_order_div` (`IDM_FiniteWitnesses2.v`) | §12.3 | order `n/gcd(g,n)` divides `|ℤ_n|=n` |
+| `finite_satisfaction_dec` (`IDM_Logic.v`) | §10.3 Th 10.6 | finite Tarski satisfaction / model-checking is decidable |
+| `rdl_non_explosion` (`IDM_Logic.v`) | §10.4 / Part I | Belnap–Dunn countermodel: `p∧¬p` designated, `q` not (non-explosion) |
 | `FTCC_exact` / `FTCC_eps_exact` (`IDM_Bridge.v`) | §20.2 | continuum-maya exact core: `I_ε(D_ε f)=f[N]−f[0]` (zero residue) |
 
 All checked axiom-free under Coq 8.20 (`Print Assumptions` = *Closed under the global context*).
