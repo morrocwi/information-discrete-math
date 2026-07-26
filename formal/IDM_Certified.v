@@ -255,6 +255,51 @@ Proof.
       apply Qle_trans with (y := Qabs v); [ apply Qabs_nonneg | assumption ].
 Qed.
 
+(** ---------------------------------------------------------------------------------------------
+    FINITE-STABILITY INTEGRAL CERTIFICATE — the RIGHT way to certify a quadrature, with NO continuum.
+
+    We do NOT bound "our quadrature minus the true continuum integral ∫f" — under readout-first there is
+    no completed ∫f to be the target; that framing would smuggle the continuum back in. Instead we certify
+    STABILITY: successive refinements (panel counts N, 2N, 4N, …) form readouts whose consecutive gaps
+    s_k contract. Then the difference between any two refined readouts M steps apart — a finite sum of the
+    gaps — is bounded by |s_N|/(1−ρ), a computable rational. When that is below ε, the readout has a
+    stable plateau (CERTIFIED); if the gaps do not contract, no plateau (HOLD). Same shape as the
+    geometric and exponential certificates — entirely within Q, axiom-free. *)
+
+Lemma Qmult_le_l_nonneg : forall a b c, 0 <= c -> a <= b -> c * a <= c * b.
+Proof.
+  intros a b c Hc Hab.
+  rewrite (Qmult_comm c a). rewrite (Qmult_comm c b).
+  apply Qmult_le_compat_r; assumption.
+Qed.
+
+(** Triangle inequality over a finite tail: |Σ gaps| ≤ Σ |gaps|. *)
+Lemma abs_tailsum_le : forall (s : nat -> Q) (N M : nat),
+  Qabs (tailsum s N M) <= tailsum (fun k => Qabs (s k)) N M.
+Proof.
+  intros s N M. revert N. induction M as [| m IH]; intro N; simpl.
+  - apply Qle_refl.
+  - eapply Qle_trans; [ apply Qabs_triangle | ].
+    apply Qplus_le_r. apply IH.
+Qed.
+
+(** Stability certificate: if the refinement gaps contract (|s_{k+1}| ≤ ρ|s_k|, ρ≤1), then the sum of M
+    consecutive gaps from N — i.e. the gap between two refined readouts — obeys (1−ρ)·|Σ| ≤ |s_N|,
+    hence ≤ |s_N|/(1−ρ). A finite, computable stability bound. Reuses geom_majorant_tail on |s|. *)
+Theorem refine_stable : forall (rho : Q) (s : nat -> Q) (N M : nat),
+  rho <= 1 ->
+  (forall k, Qabs (s (S k)) <= rho * Qabs (s k)) ->
+  (1 - rho) * Qabs (tailsum s N M) <= Qabs (s N).
+Proof.
+  intros rho s N M Hrho Hrat.
+  assert (Hnn : 0 <= 1 - rho) by (apply Qle_minus_iff in Hrho; assumption).
+  apply Qle_trans with (y := (1 - rho) * tailsum (fun k => Qabs (s k)) N M).
+  - apply Qmult_le_l_nonneg; [ assumption | apply abs_tailsum_le ].
+  - apply (geom_majorant_tail rho (fun k => Qabs (s k))).
+    + intro k. apply Qabs_nonneg.
+    + intro k. apply Hrat.
+Qed.
+
 (** Sanity checks that these are computable finite readouts (not just abstract). *)
 Example geom_half_3 : geom_sum (1 # 2) 3 == 7 # 4.
 Proof. reflexivity. Qed.

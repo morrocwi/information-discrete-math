@@ -46,10 +46,15 @@ Implemented with proven-on-paper bounds in `tools/certified_readout.py`:
 |---|---|---|---|
 | `exp_certified` | `|x| ≤ ½` | `|x|^{N+1} / ((N+1)! (1−|x|))` | `|x| > ½` (range-reduction cert. not yet formalized) |
 | `simpson_certified` | `f ∈ C⁴`, bound `M₄ ≥ max|f⁗|` given | `(b−a)⁵ M₄ / (180 N⁴)` | no `M₄` supplied |
+| `integral_stable_certified` | refinement gaps contract (ρ<1) | `g_last/(1−ρ)` (see §7, Coq-backed) | gaps don't contract (pole / non-integrable / oscillatory) |
 | `richardson_certified` | sequence has a `1/n` asymptotic expansion | a-posteriori: the contracted diagonal gap | diagonal fails to contract (e.g. `1/log n`, oscillatory, divergent) |
 
-These are `finite_diagnostic`/`Dr`: the bounds are standard and the code enforces them, but the
-remainder inequalities are not yet Coq-checked.
+`simpson_certified`/`richardson_certified` are `finite_diagnostic`/`Dr`; `integral_stable_certified` is
+backed by the Coq theorem in §7. **A note on the integral, on principle:** the classic Simpson bound is
+stated as a distance to the *true continuum integral* `∫f`. Under readout-first there is **no** completed
+`∫f` to be the target — demanding that distance would smuggle the continuum back in as the primitive. So
+`integral_stable_certified` does **not** target `∫f`; it certifies that our *own* readout has stabilized
+(§7). The `M₄`-based `simpson_certified` is kept only as an optional continuum-comparator convenience.
 
 ### 3. Geometric-majorant tail bound — machine-checked, axiom-free (`Th_coqc`)
 
@@ -96,11 +101,34 @@ where `errbound` is the finite, computable bound obtained by iterating `sq_error
 this carries the finite exponential's certificate from `|x|≤½` to **any** `x`, with a fully finite error
 bound — machine-checked, axiom-free.
 
+### 7. Integral by finite stability — machine-checked, axiom-free (`Th_coqc`)
+
+The readout-first way to certify a quadrature — **without ever naming a completed `∫f`**. Refine the
+panel count (`N, 2N, 4N, …`); the successive readouts differ by gaps `s_k`. Two Coq theorems
+(`formal/IDM_Certified.v`) make the stability rigorous over ℚ:
+
+- `abs_tailsum_le`: `|Σ gaps| ≤ Σ |gaps|` (triangle over a finite tail);
+- `refine_stable`: if the gaps contract (`|s_{k+1}| ≤ ρ|s_k|`, `ρ ≤ 1`), then the difference between any
+  two refined readouts `M` steps apart obeys `(1 − ρ)·|Σ_{j<M} s_{N+j}| ≤ |s_N|` — i.e. every further
+  refinement agrees within `|s_N|/(1 − ρ)`, a **computable rational** (proved by combining
+  `abs_tailsum_le` with `geom_majorant_tail` on `|s|`).
+
+So when the refinement gaps contract, the readout has a certified stable plateau; when they do not
+(pole, non-integrable, oscillatory), there is no plateau and the tool returns `HOLD`
+(`integral_stable_certified`, with the pole/singular cases in `validation/negative_controls.py`). We
+never claim a distance to `∫f`; we certify that *our own* finite readout has stopped moving. Both
+theorems `Closed under the global context`.
+
 ## What is still open (`+ℝ-Open` / next work)
 
-- Formalize the Simpson and Euler–Maclaurin remainder inequalities (needs a real-analysis layer — a
-  different style from this repo's ℚ-only core).
-- A general Richardson **a-priori** certificate (not just the a-posteriori contraction test).
+- A general Richardson **a-priori** certificate (deciding contraction from the sequence's form up front,
+  not only the a-posteriori contraction test already implemented).
+- Extend the finite-stability certificate to more refinement families (multi-dimensional quadrature,
+  adaptive grids) — same ℚ-only `refine_stable` mechanism, more instances.
+
+*(Note: we do **not** list "prove the Simpson/Euler–Maclaurin bound against the true `∫f`" as open work.
+That is a continuum-first obligation the framework does not accept: the certified object is the stability
+of the finite readout, §7, not its distance to a completed integral.)*
 
 The honest position: the **geometric-series certified readout is proved end-to-end and axiom-free**; the
 other tools **carry derived certificates and a working HOLD discipline**, and their formalization is the

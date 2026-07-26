@@ -50,6 +50,8 @@ declare -a THMS=(
   "exp_tail_certified:IDM_Certified"
   "sq_error_propagation:IDM_Certified"
   "iter_sq_certified:IDM_Certified"
+  "abs_tailsum_le:IDM_Certified"
+  "refine_stable:IDM_Certified"
 )
 
 fail=0

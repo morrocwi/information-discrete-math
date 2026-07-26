@@ -11,7 +11,7 @@ Run: python3 validation/negative_controls.py
 import sys, os, math
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 from certified_readout import (geom_series_certified, exp_certified, simpson_certified,
-                               richardson_certified, HOLD, CERTIFIED)
+                               richardson_certified, integral_stable_certified, HOLD, CERTIFIED)
 from fractions import Fraction as Q
 import mpmath as mp
 mp.mp.dps = 50
@@ -36,6 +36,11 @@ expect("richardson on sin(n)  (oscillatory, no limit)",
        richardson_certified(lambda n: mp.sin(mp.mpf(n)), mp.mpf(10)**-8), HOLD)
 expect("richardson on n  (divergent)",
        richardson_certified(lambda n: mp.mpf(n), mp.mpf(10)**-8), HOLD)
+# Integral by finite stability: refuse when the refinement does not stabilize
+expect("integral 1/(x−½) on [0,1]  (pole, no plateau)",
+       integral_stable_certified(lambda x: 1/(x - mp.mpf("0.5")), 0, 1, mp.mpf(10)**-6), HOLD)
+expect("integral 1/x on [0,1]  (singular at 0)",
+       integral_stable_certified(lambda x: 1/(x + mp.mpf(0)) if x > 0 else mp.mpf(0), 0, 1, mp.mpf(10)**-6), HOLD)
 
 # ---- POSITIVE controls: hypotheses met → must CERTIFY (proves the tools aren't just always-HOLD) ----
 expect("geom r=1/3 → 3/2 (certified)", geom_series_certified(Q(1, 3), Q(1, 10**12)), CERTIFIED)
@@ -43,6 +48,8 @@ expect("exp(0.25) certified", exp_certified(mp.mpf("0.25"), mp.mpf(10)**-20), CE
 expect("simpson x² with M₄=0 certified", simpson_certified(lambda t: t**2, 0, 3, mp.mpf(10)**-9, d4_bound=0), CERTIFIED)
 expect("richardson on (1+1/n)^n → e (genuine 1/n asymptotic)",
        richardson_certified(lambda n: (1 + mp.mpf(1)/n)**n, mp.mpf(10)**-8), CERTIFIED)
+expect("integral x² on [0,1] stabilizes → CERTIFIED",
+       integral_stable_certified(lambda x: x*x, 0, 1, mp.mpf(10)**-6), CERTIFIED)
 
 print("=" * 88)
 print("  NEGATIVE CONTROLS — the framework refuses (HOLD) when its hypotheses are not met")

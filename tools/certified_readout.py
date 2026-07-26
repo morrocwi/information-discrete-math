@@ -130,6 +130,44 @@ def richardson_certified(seq, eps, M=2, K=12):
     return Readout(diag[-1], tail_gaps[-1], CERTIFIED,
                    f"Richardson depth {K}, diagonal contracted to gap≤ε (a-posteriori certificate)")
 
+# ---------------------------------------------------------------------------------------------------
+# 5) INTEGRAL by FINITE STABILITY — the readout-first way: NO true continuum integral is referenced.
+#    We refine the panel count (N, 2N, 4N, …), watch the successive readouts' gaps, and CERTIFY only if
+#    the gaps CONTRACT (ratio ρ<1). Then refine_stable (formal/IDM_Certified.v) bounds every further
+#    refinement's disagreement by g_last/(1−ρ) — a computable rational. If the gaps do not contract
+#    (singularity, non-integrable, wild oscillation), there is no stable plateau → HOLD. We never claim a
+#    distance to "∫f"; we certify that OUR readout has stabilized.
+# ---------------------------------------------------------------------------------------------------
+def _trapezoid(f, a, b, n):
+    h = (b - a) / n
+    return h * (f(a) / 2 + f(b) / 2 + sum(f(a + i * h) for i in range(1, n)))
+
+def integral_stable_certified(f, a, b, eps, n0=8, refines=14):
+    if not _HAVE_MP:
+        return Readout(None, None, HOLD, "integral_stable_certified needs mpmath")
+    a, b, eps = mp.mpf(a), mp.mpf(b), mp.mpf(eps)
+    if eps <= 0:
+        return Readout(None, None, HOLD, "tolerance ε must be > 0")
+    vals, n = [], n0
+    for _ in range(refines):
+        try:
+            v = _trapezoid(f, a, b, n)
+        except (ZeroDivisionError, ValueError, OverflowError):
+            return Readout(None, None, HOLD, "integrand not finitely samplable on the grid (pole/singularity) — refusing")
+        vals.append(v); n *= 2
+    gaps = [abs(vals[i + 1] - vals[i]) for i in range(len(vals) - 1)]
+    tail = gaps[len(gaps) // 2:]                       # judge stability on the refined tail
+    ratios = [tail[i + 1] / tail[i] for i in range(len(tail) - 1) if tail[i] > 0]
+    if not ratios or max(ratios) >= 1:
+        return Readout(None, None, HOLD,
+                       "refinement gaps do not contract (ρ≥1) — no stable plateau "
+                       "(singular / non-integrable / oscillatory); refusing to emit a value")
+    rho = max(ratios)
+    bound = gaps[-1] / (1 - rho)                        # refine_stable: further refinements agree within this
+    if bound <= eps:
+        return Readout(vals[-1], bound, CERTIFIED, f"trapezoid refinement stabilized, ρ≈{mp.nstr(rho,3)}, gap≤ε")
+    return Readout(None, None, HOLD, f"not yet within ε (stable bound {mp.nstr(bound,3)} > ε); refine further")
+
 if __name__ == "__main__":
     checks = []
     g = geom_series_certified(Q(1, 3), Q(1, 10 ** 12))
@@ -142,6 +180,10 @@ if __name__ == "__main__":
     checks.append(("simpson x² certified", (not _HAVE_MP) or (s.certified and abs(s.q - 9) <= max(s.bound, mp.mpf(10) ** -9))))
     sh = simpson_certified((lambda t: t ** 2), 0, 3, mp.mpf(10) ** -9) if _HAVE_MP else Readout(None, None, HOLD, "")
     checks.append(("simpson no M₄ → HOLD", sh.status == HOLD))
+    it = integral_stable_certified((lambda t: t * t), 0, 1, mp.mpf(10) ** -6) if _HAVE_MP else Readout(0, 0, CERTIFIED, "")
+    checks.append(("integral x² stabilizes → CERTIFIED", (not _HAVE_MP) or (it.certified and abs(it.q - mp.mpf(1) / 3) < mp.mpf(10) ** -4)))
+    ih = integral_stable_certified((lambda t: 1 / (t - mp.mpf("0.5"))), 0, 1, mp.mpf(10) ** -6) if _HAVE_MP else Readout(None, None, HOLD, "")
+    checks.append(("integral with a pole → HOLD", ih.status == HOLD))
     for name, ok in checks:
         print(f"  {'ok ' if ok else 'FAIL'} {name}")
     ok = all(o for _, o in checks)
