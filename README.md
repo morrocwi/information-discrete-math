@@ -8,8 +8,8 @@ The claim above is a claim about **computation**: every mathematical problem tha
 answered by a **finite, discrete, rational** computation — no actual continuum (ℝ-completeness, `h→0`,
 reached `+∞`) is ever needed as a primitive. This is demonstrated, not asserted: **1000/1000** problems
 ประถม→PhD, **100/100** classically-continuous problems (integrals, derivatives, limits, ODEs, special
-functions) reproduced from the discrete, **48/48 + 34/34** breadth (algebra→optimization), **16/16**
-paradox-dissolution (topology · manifolds · PDE), and axiom-free Coq witnesses for the operator keystone
+functions) reproduced from the discrete, **48/48 + 34/34** breadth (algebra→optimization), **21/21**
+paradox-dissolution (topology · manifolds · PDE), and 16 axiom-free Coq witnesses for the operator keystone
 `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, and the finite core theorems (`formal/`). *(Honest fence: this is
 about computing the answers and dissolving the paradoxes — refusing to inject the non-readout — not about
 deciding the classical completed-continuum questions in their own terms, which the framework declines to
@@ -50,7 +50,7 @@ The full foundational treatise — **[textbook/INFORMATION_DISCRETE_MATHEMATICS.
   `limit_eps`, `ode_rk4`, …); run `python3 tools/idm_tools.py` for the self-check.
 - **Machine-checked:** 16 axiom-free Coq witnesses under `formal/` — `bash formal/verify.sh` compiles all + confirms *Closed under the global context* (keystone `B(Φ,Φ)=I(Φ)`, FTCC bridge, RDL non-explosion, finite theorems).
 - **Validation:** `1000/1000` (grade-school→PhD), `100/100` (continuous problems reproduced from the
-  discrete), `48/48` (algebra·linear·complex·combinatorics/graph) — under `validation/`.
+  discrete), `48/48` + `34/34` (algebra→optimization), `21/21` (paradox-dissolution) — under `validation/`.
 
 ## Install (via public git)
 
