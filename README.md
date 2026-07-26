@@ -6,7 +6,7 @@
 
 <br>
 
-> # ⛔️ There is **no need** for continuum mathematics<br>to solve mathematical problems in the modern world.
+> # 🎉 There is **no need** for continuum mathematics<br>to solve mathematical problems in the modern world. 🎆
 
 <br>
 
