@@ -53,17 +53,28 @@ remainder inequalities are not yet Coq-checked.
 
 ### 3. Geometric-majorant tail bound — machine-checked, axiom-free (`Th_coqc`)
 
-The *mechanism* behind the `exp`/Simpson-tail certificates is now Coq-checked
+The *mechanism* behind the `exp`/Simpson-tail certificates is Coq-checked
 (`formal/IDM_Certified.v : geom_majorant_tail`): for any run of nonnegative terms that contracts by a
 ratio ρ (`t_{k+1} ≤ ρ·t_k`), every finite tail obeys `(1 − ρ)·Σ_{j<M} t_{N+j} ≤ t_N`, i.e. the tail is
 `≤ t_N/(1 − ρ)` — a finite, division-free stability certificate, `Closed under the global context`.
-The finite exponential is the instance `t_k = x^k/k!`, `ρ = x` (since `t_{k+1}/t_k = x/(k+1) ≤ x`).
+
+### 4. Finite exponential's Taylor tail — machine-checked, axiom-free (`Th_coqc`)
+
+The exp instance is now fully closed in Coq (`exp_tail_certified`): with the terms
+`exp_term x k = x^k/k!` built by the standard recurrence `t_{k+1} = t_k·x/(k+1)`, the lemmas
+`exp_term_nonneg` (`0 ≤ x ⇒ 0 ≤ t_k`) and `exp_term_ratio` (`0 ≤ x ⇒ t_{k+1} ≤ x·t_k`, since
+`x/(k+1) ≤ x`) discharge the hypotheses of `geom_majorant_tail`, giving
+
+    0 ≤ x  ⇒  (1 − x) · Σ_{j<M} exp_term x (N+j)  ≤  exp_term x N,
+
+i.e. the M-term Taylor tail from index N is `≤ (x^N/N!)/(1 − x)` — the certified remainder of the
+finite exponential, machine-checked and axiom-free. This is the second end-to-end certified algorithm
+(after the geometric series).
 
 ## What is still open (`+ℝ-Open` / next work)
 
-- Instantiate `geom_majorant_tail` in Coq for the specific exp terms (the ℚ fact `x/(k+1) ≤ x` for
-  `0 ≤ x ≤ ½`) and add the range-reduction (`exp(x)=exp(x/2)²`) certificate — closing a second fully
-  machine-checked end-to-end algorithm.
+- Add the range-reduction (`exp(x)=exp(x/2)²`) certificate in Coq so the exp bound extends past `|x|≤½`
+  to all `x` (currently the ℚ tail bound is proved for `0 ≤ x < 1`; the Python layer HOLDs beyond `½`).
 - Formalize the Simpson and Euler–Maclaurin remainder inequalities (needs a real-analysis layer).
 - A general Richardson **a-priori** certificate (not just the a-posteriori contraction test).
 
