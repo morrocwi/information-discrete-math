@@ -17,6 +17,7 @@ coqc -q IDM_FiniteWitnesses.v
 coqc -q IDM_FiniteWitnesses2.v
 coqc -q IDM_Logic.v
 coqc -q IDM_FiniteWitnesses3.v
+coqc -q IDM_Matrix.v
 printf 'Require Import IDM_FiniteWitnesses.\nPrint Assumptions kuratowski_pair_inj.\nPrint Assumptions handshake_lemma.\nPrint Assumptions pigeonhole.\nPrint Assumptions finite_yoneda.\nPrint Assumptions semiring_distrib.\n' > _chk.v
 coqc -q _chk.v   # every result prints "Closed under the global context" = axiom-free
 rm -f _chk.v *.vo *.glob *.vos *.vok
@@ -45,6 +46,9 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 | `measure_additive` (`IDM_FiniteWitnesses3.v`) | §16.1 | μ_λ finitely additive (disjoint counts add) |
 | `ring_distrib_Z` (`IDM_FiniteWitnesses3.v`) | §12.2 | ℤ ring distributivity (+ and −) |
 | `aut_assoc`/`aut_id_*`/`aut_inv_*` (`IDM_FiniteWitnesses3.v`) | §12.1 | readout automorphisms form a group |
+| `mid_left`/`transpose_mmul`/… (`IDM_Matrix.v`) | §13 | discrete matrix algebra over ℚ (from scratch) |
+| `laplacian_symmetric`/`_rowsum_zero`/`_ones_in_kernel` (`IDM_Matrix.v`) | §15.2 | L_R symmetric; row-sums 0; constants ∈ ker L_R (connectivity) |
+| `twirl_image_scalar` (`IDM_Matrix.v`) | §13.4 | the averaging/Reynolds projector collapses to the 1-D scalar line (parameter reduction) |
 | `FTCC_exact` / `FTCC_eps_exact` (`IDM_Bridge.v`) | §20.2 | continuum-maya exact core: `I_ε(D_ε f)=f[N]−f[0]` (zero residue) |
 
 All checked axiom-free under Coq 8.20 (`Print Assumptions` = *Closed under the global context*).
