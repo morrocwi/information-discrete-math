@@ -48,7 +48,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**175 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**199 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Symbolic (exact CAS)** — `symbolic_diff` (`expr`,`var`) · `simplify` · `expand` · `symbolic_integrate` (polynomial + elementary, HOLD when no elementary antiderivative) · `symbolic_solve` (linear/quadratic radicals, rational roots) · `symbolic_series` (exact Taylor)
 
@@ -84,6 +84,12 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 
 **Optimization / paths** (tropical semirings, `Th_coqc` laws) — `shortest_path` · `critical_path` ·
 `widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
+
+**P1 · number theory (advanced)** — `diophantine_linear` · `pell` · `modular_sqrt` (Tonelli–Shanks) · `mobius` · `mertens` · `liouville` · `von_mangoldt`
+
+**P1 · linear algebra (advanced)** — `matrix_exp` · `null_space` · `hermite_normal_form` · `smith_normal_form`
+
+**P1 · combinatorial optimization** — `knapsack` · `subset_sum` · `lcs` · `edit_distance` · `coin_change` · `dijkstra` · `bellman_ford` · `bipartite_matching` · `assignment` (Hungarian) · `spanning_tree_count` (Kirchhoff) · `chromatic_number` · `linear_program` (exact-ℚ simplex) · `sat` (DPLL)
 
 **Number theory (extended)** — `num_divisors` · `sigma` · `next_prime` · `prime_pi` · `integer_sqrt` ·
 `is_perfect_square` · `integer_root` · `digital_root` · `base_convert` · `bezout` · `legendre_symbol` ·

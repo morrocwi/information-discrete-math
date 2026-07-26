@@ -347,3 +347,117 @@ def polygon_area(pts):
         s += x1 * y2 - x2 * y1
     return abs(s) / 2
 def triangle_area(a, b, c): return polygon_area([a, b, c])
+
+# ================================================================ number theory (P1) ===============
+def diophantine_linear(a, b, c):
+    """all integer solutions of a·x + b·y = c: (x0, y0, dx, dy) with x=x0+t·dx, y=y0+t·dy, or None."""
+    g, x, y = _egcd(abs(a), abs(b))
+    if c % g != 0: return None
+    x *= (1 if a >= 0 else -1); y *= (1 if b >= 0 else -1)
+    return (x * (c // g), y * (c // g), b // g, -a // g)
+def tonelli_shanks(n, p):
+    """a square root of n modulo an odd prime p (or None if n is a non-residue)."""
+    n %= p
+    if n == 0: return 0
+    if pow(n, (p - 1) // 2, p) != 1: return None
+    if p % 4 == 3: return pow(n, (p + 1) // 4, p)
+    q = p - 1; s = 0
+    while q % 2 == 0: q //= 2; s += 1
+    z = 2
+    while pow(z, (p - 1) // 2, p) != p - 1: z += 1
+    m = s; c = pow(z, q, p); t = pow(n, q, p); r = pow(n, (q + 1) // 2, p)
+    while t != 1:
+        i = 0; tt = t
+        while tt != 1: tt = tt * tt % p; i += 1
+        b = pow(c, 1 << (m - i - 1), p); m = i; c = b * b % p; t = t * c % p; r = r * b % p
+    return r
+def pell(D):
+    """the fundamental solution (x,y) of Pell's equation x²−D·y²=1 via the continued fraction of √D."""
+    a0 = isqrt(D)
+    if a0 * a0 == D: return None
+    m, d, a = 0, 1, a0; h1, h0, k1, k0 = a0, 1, 1, 0
+    while h1 * h1 - D * k1 * k1 != 1:
+        m = d * a - m; d = (D - m * m) // d; a = (a0 + m) // d
+        h1, h0 = a * h1 + h0, h1; k1, k0 = a * k1 + k0, k1
+    return (h1, k1)
+def mobius(n):
+    n = abs(n)
+    if n == 1: return 1
+    f = factorize(n)
+    return 0 if any(e > 1 for e in f.values()) else (-1) ** len(f)
+def mertens(N): return sum(mobius(k) for k in range(1, N + 1))
+def liouville(n): return (-1) ** sum(factorize(n).values()) if n > 1 else 1
+def von_mangoldt(n):
+    import math as _m
+    f = factorize(n)
+    return _m.log(list(f)[0]) if len(f) == 1 else 0.0
+
+# ================================================================ linear algebra (P1) ==============
+def matrix_exp(A, terms=60):
+    """e^A = Σ A^k/k! (finite series). A over ℚ/ℝ; returns a float matrix."""
+    n = len(A); import mpmath as mp
+    S = [[mp.mpf(1) if i == j else mp.mpf(0) for j in range(n)] for i in range(n)]
+    T = [[mp.mpf(1) if i == j else mp.mpf(0) for j in range(n)] for i in range(n)]
+    Am = [[mp.mpf(str(float(x))) for x in row] for row in A]
+    for k in range(1, terms):
+        T = [[sum(T[i][l] * Am[l][j] for l in range(n)) / k for j in range(n)] for i in range(n)]
+        S = [[S[i][j] + T[i][j] for j in range(n)] for i in range(n)]
+    return S
+def null_space(A):
+    """a basis (list of vectors) for the kernel of A over ℚ, from the reduced row-echelon form."""
+    M, r = rref(A); rows, cols = len(M), len(M[0])
+    pivots = []
+    for i in range(r):
+        pivots.append(next(j for j in range(cols) if M[i][j] != 0))
+    free = [j for j in range(cols) if j not in pivots]
+    basis = []
+    for fcol in free:
+        v = [Q(0)] * cols; v[fcol] = Q(1)
+        for i, pc in enumerate(pivots): v[pc] = -M[i][fcol]
+        basis.append(v)
+    return basis
+def hermite_normal_form(A):
+    """column-style Hermite normal form of an integer matrix (upper-triangular, exact)."""
+    M = [[int(x) for x in row] for row in A]; rows = len(M); cols = len(M[0]); r = 0
+    for c in range(cols):
+        piv = next((i for i in range(r, rows) if M[i][c] != 0), None)
+        if piv is None: continue
+        M[r], M[piv] = M[piv], M[r]
+        if M[r][c] < 0: M[r] = [-x for x in M[r]]
+        for i in range(rows):
+            if i != r and M[i][c] != 0:
+                q = M[i][c] // M[r][c]; M[i] = [M[i][j] - q * M[r][j] for j in range(cols)]
+        r += 1
+        if r == rows: break
+    return M
+def smith_normal_form(A):
+    """the invariant factors d_1 | d_2 | … of an integer matrix (Smith normal form diagonal)."""
+    M = [[int(x) for x in row] for row in A]; rows = len(M); cols = len(M[0]); res = []; t = 0
+    import math as _m
+    while t < min(rows, cols):
+        nz = [(i, j) for i in range(t, rows) for j in range(t, cols) if M[i][j] != 0]
+        if not nz: break
+        i0, j0 = min(nz, key=lambda p: abs(M[p[0]][p[1]]))
+        M[t], M[i0] = M[i0], M[t]
+        for r in range(rows): M[r][t], M[r][j0] = M[r][j0], M[r][t]
+        changed = True
+        while changed:
+            changed = False
+            for i in range(t + 1, rows):
+                if M[i][t]:
+                    q = M[i][t] // M[t][t]; M[i] = [M[i][j] - q * M[t][j] for j in range(cols)]
+                    if M[i][t]: M[t], M[i] = M[i], M[t]; changed = True
+            for j in range(t + 1, cols):
+                if M[t][j]:
+                    q = M[t][j] // M[t][t]
+                    for r in range(rows): M[r][j] -= q * M[r][t]
+                    if M[t][j]:
+                        for r in range(rows): M[r][t], M[r][j] = M[r][j], M[r][t]
+                        changed = True
+        res.append(abs(M[t][t])); t += 1
+    # enforce divisibility d_i | d_{i+1}
+    for i in range(len(res) - 1):
+        for j in range(i + 1, len(res)):
+            if res[i] and res[j] % res[i] != 0:
+                g = _m.gcd(res[i], res[j]); res[j] = res[i] * res[j] // g; res[i] = g
+    return res

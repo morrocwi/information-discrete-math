@@ -287,3 +287,30 @@ def test_symbolic():
     assert [c for c in idm.solve({"kind": "symbolic_series", "expr": "exp(x)", "var": "x", "n": 4})["value"]] == ["1", "1", "1/2", "1/6", "1/24"]
     # solve quadratic
     assert idm.solve({"kind": "symbolic_solve", "expr": "x**2 - 5*x + 6", "var": "x"})["value"]["discriminant"] == "1"
+
+
+def test_p1_number_theory_linalg():
+    assert idm.solve({"kind": "pell", "D": 61})["value"] == {"x": 1766319049, "y": 226153980}
+    assert idm.solve({"kind": "modular_sqrt", "a": 10, "p": 13})["value"] == 7
+    assert idm.solve({"kind": "modular_sqrt", "a": 5, "p": 7})["status"] == "HOLD"  # non-residue
+    assert idm.solve({"kind": "mobius", "n": 30})["value"] == -1
+    assert idm.solve({"kind": "diophantine_linear", "a": 3, "b": 5, "c": 1})["value"]["x0"] == 2
+    assert idm.solve({"kind": "smith_normal_form", "matrix": [[2, 4, 4], [-6, 6, 12], [10, -4, -16]]})["value"] == [2, 6, 12]
+    assert idm.solve({"kind": "null_space", "matrix": [[1, 2, 3], [2, 4, 6]]})["value"]  # nonempty kernel
+
+
+def test_p1_dp_graph_lp_sat():
+    assert idm.solve({"kind": "knapsack", "weights": [2, 3, 4, 5], "values": [3, 4, 5, 6], "capacity": 5})["value"]["max_value"] == 7
+    assert idm.solve({"kind": "edit_distance", "a": "kitten", "b": "sitting"})["value"] == 3
+    assert idm.solve({"kind": "lcs", "a": "ABCBDAB", "b": "BDCAB"})["value"]["length"] == 4
+    assert idm.solve({"kind": "coin_change", "coins": [1, 2, 5], "amount": 11})["value"] == {"min_coins": 3, "num_ways": 11}
+    assert idm.solve({"kind": "dijkstra", "n": 4, "edges": [[0, 1, 1], [1, 2, 2], [0, 2, 4], [2, 3, 1]], "source": 0})["value"]["distances"][3] == 4
+    assert idm.solve({"kind": "bellman_ford", "n": 3, "edges": [[0, 1, 1], [1, 2, -3], [2, 0, 1]], "source": 0})["value"]["negative_cycle"] is True
+    assert idm.solve({"kind": "spanning_tree_count", "n": 4, "edges": [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]})["value"] == 16
+    assert idm.solve({"kind": "chromatic_number", "n": 5, "edges": [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]})["value"] == 3
+    a = idm.solve({"kind": "assignment", "cost": [[4, 1, 3], [2, 0, 5], [3, 2, 2]]})["value"]["cost"]
+    assert (a["exact"] if isinstance(a, dict) else a) in ("5/1", 5)
+    lp = idm.solve({"kind": "linear_program", "c": [3, 2], "A": [[1, 1], [1, 3]], "b": [4, 6], "sense": "max"})
+    assert lp["value"]["objective"]["exact"] == "12/1"
+    assert idm.solve({"kind": "sat", "clauses": [[1, 2], [-1, 3], [-2, -3]]})["value"]["satisfiable"] is True
+    assert idm.solve({"kind": "sat", "clauses": [[1], [-1]]})["value"]["satisfiable"] is False

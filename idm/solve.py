@@ -12,7 +12,7 @@ answer; an unknown kind or a failure returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT, symbolic as SYM
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D, integrate as INT, diffeq as DEQ, series as SER, special as SP, transforms as TR, optimize as OPT, symbolic as SYM, combopt as CO
 
 try:
     import mpmath as mp
@@ -538,6 +538,80 @@ def _ssol(p):
 @kind("symbolic_series", "Th_coqc")
 def _sser(p): return _ok("symbolic_series", [SYM.tostr(c) for c in SYM.taylor(SYM.parse(p["expr"]), p["var"], p.get("x0", 0), int(p.get("n", 6)))],
                          "exact symbolic Taylor by repeated differentiation")
+
+
+# ================================================================ P1 — number theory (advanced) ===
+@kind("diophantine_linear", "Th_coqc")
+def _dio(p):
+    r = X.diophantine_linear(int(p["a"]), int(p["b"]), int(p["c"]))
+    return {"kind": "diophantine_linear", "status": "ok" if r else "HOLD", "tier": "Th_coqc",
+            "value": {"x0": r[0], "y0": r[1], "dx": r[2], "dy": r[3]} if r else None, "method": "extended Euclid",
+            **({} if r else {"reason": "no integer solution (gcd(a,b) ∤ c)"})}
+@kind("pell", "Th_coqc")
+def _pell(p):
+    r = X.pell(int(p["D"])); return {"kind": "pell", "status": "ok" if r else "HOLD", "tier": "Th_coqc",
+        "value": {"x": r[0], "y": r[1]} if r else None, "method": "continued fraction of √D",
+        **({} if r else {"reason": "D is a perfect square — no nontrivial solution"})}
+@kind("modular_sqrt", "Th_coqc")
+def _msqrt(p):
+    r = X.tonelli_shanks(int(p["a"]), int(p["p"])); return {"kind": "modular_sqrt", "status": "ok" if r is not None else "HOLD",
+        "tier": "Th_coqc", "value": r, "method": "Tonelli–Shanks", **({} if r is not None else {"reason": "a is a quadratic non-residue mod p"})}
+@kind("mobius", "Th_coqc")
+def _mob(p): return _ok("mobius", X.mobius(int(p["n"])), "μ(n) from factorization")
+@kind("mertens", "Th_coqc")
+def _mert(p): return _ok("mertens", X.mertens(int(p["N"])), "Σ μ(k)")
+@kind("liouville", "Th_coqc")
+def _liou(p): return _ok("liouville", X.liouville(int(p["n"])), "λ(n)=(−1)^Ω(n)")
+@kind("von_mangoldt")
+def _vm(p): return _ok("von_mangoldt", X.von_mangoldt(int(p["n"])), "Λ(n)=ln p if n=p^k else 0")
+
+# ================================================================ P1 — linear algebra (advanced) ==
+@kind("matrix_exp")
+def _mexp(p): return _ok("matrix_exp", X.matrix_exp(p["matrix"]), "e^A = Σ A^k/k! (finite series)")
+@kind("null_space", "Th_coqc")
+def _null(p): return _ok("null_space", X.null_space(p["matrix"]), "kernel basis from RREF (exact ℚ)")
+@kind("hermite_normal_form", "Th_coqc")
+def _hnf(p): return _ok("hermite_normal_form", X.hermite_normal_form(p["matrix"]), "column HNF (exact ℤ)")
+@kind("smith_normal_form", "Th_coqc")
+def _snf(p): return _ok("smith_normal_form", X.smith_normal_form(p["matrix"]), "invariant factors d₁|d₂|… (exact ℤ)")
+
+# ================================================================ P1 — DP / combinatorics ==========
+@kind("knapsack", "Th_coqc")
+def _knap(p): return _ok("knapsack", CO.knapsack(p["weights"], p["values"], int(p["capacity"])), "0/1 knapsack DP")
+@kind("subset_sum", "Th_coqc")
+def _ss2(p): return _ok("subset_sum", CO.subset_sum(p["nums"], int(p["target"])), "reachability DP")
+@kind("lcs", "Th_coqc")
+def _lcs(p): return _ok("lcs", CO.lcs(p["a"], p["b"]), "longest common subsequence DP")
+@kind("edit_distance", "Th_coqc")
+def _ed(p): return _ok("edit_distance", CO.edit_distance(p["a"], p["b"]), "Levenshtein DP")
+@kind("coin_change", "Th_coqc")
+def _cc2(p): return _ok("coin_change", CO.coin_change(p["coins"], int(p["amount"])), "coin DP (min + #ways)")
+
+# ================================================================ P1 — graph (advanced) ============
+@kind("dijkstra", "Th_coqc")
+def _dij(p): return _ok("dijkstra", CO.dijkstra(int(p["n"]), p["edges"], int(p["source"])), "Dijkstra (nonneg weights)")
+@kind("bellman_ford", "Th_coqc")
+def _bf(p): return _ok("bellman_ford", CO.bellman_ford(int(p["n"]), p["edges"], int(p["source"])), "Bellman–Ford (neg-cycle aware)")
+@kind("bipartite_matching", "Th_coqc")
+def _bm(p): return _ok("bipartite_matching", CO.bipartite_matching(int(p["nL"]), int(p["nR"]), p["edges"]), "augmenting-path matching")
+@kind("assignment", "Th_coqc")
+def _asg(p): return _ok("assignment", CO.hungarian(p["cost"]), "Hungarian algorithm (exact ℚ)")
+@kind("spanning_tree_count", "Th_coqc")
+def _stc(p): return _ok("spanning_tree_count", CO.spanning_tree_count(int(p["n"]), p["edges"]), "Kirchhoff (Laplacian cofactor det)")
+@kind("chromatic_number", "Th_coqc")
+def _chr(p): return _ok("chromatic_number", CO.chromatic_number(int(p["n"]), p["edges"]), "backtracking colouring")
+
+# ================================================================ P1 — LP / logic =================
+@kind("linear_program")
+def _lp(p):
+    r = CO.linear_program(p["c"], p["A"], p["b"], p.get("sense", "max"))
+    return {"kind": "linear_program", "status": r["status"], "value": _norm(r), "tier": "Th_coqc",
+            "method": "simplex, exact rational pivoting (Bland's rule)"}
+@kind("sat", "Th_coqc")
+def _sat(p):
+    r = CO.sat(p["clauses"], p.get("n_vars"))
+    return {"kind": "sat", "status": "ok" if r["satisfiable"] else "HOLD", "value": r, "tier": "Th_coqc",
+            "method": "DPLL with unit propagation"}
 
 
 # ================================================================ dispatch ==========================
