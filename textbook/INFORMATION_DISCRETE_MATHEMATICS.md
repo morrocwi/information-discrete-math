@@ -101,6 +101,39 @@ non-readout**. Name it before deferring:
   refused endpoints and touches neither. *A refused endpoint being unreadable is the system working,
   not a wall to break through.*
 
+## 0.3 What a number, a unit, a symbol, and an equation ARE (a philosophy of mathematics)
+
+Every mathematical object admits **two levels of account, and is never only one** — a distinction of
+pure philosophy of mathematics (designation vs constitution; token vs type), not of any doctrine.
+
+- **The conventional (designative) level** — what the object is *as it appears to a reader*: a
+  **readout** `r=O(X)` at a declared resolution `λ`, an admissible designation `E=Ẽ∘G_λ`.
+- **The ultimate (constitutive) level** — what it is *in its root constitution*: **retained
+  distinction** `δ_R=(a♯b)` and the structure `L_R` it induces. Meaning is generated *downstream* of
+  the retained trace; a domain name is a **translation** `q_D` (with `q_D∘F=F♯∘q_D`), **never a new
+  root** [epistemic-foundation synthesis, Lahtee 2026].
+
+Read through both levels:
+
+- A **number** is neither a Platonic object nor a bare mark. It is a **readout-invariant of a
+  retained-distinction structure**: the numeral *designates*, the equivalence class `[X]` under
+  reader-equivalence (`X∼X' ⟺ O(X)=O(X')`) *constitutes*. (`π`, `φ` are the worked case — §4.4.)
+- A **unit** is not physical stuff; it is a **calibration/gauge on readouts** — a choice of scale on
+  the retained metric `⟨·,·⟩_G`. Changing units is a reader-relabelling that preserves every readout:
+  a redundancy, not a fact.
+- A **symbol** is not the thing; it is a **stable reader-label** for an equivalence class. One class
+  may bear many symbols; use ≠ mention, token ≠ type.
+- An **equation** `A=B` is not a metaphysical identity of objects; it is the **admissible
+  indistinguishability** of two constructions to every reader (`O(A)=O(B)`) at a declared resolution —
+  the operational `=` of §0.5.3 / §7.0.
+
+**So the old dispute dissolves.** The number is not an abstract object floating free of any reader
+(against Platonism), nor an empty inscription (against strict formalism), nor merely a useful fiction
+(against fictionalism): it is the **invariant of a reading** — conventional in its appearance,
+constitutive in its retained structure, and neither without the other. **Governing principle:** never
+import a mathematical object as a primitive premise; *earn* it as a downstream readout of retained
+distinction, tier-tagged.
+
 ---
 
 # Part 0.5 — The reader, resolution, and coarse-graining (the substrate)
@@ -317,6 +350,47 @@ place:
   **summation-by-parts** (`sbp`).
 - **Th 4.4 (energy non-increase).** the per-node equation of motion makes the readout energy
   monotone non-increasing (`list_energy_nonincreasing`).
+
+## 4.4 The constants of geometry are readout-invariants of quotient grammars — geometry closed
+
+The recurring constants of geometry are **not** signatures imposed on nature, nor a catalogue of
+coincidences; each is the **invariant of a recurring quotient grammar** — it appears only after a
+structural reduction, and is refused where the reduction fails. *(Lahtee 2026, `π,φ` standalone
+synthesis; tiers below are exactly its claim-gate ledger.)*
+
+- **`π` = the calibrated invariant of compact retained closure (`Th_coqc` / conditional).** Two roots,
+  one number: (i) an involutive nontrivial adjacent **order reversal** carries the exchange factor
+  `r=−1=e^{iπ}` (Th 4.4, exact under the ordered-tape axioms; the same `k`-odd witness that forces
+  `k=3` → SU(3), §II); (ii) a continuous compact transport closes on a **topological circle**
+  `θ∈ℝ/Tℤ`, and an **isotropic Euclidean metric calibration** gives `C/R=2π` (conditional on the
+  calibration). `π` is *not* inserted at the root — it is what compact closure reads out.
+- **`φ` = the Perron invariant of minimal closure-continuation transfer (`Th_coqc`).** The least
+  nontrivial two-step transfer `K_F=[[1,1],[1,0]]` (Fibonacci) has characteristic `λ²−λ−1=0`, so its
+  Perron–Frobenius eigenvalue is `φ=(1+√5)/2` (Th 4.5, algebraically exact). Independently, the
+  retained-history fusion sector (gates H1–H7 → a unitary fusion category) forces the minimal
+  noninvertible frontier `τ⊗τ≅1⊕τ` with **`FPdim(τ)=φ`** — a *fusion/history* dimension, **not** an
+  ordinary carrier dimension (Cor 4.1: no finite-dimensional fibre functor, since `d²=1+d` has no
+  integer solution). `φ` is irrational *because* it is a history dimension, not a count.
+- **The golden rotation `θ_G=2π/φ²≈137.5°` (`Th_coqc` algebra + number theory).** Combining a compact
+  phase (`π`) with the minimal-memory transfer (`φ`) gives nonresonant generation on a closed phase;
+  its continued fraction `[1;1,1,…]` is extremal for rational approximation (Hurwitz–Markov), which is
+  the precise, `Dr`-fenced meaning of "most irrational" — it *delays* low-order phase locking. **Do
+  not** read this as "every spiral/growth system is golden": the *universal golden nature* claim is
+  **rejected** (negative controls: compact closure without minimal transfer gives `π` without `φ`;
+  minimal transfer on a line gives `φ` without `π`; an arbitrary logarithmic spiral has a free growth
+  rate; a Fibonacci count can be purely combinatorial).
+- **Why the same constants recur across domains (the closure principle, `Dr`).** if domains `D_a` each
+  admit a translation `q_a:D_a→Q` to a shared structural quotient, and the observables factor through
+  it (`O_a=Õ∘q_a`), the *same* invariant appears in all of them **without any system transmitting a
+  number to another** — recurrence is quotient-equivalence, not numerical transmission. "`π` is return;
+  `φ` is growth" made precise: `π` = calibrated invariant of compact closure, `φ` = Perron invariant
+  of minimal closure-continuation transfer.
+
+**Geometry closes here, uncontaminated:** distance is retained resistance (§4.1); betweenness is
+Tarski over the discrete metric (§4.2); angle is the overlap fraction, never a continuum degree
+(§4.2); curvature is the second retained difference with a discrete Gauss–Bonnet/Bianchi (§10.10); and
+its constants (`π,φ,θ_G`) are readout-invariants of quotient grammars — each derived, tier-fenced, and
+free of any injected continuum, Platonic constant, or "universal golden" overclaim.
 
 ---
 
