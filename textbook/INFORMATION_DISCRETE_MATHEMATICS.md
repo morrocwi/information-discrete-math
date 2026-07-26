@@ -1059,6 +1059,175 @@ still declared Open and predicted, per Part 0.
 
 ---
 
+# Part XII — Abstract algebra as retained symmetry (group · ring · field)
+
+Algebra is not a theory of abstract symbols floating above nothing; in this foundation it is the
+**bookkeeping of the relabelings that preserve every readout**. Structure comes first (`δ_R`, the
+operators of Part VII), and algebra is the study of its symmetries and closures.
+
+## 12.1 A group is the automorphisms of a retained structure
+
+For a retained structure `F` with reader `O`, define the **admissible automorphisms**
+`Aut(F,O) := { g : g relabels F and O(g·X)=O(X) for all readouts }` — the reversible relabelings that
+change no distinction any reader can detect (gauge-type redundancies, §III of the `π`/`φ` synthesis).
+
+- **Group axioms are theorems, not decrees.** Composition of readout-preserving relabelings is
+  readout-preserving (closure); it is associative because relabeling-composition is; the empty relabel
+  is the identity; readout-preservation is reversible (each `g` has `g⁻¹`). **Th 12.1
+  (`Th_coqc`-elig):** `(Aut(F,O), ∘)` satisfies the group axioms — each step a finite decidable check
+  on `∼_λ`-classes. No axiom is imported; the group *is* the symmetry of a reading.
+- **Finite groups only, as readouts.** A group is presented by its finite Cayley table — a finite
+  readout. Infinite/continuous groups (Lie groups) are `+ℝ-Open`: their finite-dimensional
+  *representations* are the readouts we admit (§12.3), not the completed manifold.
+- **Symmetry = indistinguishability under a relabel** ties directly to the `L_R` kernel (§V): elements
+  a reader cannot separate sit in one orbit.
+
+## 12.2 Rings and fields are the operator algebra, already grounded
+
+The number tower *is* the worked example, so this chapter only makes the abstract shape explicit:
+
+- A **ring** = a carrier with `⊕` (an abelian group, §7) and `⊗` (a monoid, §7) linked by distributivity
+  — all of which are the retained-operator laws of Part VII. **`D` is a commutative semiring** (RD1–9,
+  `Th_coqc`); **`ℤ` is a ring** (Grothendieck completion, §III); **`ℚ` is a field** (field of fractions,
+  `÷` total except `÷0` refused, §7). **Th 12.2 (`Th_coqc`, mined):** these hold with the ring/field
+  axioms as *derived* identities of `⊕,⊗,÷`, not primitives.
+- **`÷0` is the one refused operation** — a field is "`ℚ` minus the non-readout `1/0`", exactly the
+  partition-with-no-parts refusal (§7). The field structure is honest about its one hole.
+
+## 12.3 Representations, order, and solvability
+
+- **Representation = action on retained amplitudes.** A representation sends group elements to admissible
+  operators on a `ℚ`-space of retained states; its **dimension is an integer** (a carrier count). This is
+  why `SU(3)` appears with `k=3` from the ordered-tape odd-closure witness (§II), and why the fusion
+  dimension `FPdim(τ)=φ` is explicitly **not** an ordinary representation dimension (§4.4, Cor 4.1) — the
+  integrality of ordinary dimensions is a `Th_coqc`-elig finite fact.
+- **Lagrange / orbit–counting = finite counting theorems.** `|H|` divides `|G|`; orbit size divides
+  `|G|` — **Th 12.3 (`Th_coqc`-elig):** proved by partitioning the finite Cayley table into cosets, a
+  decidable finite readout.
+- **Galois solvability = radical-tower reachability (`Dr`).** A readout is "solvable by radicals" iff it
+  is reachable from `ℚ` by a finite tower of `⊕,⊗,÷,^,√` (§7 operators). The abstract correspondence
+  (solvable group ↔ radical tower) is `Dr`/`finite_diagnostic` here — stated as the framework's reading,
+  with the general theorem over the completed field left `+ℝ-Open`.
+
+---
+
+# Part XIII — Linear algebra as the algebra of `L_R`
+
+Linear algebra is not an add-on; the central object of this whole foundation — the
+retained-information operator `L_R` (Part V) — *is* a linear operator, and its spectral theory is where
+"information is the central axis" becomes computational.
+
+## 13.1 Vector spaces over `ℚ` (finite, no smuggled completeness)
+
+A **retained vector space** is finite `ℚ`-linear combinations of retained states — closure under `⊕`
+and `ℚ`-scaling (§7). Basis = a maximal set of mutually distinguishable states (a `δ_R`-independent
+set); **dimension = the number of retained distinctions** (`Th_coqc`-elig, a finite count). Completeness
+of the space (Hilbert-space limits) is **`+ℝ-Open`** — we work in the `ℚ`-dense core and take the
+completion only as a declared readout (A8).
+
+## 13.2 The retained metric, `L_R`, and the spectral readout
+
+- **Inner product = the positive retained metric** `⟨x,y⟩_G = xᵀ G y`, `G≻0` (§III of the `π`/`φ`
+  synthesis, Eq. 4). It makes retained load nonnegative and fixes which relabelings are admissible
+  (the automorphisms of Part XII are the `G`-isometries).
+- **`L_R = D_W − W`** (graph Laplacian, Part V) is the canonical self-adjoint operator. Its keystone is
+  `B(Φ,Φ)=I(Φ)` — the Dirichlet energy *equals* the retained information (`Th_coqc`, mined). Its
+  **kernel is the indistinguishability space** (constant-on-components readouts); its **spectrum is the
+  set of retained modes**; its **Perron–Frobenius eigenvalue** carries the dominant retained scale (the
+  `φ` of the minimal transfer `K_F`, §4.4).
+- **Determinant = signed retained volume; rank = retained-distinction count.** Both are exact `ℚ`
+  computations (validated, Appendix D.L3); **matrix–tree** links `det` of an `L_R` minor to spanning
+  trees (§15.3).
+
+## 13.3 Solving linear systems (exact, no continuum)
+
+`Ax=b` over `ℚ` is solved by finite Gaussian elimination — an **exact `Th_coqc`-elig** procedure with
+no rounding and no limit. Eigenvalue/eigenvector computation for the finite `L_R` is a finite readout;
+the only `+ℝ-Open` step is the completion to real spectra of an infinite operator (the continuum limit
+`L_R→□`, §10.9).
+
+---
+
+# Part XIV — Complex analysis as the rotation-readout of retained phase
+
+The complex numbers are introduced here **without** the mystical "`√(−1)`". A complex number is a
+retained **phase**, and `i` is the generator of a quarter-turn — an order-4 element of the rotation
+readout, nothing more occult than the order-reversal sign of §4.4.
+
+## 14.1 `ℂ` as `ℚ`-pairs with a rotation operator
+
+`ℂ_ℚ := ℚ×ℚ` with `⊕` componentwise and `⊗` the rotation-scaling `(a,b)·(c,d)=(ac−bd, ad+bc)`. Then
+**`i=(0,1)` is the quarter-turn**: `i²=(−1,0)` because two quarter-turns are a half-turn — the same
+order-reversal that carries phase `π` (§4.4, Th 4.4). **`i` is defined by its order (4), not by a square
+root of a negative real** — the contamination "`√−1` as a real-line object" is refused; the object is a
+finite cyclic phase. `e^{iθ}` is the **compact-closure readout** `U(θ)` with `U(θ+2π)=U(θ)` (Eq. 11 of
+the `π`/`φ` synthesis).
+
+## 14.2 Roots of unity, Euler's identity, and closure
+
+- **Roots of unity = finite cyclic readouts.** The `n`-th roots are the `ℤ_n` phase group (validated,
+  Appendix D.L4; `ℤ_3={1,e^{2πi/3},e^{4πi/3}}` is exactly the Standard-Model center quotient, §III of
+  the synthesis, Eq. 14). Finite, exact.
+- **Euler's identity `e^{iπ}+1=0`** is the order-reversal invariant `e^{iπ}=−1` (§4.4) — a
+  `Th_coqc`-elig algebraic fact about the compact phase, not a statement needing the real exponential's
+  completion.
+
+## 14.3 Holomorphy, contours, and residues (discrete)
+
+- **Holomorphic = a phase-transport that closes.** A map is admissible-analytic when its transport
+  `U'_{j←i}=h_j U_{j←i} h_i⁻¹` (Eq. 5) has trivial holonomy on contractible cycles; the **holonomy**
+  `H_C=∏_{e∈C} U_e` (Eq. 6) records whether translations close consistently.
+- **Contour integral = `I_ε` around a finite cycle; residue = retained winding count.** Cauchy's theorem
+  is the closure condition (a distinction transported around a closed path returns to the same readout
+  class ⇒ zero net accumulation), and the residue is the integer winding a non-closing cycle carries —
+  both finite readouts (`Dr`/`finite_diagnostic`). Full complex analysis over the completed plane
+  (analytic continuation, the ℝ/ℂ-completeness theorems) stays **`+ℝ-Open`**, per Part 0.
+
+---
+
+# Part XV — Combinatorics and graph theory (the native home of `δ_R`)
+
+This Part is last only in order, not in fundamentality: `δ_R=(a♯b)` **is an edge**, so a retained
+structure **is a graph**, and counting distinctions is the most native computation in the whole book.
+Everything here sits at the native tier (`Th_coqc`-elig — finite, decidable, over `ℚ`).
+
+## 15.1 Counting is retained-distinction counting
+
+`Counting_λ(S)=|[S]_λ|` (§10.2) — the de-duplicated count of `∼_λ`-classes, always a finite natural.
+Binomial/multinomial coefficients count admissible selections; **Catalan numbers, partitions, Stirling
+numbers, Bernoulli numbers** are all validated finite readouts (Appendix D.L3–L5). Generating functions
+are **readout-series** — the same finite-`ε` series objects of Part IX, now indexing combinatorial
+families.
+
+## 15.2 Graphs, the Laplacian, and connectivity
+
+A graph *is* the retained structure. `L_R=D_W−W` is its Laplacian (Part V); therefore every
+graph-theoretic invariant is an `L_R` readout:
+
+- **Connectivity = `ker L_R`.** The number of connected components equals `dim ker L_R` (constant-on-
+  component vectors) — the kernel is literally the indistinguishability space (§V). `Th_coqc`-elig.
+- **Spectral gap = `λ₂(L_R)`** controls mixing/expansion — the same spectral quantity that the
+  particle-graph diagnosis reads (`falsify_particle_graph`, memory) and that the `π`/`φ` transfer
+  selects (§4.4).
+
+## 15.3 Trees, Euler characteristic, and finite guarantees
+
+- **Matrix–tree theorem.** The number of spanning trees `= det` of any cofactor of `L_R` — a bridge to
+  linear algebra (§13.2), an exact `ℚ` determinant (`Th_coqc`-elig).
+- **Euler characteristic `χ=V−E+F`** and the **discrete Gauss–Bonnet / Bianchi** identities (§10.10)
+  make curvature a second retained difference summing to a topological invariant — geometry and
+  combinatorics meet with no continuum (`Th_coqc`-elig in the mined DEC toolkit).
+- **Pigeonhole and Ramsey-type bounds** are finite existence readouts: with more distinctions than
+  classes, two must collide — a one-line `δ_R` counting argument (`Th_coqc`-elig).
+
+**Breadth closure.** With Parts XII–XV the foundation now carries dedicated, tier-honest chapters for
+algebra, linear algebra, complex analysis, and combinatorics/graph theory — each derived from `δ_R`,
+`L_R`, and the Part VII operators, none importing a continuum primitive. The remaining declared frontier
+(topology/topos, Hauptvermutung, completed continuum limits, exact `π`/`φ` objects) stays `+ℝ-Open`
+(§10.9), stated and predicted, never smuggled in.
+
+---
+
 # Appendix A — The contaminated-concept → discrete-replacement table
 
 | contaminated concept | injection | discrete-correct replacement |
