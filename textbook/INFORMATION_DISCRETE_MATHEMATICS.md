@@ -93,8 +93,9 @@ honesty discipline of `tools/idm_discipline.py` (truthy only on `ACCEPT`; used f
 > `readout_genesis`, `readout_universe` — where those `coqc`-verified proofs live (Appendix B/C). In
 > addition, this repository now ships its **own** axiom-free witnesses in **`formal/IDM_FiniteWitnesses.v`**
 > (Coq 8.20; `coqc` exit 0, `Print Assumptions` = *Closed under the global context* for every result) —
-> currently Th 10.1 (Kuratowski pair injectivity), §15.2 handshake, §15.3 pigeonhole, §17.2 finite-Yoneda,
-> §12.2 semiring distributivity. Where no witness exists yet, the tag is `Th_coqc-elig` (eligible, not yet
+> currently the operator keystone Th 5.1 `B(Φ,Φ)=I(Φ)` (`IDM_Keystone.v`), plus Th 10.1 (Kuratowski pair
+> injectivity), §15.2 handshake, §15.3 pigeonhole, §17.2 finite-Yoneda, §12.2 semiring distributivity
+> (`IDM_FiniteWitnesses.v`). Where no witness exists yet, the tag is `Th_coqc-elig` (eligible, not yet
 > checked), never a bare `Th_coqc`.
 
 ---
@@ -427,10 +428,12 @@ free of any injected continuum, Platonic constant, or "universal golden" overcla
 
 - **Def 5.1 (retained-information density).** `I(Φ) :=` the distinguishability of neighbouring
   retained states of the field `Φ` on the graph.
-- **Th 5.1 (keystone — target, `Th_coqc` in progress).** **`B(Φ,Φ) = I(Φ)`**: the operator's
-  Dirichlet energy **is** the retained-information functional. *Information — not length, not energy
-  — is the central quantity; geometry and distance are readouts OF it.* (Phase-2 of the operator
-  program; the Laplacian mechanics Th 4.3–4.4 are the completed Phase-0.)
+- **Th 5.1 (keystone — `Th_coqc`, witness `formal/IDM_Keystone.v: keystone_B_eq_I`).** **`B(Φ,Φ) = I(Φ)`**:
+  the operator's Dirichlet energy **is** the retained-information functional. In the edge assembly of
+  `L_R = D_W − W` this is the identity `ΦᵀL_RΦ = Σ_edges w·(Φ_i − Φ_j)²`, proved axiom-free over `ℚ`
+  (`Print Assumptions` = *Closed under the global context*); its companion `keystone_nonneg` shows
+  `L_R` is positive semidefinite (the retained metric is a genuine seminorm). *Information — not length,
+  not energy — is the central quantity; geometry and distance are readouts OF it.*
 
 ## 5.2 Readouts of the operator
 
@@ -935,7 +938,7 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
   **cosmogenesis order backbone** (`δ_R` → asymmetry → temporal order → `τ_c` seed → atomicity) ·
   **causal order `≺` and `L_R` structural facts** (bridge to the spine `K·L_R`) · **genesis-chain
   integration (M2) + readout-lossiness (CG-05A)** · **coupled discrete-spine stability** on the graph
-  carrier · **the info-operator keystone `B(Φ,Φ)=I(Φ)`** (Dirichlet energy = retained information — **target Th 5.1, in progress**, see §5.1/Roadmap; listed here as the design goal the mined pieces support, not a completed witness) ·
+  carrier · **the info-operator keystone `B(Φ,Φ)=I(Φ)`** (Dirichlet energy = retained information — **Th 5.1, now `Th_coqc`**, local witness `formal/IDM_Keystone.v`) ·
   **DEC toolkit** (discrete exterior calculus around `L_R`, 9 tools, minimal-cell scope) · **π and φ as
   readout-invariants** (reconstruction limits, not root objects; `Dr`). *(Witnesses: `RD.v`, `RDL.v`,
   `RDL_Distinguishability.v`, `RDL_CausalOrder.v`, `RDL_GenesisLink.v`, `RDL_SpineGraph*.v`,
@@ -1158,7 +1161,7 @@ completion only as a declared readout (A8).
   synthesis, Eq. 4). It makes retained load nonnegative and fixes which relabelings are admissible
   (the automorphisms of Part XII are the `G`-isometries).
 - **`L_R = D_W − W`** (graph Laplacian, Part V) is the canonical self-adjoint operator. Its keystone is
-  `B(Φ,Φ)=I(Φ)` — the Dirichlet energy *equals* the retained information (the keystone **Th 5.1**, a **design target, `Th_coqc` in progress** — not yet a completed witness). Its
+  `B(Φ,Φ)=I(Φ)` — the Dirichlet energy *equals* the retained information (the keystone **Th 5.1**, `Th_coqc`, witness `formal/IDM_Keystone.v`). Its
   **kernel is the indistinguishability space** (constant-on-components readouts); its **spectrum is the
   set of retained modes**; its **Perron–Frobenius eigenvalue** carries the dominant retained scale (the
   `φ` of the minimal transfer `K_F`, §4.4).
@@ -1423,7 +1426,7 @@ construct the continuum layer *as a readout* and prove it computes identically.
 
 # Appendix B — Machine-checked theorem index (tier · witness)
 
-**Local witnesses (this repo, `formal/IDM_FiniteWitnesses.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
+**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`
@@ -1504,8 +1507,8 @@ operational meaning of "closing the continuum" (Part XI).**
 
 **Stated & machine-checked:** RDL logic; `δ_R→D→ℤ→ℚ→ℝ` to the ordered-field / Cauchy-complete /
 lattice level; discrete calculus; metric-space + betweenness geometry; the Laplacian operator
-mechanics; the non-readout theorems and the endpoint principle. **In progress:** the operator
-keystone `B(Φ,Φ)=I(Φ)` (Th 5.1). **Deferred / imported (`+ℝ`/`Open`):** the full continuum
+mechanics; the non-readout theorems and the endpoint principle; **the operator keystone `B(Φ,Φ)=I(Φ)`
+(Th 5.1, now machine-checked — `formal/IDM_Keystone.v`).** **Deferred / imported (`+ℝ`/`Open`):** the full continuum
 derivative-integral tower, continuum geometry (manifolds, curvature), and the physical readouts
 (spectra → masses) built on top.
 

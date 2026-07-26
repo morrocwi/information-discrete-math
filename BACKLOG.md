@@ -50,9 +50,9 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
 
 ## Tier 2 — strengthen warrant (proof work; raises existing tiers, no new breadth)
 
-- [ ] **Prove the keystone Th 5.1 `B(Φ,Φ)=I(Φ)` in Coq.** Currently a design target / in-progress
-      (§5.1, §13.2, Roadmap). A checked witness would upgrade the single most-cited result from
-      "in progress" to `Th_coqc`. *Highest warrant value in the book.*
+- [x] **Prove the keystone Th 5.1 `B(Φ,Φ)=I(Φ)` in Coq.** DONE (v1.10): `formal/IDM_Keystone.v`,
+      `keystone_B_eq_I` (edge assembly `ΦᵀL_RΦ = Σ w(Φi−Φj)²`) + `keystone_nonneg` (L_R PSD), both
+      axiom-free. Single most-cited result upgraded in-progress → `Th_coqc` (§5.1/§10.8/§13.2/Roadmap).
 - [~] **Machine-check the `Th_coqc-elig` claims → real `.v` witnesses.** DONE (v1.9): `formal/IDM_FiniteWitnesses.v`
       proves 5 axiom-free — Th 10.1 Kuratowski pair injectivity (§10.1), handshake (§15.2), pigeonhole
       (§15.3), finite-Yoneda (§17.2), semiring distributivity (§12.2). REMAINING: §10.2 cardinality
