@@ -119,7 +119,9 @@ first‑class: `tools/aggregate.py` solves shortest/critical/widest paths and re
 algebra over the **min‑plus / max‑plus / bottleneck semirings** (laws machine‑checked in
 `formal/IDM_Tropical.v`), and reads the values engineers use — MIN, MAX, AVG, MEDIAN, PEAK, RMS,
 variance/σ, crest & form factor, L1/L2/L∞, moving averages, prefix sums, rate/curvature — all as finite
-aggregations, no continuum.
+aggregations, no continuum. `tools/eng_readouts.py` adds the domain-spanning finite readouts (DFT/spectrum,
+THD, dB, correlation & exact‑ℚ least‑squares regression, Cp/Cpk & spec yield, response overshoot/rise/
+settling, Shannon entropy, safety factor) — pure mathematics, domain‑neutral, no continuum call producing a value.
 
 **Is not:** a proof that continuum mathematics is *unnecessary for everything*, and **not** a physical
 theory. The claim is about **computation**: the answers standard analysis names are obtained without
