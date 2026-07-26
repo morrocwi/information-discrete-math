@@ -531,6 +531,63 @@ from it.
 
 ---
 
+# Part IX — Powerful Tools, Re-adapted (Regularization, Asymptotics, Transforms, Deformations)
+
+Under readout-not-truth there is no completed infinite object to sum, integrate, or continue; what exists is a finite reader's *retained aggregation* of discrete data at a declared resolution. Every tool below is therefore re-read as one operation — split a finite readout into a **window-tracking bulk** (discarded, non-readout) and a **window-stable residue** (kept), and declare the limit only after proving stability (Discipline **A8**). Regularization is not "assigning a value to infinity"; it *is* the mathematics of finite retained aggregation.
+
+## A. Divergent aggregation as retained readout
+
+**§9.1 Ramanujan summation.** The Ramanujan value is not the sum of the series but the resolution-independent residue of the finite prefix-sum $I_1f[N]=\sum_{n\le N}f[n]$. Factor $I_1f[N]=A_\varepsilon(N)\oplus C_\varepsilon(f)\oplus R_p(N)$, with $A_\varepsilon$ the window-growing envelope (integral + boundary derivative corrections), $R_p(N)\to0$ the truncation error, and $C_\varepsilon(f)$ the stable residue. Declare $R\!\sum f=C_\varepsilon(f)$ only after proving $c_N=I_1f[N]-A_\varepsilon(N)$ is Cauchy under window-refinement. Buys the flagship $R\!\sum n=\zeta(-1)=-1/12$ as a *finite* computation, with the firewall against "1+2+3+⋯ = −1/12." **Tier: finite_diagnostic.**
+
+**§9.2 Euler–Maclaurin.** The exact ($R_m$-attached) sum↔integral bridge, re-founded as the first nontrivial corollary of FTCC ($I_\varepsilon D_\varepsilon f=f$) via the finite operator algebra $E_\varepsilon=(1-\varepsilon D_\varepsilon)^{-1}$:
+$$I_\varepsilon f[a,b]=\tfrac{\varepsilon}{2}[f(b)+f(a)]+\sum_{k=1}^{m}\tfrac{B_{2k}}{(2k)!}\varepsilon^{2k}\!\left[D_\varepsilon^{2k-1}f(b)-D_\varepsilon^{2k-1}f(a)\right]+R_{m,\varepsilon}.$$
+Bernoulli numbers are finite rational data; the divergent $m\to\infty$ tail is un-coarse-graining without bound, so truncating at retained order $m^\ast$ is a $G_{\lambda(m^\ast)}$ choice. This is the constructive engine realizing the regularization hook at every finite order. **Tier: finite_diagnostic** (interpretive layer Dr).
+
+**§9.3 Zeta / analytic regularization.** Build the two-parameter readout $\zeta_\lambda(s;N)=\sum_{n\le N}n^{-s}e^{-\lambda n}$ — manifestly $E=\tilde E\circ G_\lambda$ with $G_\lambda=e^{-\lambda n}$ discarding the sub-resolution tail (S1). Euler–Maclaurin splits it into $\lambda$-divergent poles plus a regulator-independent residue; when regulator-independence is *proved*, that residue is $\zeta(-s)$. The operator version regularizes $\det A=\prod\lambda_i$ as $\det_\zeta A=\exp(-\zeta_A'(0))$. The pole at $s=1$ is the framework correctly *refusing* a readout where none is stable. **Tier: finite_diagnostic** (physical application Dr).
+
+**§9.4 Abel, Borel, Cesàro.** Each regulator is a coarse-graining parameter $\lambda$. Cesàro: $C_N=\tfrac1N I_\varepsilon(s)[N]$, a finite mean; report its plateau. Abel: $G_x[a][n]=a[n]x^n$ suppresses indices past $n^\ast\sim1/\ln(1/x)$. Borel: $B_N(t)=\sum_{n\le N}\tfrac{a_n}{n!}t^n$ then discrete aggregation $S_\varepsilon=\varepsilon\sum_k e^{-k\varepsilon}B(k\varepsilon)$. All read: the family $\{E_\lambda[a]\}$ has a stable value $S$ once $\lambda$ crosses a *declared* threshold; the raw sum is never computed. The canonical teaching example for why A8 exists (forget the stability declaration and "prove" $1-1+1-\cdots$ is both 0 and 1). **Tier: finite_diagnostic.**
+
+**§9.5 Generating functions.** $\mathbb Q[[x]]$ is already finite-discrete: it is the inverse limit of decidable rings $\mathbb Q[x]/(x^{N+1})$, with $G_N$ truncation and $[x^n](A\!\cdot\!B)=\sum_{k\le n}a_kb_{n-k}$ a finite sum. Multiply-by-$x$ is the causal shift ($I_\varepsilon$-side), $(A-a_0)/x$ the backward-difference dual; solving a linear recurrence via $A(x)\cdot(1-\sum c_kx^k)=$ data is FTCC made combinatorial. Evaluating a rational closed form at a divergence point $x_0$ is the same regularization move — licensed only post-stability. **Tier: finite_diagnostic** (evaluation-at-a-point Dr).
+
+**§9.6 Ramanujan Master Theorem, mock theta, partition asymptotics.** RMT is A8 on the *coefficient axis*: from retained $\{\phi(0),\dots,\phi(N)\}$ form $f_\varepsilon(x)$, take the finite Mellin readout $M_\varepsilon(s)$, and declare $\Gamma(s)\phi(-s)$ only after a growth-bound stability proof. Hardy–Ramanujan–Rademacher $p(n)\sim\frac{1}{4n\sqrt3}e^{\pi\sqrt{2n/3}}$ is the case A8 *passes* — Rademacher's convergent tail certifies the discard. Mock theta functions are the case it *fails*: the sub-leading discrepancy from modularity survives every finite resolution and must be carried explicitly as Zwegers' shadow. Gives A8 falsifiable teeth. **Tier: finite_diagnostic.**
+
+## B. Asymptotics and transforms
+
+**§9.7 Mellin transform & master theorem.** Read $q$—no, read $s$ as a probe-exponent and the transform as a coarse-graining on a geometric log-grid: $M_\varepsilon[f](s)=\sum_n f_\varepsilon[n]x_n^{s-1}(x_n-x_{n-1})$, an $I_\varepsilon$ aggregation. The "fundamental strip" becomes the **retained-distinguishability band** (found by A8 stability testing). The harmonic-sum factorization $M_\varepsilon[S]=F^\ast(s)M_\varepsilon[f]$ with $F^\ast(s)=\sum_k\lambda_k\mu_k^{-s}$; contour-shift = resolution change, residues = zeta/Ramanujan-type finite retained values. **Tier: finite_diagnostic.**
+
+**§9.8 Watson, Laplace, stationary-phase, saddle-point.** Set $\varepsilon=1/\lambda$; the large parameter is inverse resolution. Discretize: $I_\varepsilon=\varepsilon\sum_{n\le N}f(n\varepsilon)e^{-n}=\sum_k a_k\varepsilon^{k+1}S_N(k)$, $S_N(k)=\sum n^k e^{-n}$ with a provable geometric tail (S1 discard). Declaring the bound then $N\to\infty$ recovers Watson's $\sum a_k k!/\lambda^{k+1}$ — each term labeled a coarse-graining moment. Laplace/stationary-phase use the finite argmin of $D_\varepsilon^2\phi$ and a discrete Gauss sum; the divergent asymptotic series ties back to §9.1–9.4. **Tier: finite_diagnostic** (saddle-point in ℂ, general optimal-truncation: Dr/Open).
+
+## C. Deformations and finite representations
+
+**§9.9 Umbral & finite-difference calculus.** On the $\varepsilon$-falling-factorial basis $x^{\underline n}_\varepsilon=\prod_{j<n}(x-j\varepsilon)$ the causal difference is *exact*, not limiting: $D_\varepsilon x^{\underline n}_\varepsilon=n\,x^{\underline{n-1}}_\varepsilon$, giving exact telescoped power-sums and the Newton forward reconstruction $f(x)=\sum_n \frac{x^{\underline n}_\varepsilon}{n!\varepsilon^n}D_\varepsilon^{(n)}f[x_0]$. Stirling numbers are the resolution-deformation dictionary between $x^n$ and the readout-native basis; $B_n$ measures the basis-correction Faulhaber needs. **Tier: mixed** — finite core Th_coqc-eligible; the $\zeta(-n)=-B_{n+1}/(n+1)$ bridge is an import (Dr/Open), never merged with it.
+
+**§9.10 q-calculus.** Same causal scaffolding on a *geometric* lattice $\Lambda_q=\{x_0q^n\}$ — resolution measured as a ratio, not an absolute step. $D_qf[n]$ is $D_\varepsilon$ with local $\varepsilon_n=x_0q^{n-1}(1-q)$; $I_qf(a)=a(1-q)\sum q^n f(aq^n)$ is $I_\varepsilon$ with the $q^n$ factor making the "infinite" sum a genuinely finite retained aggregate (S1 tail explicit). $q\to1$ is the disciplined continuum recovery, proved not assumed. **Tier: finite_diagnostic.**
+
+**§9.11 Continued fractions.** The CF algorithm *is* the access operator: each step emits one integer $a_k=\lfloor x_k\rfloor$, $x_{k+1}=1/(x_k-a_k)$, aggregated by the prefix matrix product $M_n=\prod\begin{psmallmatrix}a_k&1\\1&0\end{psmallmatrix}$. Depth $n$ is $\lambda$; $p_n/q_n$ is the *optimal* finite rational readout at denominator budget $q_n$, with $|x-p_n/q_n|<1/(q_nq_{n+1})$ as the resolution-deformation metric. Periodicity (Lagrange) is itself a finite stability certificate. **Tier: finite_diagnostic** (finite $n$ Th_coqc; general $n\to\infty$ +ℝ(Open)).
+
+**§9.12 Padé approximants.** A rational-function sibling of the scalar regularizers: from a retained coefficient window $(c_0^\varepsilon,\dots,c_N^\varepsilon)$, solve the finite Padé linear system for $[L/M]$. Poles geometrize S1's discarded tail as singularity locations. Convergence as $N\to\infty$ holds only under structural hypotheses (de Montessus); the diagonal is genuinely **Open** for unclassified $f$ (Baker–Gammel–Wills refuted, Lubinsky 2003). **Tier: split** — construction Th_coqc, convergence Dr/+ℝ(Open); spurious Froissart poles are artifacts, never reported as structure.
+
+---
+
+## References
+
+- Ramanujan (notebooks, letters to Hardy, c. 1910–1918); G. H. Hardy, *Divergent Series*, Oxford: Clarendon Press, 1949, Ch. XIII.
+- L. Euler, "Methodus generalis summandi progressiones," *Comm. Acad. Sci. Petrop.*, 1738; C. Maclaurin, *A Treatise of Fluxions*, Edinburgh, 1742; Graham, Knuth & Patashnik, *Concrete Mathematics*, 2nd ed., 1994, §9.5.
+- B. Riemann, "Über die Anzahl der Primzahlen unter einer gegebenen Grösse," *Monatsber. Berliner Akad.*, 1859; S. W. Hawking, "Zeta Function Regularization of Path Integrals in Curved Spacetime," *Commun. Math. Phys.* 55 (1977), 133–148.
+- E. Cesàro (1890); N. H. Abel (1826); É. Borel, "Mémoire sur les séries divergentes," *Ann. Sci. ENS*, 1899; Hardy, *Divergent Series*, 1949.
+- A. de Moivre, *Miscellanea Analytica*, 1730; L. Euler, *Introductio in Analysin Infinitorum*, 1748; H. S. Wilf, *generatingfunctionology*, 2nd ed., 1994; Flajolet & Sedgewick, *Analytic Combinatorics*, CUP, 2009.
+- RMT: Hardy, *Ramanujan: Twelve Lectures*, CUP, 1940, Ch. XI; Amdeberhan et al., *Ramanujan J.* 29 (2012), 103–120. Mock theta: Ramanujan (last letter, 1920); S. Zwegers, PhD thesis, Utrecht, 2002. Partitions: Hardy & Ramanujan, *Proc. LMS* 17 (1918), 75–115; H. Rademacher, *Proc. LMS* 43 (1937), 241–254.
+- R. H. Mellin (1902, 1910); Flajolet, Gourdon & Zimmermann, "The Mellin Transform and Asymptotics: Harmonic Sums," *TCS* 144 (1995), 3–58; E. W. Barnes (1908).
+- Laplace (1774); W. Thomson/Kelvin (1887); P. Debye (1909); G. N. Watson (1918); Bender & Orszag, *Advanced Mathematical Methods*, 1978; Copson, *Asymptotic Expansions*, CUP, 1965; de Bruijn, *Asymptotic Methods in Analysis*, 1958.
+- I. Newton, *Methodus Differentialis*, 1711; J. Bernoulli, *Ars Conjectandi*, 1713; J. Stirling, *Methodus Differentialis*, 1730; J. Blissard (1861); Rota, Kahaner & Odlyzko, *JMAA* 42 (1973), 684–760; Roman & Rota, *Adv. Math.* 27 (1978), 95–188; S. Roman, *The Umbral Calculus*, Academic Press, 1984.
+- F. H. Jackson, *Trans. Roy. Soc. Edinburgh* 46 (1908), 253–281; *Quart. J. Pure Appl. Math.* 41 (1910), 193–203; Kac & Cheung, *Quantum Calculus*, Springer, 2002.
+- L. Euler, "De fractionibus continuis dissertatio," *Comm. Acad. Sci. Petrop.* 9 (1744/1750); A. Ya. Khinchin, *Continued Fractions*, 3rd ed., Univ. of Chicago Press, 1964.
+- H. Padé, *Ann. Sci. ENS*, 3e série, 9 (1892); Baker & Graves-Morris, *Padé Approximants*, 2nd ed., CUP, 1996; D. S. Lubinsky (2003).
+
+> *Every tool above is re-adapted to this framework (finite-ε, coarse-graining, A8) and the original is cited; none is used in its continuum-primitive form. This is the operator/analysis power layer — the book carries the world's hard tools without importing the continuum.*
+
+---
+
 # Appendix A — The contaminated-concept → discrete-replacement table
 
 | contaminated concept | injection | discrete-correct replacement |
