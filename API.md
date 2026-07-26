@@ -48,10 +48,12 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**117 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**126 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
+
+**Limits & series** — `taylor_series` (`f`,`x0`,`n`) · `laurent_series` · `fourier_series` (`f`,`n`) · `pade` (`coeffs`,`m`,`n`) · `series_accelerate` (`term` — Wynn ε) · `convergence_test` (`term` → CONVERGES/DIVERGES/**HOLD** on the harmonic/Bertrand boundary) · `limit_oneside` · `limit_infinity` · `lhopital`
 
 **Differential equations** (finite-difference readouts) — `ode_system` (`f` list, `vars`, `x0`, `y0` vector, `xT`) · `ode_bvp` (`q`,`r`,`a`,`b`,`alpha`,`beta`) · `pde_heat` (Crank–Nicolson) · `pde_wave` (leapfrog) · `pde_poisson` / `pde_laplace` (Gauss–Seidel, 2-D) · `sturm_liouville` (eigenvalues by Sturm bisection). Each takes an optional `at` to read the solution at a point.
 

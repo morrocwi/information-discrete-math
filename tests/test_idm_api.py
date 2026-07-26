@@ -184,3 +184,27 @@ def test_ode_pde():
     e = idm.solve({"kind": "sturm_liouville", "potential": "0", "L": float(mp.pi), "n_eigs": 3, "N": 400})
     eigs = [round(float(v["float"] if isinstance(v, dict) else v)) for v in e["value"]]
     assert eigs == [1, 4, 9]
+
+
+def test_limits_series():
+    import mpmath as mp
+    # Taylor of exp → 1/k!
+    t = idm.solve({"kind": "taylor_series", "f": "exp(x)", "x0": 0, "n": 5})
+    cs = [c["float"] if isinstance(c, dict) else float(c) for c in t["value"]]
+    assert abs(cs[0] - 1) < 1e-6 and abs(cs[2] - 0.5) < 1e-6 and abs(cs[4] - 1 / 24) < 1e-5
+    # Fourier of sin → b1 = 1
+    fo = idm.solve({"kind": "fourier_series", "f": "sin(x)", "n": 3})
+    assert abs((fo["value"]["b"][0]["float"] if isinstance(fo["value"]["b"][0], dict) else float(fo["value"]["b"][0])) - 1) < 1e-6
+    # Padé [1/1] of exp = (1 + x/2)/(1 − x/2)
+    pa = idm.solve({"kind": "pade", "coeffs": ["1", "1", "1/2", "1/6"], "m": 1, "n": 1})
+    assert pa["value"]["num"][1]["exact"] == "1/2" and pa["value"]["den"][1]["exact"] == "-1/2"
+    # acceleration of Σ(−1)ⁿ/(n+1) = ln 2
+    assert abs(_val(idm.solve({"kind": "series_accelerate", "term": "(-1)**n/(n+1)", "N": 25})) - float(mp.log(2))) < 1e-8
+    # convergence with an honest HOLD on the harmonic boundary
+    assert idm.solve({"kind": "convergence_test", "term": "1/n**2"})["value"]["verdict"] == "CONVERGES"
+    assert idm.solve({"kind": "convergence_test", "term": "2**n"})["value"]["verdict"] == "DIVERGES"
+    assert idm.solve({"kind": "convergence_test", "term": "1/n"})["status"] == "HOLD"
+    # limits
+    assert abs(_val(idm.solve({"kind": "limit_oneside", "f": "sin(x)/x", "a": 0, "side": "+"})) - 1) < 1e-8
+    assert abs(_val(idm.solve({"kind": "limit_infinity", "f": "(1+1/x)**x"})) - float(mp.e)) < 1e-6
+    assert abs(_val(idm.solve({"kind": "lhopital", "num": "exp(x)-1", "den": "x", "a": 0})) - 1) < 1e-8
