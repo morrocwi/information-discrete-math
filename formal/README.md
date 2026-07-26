@@ -19,6 +19,7 @@ coqc -q IDM_Logic.v
 coqc -q IDM_FiniteWitnesses3.v
 coqc -q IDM_Matrix.v
 coqc -q IDM_Harvest.v
+coqc -q IDM_Calculus.v
 printf 'Require Import IDM_FiniteWitnesses.\nPrint Assumptions kuratowski_pair_inj.\nPrint Assumptions handshake_lemma.\nPrint Assumptions pigeonhole.\nPrint Assumptions finite_yoneda.\nPrint Assumptions semiring_distrib.\n' > _chk.v
 coqc -q _chk.v   # every result prints "Closed under the global context" = axiom-free
 rm -f _chk.v *.vo *.glob *.vos *.vok
@@ -53,6 +54,9 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 | `sym_skew_reconstruct`/`skew_diag_zero` (`IDM_Harvest.v`) | §13 | every operator = self-adjoint (metric) + skew part; skew diagonal = 0 |
 | `odd_from_cyclic_closure`/`least_nontrivial_odd_is_three` (`IDM_Harvest.v`) | §4.4/§II | cyclic start-independence ⇒ k odd ⇒ least 3 |
 | `repeated_event_zero` (`IDM_Harvest.v`) | — | a self-cancelling readout is null (C=−C⇒C=0) |
+| `delta_sum`/`delta_scalar`/`delta_product` (`IDM_Calculus.v`) | §8.2/§10.5 Th 10.8 | exact D_ε rules, zero O(ε) residue |
+| `Deps_sum`/`Deps_product` (`IDM_Calculus.v`) | §10.5 | the ε-form (ε cancels exactly) |
+| `FTCC_telescope`/`summation_by_parts` (`IDM_Calculus.v`) | §8.2 | exact discrete FTC + integration by parts |
 | `FTCC_exact` / `FTCC_eps_exact` (`IDM_Bridge.v`) | §20.2 | continuum-maya exact core: `I_ε(D_ε f)=f[N]−f[0]` (zero residue) |
 
 All checked axiom-free under Coq 8.20 (`Print Assumptions` = *Closed under the global context*).

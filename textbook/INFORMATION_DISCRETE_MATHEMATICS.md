@@ -621,6 +621,8 @@ readout. Results and definitions are stated here; proofs are v-proofs (next vers
 
 ## 8.2 Sum, the discrete FTC, and integration-by-parts
 
+*(Machine-checked core: the exact `D_ε` sum/scalar/product rules, FTCC telescoping, and summation-by-parts are `formal/IDM_Calculus.v`, axiom-free — see §10.5 Th 10.8.)*
+
 - **Def.** antidifference `Σ_a^b f := f(a)⊕…⊕f(b−1)`.
 - **Th 8.1 (discrete FTC).** `Σ_a^b Δf = f(b)⊖f(a)` (telescoping) and `Δ(Σf)=f` (Th 3.2).
 - **Th 8.2 (summation by parts).** `Σ f·Δg = f·g ⊖ Σ (Eg)·Δf` — discrete integration by parts.
@@ -881,11 +883,14 @@ primitive. This closes the panel-flagged stub with all five sub-rungs stated, no
 ### 10.5.4 Derivative (`D_ε` exact algebra ⊢ declared-stability rung)
 
 - **Primitive (unchanged).** `D_ε f := (f[n]⊖f[n−1])/ε` (causal secant, §8.1/§0.5.4).
-- **Th 10.8 (restated, `Th_coqc` AS STATED — the exact finite-`ε` algebra, zero `O(ε)` residue):**
-  `D_ε(f+g)=D_εf+D_εg` · `D_ε(f·g)[n]=f[n]D_εg[n]+g[n−1]D_εf[n]` ·
-  `D_ε(g∘f)[n]=Δg[f[n−1],f[n]]·D_εf[n]` (secant slope across the actual jump) ·
-  **FTCC** `I_ε(D_εf)[N]=f[N]−f[0]` exactly (telescoping). Each discharges by `field_simplify; ring` /
-  finite induction — no `Reals`, axiom-free.
+- **Th 10.8 (`Th_coqc` AS STATED — the exact finite-`ε` algebra, zero `O(ε)` residue; local witnesses
+  `formal/IDM_Calculus.v`):** `D_ε(f+g)=D_εf+D_εg` (`delta_sum`/`Deps_sum`) · `D_ε(c·f)=c·D_εf`
+  (`delta_scalar`) · the causal `D_ε(f·g)[n]=f[n+1]·D_εg[n]+g[n]·D_εf[n]` (`delta_product`/`Deps_product`) ·
+  **FTCC** `I_ε(D_εf)[N]=f[N]−f[0]` exactly (`FTCC_telescope`) · **summation by parts**
+  `Σ(f[k+1]Δg[k]+g[k]Δf[k])=f[N]g[N]−f[0]g[0]` (`summation_by_parts`). Each discharges by `field`/`ring` /
+  finite induction — no `Reals`, axiom-free (`Print Assumptions` = *Closed under the global context*). The
+  chain rule `D_ε(g∘f)[n]=Δg[f[n−1],f[n]]·D_εf[n]` (secant slope across the actual jump) is the one still
+  described by reference, `Th_coqc`-elig.
 - **Def 10.5c (finite-`ε` differentiability, the new rung).** `f` is **finite-`ε` differentiable at `x`**
   iff the `ε`-indexed family `(D_{ε_k} f(x))_k`, `ε_k → 0` an admissible refinement sequence, is
   `ε'`-stable in the sense of 10.5a — i.e. the difference-quotient family must itself pass the Cauchy-
