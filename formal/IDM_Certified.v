@@ -86,6 +86,7 @@ Qed.
     M-term tail from index N is bounded by t_N/(1−x). Machine-checked, axiom-free. *)
 Require Import Coq.ZArith.ZArith.
 Require Import Coq.micromega.Lia.
+Require Import Coq.QArith.Qabs.
 
 Fixpoint exp_term (x : Q) (k : nat) : Q :=
   match k with
@@ -146,6 +147,42 @@ Proof.
   apply (geom_majorant_tail x (exp_term x)).
   - intro k. apply exp_term_nonneg; assumption.
   - intro k. apply exp_term_ratio; assumption.
+Qed.
+
+(** ---------------------------------------------------------------------------------------------
+    RANGE-REDUCTION PROPAGATION — carrying the |x|≤½ certificate out to any x.
+
+    The mathematical exponential satisfies exp(x) = exp(x/2)², so a readout for a large argument is the
+    SQUARE of a readout for the halved argument. The remaining question is purely about error: if a
+    readout p is within e of the value v it approximates (|p − v| ≤ e), how far is p² from v²? Answer,
+    proved here axiom-free over Q:
+
+        |p² − v²| ≤ (2|v| + e) · e.
+
+    Repeatedly halving (m times) then squaring back therefore keeps a controlled, finite error — this is
+    the exact mechanism that extends the finite exponential's certificate from |x|≤½ to all x. *)
+Lemma two_nonneg : (0 <= 2)%Q. Proof. unfold Qle; simpl; lia. Qed.
+
+Theorem sq_error_propagation : forall (p v e : Q),
+  Qabs (p - v) <= e ->
+  Qabs (p * p - v * v) <= (2 * Qabs v + e) * e.
+Proof.
+  intros p v e He.
+  assert (Hpv : Qabs (p + v) <= 2 * Qabs v + e).
+  { setoid_replace (p + v) with ((p - v) + 2 * v) by ring.
+    eapply Qle_trans; [ apply Qabs_triangle | ].
+    setoid_replace (Qabs (2 * v)) with (2 * Qabs v)
+      by (rewrite Qabs_Qmult;
+          setoid_replace (Qabs 2) with (2:Q) by (apply Qabs_pos; apply two_nonneg); reflexivity).
+    setoid_replace (Qabs (p - v) + 2 * Qabs v) with (2 * Qabs v + Qabs (p - v)) by ring.
+    apply Qplus_le_r. assumption. }
+  setoid_replace (p * p - v * v) with ((p - v) * (p + v)) by ring.
+  rewrite Qabs_Qmult.
+  apply Qle_trans with (y := e * Qabs (p + v)).
+  - apply Qmult_le_compat_r; [ assumption | apply Qabs_nonneg ].
+  - setoid_replace (e * Qabs (p + v)) with (Qabs (p + v) * e) by ring.
+    apply Qmult_le_compat_r; [ assumption | ].
+    apply Qle_trans with (y := Qabs (p - v)); [ apply Qabs_nonneg | assumption ].
 Qed.
 
 (** Sanity checks that these are computable finite readouts (not just abstract). *)

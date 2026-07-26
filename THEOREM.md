@@ -71,10 +71,22 @@ i.e. the M-term Taylor tail from index N is `≤ (x^N/N!)/(1 − x)` — the cer
 finite exponential, machine-checked and axiom-free. This is the second end-to-end certified algorithm
 (after the geometric series).
 
+### 5. Range-reduction propagation — machine-checked, axiom-free (`Th_coqc`)
+
+`exp(x) = exp(x/2)²`, so a readout for a large argument is the *square* of a readout for the halved one;
+the only question is how error propagates through squaring. Proved in Coq (`sq_error_propagation`),
+axiom-free over ℚ:
+
+    |p − v| ≤ e   ⇒   |p² − v²| ≤ (2|v| + e)·e.
+
+Halving `m` times (until the reduced argument is `≤ ½`, where `exp_tail_certified` applies) and squaring
+back `m` times therefore keeps a controlled, finite error — the mechanism that extends the exponential's
+certificate from `|x| ≤ ½` to any `x`.
+
 ## What is still open (`+ℝ-Open` / next work)
 
-- Add the range-reduction (`exp(x)=exp(x/2)²`) certificate in Coq so the exp bound extends past `|x|≤½`
-  to all `x` (currently the ℚ tail bound is proved for `0 ≤ x < 1`; the Python layer HOLDs beyond `½`).
+- Assemble the two Coq pieces (`exp_tail_certified` at `|x|≤½` + `m`-fold `sq_error_propagation`) into a
+  single `exp_certified_all_x` theorem with the composed bound — mechanical, not yet written.
 - Formalize the Simpson and Euler–Maclaurin remainder inequalities (needs a real-analysis layer).
 - A general Richardson **a-priori** certificate (not just the a-posteriori contraction test).
 

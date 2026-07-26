@@ -91,7 +91,7 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
 | **1. Be surprised (0 deps)** | `python3 prove_it_lite.py` | 8 continuum frontiers from stdlib float |
 | **2. Be surprised (precise)** | `python3 prove_it.py` | the 10 roots to 40 digits |
 | **3. See the breadth** | `python3 prove_it_full.py` | 1278 problems across 5 domains |
-| **4. Be convinced** | `bash formal/verify.sh` | **39 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
+| **4. Be convinced** | `bash formal/verify.sh` | **40 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)`, the exact FTCC bridge, the discrete calculus rules |
 | **5. Read the details** | [`textbook/…`](textbook/INFORMATION_DISCRETE_MATHEMATICS.md) | the full derivations, tier‑tagged; [`INDEX.md`](INDEX.md) is the map |
 
 **Every claim carries an honesty tier — evaluate each on its own tier, never promote evidence across tiers:**

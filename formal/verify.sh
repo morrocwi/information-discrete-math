@@ -48,6 +48,7 @@ declare -a THMS=(
   "geom_certified_defect:IDM_Certified"
   "geom_majorant_tail:IDM_Certified"
   "exp_tail_certified:IDM_Certified"
+  "sq_error_propagation:IDM_Certified"
 )
 
 fail=0
