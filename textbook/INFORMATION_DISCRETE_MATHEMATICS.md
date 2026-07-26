@@ -373,6 +373,7 @@ semantics.**
 | `÷` | **equal partition** of a retained record into `b` indistinguishable parts (the inverse of replication); `÷0` = partition into *no* parts = no reader-record = **refused** |
 | `^` | **self-composition** — iterate the replication-operator on its own output; the retained record of a process re-reading itself |
 | `√` / `ⁿ√` | **generator readout** — recover the pattern whose self-composition yields the record; usually a **non-readout** (no finite record generates it), only its approach appears |
+| `log` / `log_a` | **retained-distinction count** — how many replications (self-compositions) of `a`'s pattern produce the record; the record LENGTH; the **native unit of information (bits when `a=2`)** — inverse of `^` |
 | `\|·\|` | **magnitude of retained distinction**, direction discarded |
 | `Δ` | **local change** of retained distinction (the increment of record between adjacent ticks) |
 | `Σ` | **accumulated retained record** (the total distinction up to a tick) |
@@ -436,6 +437,19 @@ of the project's readout lexicon; keep the two in sync.)*
   `ℚ`-approximants appears; "`√2` the number" is a boundary, never an appearance. It is *computed* by
   a discrete bisection/Newton sequence over `ℚ` that converges by Cauchy-completeness (Th 3.6) — no
   `ℝ` is needed to run it.
+
+- **`log_a` logarithm — the retained-distinction count (the information unit)** — Def: `log_a(x) :=`
+  the `n` with `a^n = x`, i.e. **how many self-compositions of `a` generate the record `x`** — the
+  inverse of `^`. On `D/ℤ`: the **discrete logarithm** `⌊log_a x⌋ = ` the largest `n` with `a^n ⪯ x`,
+  total for `a ⪰ 2`, `x ⪰ 1`. **Th 7.5:** `log_a(x⊗y)=log_a x ⊕ log_a y`, `log_a(x^k)=k·log_a x`,
+  `log_a(1)=0` — replication becomes accumulation (`⊗ → ⊕`): the log **linearises composition**. When
+  `x` is not an exact power of `a`, `log_a x` is a **non-readout** (only its `ℚ`-approximant appears,
+  computed by a discrete bisection over exponents). **Information meaning (primary):** `log_2 N` is
+  the number of **binary distinctions (bits)** needed to name one of `N` retained states — the record
+  LENGTH; the entropy `H = Σ p_i · log_2(1/p_i)` (Part V) is the *expected retained-distinction count*.
+  `log` is therefore the native unit of this book's "information" — it measures retained distinction
+  in bits. `log_a(0)` and `log_a` of a non-positive record are **refused** (no generating count exists
+  — the `0`/`∞` endpoint, Th 6.1).
 
 ## 7.4 Derived operators (all reduce to 7.1–7.3)
 
