@@ -85,6 +85,15 @@ declare -a THMS=(
   "decide_dec:IDM_Reduction"
   "witness_composite_sound:IDM_Reduction"
   "composite_has_factor:IDM_Reduction"
+  "fold_ext:IDM_Reduction"
+  "fold_linear:IDM_Reduction"
+  "fold_add_split:IDM_Reduction"
+  "foldmax_ge_init:IDM_Reduction"
+  "foldmax_ge_elem:IDM_Reduction"
+  "dot_is_fold:IDM_Reduction"
+  "dot_scale:IDM_Reduction"
+  "decide_reflect:IDM_Reduction"
+  "witness_power_sound:IDM_Reduction"
 )
 
 fail=0

@@ -37,6 +37,7 @@
 - **Part XIX** — Optimization (gradient = `D_ε`; convexity; Lagrange; exact-`ℚ` linear programming)
 - **Part XX** — The continuum-maya bridge (the continuum constructed as a readout, `Λ`, and computed with; exact FTCC core)
 - **Part XXI** — The frontier without the continuum: paradox dissolution (topology · manifolds · PDE — the decisive stance)
+- **Part XXII** — The root design: three axioms that generate the solver (`READOUT · FOLD · DECISION` + the `KEYSTONE` bridge; the 230-kind branch map; reductions machine-checked in `IDM_Reduction.v`)
 - **Appendices A/B/C** — contaminated-concept table · machine-checked theorem index · axiom-dependence discipline
 - **Appendices D/E** — validation: 1000 problems ประถม→ปริญญาเอก (1000/1000) · 100 continuous problems reproduced from the discrete (100/100)
 
@@ -1743,6 +1744,89 @@ finite-`ε` schemes — **all three computed robustly, none producing its parado
 
 ---
 
+# Part XXII — The root design: three axioms that generate the solver
+
+The preceding parts build mathematics rung by rung. This part states the **minimal generating core** —
+the shortest set of axioms from which the book's *computational* content, and the 230-kind solver
+`idm`, is produced. The claim of this part is deliberately narrow and tier-honest: **three axioms plus
+one bridge, of which three have machine-checked cores, and whose branch reductions are machine-checked
+in `formal/IDM_Reduction.v` (axiom-free).**
+
+## 22.1 The core — `{ READOUT · FOLD · DECISION }` + the KEYSTONE bridge
+
+- **A1 · READOUT** (`Dr`, the substrate — Part 0.5, Part II).
+  Every appearance is a finite retained difference `δ_R`, a readout `r = O_ε(X) ∈ ℚ` at a declared
+  resolution `ε ≻ 0`. `ℝ`, `+∞`, and the point of zero extent are **non-readouts** — boundaries, never
+  appearances. *This is the framing that makes the rest finite; it is a stance, not a theorem.*
+
+- **A2 · FOLD** (`Th_coqc`, the engine — Part VIII, §22.3).
+  One generic accumulation over a carrier and operation,
+  \[ I_\oplus[f](N) \;=\; \bigoplus_{k<N} f[k], \qquad I(D f) \;=\; f[N]\ \boxminus\ f[0]. \]
+  Changing `(⊕,⊗)` changes the branch of mathematics; the telescoping/FTCC identity is exact.
+
+- **A3 · DECISION** (`Th_coqc`, the search — §22.3).
+  Some problems are not accumulations but existence questions:
+  \[ P(X) \iff \exists\,w \text{ finite}: \mathrm{check}(X,w)=\top \quad(\text{no witness} \Rightarrow \textbf{HOLD}). \]
+  This is also the honesty mechanism: absence of a witness is a refusal, never a guess.
+
+- **A4 · KEYSTONE** (`Th_coqc`, the bridge — Part V, Th 5.1).
+  \[ B(\Phi,\Phi) \;=\; \sum_e w_e\,(\Phi_i-\Phi_j)^2 \;=\; I(\Phi), \qquad L_R = D_W - W. \]
+  Because `D_W` is the very difference operator of A2, the keystone turns the forward FOLD engine into a
+  **variational / inverse** engine (optimization, physics, inverse problems, the RCP savings) — this is
+  what makes the core "hard" enough for real-world engineering, not only evaluation.
+
+## 22.2 Why this is the shortest maximal core
+
+Three modes are genuinely distinct and none is redundant: **accumulate** (A2), **search-and-certify**
+(A3), and **the substrate they run on** (A1); A4 is the one bridge that lifts computation to
+optimization. Everything else in the solver is an *instantiation* — a choice of semiring `(⊕,⊗)` for a
+FOLD, or a choice of `check` for a DECISION.
+
+## 22.3 The reductions, machine-checked (`formal/IDM_Reduction.v`, `Th_coqc`, axiom-free)
+
+The structural claim "each branch's kernel is an instance of A2 or A3" is **not left as narrative** — it
+is proven, `Closed under the global context`:
+
+| theorem (witness `IDM_Reduction.v`) | reduces which kernel |
+|---|---|
+| `ftcc_Z` | analysis / summation branch `= fold` over `(+)`; telescoping `I(Df)=f[N]−f[0]` exact |
+| `foldmin_le_init`, `foldmin_le_elem` | shortest-path / DP branch `=` the **same** fold over `(min)` (relaxation invariant) |
+| `foldmax_ge_init`, `foldmax_ge_elem` | critical- / widest-path branch `=` the same fold over `(max)` |
+| `sum_is_fold`, `path_is_fold` | the two kernels are **definitionally one `fold`**, differing only in `(⊕,⊗)` |
+| `fold_linear`, `fold_add_split` | the semiring laws (linearity, additivity) that *make* the reduction valid |
+| `dot_is_fold`, `dot_scale` | inner product / matrix-multiply / convolution kernel `= fold` of products |
+| `pivot_preserves` | linear-algebra / LP / determinant-sign geometry atom: a retained-difference row op preserves every solution ⇒ elimination is a schedule of folds |
+| `witness_sound`, `witness_complete`, `decide_reflect`, `decide_dec` | A3: a bounded checkable witness is a decidable ACCEPT/HOLD, faithfully reflected |
+| `witness_composite_sound`, `composite_has_factor` | number-theory / crypto kernel: a found divisor **proves** compositeness (the `is_prime` backbone) |
+| `witness_power_sound` | `integer_root` / `is_perfect_square` kernel: a found `w` with `w^k=n` proves a perfect power |
+
+## 22.4 The branch map — 230 solver kinds, exactly partitioned
+
+| branch | generated by | count | representative kinds |
+|---|---|---|---|
+| Analysis / continuum frontier | **A2** fold over `(+,×)` | 97 | `integral`, `ode`, `pde_*`, `taylor_series`, special functions, transforms |
+| Paths / dynamic programming | **A2** fold over a tropical semiring | 22 | `shortest_path`, `widest_path`, `knapsack`, `mst`, `max_flow` |
+| Linear algebra / polynomials / stats | **A2** fold **with pivot** (§`pivot_preserves`) | 46 | `matrix_*`, `eigenvalues`, `linear_program`, `regression` |
+| Number theory / crypto / logic | **A3** finite witness | 55 | `factorize`, `is_prime`, `sat`, `discrete_log`, `rsa_*` |
+| Geometry | **A2** sign of a determinant (a signed fold) | 10 | `orient`, `convex_hull`, `in_circle`, `polygon_area` |
+| **total** | | **230** | |
+
+`97 + 22 + 46 + 55 + 10 = 230` (partition verified against the live registry).
+
+## 22.5 Honest fence (declared, not hidden)
+
+- **Proven (`Th_coqc`).** The branch **kernels** reduce to A2/A3 (the theorems of §22.3), axiom-free; the
+  keystone A4 and the additive FTCC are machine-checked (Part V, Part VIII).
+- **Not proven.** That every one of the 230 *Python implementations* matches its kernel — the reductions
+  certify the mathematical form, not each line of code. A1 (READOUT) is a **stance**, not a theorem. The
+  full statement "A2+A3 generate all 230 kinds" is `Dr` (design); §22.3 lifts the *kernel* half of it to
+  `Th_coqc`, and further coverage is the honest open work.
+- **Not given for free.** Transcendental *values* (`π`, `e`) are readout-invariants that *emerge* from
+  the fold, not derived from the axioms; and *modeling* (choosing `f`, choosing the semiring for a real
+  problem) is human input — the core is the solver, not the modeller.
+
+---
+
 # Appendix A — The contaminated-concept → discrete-replacement table
 
 | contaminated concept | injection | discrete-correct replacement |
@@ -1763,7 +1847,7 @@ finite-`ε` schemes — **all three computed robustly, none producing its parado
 
 # Appendix B — Machine-checked theorem index (tier · witness)
 
-**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_Logic.v`: `finite_satisfaction_dec` (§10.3 Th 10.6, finite model-checking decidable) + `rdl_non_explosion` (§10.4/Part I, paraconsistent countermodel). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
+**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_Logic.v`: `finite_satisfaction_dec` (§10.3 Th 10.6, finite model-checking decidable) + `rdl_non_explosion` (§10.4/Part I, paraconsistent countermodel). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). `formal/IDM_Geometry.v`: `orient_swap_bc/ab`, `orient_cyclic`, `orient_coincident_*`, `orient_translation`, `orient_scale`, `orient_collinear_mid/aff` (Part IV / §22.4, the exact orientation predicate the geometry solver branches on, 10 theorems). `formal/IDM_Reduction.v` (Part XXII, the root-design reductions, 20 theorems): `ftcc_Z`, `foldmin_le_init/elem`, `foldmax_ge_init/elem`, `sum_is_fold`, `path_is_fold`, `fold_ext`, `fold_linear`, `fold_add_split`, `dot_is_fold`, `dot_scale`, `pivot_preserves` (A2); `witness_sound/complete`, `decide_reflect`, `decide_dec`, `witness_composite_sound`, `composite_has_factor`, `witness_power_sound` (A3). One-command audit: `bash formal/verify.sh` (**85 theorems, all `Closed under the global context`**). Reproduce a single one: `cd formal && coqc -q IDM_Reduction.v` then `Print Assumptions ftcc_Z`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`

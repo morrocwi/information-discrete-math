@@ -99,6 +99,70 @@ Qed.
 
 Close Scope Z_scope.
 
+(* ---- the semiring LAWS that make the fold-reduction valid ----
+   linearity and additivity of the additive fold are exactly why "the branch is a
+   fold" is a legitimate reduction: expectation, integration, summation, and the
+   matrix product all inherit these from the one `fold`. *)
+Open Scope Z_scope.
+
+Lemma fold_ext : forall {A} (op : A -> A -> A) (e : A) (f g : nat -> A) N,
+  (forall k, f k = g k) -> fold op e f N = fold op e g N.
+Proof.
+  intros A op e f g N H. induction N as [| k IH]; simpl.
+  - reflexivity.
+  - rewrite IH, H. reflexivity.
+Qed.
+
+Theorem fold_linear : forall (c : Z) (f : nat -> Z) N,
+  fold Z.add 0 (fun k => c * f k) N = c * fold Z.add 0 f N.
+Proof.
+  intros c f N. induction N as [| k IH]; simpl.
+  - ring.
+  - rewrite IH. ring.
+Qed.
+
+Theorem fold_add_split : forall (f g : nat -> Z) N,
+  fold Z.add 0 (fun k => f k + g k) N = fold Z.add 0 f N + fold Z.add 0 g N.
+Proof.
+  intros f g N. induction N as [| k IH]; simpl.
+  - ring.
+  - rewrite IH. ring.
+Qed.
+
+(* ---- branch kernel 4: max-plus / bottleneck (CRITICAL & WIDEST path) ----
+   the same fold over Z.max: the accumulation is an upper bound on the start and
+   on every element — the "longest / widest so far" invariant. *)
+Lemma foldmax_ge_init : forall v0 f N, v0 <= fold Z.max v0 f N.
+Proof. intros v0 f N. induction N as [| k IH]; simpl; lia. Qed.
+
+Lemma foldmax_ge_elem : forall v0 f N i,
+  (i < N)%nat -> f i <= fold Z.max v0 f N.
+Proof.
+  intros v0 f N. induction N as [| k IH]; intros i Hi; simpl.
+  - lia.
+  - assert (i = k \/ i < k)%nat as [->|Hlt] by lia; [lia | specialize (IH i Hlt); lia].
+Qed.
+
+(* ---- branch kernel 5: the INNER PRODUCT (matrix-multiply / convolution / dot) ----
+   every entry of a matrix product, every convolution tap, and dot/cross are the
+   SAME fold over (+) of pointwise products; scaling a factor scales the result
+   (bilinearity), inherited from fold_linear via fold_ext. *)
+Definition dotf (u v : nat -> Z) : nat -> Z := fold Z.add 0 (fun k => u k * v k).
+
+Theorem dot_is_fold : forall u v N,
+  dotf u v N = fold Z.add 0 (fun k => u k * v k) N.
+Proof. reflexivity. Qed.
+
+Theorem dot_scale : forall a u v N, dotf (fun k => a * u k) v N = a * dotf u v N.
+Proof.
+  intros a u v N. unfold dotf.
+  rewrite (fold_ext Z.add 0 (fun k => (a * u k) * v k) (fun k => a * (u k * v k)) N)
+    by (intro k; ring).
+  apply fold_linear.
+Qed.
+
+Close Scope Z_scope.
+
 (* ============================ A3 · the one DECISION ============================ *)
 (* a predicate decided by a BOUNDED search for a checkable witness. This is the
    kernel of every decision/enumeration branch member (primality, SAT, discrete
@@ -157,4 +221,26 @@ Theorem composite_has_factor : forall n,
   composite n -> exists d, Nat.divide d n /\ d <> 1%nat /\ d <> n.
 Proof.
   intros n [d [Hlt Hdiv]]. exists d. split; [exact Hdiv | split; lia].
+Qed.
+
+(* soundness AND completeness together: the bounded search is a faithful reflection
+   of "a witness exists" — the exact ACCEPT/HOLD contract of the solver. *)
+Theorem decide_reflect : forall check bound,
+  decide check bound = true <-> exists w, (w < bound)%nat /\ check w = true.
+Proof.
+  intros check bound. split.
+  - apply witness_sound.
+  - intros [w [Hlt Hc]]. eapply witness_complete; eauto.
+Qed.
+
+(* ---- A3 branch instance 2: INTEGER ROOT / PERFECT POWER ----
+   the integer_root / is_perfect_square backbone: a witness w with w^k = n proves
+   n is a perfect k-th power (found by the bounded search, else HOLD). *)
+Definition power_check (n k w : nat) : bool := Nat.eqb (w ^ k) n.
+
+Theorem witness_power_sound : forall n k,
+  decide (fun w => power_check n k w) (S n) = true -> exists w, (w ^ k = n)%nat.
+Proof.
+  intros n k H. apply witness_sound in H. destruct H as [w [_ Hc]].
+  unfold power_check in Hc. apply Nat.eqb_eq in Hc. exists w. exact Hc.
 Qed.
