@@ -77,7 +77,7 @@ for n in [3, 4, 5, 6]:
 # Z_3 = SM center quotient {1, e^{2πi/3}, e^{4πi/3}}
 z3 = [cmath.exp(2j*math.pi*k/3) for k in range(3)]
 chk("Z_3 product of all = 1", z3[0]*z3[1]*z3[2], 1+0j, 1e-10)
-# Winding / holonomy: residue = retained winding count = (1/2π)Σ arg(z_{k+1}/z_k), an exact integer
+# Winding number (NOT the residue — that is the Laurent coeff a₋₁): n = (1/2π)Σ arg(z_{k+1}/z_k), exact integer
 N = 2000
 pts = [cmath.exp(2j*math.pi*k/N) for k in range(N)] + [1+0j]
 turning = sum(cmath.phase(pts[k+1]/pts[k]) for k in range(N))   # total angle swept

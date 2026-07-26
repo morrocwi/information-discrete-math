@@ -18,6 +18,12 @@
 | `reparametrize` | admissible change of variable | improper-integral hand-waving |
 | number ladder `D→ℤ→ℚ→ℝ` | each rung a readout of the last; `ℝ` = regular Cauchy of `ℚ` | ℝ as a primitive continuum |
 
+> **Note on the top three rows** (`δ_R`/`L_R`, the operator set, the number ladder): these are
+> *conceptual / Coq-verified* structures, not callable `idm_tools` functions. When step 2 says "express
+> in tools only," use Python's exact substrate for them — `fractions.Fraction` for `ℚ`/the ladder,
+> native `+ - * / ** ` and `math.sqrt`/`math.log` for the operator set, `sympy`/`numpy` for `L_R`
+> matrices. The callable `idm_tools` functions are the rows from `D_eps` down.
+
 ## The process (verb — the one loop; run it top to bottom, then stop)
 
 1. **DECLARE** the resolution `λ` and the layer (`A11`). *What is being read, and how finely?* Every

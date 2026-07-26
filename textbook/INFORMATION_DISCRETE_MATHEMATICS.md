@@ -26,7 +26,13 @@
 - **Part VIII** — Information discrete calculus (`D_ε`, `I_ε`, FTCC, series, spectral window)
 - **Part IX** — Powerful tools re-adapted (Ramanujan summation, Euler–Maclaurin, zeta reg., q-calculus, …)
 - **Part X** — Integrated extensions (pairs/products/functions from `δ_R`; cardinality; analysis; probability; geometry-from-the-graph; and reconciliations with causal-set theory, network/spectral-graph theory, Bishop, category theory, Shannon)
+- **Part XI** — Closing the continuum (discrete derivative/integral/limit/ODE/special-function; the closure theorem)
+- **Part XII** — Abstract algebra as retained symmetry (group = `Aut(F,O)`; ring/field; Lagrange; Galois)
+- **Part XIII** — Linear algebra as the algebra of `L_R` (ℚ-vector space; metric; determinant; exact solve)
+- **Part XIV** — Complex analysis as the rotation-readout of retained phase (`i` = quarter-turn; roots of unity; holomorphy; residue)
+- **Part XV** — Combinatorics & graph theory (the native home of `δ_R`; `L_R` connectivity; matrix–tree; Euler χ)
 - **Appendices A/B/C** — contaminated-concept table · machine-checked theorem index · axiom-dependence discipline
+- **Appendices D/E** — validation: 1000 problems ประถม→ปริญญาเอก (1000/1000) · 100 continuous problems reproduced from the discrete (100/100)
 
 ## Using this to calculate physics (the release purpose)
 
@@ -58,8 +64,12 @@ Every numbered result is tagged:
   (excluded middle) in the classical layer.
 - **`+ℝ-axioms`** — machine-checked but importing `Coq.Reals` (the 2 real-analysis axioms); NOT
   axiom-free — a *readout* rung, honestly flagged.
+- **`Th_coqc-elig`** / **`finite_diagnostic`** — a finite, decidable computation or proof *eligible* for
+  Coq (all objects finite lists over decidable-equal `ℚ`) but not necessarily checked yet; or a numeric
+  readout reproduced to a **declared tolerance**. The working tag from Part VIII onward.
 - **`Dr`** — a stance / definition / interpretation over checked pieces (design-narrative).
-- **`Open`** — genuinely unsettled, or needs the continuum (`+reals`).
+- **`+ℝ-Open`** (a.k.a. **`Open`**) — genuinely unsettled, or needs the completed continuum (`+reals`).
+  Stated and predicted as a readout, never smuggled in as a premise.
 
 **The load-bearing rule.** Never assert *all/every/universal* over a finite witness set without
 tagging `Dr`. Never put a continuum name on a finite analogue. Never claim to *solve* a continuum
@@ -71,6 +81,13 @@ and the Open **is** the boundary of the infinity axioms.
 `δ_R` primitive retained difference · `D` the naturals-as-semiring · `ℤ,ℚ,ℝ` the number tower ·
 `≺` retained order · `L_R` the graph Laplacian (retained-information operator) · `⟨·,·⟩_G` the
 retained inner product · `Th` theorem, `Def` definition, `Ax` axiom, `Pr` principle.
+
+> **On the `Th_coqc` witnesses (warrant disclosure).** This repository is the *treatise*; it contains no
+> `.v` files itself. Every `Th_coqc` citation of a bare witness file (`RD.v`, `RDL.v`, …) refers to the
+> **external machine-checked corpora** — `research_universal_solver`, `readout_genesis`, `readout_universe`
+> — where the `coqc`-verified proofs live (Appendix B, Appendix C). A bare filename in this book is a
+> *pointer* to those repos, not a claim of local checkability. Where no such witness exists yet, the tag
+> is `Th_coqc-elig` (eligible, not yet checked), never a bare `Th_coqc`.
 
 ---
 
@@ -127,7 +144,7 @@ Read through both levels:
   indistinguishability** of two constructions to every reader (`O(A)=O(B)`) at a declared resolution —
   the operational `=` of §0.5.3 / §7.0.
 
-**So the old dispute dissolves.** The number is not an abstract object floating free of any reader
+**So the old dispute is sidestepped (`Dr` — this framework's reading, not a claim to have settled the philosophy-of-mathematics literature).** The number is not an abstract object floating free of any reader
 (against Platonism), nor an empty inscription (against strict formalism), nor merely a useful fiction
 (against fictionalism): it is the **invariant of a reading** — conventional in its appearance,
 constitutive in its retained structure, and neither without the other. **Governing principle:** never
@@ -358,12 +375,14 @@ coincidences; each is the **invariant of a recurring quotient grammar** — it a
 structural reduction, and is refused where the reduction fails. *(Lahtee 2026, `π,φ` standalone
 synthesis; tiers below are exactly its claim-gate ledger.)*
 
-- **`π` = the calibrated invariant of compact retained closure (`Th_coqc` / conditional).** Two roots,
+- **`π` = the calibrated invariant of compact retained closure** (order-reversal witness `Th_coqc`-elig; the metric-calibration route is `+ℝ-Open`). Two roots,
   one number: (i) an involutive nontrivial adjacent **order reversal** carries the exchange factor
   `r=−1=e^{iπ}` (Th 4.4, exact under the ordered-tape axioms; the same `k`-odd witness that forces
-  `k=3` → SU(3), §II); (ii) a continuous compact transport closes on a **topological circle**
-  `θ∈ℝ/Tℤ`, and an **isotropic Euclidean metric calibration** gives `C/R=2π` (conditional on the
-  calibration). `π` is *not* inserted at the root — it is what compact closure reads out.
+  `k=3` → SU(3), §II); (ii) a continuous compact transport closes on a **topological circle** `θ∈ℝ/Tℤ` and an **isotropic
+  Euclidean metric calibration** gives `C/R=2π`. **This second route uses the completed real circle, so it
+  is `+ℝ-Open`, not `Th_coqc`** — it is stated and predicted, not proved axiom-free (§10.9). The native,
+  contamination-free content of `π` is route (i), the finite order-reversal phase; `π` is *not* inserted at
+  the root — route (i) is what compact closure reads out, and route (ii) is its continuum readout.
 - **`φ` = the Perron invariant of minimal closure-continuation transfer (`Th_coqc`).** The least
   nontrivial two-step transfer `K_F=[[1,1],[1,0]]` (Fibonacci) has characteristic `λ²−λ−1=0`, so its
   Perron–Frobenius eigenvalue is `φ=(1+√5)/2` (Th 4.5, algebraically exact). Independently, the
@@ -371,7 +390,7 @@ synthesis; tiers below are exactly its claim-gate ledger.)*
   noninvertible frontier `τ⊗τ≅1⊕τ` with **`FPdim(τ)=φ`** — a *fusion/history* dimension, **not** an
   ordinary carrier dimension (Cor 4.1: no finite-dimensional fibre functor, since `d²=1+d` has no
   integer solution). `φ` is irrational *because* it is a history dimension, not a count.
-- **The golden rotation `θ_G=2π/φ²≈137.5°` (`Th_coqc` algebra + number theory).** Combining a compact
+- **The golden rotation `θ_G=2π/φ²≈137.5°`** (`Th_coqc`-elig: exact algebra + number theory). Combining a compact
   phase (`π`) with the minimal-memory transfer (`φ`) gives nonresonant generation on a closed phase;
   its continued fraction `[1;1,1,…]` is extremal for rational approximation (Hurwitz–Markov), which is
   the precise, `Dr`-fenced meaning of "most irrational" — it *delays* low-order phase locking. **Do
@@ -386,7 +405,7 @@ synthesis; tiers below are exactly its claim-gate ledger.)*
   `φ` is growth" made precise: `π` = calibrated invariant of compact closure, `φ` = Perron invariant
   of minimal closure-continuation transfer.
 
-**Geometry closes here, uncontaminated:** distance is retained resistance (§4.1); betweenness is
+**Geometry closes here, uncontaminated** (its *finite* content; the completed-manifold/topology frontier stays `+ℝ-Open`, §10.9): distance is retained resistance (§4.1); betweenness is
 Tarski over the discrete metric (§4.2); angle is the overlap fraction, never a continuum degree
 (§4.2); curvature is the second retained difference with a discrete Gauss–Bonnet/Bianchi (§10.10); and
 its constants (`π,φ,θ_G`) are readout-invariants of quotient grammars — each derived, tier-fenced, and
@@ -908,7 +927,7 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
   **cosmogenesis order backbone** (`δ_R` → asymmetry → temporal order → `τ_c` seed → atomicity) ·
   **causal order `≺` and `L_R` structural facts** (bridge to the spine `K·L_R`) · **genesis-chain
   integration (M2) + readout-lossiness (CG-05A)** · **coupled discrete-spine stability** on the graph
-  carrier · **the info-operator keystone `B(Φ,Φ)=I(Φ)`** (Dirichlet energy = retained information) ·
+  carrier · **the info-operator keystone `B(Φ,Φ)=I(Φ)`** (Dirichlet energy = retained information — **target Th 5.1, in progress**, see §5.1/Roadmap; listed here as the design goal the mined pieces support, not a completed witness) ·
   **DEC toolkit** (discrete exterior calculus around `L_R`, 9 tools, minimal-cell scope) · **π and φ as
   readout-invariants** (reconstruction limits, not root objects; `Dr`). *(Witnesses: `RD.v`, `RDL.v`,
   `RDL_Distinguishability.v`, `RDL_CausalOrder.v`, `RDL_GenesisLink.v`, `RDL_SpineGraph*.v`,
@@ -918,7 +937,7 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
 
 *(From the resume run: network/spectral-graph reconciliation + the causal-quantum-gravity spine export.)*
 
-- **Resistance distance = our distance (Th 10.10, `Th_coqc`).** `d_λ(i,j) := (e_i − e_j)ᵀ L_R⁺ (e_i − e_j) ∈ ℚ`
+- **Resistance distance = our distance (Th 10.15, `Th_coqc`).** `d_λ(i,j) := (e_i − e_j)ᵀ L_R⁺ (e_i − e_j) ∈ ℚ`
   (`L_R⁺` the pseudoinverse) — the graph resistance distance IS the retained-resistance metric of §4.1,
   now a *forced rational geometry* of the causal graph. Distance stops being primitive. *(Klein–Randić
   1993; Doyle–Snell 1984.)*
@@ -1016,7 +1035,7 @@ first **Euler–Maclaurin** endpoint correction `−ε²/12·(f′_N−f′_a)` 
 **FTCC** `I_ε D_ε f = f[N]−f[0]` is exact by telescoping (`Th_coqc`). Improper/oscillatory integrals are
 closed by **admissible reparametrization** (`∫₀^1 ln(1/x)dx` via `x=e^{−t}` → `∫₀^∞ t e^{−t}dt`; `Γ(½)`
 via `x=t²` → `2∫₀^∞ e^{−t²}dt`) and by **half-period summation + Euler acceleration** for conditionally
-convergent tails (Dirichlet `∫₀^∞ sinx/x = π/2`). *(Validated: 34/34 integrals, Appendix E.A.)*
+convergent tails (Dirichlet `∫₀^∞ sinx/x = π/2`). *(Each `∞` bound is a **finite truncation to a declared cutoff** plus the E–M/acceleration tail — `finite_diagnostic`; the completed `∫₀^∞` stays `+ℝ-Open`.)* *(Validated: 34/34 integrals, Appendix E.A.)*
 
 ## 11.3 The discrete limit (replaces the ε–δ limit taken as a primitive)
 
@@ -1089,7 +1108,7 @@ The number tower *is* the worked example, so this chapter only makes the abstrac
 - A **ring** = a carrier with `⊕` (an abelian group, §7) and `⊗` (a monoid, §7) linked by distributivity
   — all of which are the retained-operator laws of Part VII. **`D` is a commutative semiring** (RD1–9,
   `Th_coqc`); **`ℤ` is a ring** (Grothendieck completion, §III); **`ℚ` is a field** (field of fractions,
-  `÷` total except `÷0` refused, §7). **Th 12.2 (`Th_coqc`, mined):** these hold with the ring/field
+  `÷` total except `÷0` refused, §7). **Th 12.2 (`Th_coqc`-elig, mined):** these hold with the ring/field
   axioms as *derived* identities of `⊕,⊗,÷`, not primitives.
 - **`÷0` is the one refused operation** — a field is "`ℚ` minus the non-readout `1/0`", exactly the
   partition-with-no-parts refusal (§7). The field structure is honest about its one hole.
@@ -1131,7 +1150,7 @@ completion only as a declared readout (A8).
   synthesis, Eq. 4). It makes retained load nonnegative and fixes which relabelings are admissible
   (the automorphisms of Part XII are the `G`-isometries).
 - **`L_R = D_W − W`** (graph Laplacian, Part V) is the canonical self-adjoint operator. Its keystone is
-  `B(Φ,Φ)=I(Φ)` — the Dirichlet energy *equals* the retained information (`Th_coqc`, mined). Its
+  `B(Φ,Φ)=I(Φ)` — the Dirichlet energy *equals* the retained information (the keystone **Th 5.1**, a **design target, `Th_coqc` in progress** — not yet a completed witness). Its
   **kernel is the indistinguishability space** (constant-on-components readouts); its **spectrum is the
   set of retained modes**; its **Perron–Frobenius eigenvalue** carries the dominant retained scale (the
   `φ` of the minimal transfer `K_F`, §4.4).
@@ -1158,8 +1177,9 @@ readout, nothing more occult than the order-reversal sign of §4.4.
 
 `ℂ_ℚ := ℚ×ℚ` with `⊕` componentwise and `⊗` the rotation-scaling `(a,b)·(c,d)=(ac−bd, ad+bc)`. Then
 **`i=(0,1)` is the quarter-turn**: `i²=(−1,0)` because two quarter-turns are a half-turn — the same
-order-reversal that carries phase `π` (§4.4, Th 4.4). **`i` is defined by its order (4), not by a square
-root of a negative real** — the contamination "`√−1` as a real-line object" is refused; the object is a
+order-reversal that carries phase `π` (§4.4, Th 4.4). **`i=(0,1)` is defined constructively as the positive quarter-turn, not as a square root of a negative
+real** — the contamination "`√−1` as a real-line object" is refused. (Order 4 alone fixes only the pair
+`{i,−i}`; singling out `i` needs the orientation choice built into `(0,1)`.) The object is a
 finite cyclic phase. `e^{iθ}` is the **compact-closure readout** `U(θ)` with `U(θ+2π)=U(θ)` (Eq. 11 of
 the `π`/`φ` synthesis).
 
@@ -1177,10 +1197,13 @@ the `π`/`φ` synthesis).
 - **Holomorphic = a phase-transport that closes.** A map is admissible-analytic when its transport
   `U'_{j←i}=h_j U_{j←i} h_i⁻¹` (Eq. 5) has trivial holonomy on contractible cycles; the **holonomy**
   `H_C=∏_{e∈C} U_e` (Eq. 6) records whether translations close consistently.
-- **Contour integral = `I_ε` around a finite cycle; residue = retained winding count.** Cauchy's theorem
-  is the closure condition (a distinction transported around a closed path returns to the same readout
-  class ⇒ zero net accumulation), and the residue is the integer winding a non-closing cycle carries —
-  both finite readouts (`Dr`/`finite_diagnostic`). Full complex analysis over the completed plane
+- **Contour integral = `I_ε` around a finite cycle; the winding number is a retained integer count.**
+  Cauchy's theorem is the closure condition (a distinction transported around a closed path returns to the
+  same readout class ⇒ zero net accumulation). The **winding number** `n(C,a)` is an integer property of
+  the cycle (a retained turning count); the **residue** `Res(f,a)` is a *distinct* object — the Laurent
+  coefficient `a₋₁` of the function, generally not an integer. The residue theorem multiplies them:
+  `∮_C f dz = 2πi·Σ_k n(C,a_k)·Res(f,a_k)` — both sides finite readouts (`Dr`/`finite_diagnostic`). Full
+  complex analysis over the completed plane
   (analytic continuation, the ℝ/ℂ-completeness theorems) stays **`+ℝ-Open`**, per Part 0.
 
 ---
@@ -1264,20 +1287,6 @@ conditional* — say so. `coqc` exit 0 + `Print Assumptions` *Closed* is the onl
 
 ---
 
-## Roadmap (honest frontier — what this edition states vs. what remains)
-
-**Stated & machine-checked:** RDL logic; `δ_R→D→ℤ→ℚ→ℝ` to the ordered-field / Cauchy-complete /
-lattice level; discrete calculus; metric-space + betweenness geometry; the Laplacian operator
-mechanics; the non-readout theorems and the endpoint principle. **In progress:** the operator
-keystone `B(Φ,Φ)=I(Φ)` (Th 5.1). **Deferred / imported (`+ℝ`/`Open`):** the full continuum
-derivative-integral tower, continuum geometry (manifolds, curvature), and the physical readouts
-(spectra → masses) built on top.
-
----
-*Information Discrete Mathematics — developed by **Yaoharee Lahtee**. Readout-not-truth applied to
-the foundations, from the retained difference up. AI-assisted; the core stance and results are the
-author's. Tiers are honest; where the continuum enters it is flagged, never smuggled.*
-
 # Appendix D — Validation: 1000 problems, ประถม → ปริญญาเอก (the release dogfood)
 
 The framework is exercised on **1000 problems across five levels**, each solved by a
@@ -1334,3 +1343,19 @@ fixed to a one-sided *inward* difference; (2) a benchmark with a **sign error** 
 (`n⁴(cos(1/n)−1+1/2n²)→+1/24`, not `−1/24`) — the framework had the correct sign; the reference was
 corrected. **The continuum enters nowhere as a primitive and is recovered everywhere as a readout — the
 operational meaning of "closing the continuum" (Part XI).**
+
+---
+
+## Roadmap (honest frontier — what this edition states vs. what remains)
+
+**Stated & machine-checked:** RDL logic; `δ_R→D→ℤ→ℚ→ℝ` to the ordered-field / Cauchy-complete /
+lattice level; discrete calculus; metric-space + betweenness geometry; the Laplacian operator
+mechanics; the non-readout theorems and the endpoint principle. **In progress:** the operator
+keystone `B(Φ,Φ)=I(Φ)` (Th 5.1). **Deferred / imported (`+ℝ`/`Open`):** the full continuum
+derivative-integral tower, continuum geometry (manifolds, curvature), and the physical readouts
+(spectra → masses) built on top.
+
+---
+*Information Discrete Mathematics — developed by **Yaoharee Lahtee**. Readout-not-truth applied to
+the foundations, from the retained difference up. AI-assisted; the core stance and results are the
+author's. Tiers are honest; where the continuum enters it is flagged, never smuggled.*

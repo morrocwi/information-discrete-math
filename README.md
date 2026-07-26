@@ -26,7 +26,17 @@ continuum concepts from being *silently injected* into your mathematics, physics
 
 ## The textbook
 
-The full foundational treatise — **[textbook/INFORMATION_DISCRETE_MATHEMATICS.md](textbook/INFORMATION_DISCRETE_MATHEMATICS.md)** — carries the foundation from ONE primitive (the retained difference) up through logic (RDL), the number tower `D→ℤ→ℚ→ℝ` (the continuum as a readout of the discrete root), discrete analysis, geometry (distance as retained resistance; angle without trig), and the retained-information operator — every axiom, definition, and major theorem, each tier-tagged, with machine-checked witnesses.
+The full foundational treatise — **[textbook/INFORMATION_DISCRETE_MATHEMATICS.md](textbook/INFORMATION_DISCRETE_MATHEMATICS.md)** — carries the foundation from ONE primitive (the retained difference) up through logic (RDL), the number tower `D→ℤ→ℚ→ℝ` (the continuum as a readout of the discrete root), discrete analysis, geometry (distance as retained resistance; angle without trig; **π,φ,golden rotation as readout-invariants**), the retained-information operator, a **philosophy of mathematics** (what a number/unit/symbol/equation *is*), the **closure of the continuum** (discrete derivative/integral/limit/ODE/special-function), and dedicated chapters on **abstract algebra, linear algebra, complex analysis, and combinatorics/graph theory** — every axiom, definition, and major theorem tier-tagged, with machine-checked witnesses. See **[INDEX.md](INDEX.md)** for the full structure map.
+
+## For AI agents — compute with it directly
+
+- **[AI_COMPUTE.md](AI_COMPUTE.md)** — quick-start for an AI that must produce a math answer: the tool
+  decision-table, the 6-step process, and copy-paste examples.
+- **[METHOD.md](METHOD.md)** — tools (nouns) vs process (verb); the light+sharp solve loop.
+- **[tools/idm_tools.py](tools/idm_tools.py)** — the tested tool library (`D_eps`, `I_eps`,
+  `limit_eps`, `ode_rk4`, …); run `python3 tools/idm_tools.py` for the self-check.
+- **Validation:** `1000/1000` (grade-school→PhD), `100/100` (continuous problems reproduced from the
+  discrete), `48/48` (algebra·linear·complex·combinatorics/graph) — under `validation/`.
 
 ## Install (via public git)
 
