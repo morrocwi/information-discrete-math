@@ -12,7 +12,7 @@ This package is a clean facade over the repository's verified modules — same c
 
 Submodules: functions · certified · algebra · readouts · rcp · solve · server.
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, rcp, solve as _solve
 

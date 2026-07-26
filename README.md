@@ -9,7 +9,7 @@
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
 [![Coq](https://img.shields.io/badge/Coq-8.20%20·%2055%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
-[![release](https://img.shields.io/badge/release-v1.0-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.0)
+[![release](https://img.shields.io/badge/release-v1.1-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.1)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 </div>
@@ -191,8 +191,11 @@ python3 -m idm.server        # idm solver API on http://127.0.0.1:8737
 curl -s -X POST localhost:8737/solve -d '{"kind":"constant","name":"pi"}'
 ```
 
-The `idm` package is a clean facade over the CI-verified modules; every answer is tier-tagged and, where
-a bound is proven, certified with an `ACCEPT`/`HOLD` verdict. Full reference: [`API.md`](API.md).
+The `idm` package solves **199 problem kinds** — the entire continuum frontier (integration, ODE/PDE,
+limits/series, special functions, transforms, continuous optimization) plus an exact symbolic CAS and a
+deep exact/discrete backbone (number theory, normal forms, DP, graphs, exact‑ℚ LP, SAT) — each a certified
+finite readout, tier‑tagged, with an `ACCEPT`/`HOLD` verdict where a bound is proven. Full reference:
+[`API.md`](API.md) · roadmap: [`SOLVER_ROADMAP.md`](SOLVER_ROADMAP.md).
 
 ## Install as a Claude Code skill
 
