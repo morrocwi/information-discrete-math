@@ -314,3 +314,25 @@ def test_p1_dp_graph_lp_sat():
     assert lp["value"]["objective"]["exact"] == "12/1"
     assert idm.solve({"kind": "sat", "clauses": [[1, 2], [-1, 3], [-2, -3]]})["value"]["satisfiable"] is True
     assert idm.solve({"kind": "sat", "clauses": [[1], [-1]]})["value"]["satisfiable"] is False
+
+
+def test_rigorous_certification():
+    # verified root enclosure of √2, proven by the intermediate-value theorem
+    r = idm.solve({"kind": "certified_root", "expr": "x**2 - 2", "var": "x", "a": 1, "b": 2})
+    assert r["status"] == "ok"
+    lo, hi = r["value"]["root_lo"]["float"], r["value"]["root_hi"]["float"]
+    assert lo <= 2 ** 0.5 <= hi
+    # no sign change ⇒ HOLD (refuses to certify a root that isn't verified)
+    assert idm.solve({"kind": "certified_root", "expr": "x**2 + 1", "var": "x", "a": -1, "b": 1})["status"] == "HOLD"
+    # rigorous outer enclosure of the range (guaranteed to contain the true [min,max])
+    rr = idm.solve({"kind": "verified_range", "expr": "x**2 - 2*x", "var": "x", "a": 0, "b": 3})["value"]
+    assert rr["min"]["float"] <= -1 + 1e-3 and rr["max"]["float"] >= 3 - 1e-3
+    # rigorous global-minimum bracket
+    mn = idm.solve({"kind": "certified_min", "expr": "(x-3)**2 + 1", "var": "x", "a": 0, "b": 6})["value"]
+    assert abs(mn["min_lower"]["float"] - 1) < 1e-4 and abs(mn["min_upper"]["float"] - 1) < 1e-4
+    # Gershgorin discs enclose the spectrum
+    g = idm.solve({"kind": "gershgorin", "matrix": [[2, 0.1], [0.1, 3]]})["value"]
+    assert g["spectrum_bound"]["lo"]["float"] <= 1.99 and g["spectrum_bound"]["hi"]["float"] >= 3.01
+    # single-shot interval enclosure
+    e = idm.solve({"kind": "interval_enclose", "expr": "x**2", "box": {"x": [1, 2]}})["value"]
+    assert e["lo"]["float"] <= 1 and e["hi"]["float"] >= 4

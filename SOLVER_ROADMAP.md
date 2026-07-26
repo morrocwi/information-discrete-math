@@ -116,7 +116,11 @@ finite tree = a finite readout; no continuum needed to transform it).
 
 ---
 
-## P1 — Certification everywhere (the real differentiator)
+## P1 — Certification everywhere  ← ✅ DONE (interval arithmetic layer)
+
+> **Status:** idm/interval.py — rigorous enclosures via validated interval arithmetic: verified_range, certified_root (proven by IVT), certified_min (branch-and-bound), gershgorin eigenvalue discs. Shipped as solver kinds.
+
+### original
 
 Make **every** continuum computation return `(value, proven error bound, ACCEPT/HOLD)`, not just the
 current four. The world-class edge is not "it computes the integral" (SciPy does) but "it computes it

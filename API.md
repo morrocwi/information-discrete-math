@@ -48,7 +48,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**199 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**204 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Symbolic (exact CAS)** — `symbolic_diff` (`expr`,`var`) · `simplify` · `expand` · `symbolic_integrate` (polynomial + elementary, HOLD when no elementary antiderivative) · `symbolic_solve` (linear/quadratic radicals, rational roots) · `symbolic_series` (exact Taylor)
 
@@ -84,6 +84,8 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 
 **Optimization / paths** (tropical semirings, `Th_coqc` laws) — `shortest_path` · `critical_path` ·
 `widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
+
+**P1 · rigorous certification** (interval arithmetic — guaranteed enclosures) — `interval_enclose` · `verified_range` (rigorous [min,max]) · `certified_root` (root proven by IVT, else HOLD) · `certified_min` (global-minimum bracket) · `gershgorin` (eigenvalue discs)
 
 **P1 · number theory (advanced)** — `diophantine_linear` · `pell` · `modular_sqrt` (Tonelli–Shanks) · `mobius` · `mertens` · `liouville` · `von_mangoldt`
 
