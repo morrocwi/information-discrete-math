@@ -46,7 +46,7 @@ def load(domain):
 def main():
     print("=" * 100)
     print("  prove_it_full.py — 1000 continuum-frontier problems, each a FINITE-DISCRETE readout")
-    print("  engine: mpmath as an exact rational core; NO continuum function produces any 'ours' value")
+    print("  engine: mpmath = arbitrary-precision finite (floating) arithmetic; NO continuum function produces any 'ours' value")
     print("=" * 100)
     grand_ok = grand_tot = 0
     worst = []

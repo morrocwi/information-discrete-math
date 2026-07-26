@@ -19,7 +19,7 @@ try:
     import mpmath as mp
     mp.mp.dps = 40; R = mp.mpf; SQRT = mp.sqrt
     PI_STD, E_STD = mp.pi, mp.e; ZETA2_STD = mp.pi ** 2 / 6
-    NS = lambda x, n=13: mp.nstr(x, n); ENGINE = "mpmath (40-digit rational engine)"
+    NS = lambda x, n=13: mp.nstr(x, n); ENGINE = "mpmath (40-digit arbitrary-precision finite arithmetic)"
 except Exception:
     R = float; SQRT = math.sqrt; PI_STD, E_STD = math.pi, math.e; ZETA2_STD = math.pi ** 2 / 6
     NS = lambda x, n=13: f"{x:.11g}"; ENGINE = "float (pip install mpmath for more digits)"
