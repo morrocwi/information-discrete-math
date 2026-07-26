@@ -161,3 +161,26 @@ def test_integration_flagship():
     assert abs(_val(idm.solve({"kind": "gauss_quadrature", "f": "x*x", "a": 0, "b": 1})) - 1 / 3) < 1e-12
     r = idm.solve({"kind": "multidim_integral", "f": "1/exp(x+y)", "vars": ["x", "y"], "bounds": [[0, 1], [0, 1]]})
     assert abs(_val(r) - float((1 - 1 / mp.e) ** 2)) < 1e-8
+
+
+def test_ode_pde():
+    import mpmath as mp
+    # ODE system: harmonic oscillator y0(π) = cos π = -1
+    y = idm.solve({"kind": "ode_system", "f": ["y1", "-y0"], "vars": ["y0", "y1"], "x0": 0, "y0": [1, 0], "xT": float(mp.pi), "N": 4000})
+    assert y["status"] == "ok" and abs(y["value"][0]["float"] + 1) < 1e-5
+    # heat: u(0.5, 0.1) ≈ e^{-π²·0.1}
+    h = idm.solve({"kind": "pde_heat", "alpha": 1, "L": 1, "T": 0.1, "init": "sin(pi*x)", "bc": [0, 0], "at": 0.5, "Nx": 100, "Nt": 500})
+    assert abs(_val(h) - float(mp.e ** (-mp.pi ** 2 * mp.mpf("0.1")))) < 1e-3
+    # wave: u(0.5, 1) = -1
+    w = idm.solve({"kind": "pde_wave", "c": 1, "L": 1, "T": 1, "init": "sin(pi*x)", "bc": [0, 0], "at": 0.5, "Nx": 200})
+    assert abs(_val(w) + 1) < 5e-2
+    # Poisson with harmonic BC x²−y²: interior value exact
+    p = idm.solve({"kind": "pde_poisson", "f": "0", "box": [0, 1, 0, 1], "bc": "x*x - y*y", "at": [0.75, 0.25], "Nx": 40, "Ny": 40})
+    assert abs(_val(p) - 0.5) < 1e-3
+    # BVP u''=u, u(0)=0, u(1)=1 → sinh(x)/sinh(1)
+    b = idm.solve({"kind": "ode_bvp", "q": "1", "r": "0", "a": 0, "b": 1, "alpha": 0, "beta": 1, "at": 0.5})
+    assert abs(_val(b) - float(mp.sinh(mp.mpf("0.5")) / mp.sinh(1))) < 1e-3
+    # Sturm–Liouville −u''=λu on [0,π] → λ_n = n²
+    e = idm.solve({"kind": "sturm_liouville", "potential": "0", "L": float(mp.pi), "n_eigs": 3, "N": 400})
+    eigs = [round(float(v["float"] if isinstance(v, dict) else v)) for v in e["value"]]
+    assert eigs == [1, 4, 9]

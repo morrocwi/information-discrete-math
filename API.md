@@ -48,10 +48,12 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**110 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**117 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
+
+**Differential equations** (finite-difference readouts) — `ode_system` (`f` list, `vars`, `x0`, `y0` vector, `xT`) · `ode_bvp` (`q`,`r`,`a`,`b`,`alpha`,`beta`) · `pde_heat` (Crank–Nicolson) · `pde_wave` (leapfrog) · `pde_poisson` / `pde_laplace` (Gauss–Seidel, 2-D) · `sturm_liouville` (eigenvalues by Sturm bisection). Each takes an optional `at` to read the solution at a point.
 
 **Integration flagship** (double-exponential DE quadrature — absorbs endpoint singularities and infinite ranges, a-posteriori certified) — `integral` (auto: finite/singular/infinite, `a`/`b` may be `inf`/`-inf`) · `improper_integral` · `singular_integral` · `oscillatory_integral` · `gauss_quadrature` (`n`) · `residue_integral` (`num`,`den`) · `multidim_integral` (`f`,`vars`,`bounds`)
 
