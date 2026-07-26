@@ -182,10 +182,17 @@ def level4():
             bad=sum(1 for x in xs if abs(x-m)>=d)/len(xs)
             ours_bound=v/(1*d**2)  # per-sample Chebyshev
             ok = bad <= ours_bound + 1e-9; ex="Chebyshev/LLN: empirical bad-fraction ≤ σ²/δ² (finite, Th_coqc §10.6)"
-        elif k == 'bernoulli': # Bernoulli B_{2k} rational (umbral/E-M, §9.9)
+        elif k == 'bernoulli': # Bernoulli B_{2k} rational — from the FINITE defining recurrence, not bernoulli()
             m = random.randint(1, 6)
-            ours = sp.bernoulli(2*m); ref = sp.bernoulli(2*m)
-            ok = ours == ref and ours.is_rational; ex="Bernoulli B_{2k} exact rational (umbral calculus, §9.9)"
+            def bern(nn):                              # B_n via Σ_{k=0}^{n} C(n+1,k)·B_k = 0 (finite, exact ℚ)
+                B = [Q(1)]
+                for n in range(1, nn + 1):
+                    s = sum(math.comb(n + 1, k) * B[k] for k in range(n))
+                    B.append(-Q(s.numerator, s.denominator * (n + 1)) if isinstance(s, Q) else -Q(s, n + 1))
+                return B[nn]
+            ours = bern(2*m); ref = sp.bernoulli(2*m)  # ref = sympy (standard column), ours = our recurrence
+            ok = sp.Rational(ours.numerator, ours.denominator) == ref and ours != 0
+            ex="Bernoulli B_{2k} from the finite recurrence ΣC(n+1,k)B_k=0 (independent of bernoulli(), §9.9)"
         else:  # basel accelerated
             N=5000; S=sum(1.0/n**2 for n in range(1,N+1)); ours=S+1.0/N-1.0/(2*N**2)+1.0/(6*N**3)
             ok=approx(ours, float(mp.pi**2/6), 1e-9); ex="Basel Σ1/n²=π²/6 (E-M accelerated)"
@@ -239,9 +246,13 @@ def level5():
             ours = n*mp.log(n)-n+0.5*mp.log(2*mp.pi*n)+1/(12*mp.mpf(n))
             ref = mp.log(mp.factorial(n)); ok = approx(ours, ref, 1e-5)
             ex="Stirling ln(n!) + 1/(12n) correction (saddle-point/Watson, §9.8)"
-        elif k == 'catalan':   # Catalan's constant via fast series
-            ours = mp.catalan; ref = mp.nsum(lambda n: (-1)**n/(2*n+1)**2, [0, mp.inf])
-            ok = approx(ours, ref, 1e-12); ex="Catalan G = Σ(−1)ⁿ/(2n+1)² (§9.1 acceleration)"
+        elif k == 'catalan':   # Catalan's constant from a FINITE alternating sum + Euler averaging (no catalan call)
+            N = 4000
+            SN = mp.fsum(mp.mpf((-1)**n)/(2*n+1)**2 for n in range(N))
+            SN1 = SN + mp.mpf((-1)**N)/(2*N+1)**2
+            ours = (SN + SN1)/2            # endpoint averaging of the alternating series (finite readout)
+            ref = mp.catalan               # standard column only
+            ok = approx(ours, ref, 1e-6); ex="Catalan G = finite Σ(−1)ⁿ/(2n+1)² + endpoint averaging (no catalan call, §9.1)"
         elif k == 'madhava':   # Madhava–Leibniz π/4 accelerated (Euler transform)
             N=2000; s=sum((-1)**n/(2*n+1) for n in range(N))
             # Euler/Abel acceleration: add half the next term (endpoint E-M)
