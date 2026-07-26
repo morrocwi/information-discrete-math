@@ -5,6 +5,10 @@ of the `Th_coqc` corpus is external: `research_universal_solver`, `readout_genes
 
 ## Reproduce
 
+**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 16 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
+
+### Manual
+
 ```
 cd formal
 coqc -q IDM_Keystone.v

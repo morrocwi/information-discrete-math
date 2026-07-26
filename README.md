@@ -48,6 +48,7 @@ The full foundational treatise — **[textbook/INFORMATION_DISCRETE_MATHEMATICS.
 - **[METHOD.md](METHOD.md)** — tools (nouns) vs process (verb); the light+sharp solve loop.
 - **[tools/idm_tools.py](tools/idm_tools.py)** — the tested tool library (`D_eps`, `I_eps`,
   `limit_eps`, `ode_rk4`, …); run `python3 tools/idm_tools.py` for the self-check.
+- **Machine-checked:** 16 axiom-free Coq witnesses under `formal/` — `bash formal/verify.sh` compiles all + confirms *Closed under the global context* (keystone `B(Φ,Φ)=I(Φ)`, FTCC bridge, RDL non-explosion, finite theorems).
 - **Validation:** `1000/1000` (grade-school→PhD), `100/100` (continuous problems reproduced from the
   discrete), `48/48` (algebra·linear·complex·combinatorics/graph) — under `validation/`.
 

@@ -771,7 +771,7 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
 
 ## 10.3 Finite satisfaction `⊨_λ` (and an honest downgrade)
 
-- **Th 10.6 (`Th_coqc`, witness `formal/IDM_Logic.v: finite_satisfaction_dec` / `sat_dec`):** `⊨_λ` — a decidable, computable Tarski recursion of satisfaction on a
+- **Th 10.6 (propositional fragment `Th_coqc`, witness `formal/IDM_Logic.v: finite_satisfaction_dec` / `sat_dec` — decidable finite model-checking over the connectives `¬∧∨`; the first-order quantifier-over-finite-domain recursion is `Th_coqc`-elig, decidable by finite `forallb`/`existsb`, not yet formalized here):** `⊨_λ` — a decidable, computable Tarski recursion of satisfaction on a
   finite domain + finite formula at a fixed coarse-graining level. **Existing witness to REUSE (economize):**
   the readout-bivalence consistency layer is already machine-checked — `formal/RD_ConPA_ReadoutBivalence.v`
   (`soundnessC_param`, `consistencyC_param`, `Con_PA_classical_param`, `Th_coqc`); only the general
