@@ -94,6 +94,13 @@ declare -a THMS=(
   "dot_scale:IDM_Reduction"
   "decide_reflect:IDM_Reduction"
   "witness_power_sound:IDM_Reduction"
+  "horner_scaled:IDM_Reduction"
+  "horner_is_poly:IDM_Reduction"
+  "foldmin_in:IDM_Reduction"
+  "fold_add_app:IDM_Reduction"
+  "factorial_is_fold:IDM_Reduction"
+  "witness_qr_sound:IDM_Reduction"
+  "witness_dlog_sound:IDM_Reduction"
 )
 
 fail=0

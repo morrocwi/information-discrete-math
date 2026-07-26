@@ -26,7 +26,7 @@
 (*    witness_composite_sound  a found divisor PROVES compositeness           *)
 (* ===================================================================== *)
 
-Require Import ZArith Arith Lia List Bool.
+Require Import ZArith Arith Lia List Bool Factorial.
 Import ListNotations.
 
 (* ============================ A2 · the one FOLD ============================ *)
@@ -161,6 +161,69 @@ Proof.
   apply fold_linear.
 Qed.
 
+(* ---- branch kernel 6: POLYNOMIALS — Horner's method IS a (right) fold ----
+   evaluating Σ cₖ xᵏ efficiently is the nested fold  c₀ + x(c₁ + x(c₂ + …)); it
+   equals the explicit polynomial. `horner` is definitionally fold_right over the
+   coefficient list; horner_is_poly certifies it computes the polynomial. *)
+Fixpoint horner (x : Z) (cs : list Z) : Z :=
+  match cs with
+  | [] => 0
+  | c :: rest => c + x * horner x rest
+  end.
+
+Fixpoint poly (x : Z) (cs : list Z) (p : Z) : Z :=   (* explicit Σ cₖ·pxᵏ, p = running power *)
+  match cs with
+  | [] => 0
+  | c :: rest => c * p + poly x rest (p * x)
+  end.
+
+Lemma horner_scaled : forall cs x p, p * horner x cs = poly x cs p.
+Proof.
+  induction cs as [| c rest IH]; intros x p; simpl.
+  - ring.
+  - rewrite <- (IH x (p * x)). ring.
+Qed.
+
+Theorem horner_is_poly : forall x cs, horner x cs = poly x cs 1.
+Proof. intros x cs. rewrite <- (horner_scaled cs x 1). ring. Qed.
+
+(* ---- the shortest-path fold is EXACT: the accumulated minimum is attained ----
+   strengthens foldmin_le_* — the min is not merely a lower bound, it equals the
+   start value or one actual element (so shortest_path returns the true optimum). *)
+Lemma foldmin_in : forall v0 f N,
+  fold Z.min v0 f N = v0 \/ exists i, (i < N)%nat /\ fold Z.min v0 f N = f i.
+Proof.
+  intros v0 f N. induction N as [| k IH]; simpl.
+  - left. reflexivity.
+  - destruct (Z.min_spec (fold Z.min v0 f k) (f k)) as [[_ Heq] | [_ Heq]]; rewrite Heq.
+    + destruct IH as [H0 | [i [Hi Hfi]]].
+      * left. exact H0.
+      * right. exists i. split; [lia | exact Hfi].
+    + right. exists k. split; [lia | reflexivity].
+Qed.
+
+(* ---- the associative-monoid CHUNKING law: a fold splits over concatenation ----
+   fold over [0,m+n) = fold over [0,m) combined with fold over the shifted tail.
+   This is why associative folds parallelise (MapReduce) — the reduction is not
+   tied to sequential order. *)
+Theorem fold_add_app : forall f m n,
+  fold Z.add 0 f (m + n) = fold Z.add 0 f m + fold Z.add 0 (fun k => f (m + k)%nat) n.
+Proof.
+  intros f m n. induction n as [| n' IH]; simpl.
+  - replace (m + 0)%nat with m by lia. ring.
+  - replace (m + S n')%nat with (S (m + n')) by lia. simpl. rewrite IH. ring.
+Qed.
+
+(* ---- branch kernel 7: PRODUCT / COMBINATORICS — factorial is a fold over (×) ----
+   the SAME generic fold at the multiplicative operation computes n! exactly. *)
+Theorem factorial_is_fold : forall N,
+  fold Z.mul 1 (fun k => Z.of_nat (S k)) N = Z.of_nat (fact N).
+Proof.
+  induction N as [| k IH].
+  - reflexivity.
+  - cbn [fold fact]. rewrite IH, <- Nat2Z.inj_mul. f_equal. lia.
+Qed.
+
 Close Scope Z_scope.
 
 (* ============================ A3 · the one DECISION ============================ *)
@@ -243,4 +306,27 @@ Theorem witness_power_sound : forall n k,
 Proof.
   intros n k H. apply witness_sound in H. destruct H as [w [_ Hc]].
   unfold power_check in Hc. apply Nat.eqb_eq in Hc. exists w. exact Hc.
+Qed.
+
+(* ---- A3 branch instance 3: MODULAR SQUARE ROOT (the modular_sqrt kernel) ----
+   a witness w with w² ≡ a (mod p) proves a is a quadratic residue mod p. *)
+Definition qr_check (a p w : nat) : bool := Nat.eqb ((w * w) mod p) (a mod p).
+
+Theorem witness_qr_sound : forall a p,
+  decide (fun w => qr_check a p w) p = true -> exists w, ((w * w) mod p = a mod p)%nat.
+Proof.
+  intros a p H. apply witness_sound in H. destruct H as [w [_ Hc]].
+  unfold qr_check in Hc. apply Nat.eqb_eq in Hc. exists w. exact Hc.
+Qed.
+
+(* ---- A3 branch instance 4: DISCRETE LOG (the discrete_log kernel) ----
+   a witness w with g^w ≡ h (mod p) solves the discrete logarithm — the exact
+   baby-step/giant-step verdict, now with a machine-checked soundness proof. *)
+Definition dlog_check (g h p w : nat) : bool := Nat.eqb ((g ^ w) mod p) (h mod p).
+
+Theorem witness_dlog_sound : forall g h p,
+  decide (fun w => dlog_check g h p w) p = true -> exists w, ((g ^ w) mod p = h mod p)%nat.
+Proof.
+  intros g h p H. apply witness_sound in H. destruct H as [w [_ Hc]].
+  unfold dlog_check in Hc. apply Nat.eqb_eq in Hc. exists w. exact Hc.
 Qed.
