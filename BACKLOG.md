@@ -5,24 +5,21 @@ its **tier target**. Housekeeping/cosmetic items that do not make the mathematic
 by design. Extensibility contract: see `INDEX.md`; every new chapter derives from `δ_R`/`L_R`/Part VII
 operators, tier-tagged, with an executed `validation/*.py` block before prose.
 
-## Tier 1 — full chapters closeable NOW (breadth; pieces already exist, no contamination)
+## Tier 1 — full chapters (CLOSED 2026-07-26, v1.7–v1.8; validated 34/34, 4-agent reviewed)
 
-These four are the answer to "what else can be closed as a full chapter": each already has its parts
-scattered in the book and only needs elevation to a dedicated, tier-honest Part.
-
-- [ ] **Part XVI — Measure theory & functional analysis.** Discrete measure `μ_λ=I_ε(indicator)`
+- [x] **Part XVI — Measure theory & functional analysis.** Discrete measure `μ_λ=I_ε(indicator)`
       (§10.6) → σ-additivity as a retained count; `L_R` functional calculus / spectral theorem on the
       finite `ℚ`-space (§13.2); Hilbert-space completeness stays `+ℝ-Open`. *Strengthens:* gives analysis
       its measure-theoretic floor without a continuum σ-algebra. Tier: `Th_coqc-elig` + `+ℝ-Open` fence.
-- [ ] **Part XVII — Category theory in the readout vocabulary.** `G_λ` = idempotent reflector, `E=Ẽ∘G_λ`
+- [x] **Part XVII — Category theory in the readout vocabulary.** `G_λ` = idempotent reflector, `E=Ẽ∘G_λ`
       = Kan-extension/comma factorization, sets-as-fibers = Grothendieck fibration, `=_λ` = coequalizer,
       admissible descriptions = setoids (all sketched in §10.7). *Strengthens:* makes the substrate's
       universal properties explicit; topos completeness stays `+ℝ-Open`. Tier: `Th_coqc-elig`/`Dr`.
-- [ ] **Part XVIII — Statistics & inference.** Retained-frequency estimation; a hypothesis test **is** a
+- [x] **Part XVIII — Statistics & inference.** Retained-frequency estimation; a hypothesis test **is** a
       `Verdict(ACCEPT/HOLD/BLOCK)` (ties to `idm_discipline`); Bayesian update = retained reweighting;
       confidence = declared-resolution interval. *Strengthens:* closes the gap above probability (§10.6)
       and unifies inference with the fail-closed verdict discipline. Tier: `finite_diagnostic`/`Dr`.
-- [ ] **Part XIX — Optimization.** Gradient = `D_ε`; convexity = a retained second-difference sign;
+- [x] **Part XIX — Optimization.** Gradient = `D_ε`; convexity = a retained second-difference sign;
       Lagrange multipliers = constrained retained stationarity; linear programming exact over `ℚ`;
       root/optimum via obstruction-zeroing (`solve_obstruction`, `idm_discipline`). *Strengthens:* gives
       the framework its optimization chapter, grounded in tools it already ships. Tier: `Th_coqc-elig`.

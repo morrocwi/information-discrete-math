@@ -46,6 +46,7 @@ the textbook for the theory.
 | `validation/thousand_problems.py` | arithmetic → PhD | **1000/1000** |
 | `validation/hundred_continuum_problems.py` | integrals/derivatives/limits/ODEs/special | **100/100** |
 | `validation/breadth_problems.py` | algebra/linear/complex/combinatorics/graph | **48/48** |
+| `validation/breadth2_problems.py` | measure/functional/category/statistics/optimization | **34/34** |
 
 ## Backlog
 
@@ -53,7 +54,8 @@ Pending work that strengthens the framework (closeable chapters, proof work, fro
 
 ## Extensibility contract (how to grow this without breaking it)
 
-1. New chapters go as `# Part N — <title>` **before** `# Appendix A`; keep the spine order.
+1. New chapters go as `# Part N — <title>` **before** `# Appendix A`; keep the spine order. **Part XX is
+   reserved** for the continuum-maya bridge (BACKLOG capstone) — start new unrelated chapters at Part XXI.
 2. Derive from `δ_R` / `L_R` / Part VII operators — **never** import a continuum primitive; if a
    continuum object is unavoidable, tag it `+ℝ-Open` and state it as a declared, predicted frontier.
 3. Tier-tag every claim (`Th_coqc` / `finite_diagnostic` / `Dr` / `+ℝ-Open`).

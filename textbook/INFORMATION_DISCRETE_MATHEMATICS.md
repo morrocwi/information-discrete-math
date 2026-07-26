@@ -84,7 +84,9 @@ and the Open **is** the boundary of the infinity axioms.
 
 `δ_R` primitive retained difference · `D` the naturals-as-semiring · `ℤ,ℚ,ℝ` the number tower ·
 `≺` retained order · `L_R` the graph Laplacian (retained-information operator) · `⟨·,·⟩_G` the
-retained inner product · `Th` theorem, `Def` definition, `Ax` axiom, `Pr` principle.
+retained inner product · `Th` theorem, `Def` definition, `Ax` axiom, `Pr` principle ·
+`Verdict(ACCEPT/HOLD/BLOCK)` the fail-closed result type and `eq_eps`/`solve_obstruction` the numeric-
+honesty discipline of `tools/idm_discipline.py` (truthy only on `ACCEPT`; used from Part XVIII on).
 
 > **On the `Th_coqc` witnesses (warrant disclosure).** This repository is the *treatise*; it contains no
 > `.v` files itself. Every `Th_coqc` citation of a bare witness file (`RD.v`, `RDL.v`, …) refers to the
@@ -1270,7 +1272,9 @@ the one place the continuum enters, and it is fenced `+ℝ-Open`.
   σ-algebra (a countable union that "lands" is a non-readout).
 - **Integral.** `∫ f dμ_λ := I_ε(f·1_S)` — the Lebesgue integral is the readout of this finite retained
   sum; the classical `∫` is recovered by the continuum-maya bridge (Part XX target) wherever A8-stable.
-- **Measurable function = admissible map** `E=Ẽ∘G_λ` (§0.5) — measurability is just admissibility at
+- **Measurable function is *replaced by* the admissible map** `E=Ẽ∘G_λ` (§0.5) — a stipulated discrete
+  substitute, not proven equal to classical measurability (which is the strictly stronger σ-algebra
+  preimage condition): here measurability is admissibility at
   the declared resolution; no separate σ-algebra machinery is imported.
 
 ## 16.2 `L^p`, the retained inner product, and finite functional analysis
@@ -1279,7 +1283,7 @@ the one place the continuum enters, and it is fenced `+ℝ-Open`.
   retained metric `⟨f,g⟩_G = I_ε(f̄ g)` (Part XIII). **Cauchy–Schwarz** `|⟨f,g⟩| ≤ ‖f‖₂‖g‖₂` is a finite
   `Th_coqc`-elig inequality over `ℚ` (discrete sum form).
 - **Bounded operator = finite retained coupling.** On the `ℚ`-space, an operator is a finite matrix;
-  `L_R` is self-adjoint, and the **spectral theorem holds exactly** for the finite `L_R` (orthonormal
+  `L_R` is self-adjoint, and the **spectral theorem holds exactly** for the finite `L_R` (`Th_coqc`-elig, finite linear algebra; orthonormal
   retained-mode basis, real `ℚ`-approx eigenvalues — Part XIII). The completion to an infinite Hilbert
   space and its spectral measure are `+ℝ-Open`.
 - **Riesz representation (finite).** Every admissible linear functional on the finite `ℚ`-space is
@@ -1302,14 +1306,15 @@ principle, not an external framework imported on top.
   presentation is a finite readout (`Th_coqc`-elig).
 - **`G_λ` is an idempotent reflector** (endofunctor with `G_λ∘G_λ ≅ G_λ`, `finite_diagnostic`, §10.7) —
   coarse-graining is a categorical reflection onto the admissible subcategory.
-- **`E=Ẽ∘G_λ` is a Kan-extension / comma factorization** (`Th_coqc`-elig): every admissible description
-  factors uniquely through the reflector.
+- **`E=Ẽ∘G_λ` reads as a Kan-extension / comma factorization** (`Dr` — the factorization exists; the
+  universal property is stated as the framework's reading, not proved here): every admissible description
+  factors through the reflector.
 
 ## 17.2 Fibrations, congruences, and the finite Yoneda reading
 
 - **Sets-as-`G_λ`-fibers = a Grothendieck fibration** (indexed-set semantics); **`=_λ` = a coequalizer /
-  smallest congruence** (§10.7). **Admissible descriptions are setoids** — the direct Coq vehicle
-  (`Th_coqc`).
+  smallest congruence** (§10.7) — categorical restatements, tier `Dr` (no universal-property proof given here). **Admissible descriptions are setoids** — the direct Coq vehicle
+  (`Th_coqc`-elig; the setoid mechanization lives in the external corpus, no local witness).
 - **Functor = readout-preserving map; natural transformation = an admissible family** of such maps.
 - **Finite Yoneda (the readout-first principle, categorically):** a retained object is determined, up to
   `∼_λ`, by the family of its admissible readouts `⟨O(g·−)⟩` — "an object *is* its readouts"
@@ -1322,7 +1327,8 @@ principle, not an external framework imported on top.
 
 Above probability (§10.6) sits inference: estimating and testing from finite retained data. In this
 framework inference is done by a **bounded reader** who returns a **verdict**, never an omniscient
-pronouncement on a "true parameter" — the bounded-judge law (Part 0.5) applied to statistics, unified
+pronouncement on a "true parameter" — the reader/resolution discipline of Part 0.5, applied here as a
+**bounded-judge law** for statistics (every tester is itself a bounded reader), unified
 with the numeric-honesty discipline (`idm_discipline`).
 
 ## 18.1 Estimation as retained-frequency readout
@@ -1332,7 +1338,7 @@ with the numeric-honesty discipline (`idm_discipline`).
   around the retained estimate — its width is the declared `ε`, not a claim about a completed sampling
   distribution.
 - **Bayesian update = retained reweighting.** Posterior `∝` prior `×` likelihood is a reweighting of
-  retained-distinction mass; the **Born-rule normalization** `p_i=|a_i|²/Σ|a_j|²` (Part V, `Th_coqc`) is
+  retained-distinction mass; the **Born-rule normalization** `p_i=|a_i|²/Σ|a_j|²` (§10.6, `Th_coqc` in the corpus; Part V Pr 5.1) is
   the special normalized case. Tier `finite_diagnostic`/`Dr`.
 
 ## 18.2 A hypothesis test IS a verdict
@@ -1362,20 +1368,27 @@ the stopping test is a fail-closed verdict.
   resolution — solved by **obstruction-zeroing** (`solve_obstruction`, `idm_discipline`), which returns
   `ACCEPT` only when the residual reads zero and `HOLD` otherwise.
 - **Convexity = nonnegative retained second difference.** `D_ε² J ≥ 0` (a decidable `ℚ` sign check)
-  guarantees a **unique retained minimum** (`Th_coqc`-elig) — convexity is a finite readout, not a
-  statement about a smooth Hessian over `ℝ`.
+  certifies that **any retained stationary point is a global minimum, *if one exists*** (`Th_coqc`-elig);
+  it does **not** give existence or uniqueness on its own (`J=x` is convex with no minimum; `J=const` has
+  every point a minimizer). **Uniqueness needs *strict* convexity `D_ε²J > 0`** (plus boundedness/
+  coercivity for existence). Convexity is a finite readout, not a statement about a smooth Hessian over `ℝ`.
 
 ## 19.2 Constrained optimization and linear programming
 
 - **Lagrange multipliers = retained stationarity on the admissible fiber.** Constrained optimality is
-  `D_ε J = Σ λ_k D_ε g_k` on the `G_λ`-fiber cut out by the constraints; the KKT conditions are the
-  corresponding retained-verdict (`Dr`/`Th_coqc`-elig).
+  `D_ε J = Σ λ_k D_ε g_k` on the `G_λ`-fiber cut out by the constraints; the KKT feasibility /
+  complementary-slackness check is `Th_coqc`-elig (a finite `ℚ` verdict); its equivalence to the classical
+  KKT theorem is `Dr`.
 - **Linear programming = exact `ℚ` vertex enumeration.** The optimum sits at a polytope vertex; simplex
   is an **admissible path on the polytope graph** (ties to `L_R`/graph, Part XV) with exact `ℚ`
   pivots — `Th_coqc`-elig, no floating error.
 - **Gradient descent = `I_ε` of the negative-gradient field** (an ODE, §11.4); convergence is the **A8
   plateau**, reported as a fail-closed verdict (`HOLD` if the budget ends before the plateau). Continuous
   convex analysis over `ℝ` (subdifferentials, completed minimizers) stays `+ℝ-Open`.
+
+*(Validated: `validation/breadth2_problems.py`, 34/34 — Cauchy–Schwarz, finite spectral theorem, Riesz,
+`G_λ` idempotence, finite Yoneda, LLN plateau, Bayesian/Born normalization, test-verdict ACCEPT/HOLD,
+sorites BLOCK, convexity, obstruction-solve, exact-`ℚ` LP, gradient descent, Lagrange.)*
 
 **Breadth closure (extended).** With Parts XVI–XIX the foundation adds measure/functional analysis,
 category theory, statistics/inference, and optimization — each derived from `δ_R`, `L_R`, `I_ε`/`D_ε`,
