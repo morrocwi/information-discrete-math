@@ -106,12 +106,21 @@ def cos_finite(x):
         term = -term * x2 / ((2 * n - 1) * (2 * n)); s += term; n += 1
     return s
 
+def _erfc_cf(x, depth=80):
+    """erfc(x) for x>3 via its convergent continued fraction erfc(x)=e^{−x²}/√π · 1/(x+½/(x+1/(x+…))),
+    a_k=k/2 — evaluated by finite backward recurrence (no cancellation, no library erfc)."""
+    f = R(0)
+    for k in range(depth, 0, -1):
+        f = (R(k) / 2) / (x + f)
+    return exp_finite(-x * x) / SQRT_PI / (x + f)
+
 def erf_finite(x):
-    """error function via the finite Maclaurin series erf(x)=2/√π·Σ(−1)^n x^{2n+1}/(n!(2n+1)).
-    Accurate for |x|<=~4 at dps=40; beyond that use the tail via erfc quadrature."""
+    """error function, accurate for ALL real x. |x|≤3: finite Maclaurin series erf=2/√π·Σ(−1)^n x^{2n+1}/
+    (n!(2n+1)). |x|>3: erf=sign(x)·(1−erfc), erfc from the finite continued fraction _erfc_cf (the series
+    would lose precision to cancellation there). No mp.erf ever called."""
     x = R(x)
-    if abs(x) > 4:
-        return R(1) if x > 0 else R(-1)   # saturated to full precision at this dps
+    if abs(x) > 3:
+        return (R(1) if x > 0 else R(-1)) * (1 - _erfc_cf(abs(x)))
     term = R(x); s = R(x); n = 1
     while abs(term) > _EPS and n < 400:
         term = -term * x * x * (2 * n - 1) / (n * (2 * n + 1))

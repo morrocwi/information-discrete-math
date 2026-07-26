@@ -16,6 +16,23 @@ import mpmath as mp
 mp.mp.dps = 40
 random.seed(20260726)   # deterministic; reproducible
 
+_BERN = [Q(1)]
+def bernoulli_finite(n):   # B_n via the finite recurrence Σ_{k=0}^{m} C(m+1,k)·B_k = 0 (exact ℚ, no bernoulli())
+    while len(_BERN) <= n:
+        m = len(_BERN)
+        s = sum(math.comb(m + 1, k) * _BERN[k] for k in range(m))
+        _BERN.append(-Q(s.numerator, s.denominator * (m + 1)))
+    return _BERN[n]
+
+def abel_alt(coeff, e0=mp.mpf('0.2'), K=5):   # Abel-regularized Σ coeff(n)·(−1)^n via smoothed sum e^{−εn}
+    def A(ee):                                # + a full Richardson tableau on ε (kills ε, ε², ε³, … successively)
+        N = int(50 / float(ee))
+        return mp.fsum(coeff(n) * (-1) ** n * mp.e ** (-ee * n) for n in range(N))
+    col = [A(e0 / 2 ** j) for j in range(K)]
+    for p in range(1, K):
+        col = [(2 ** p * col[i + 1] - col[i]) / (2 ** p - 1) for i in range(len(col) - 1)]
+    return col[-1]
+
 def _p(n, _cache={0:1}):   # exact integer partition count (DP), reference for Hardy-Ramanujan
     if n in _cache: return _cache[n]
     total=0; k=1
@@ -203,17 +220,19 @@ def level5():
     for i in range(200):
         k = random.choice(['zeta_neg', 'abel_eta', 'apery', 'ram_pi', 'partition', 'cf_quad',
                             'stirling_hi', 'catalan', 'madhava', 'grandi_family'])
-        if k == 'zeta_neg':   # ζ(-(2m-1)) = -B_{2m}/(2m) — our regularized value = accepted value
+        if k == 'zeta_neg':   # ζ(-(2m-1)) = -B_{2m}/(2m) — 'ours' B_{2m} from OUR finite recurrence, not bernoulli()
             m = random.randint(1, 6)
-            ours = -sp.bernoulli(2*m)/(2*m); ref = sp.zeta(-(2*m-1))
-            ok = sp.simplify(ours - ref) == 0
-            ex=f"ζ(−{2*m-1}) = −B_{{{2*m}}}/{2*m} = {ours} (Ramanujan/zeta reg §9.1/9.3; ζ(−1)=−1/12)"
-        elif k == 'abel_eta': # Σ(-1)^{n-1} n^{s} regularized = (1-2^{1+s})ζ(-s)... use eta; s small
-            # 1-1+1-...=1/2, 1-2+3-...=1/4 ; general Abel value = eta-related closed form for s=0,1
+            ours = -Q(bernoulli_finite(2*m).numerator, bernoulli_finite(2*m).denominator) / (2*m)
+            ref = sp.zeta(-(2*m-1))
+            ok = sp.simplify(sp.Rational(ours.numerator, ours.denominator) - ref) == 0
+            ex=f"ζ(−{2*m-1}) = −B_{{{2*m}}}/{2*m} via finite Bernoulli recurrence (no bernoulli(), §9.1/9.3)"
+        elif k == 'abel_eta': # Abel sums 1−1+1−…=1/2, 1−2+3−…=1/4 — 'ours' from a FINITE smoothed sum, not a literal
             s = random.choice([0, 1])
-            ours = 0.5 if s == 0 else 0.25
-            ref = 0.5 if s == 0 else 0.25
-            ok = ours == ref; ex="Abel sums 1−1+1−…=1/2, 1−2+3−…=1/4 (§9.4)"
+            if s == 0:
+                ours = abel_alt(lambda n: mp.mpf(1)); ref = mp.mpf('0.5')       # Σ(−1)^n = 1/2
+            else:
+                ours = -abel_alt(lambda n: mp.mpf(n)); ref = mp.mpf('0.25')     # Σ(−1)^{n-1} n = 1/4
+            ok = approx(ours, ref, 1e-6); ex="Abel sums 1−1+1−…=1/2, 1−2+3−…=1/4 via finite smoothed sum + Richardson (§9.4)"
         elif k == 'apery':    # ζ(3) accelerated
             N=4000; S=sum(1.0/n**3 for n in range(1,N+1)); ours=S+1.0/(2*N**2)-1.0/(2*N**3)
             ref=float(mp.apery); ok=approx(ours, ref, 1e-8); ex="Apéry ζ(3)≈1.2020569 (E-M, §9.2)"
@@ -258,9 +277,9 @@ def level5():
             # Euler/Abel acceleration: add half the next term (endpoint E-M)
             ours=4*(s + 0.5*((-1)**N/(2*N+1))); ref=float(mp.pi)
             ok=approx(ours, ref, 1e-3); ex="Madhava–Leibniz π/4 with endpoint (E-M) acceleration"
-        else:  # grandi family Σ(-1)^n x^n regularized
-            ours = 1/(1+1.0); ref = 0.5; ok = approx(ours, ref)
-            ex="Grandi family Abel-regularized"
+        else:  # Grandi Σ(−1)^n = 1/2 — 'ours' from the finite smoothed sum Σ(−1)^n e^{−εn} + Richardson (not a literal)
+            ours = abel_alt(lambda n: mp.mpf(1)); ref = mp.mpf('0.5'); ok = approx(ours, ref, 1e-6)
+            ex="Grandi 1−1+1−…=1/2 via finite smoothed sum + Richardson (§9.4)"
         check('L5 ปริญญาเอก (frontier)', ok, ex)
 
 for f in (level1, level2, level3, level4, level5):

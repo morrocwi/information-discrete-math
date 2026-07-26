@@ -7,12 +7,24 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
+      - name: prove_it_lite (ZERO dependencies — stdlib only)
+        run: python3 prove_it_lite.py
       - run: pip install -r requirements.txt pytest
-      - name: prove_it (run-don't-trust)
+      - name: prove_it (run-don't-trust, 40-digit)
         run: python3 prove_it.py
+      - name: prove_it_full (1278 problems, 5 domains)
+        run: python3 prove_it_full.py
       - name: tool self-checks
         run: python3 tools/idm_tools.py && python3 tools/idm_discipline.py && python3 tools/framework_compliance.py
       - name: validations
         run: for f in validation/*.py; do echo "== $f =="; python3 "$f" || exit 1; done
       - name: pytest
         run: pytest -q
+  coq:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: install Coq
+        run: sudo apt-get update && sudo apt-get install -y coq
+      - name: verify formal core (compile every witness + Print Assumptions axiom-free)
+        run: bash formal/verify.sh
