@@ -588,6 +588,139 @@ Bernoulli numbers are finite rational data; the divergent $m\to\infty$ tail is u
 
 ---
 
+# Part X — Integrated extensions (sets & functions, cardinality, analysis, probability, reconciliations)
+
+This Part closes the foundation's remaining gaps and reconciles it with the external record. **Honest
+global status:** the `create` results below (§10.1–10.6) are **Th_coqc-ELIGIBLE proof SKETCHES** — the
+tier tag is the *target*; each needs an actual `coqc` + `Print Assumptions` single-file check before it
+is cited as verified. The mined items (§10.8) and the cotransitivity/setoid results are the currently
+machine-checked core. No external validation is invoked (horizontal-knowledge policy).
+
+## 10.1 The pair–product–relation–function layer, from `δ_R` (closes the biggest "not-standalone" blocker)
+
+Built strictly from prior primitives (number tower, `G_λ`-fibers, `∼_λ`, `δ_R`) — a strict DAG, no
+forward reference. *(In-framework construction; `Th_coqc`-eligible sketch.)*
+
+- **Singleton / pair fibers.** for `a,b` in fiber `X` at resolution `λ`: `{a}_λ`, `{a,b}_λ` are
+  sub-fibers selected by finitely many `∼_λ`-classes (fiber-formation is already licensed, §0.5.3).
+- **Ordered pair (`δ_R`-Kuratowski).** `(a,b)_λ := {{a}_λ, {a,b}_λ}`; degeneracy `a =_λ b` is *detected*
+  as a `δ_R` count (`|outer|=1` vs `2`), not hidden. **Th 10.1 (injectivity, `Th_coqc`-elig):**
+  `(a,b)=(c,d) ⟺ a=_λc ∧ b=_λd`, by a finite case-split on `|{·,·}|∈{1,2}` — every step a decidable
+  finite readout.
+- **Cartesian product.** `X ×_λ Y := {(a,b)_λ : a∈X, b∈Y}` by finite enumeration (A8: no infinite
+  product; `λ→0` deferred `+ℝ-Open`); `|X×Y| = |X|·|Y|`.
+- **Relation** = an admissible sub-fiber of the product — literally `E=Ẽ∘G_λ` applied to `X×Y`.
+- **Function** = a relation `R` with `IsFunction(R) :≡ ∀a∈X ∃!_λ b∈Y, (a,b)∈R` (`∃!_λ` a finite
+  decidable search). **Th 10.2 (coincidence — closes the blocker, `Th_coqc`-elig):**
+  `AdmissibleMap(X,Y) ≅ {R : IsFunction(R)}` via the graph `G(E)`; the `∼_λ`-respecting construction
+  forces representative-independence. **Axiom-free eligibility:** all objects are finite lists over
+  decidable-equal `ℚ`; only `List` + decidable equality, no LEM / choice / funext.
+
+## 10.2 Cardinality and the potential-vs-actual infinite
+
+*(In-framework; type-level refusal is a framework-native observation.)*
+- **Count = retained distinctions.** `Counting_λ(S) := |[S]_λ|` (de-duplicated `∼_λ`-classes) — always
+  a finite natural, never a primitive `∞`.
+- **Same size** = an admissible bijection `≈_λ`. **Th 10.3 (`Th_coqc`):** for `NoDup` lists,
+  `equinum ⟺ length equal`, by finite induction — axiom-free.
+- **Potential infinite** = a `δ_R`-generated tape `Tape(n+1)=σ(Tape n)`, each stage finite with
+  `Counting(Tape n)=n+1`. **Th 10.4 (`Th_coqc`):** `tape_count_succ` ⇒ strict growth ⇒ no terminal
+  stage (an unbounded *process*, no completed object).
+- **Actual infinite refused — analytically.** **Th 10.5 (`Th_coqc`):** `∀ l:list A, ∃n, length l = n`.
+  Every readout inhabits `list A`, which has *no infinite inhabitant* — actual `∞` is excluded because
+  the readout type never had room for it, not by fiat. *(Cantor-style comparison of two tapes' growth
+  is per-schema `finite_diagnostic`, not one closed theorem.)*
+
+## 10.3 Finite satisfaction `⊨_λ` (and an honest downgrade)
+
+- **Th 10.6 (`Th_coqc`-elig):** `⊨_λ` — a decidable, computable Tarski recursion of satisfaction on a
+  finite domain + finite formula at a fixed coarse-graining level.
+- **Downgrade (honest):** the earlier "`D ⊨ PA`" (full first-order Peano) and "`D ≡ ℕ`" (elementary
+  equivalence / nonstandard models) are **`+ℝ-Open`** — they quantify over the completed standard model
+  and are NOT reproven here; only `⊨_λ` is claimed.
+
+## 10.4 RDL boundary-tie — making the logic load-bearing
+
+- **Th 10.7 (`Th_coqc`-elig):** `D`'s semiring closure **requires RDL's non-explosion**, not classical
+  logic — a boundary distinction (a state at the semiring frontier) is held without collapse only
+  because `ex falso` is refused (Ax-RDL3). This is the one rung that makes Part I (logic) *load-bearing*
+  for Part II (number), answering the review's "RDL is decorative" finding.
+
+## 10.5 Real analysis via A8 (the finite-ε rung skeleton)
+
+Every base definition is finite-`ε` over `ℚ`; the `ε→0` continuum statement is gated behind a **named,
+declared** stability proof (finite-`ε` Cauchy for limits/series/derivatives; discrete Euler–Maclaurin
+for tails).
+- **Sequence limit / series convergence / continuity algebra** — `finite_diagnostic` (limits `+ℝ-Open`
+  until a stability witness): a `(δ_R, ε)`-continuity pair closed under sum/product/composition; series
+  = finite partial sums + Euler–Maclaurin tail bound (§9.2).
+- **Genuinely new (Th 10.8, `Th_coqc` AS STATED):** in the native *causal / secant* form the `D_ε`
+  rules are **EXACT** finite-`ε` identities over `ℚ` (zero `O(ε)` residue):
+  `D_ε(f+g)=D_εf+D_εg` · `D_ε(f·g)[n]=f[n]D_εg[n]+g[n−1]D_εf[n]` ·
+  `D_ε(g∘f)[n]=Δg[f[n−1],f[n]]·D_εf[n]` (secant slope across the actual jump) ·
+  **FTCC** `I_ε(D_εf)[N]=f[N]−f[0]` exactly (telescoping). Each discharges by `field_simplify; ring` /
+  finite induction — no `Reals`, axiom-free. *Open:* general `ε–δ` existence without a stability
+  witness stays `+ℝ-Open`; the secant≈difference-quotient step is the one place classical intuition can
+  silently diverge if resolution is not matched — flagged, not smoothed.
+
+## 10.6 Probability and measure as retained frequency (a discrete measure theory)
+
+*(New chapter-companion to the discrete calculus; `Dr`, LLN `Th_coqc`-eligible.)*
+- **measure** `μ_λ := I_ε(indicator)` — a coarse-grained retained count; **probability** `p_i =
+  |amp_i|²/Σ|amp_j|²` (Born-rule, already `Th_coqc` in the corpus) is the special normalized case;
+  **expectation** = retained average; **law of large numbers** = A8 stability of the empirical mean
+  (the plateau of `C_N=(1/N)I_ε(s)[N]`). Kolmogorov's axioms appear as theorems about admissible
+  retained counts, not primitives. *(Strong LLN stays `+ℝ-Open`.)*
+
+## 10.7 Reconciliations with the external record (กระทบยอด)
+
+- **Causal set theory** (Bombelli–Lee–Meyer–Sorkin 1987, *PRL* 59, 521; Sorkin 2003, gr-qc/0309009),
+  `finite_diagnostic`. **ADOPT re-adapted:** an admissible causal order `≺_λ` over `∼_λ`-fibers plus
+  `δ_R` counting fixes the readout geometry — `Vol_λ(interval(x,y)) := #{z : x≺_λ z≺_λ y}` restates
+  "order + number = geometry"; `I_ε` over the chain recovers the finite-`ε` line-element. **Local
+  finiteness** re-adapted: a `G_λ`-fiber between any causal pair is finite — a *structural* reason
+  sub-`λ` resolution is unreachable, strengthening A8. **CONFLICT (do not blend):** causets take
+  discreteness as ontological substrate; we do not (discreteness is a readout fact at declared `λ`;
+  the continuum is a non-readout). **Sorkin's Hauptvermutung stays `+ℝ-Open`** (§10.9); sprinkling is
+  cited as a `Dr` template for the stability step, not adopted as mechanism.
+- **Constructive / Bishop analysis** (Bishop 1967; Bishop–Bridges 1985; Bridges–Richman 1987; Simpson
+  2009). **Th 10.9 (`Th_coqc`):** **cotransitivity** is the constructive substitute for trichotomy,
+  matching A8. Bishop reals (Cauchy-with-modulus) = our `ℝ`-as-readout (`Dr`); **located sets** ↔
+  admissible distance maps on `G_λ`-fibers; **LPO/WLPO/LLPO** rejected — the same move as A8's ban on
+  pre-stability limits (`finite_diagnostic`). **What we add beyond Bishop:** limits are a *derived,
+  declared, post-stability* readout (not a definitional primitive), and a genuine discrete calculus
+  (`D_ε, I_ε`, FTCC, `δ_R`) Bishop lacks.
+- **Category / type theory** (Mac Lane 1998; Grothendieck SGA1; Jacobs 1999; Johnstone 2002;
+  Hofmann–Streicher 1998; HoTT 2013; Coq `Coq.Classes.Setoid`). `G_λ` is an **idempotent endofunctor /
+  reflector** (`finite_diagnostic`); the admissible description `E=Ẽ∘G_λ` is a **comma-category /
+  Kan-extension** factorization (`Th_coqc`-elig); sets-as-`G_λ`-fibers = a **Grothendieck fibration**
+  (indexed-set semantics); equality `=_λ` = a **coequalizer / smallest congruence**. **Admissible
+  descriptions are Setoids** — the direct Coq formalization vehicle (`Th_coqc`). **CAVEAT (`+ℝ-Open`):**
+  a **topos** structure is explicitly NOT claimed.
+
+## 10.8 Mined confirmations from the machine-checked corpus (research_universal_solver)
+
+Each is an existing `Th_coqc` witness that grounds a textbook claim:
+- **RD1–RD9 → `D ≅ ℕ`** (Peano-compatibility) · **RDL** 4-valued paraconsistent core (Belnap–Dunn FDE) ·
+  **cosmogenesis order backbone** (`δ_R` → asymmetry → temporal order → `τ_c` seed → atomicity) ·
+  **causal order `≺` and `L_R` structural facts** (bridge to the spine `K·L_R`) · **genesis-chain
+  integration (M2) + readout-lossiness (CG-05A)** · **coupled discrete-spine stability** on the graph
+  carrier · **the info-operator keystone `B(Φ,Φ)=I(Φ)`** (Dirichlet energy = retained information) ·
+  **DEC toolkit** (discrete exterior calculus around `L_R`, 9 tools, minimal-cell scope) · **π and φ as
+  readout-invariants** (reconstruction limits, not root objects; `Dr`). *(Witnesses: `RD.v`, `RDL.v`,
+  `RDL_Distinguishability.v`, `RDL_CausalOrder.v`, `RDL_GenesisLink.v`, `RDL_SpineGraph*.v`,
+  `URCF_RD_All.v`, `DEC_TOOLKIT.md`.)*
+
+## 10.9 The honest Open frontier (`+ℝ-Open` / `Dr` — named, not hidden)
+
+Continuum limit `L_R → □` (d'Alembertian) · a full **topos** completeness of the substrate ·
+**Hauptvermutung** (uniqueness of a faithful causet embedding) · the **strong** law of large numbers ·
+`π`/`φ` as exact objects (they stay readout-invariants) · general `ε–δ` existence without a stability
+witness. These are the declared boundary; the book states them as Open and predicts the readout, per
+Part 0.
+
+---
+
 # Appendix A — The contaminated-concept → discrete-replacement table
 
 | contaminated concept | injection | discrete-correct replacement |
