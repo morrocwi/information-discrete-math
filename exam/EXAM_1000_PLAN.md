@@ -74,6 +74,31 @@ Every solver output MUST contain, per problem:
 The compliance auditor fails any solve that reaches the answer by standard continuum machinery and only
 *relabels* it — that is bypass, not use.
 
+
+
+## 4a. Anti-relabel: regime-aware compliance (the fix from the 10-problem exam)
+
+The v1 exam caught the real failure: a solver wrapped a STANDARD number-theory proof in framework
+vocabulary (P2). The fix — `tools/framework_compliance.py` — replaces the blunt `used_our_framework`
+flag with an honest three-way audit:
+
+- **`finite_native` → `trivial`.** The problem is already finite/integer/discrete; there is NO continuum
+  to contaminate, so the framework is *vacuously* satisfied. Correct, but NOT a distinctive framework
+  result — labelled honestly, never claimed as a framework win. (Most pure number-theory/combinatorics.)
+- **`continuum_tempting` → `genuine` | `cosmetic`.** A limit/integral/derivative/real-analysis object is
+  tempting; HERE the framework must translate-first to a finite-ε readout and refuse the non-readout.
+  `genuine` = it did (distinctive op invoked, or — strongest — an **executed** `idm_tools` computation
+  that yields the benchmark, which relabeling cannot fake). `cosmetic` = standard continuum math smuggled
+  in and relabelled → **fail** the problem's framework score.
+- **Execution gate (`verify_executed`).** For computational problems the solver must produce a runnable
+  framework computation; genuineness is then *proved by running it*, not judged from prose.
+
+**Consequence for the metrics.** The framework-efficacy claim is made where it is real and measurable —
+on **continuum-tempting** problems (translate-first + finite-ε reproduces the answer, verifiable by
+execution; cf. `validation/infinity_accuracy.py`, 12/12 to ≥10 digits). Finite-native problems are
+reported separately as `trivial` (correct, non-distinctive). This is the honest, non-overclaiming way to
+score "the framework solved it."
+
 ## 5. Metrics (what we report — diagnostic, tier-honest)
 
 - **Accuracy** overall + per subject + per difficulty band (heatmap).

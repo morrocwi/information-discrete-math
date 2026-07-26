@@ -24,6 +24,7 @@ computation — that is what the tools below do.
 | `ζ`-type / slowly-convergent sum | `em_sum(term, N, tail)` | Euler–Maclaurin partial sum |
 | exact arithmetic / algebra / linear systems | `sympy` over `ℚ` | exact, no floats — see §3 |
 | honest float compute (equality, sums, root-find, verdicts) | `tools/idm_discipline.py` | `eq_eps`, `sum_neumaier`, `solve_obstruction`, `Verdict` |
+| check a solution genuinely USES the framework (not relabel) | `tools/framework_compliance.py` | `classify_regime`, `audit`, `verify_executed` |
 | group / counting / graph invariant | finite enumeration or `L_R` (§3) | native discrete tier |
 
 If a step seems to need a real number, a completed limit, an angle, or `∞` as a *primitive* — **stop**,
