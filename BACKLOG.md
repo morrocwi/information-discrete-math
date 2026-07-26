@@ -94,7 +94,7 @@ closure — they need the completed continuum, which the philosophy treats as a 
       form into Part VIII (discrete calculus), tier-honest. Goal: a Jacobian that does **not** rely on a
       conjecture — a finite exact-algebra readout, per the DGG-conjecture-is-false lesson (finite
       discrete counterexamples settle what continuum conjectures leave open).
-- [ ] **readout_genesis math harvest.** Scan `~/ANSE.ASIA/readout_genesis` for machine-checked / exact
+- [x] **readout_genesis math harvest — DONE (v1.24).** Pure-math results extracted to formal/IDM_Harvest.v (axiom-free): repeated_event_zero (C=−C⇒C=0), odd_from_cyclic_closure (cyclic closure ⇒ k odd ⇒ 3), sym_skew_reconstruct + skew_diag_zero (operator = self-adjoint metric + load-free skew), folded §4.4/§13.2. Remaining SM-domain .v files are physics, not pure math. ORIGINAL: Scan `~/ANSE.ASIA/readout_genesis` for machine-checked / exact
       mathematical results not yet in the textbook; extract and fold in (info-language first, tier-honest).
 
 ## Housekeeping (tracked, low priority — consistency not math)

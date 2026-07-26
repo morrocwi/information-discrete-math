@@ -388,7 +388,8 @@ synthesis; tiers below are exactly its claim-gate ledger.)*
 
 - **`π` = the calibrated invariant of compact retained closure** (order-reversal witness `Th_coqc`-elig; the metric-calibration route is `+ℝ-Open`). Two roots,
   one number: (i) an involutive nontrivial adjacent **order reversal** carries the exchange factor
-  `r=−1=e^{iπ}` (Th 4.4, exact under the ordered-tape axioms; the same `k`-odd witness that forces
+  `r=−1=e^{iπ}` (Th 4.4, exact under the ordered-tape axioms; cyclic start-independence forces `k` **odd** — witness
+  `formal/IDM_Harvest.v: odd_from_cyclic_closure`/`least_nontrivial_odd_is_three` — the same `k`-odd witness that forces
   `k=3` → SU(3), §II); (ii) a continuous compact transport closes on a **topological circle** `θ∈ℝ/Tℤ` and an **isotropic
   Euclidean metric calibration** gives `C/R=2π`. **This second route uses the completed real circle, so it
   is `+ℝ-Open`, not `Th_coqc`** — it is stated and predicted, not proved axiom-free (§10.9). The native,
@@ -684,15 +685,17 @@ It is the *retained-distinction sensitivity* of each readout coordinate to each 
 ## 8.9 The information reading (why it is *information* calculus)
 
 `Δ` = local change of distinction, `Σ` = accumulated retained record, `L_R` = information diffusion;
-energy and action are readouts of the information functional (Th 5.1). **Discrete calculus is the
+energy is a readout of the information functional (Th 5.1, `B(Φ,Φ)=I(Φ)`). **Discrete calculus is the
 calculus of retained-information flow** — continuum calculus is what a finite reader reconstructs
 from it.
 
 **The unifying stepper (a discrete damped wave on the graph).** The results of §5, §8, and §21.3 are one
 operator: `𝓜 := M·∂²_ε + D·∂_ε + L_R` on a finite weighted graph (`M,D>0` scalars) — a **discrete
 telegrapher's / damped-wave equation** `M Φ'' + D Φ' + L_R Φ = S`. Its structure is forced from the root:
-the second-order term gives a *finite propagation speed* `√(D/τ_c)` with the **forced ratio** `τ_c = M/D`
-(a readout, not a free dial — §21.3); the first-order term gives strict energy decay; and `L_R ⪰ 0` (the
+normalising by `M` gives `Φ'' + (D/M)Φ' + (1/M)L_R Φ = S/M`: the second-order term makes it **hyperbolic**
+(finite propagation — per `L_R`-mode `λ` the dispersion scale is `√(λ/M)`, not a single scalar speed), the
+**memory/relaxation time is the forced ratio `τ_c = M/D`** (a readout, not a free dial — set by the damping,
+not the speed), the first-order term gives strict energy decay, and `L_R ⪰ 0` (the
 keystone, §5.1 `keystone_nonneg`) makes the homogeneous energy non-increasing (`relaxation_dissipation`).
 So one graph operator carries diffusion, waves, damping, and the no-blow-up bound — a single discrete
 object, no continuum. *(Extracted from the readout-genesis master-equation forcing ledger; told here as
@@ -1192,6 +1195,14 @@ of the space (Hilbert-space limits) is **`+ℝ-Open`** — we work in the `ℚ`-
 completion only as a declared readout (A8).
 
 ## 13.2 The retained metric, `L_R`, and the spectral readout
+
+**Every retained operator splits into a metric part and a load-free part** (`Th_coqc`, witnesses
+`formal/IDM_Harvest.v: sym_skew_reconstruct`, `sympart_self_adjoint`, `skew_diag_zero`): `M = ½(M+Mᵀ) +
+½(M−Mᵀ)` — a **self-adjoint** part (the retained metric, `= Mᵀ`, which carries the retained load) plus a
+**skew** part (`= −(·)ᵀ`, whose diagonal vanishes, so it holds no retained metric on any single node).
+The retained metric `⟨·,·⟩_G` is exactly this self-adjoint part; `L_R` is already self-adjoint
+(§15.2 `laplacian_symmetric`), so it *is* its own metric part.
+
 
 - **Inner product = the positive retained metric** `⟨x,y⟩_G = xᵀ G y`, `G≻0` (§III of the `π`/`φ`
   synthesis, Eq. 4). It makes retained load nonnegative and fixes which relabelings are admissible

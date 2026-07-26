@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -36,6 +36,10 @@ declare -a THMS=(
   "laplacian_ones_in_kernel:IDM_Matrix"
   "twirl_image_scalar:IDM_Matrix"
   "twirl_idempotent:IDM_Matrix"
+  "repeated_event_zero:IDM_Harvest"
+  "odd_from_cyclic_closure:IDM_Harvest"
+  "sym_skew_reconstruct:IDM_Harvest"
+  "skew_diag_zero:IDM_Harvest"
 )
 
 fail=0
