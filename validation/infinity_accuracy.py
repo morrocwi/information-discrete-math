@@ -93,7 +93,11 @@ show("∫_{ℝ⁴} e^{−r²} d⁴x = π²  (4D spacetime)", "∫ over ℝ⁴",
 # (the S_{d-1} r^{d-1} Jacobian carries every one of the d dimensions), RAM-light for ANY d.
 def gaussian_dD(d, b=16, N=9000):
     z = mp.mpf(d)/2
-    gam = trap_improper(lambda t: t**(z-1)*mp.e**(-t) if t>0 else mp.mpf(0), 60, 8000)  # Γ(z) finite quadrature
+    # Γ(z) via the substitution t=x²  →  Γ(z)=∫₀^∞ 2·x^{2z−1}·e^{−x²} dx. This is the key: the raw
+    # integrand t^{z−1}e^{−t} has an INFINITE derivative at t→0 when z<2 (breaks the Euler–Maclaurin
+    # endpoint correction); after t=x² the integrand is x^{2z−1} with a FINITE derivative at 0, so the
+    # finite quadrature is accurate even at non-integer z (dim-reg d=3.9 ⇒ z=1.95). Still no gamma call.
+    gam = trap_improper(lambda x: 2*x**(2*z-1)*mp.e**(-x**2) if x > 0 else mp.mpf(0), 9, 9000)
     Sd = 2*mp.pi**(mp.mpf(d)/2)/gam                     # surface area of the unit (d−1)-sphere (Γ computed finitely)
     return trap_improper(lambda r: Sd*r**(mp.mpf(d)-1)*mp.e**(-r**2), b, N)
 for d in (7, 11):    # d=11 = M-theory dimension
