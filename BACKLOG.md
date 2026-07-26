@@ -53,9 +53,10 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
 - [ ] **Prove the keystone Th 5.1 `B(Φ,Φ)=I(Φ)` in Coq.** Currently a design target / in-progress
       (§5.1, §13.2, Roadmap). A checked witness would upgrade the single most-cited result from
       "in progress" to `Th_coqc`. *Highest warrant value in the book.*
-- [ ] **Machine-check the `Th_coqc-elig` claims → real `.v` witnesses.** Parts XII/XIII/XV finite
-      theorems, §10.1 pair–product–function layer (Th 10.1/10.2), §10.3 `⊨_λ`, §10.4 RDL boundary-tie.
-      All are finite/decidable over `ℚ` — eligible today, not yet checked. *Turns "elig" into `Th_coqc`.*
+- [~] **Machine-check the `Th_coqc-elig` claims → real `.v` witnesses.** DONE (v1.9): `formal/IDM_FiniteWitnesses.v`
+      proves 5 axiom-free — Th 10.1 Kuratowski pair injectivity (§10.1), handshake (§15.2), pigeonhole
+      (§15.3), finite-Yoneda (§17.2), semiring distributivity (§12.2). REMAINING: §10.2 cardinality
+      (Th 10.3–10.5), §10.3 `⊨_λ`, §10.4 RDL boundary-tie, more of Parts XII/XIII. *Turns "elig" into `Th_coqc`.*
 - [ ] **v-proofs edition.** Convert the §10.1–10.6 results-first sketches (flagged `[results-first]`) to
       checked proofs; this is the edition-note promise ("proofs next").
 

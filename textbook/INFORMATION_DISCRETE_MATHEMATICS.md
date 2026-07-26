@@ -88,12 +88,14 @@ retained inner product · `Th` theorem, `Def` definition, `Ax` axiom, `Pr` princ
 `Verdict(ACCEPT/HOLD/BLOCK)` the fail-closed result type and `eq_eps`/`solve_obstruction` the numeric-
 honesty discipline of `tools/idm_discipline.py` (truthy only on `ACCEPT`; used from Part XVIII on).
 
-> **On the `Th_coqc` witnesses (warrant disclosure).** This repository is the *treatise*; it contains no
-> `.v` files itself. Every `Th_coqc` citation of a bare witness file (`RD.v`, `RDL.v`, …) refers to the
-> **external machine-checked corpora** — `research_universal_solver`, `readout_genesis`, `readout_universe`
-> — where the `coqc`-verified proofs live (Appendix B, Appendix C). A bare filename in this book is a
-> *pointer* to those repos, not a claim of local checkability. Where no such witness exists yet, the tag
-> is `Th_coqc-elig` (eligible, not yet checked), never a bare `Th_coqc`.
+> **On the `Th_coqc` witnesses (warrant disclosure).** Most `Th_coqc` citations of a bare witness file
+> (`RD.v`, `RDL.v`, …) point to the **external machine-checked corpora** — `research_universal_solver`,
+> `readout_genesis`, `readout_universe` — where those `coqc`-verified proofs live (Appendix B/C). In
+> addition, this repository now ships its **own** axiom-free witnesses in **`formal/IDM_FiniteWitnesses.v`**
+> (Coq 8.20; `coqc` exit 0, `Print Assumptions` = *Closed under the global context* for every result) —
+> currently Th 10.1 (Kuratowski pair injectivity), §15.2 handshake, §15.3 pigeonhole, §17.2 finite-Yoneda,
+> §12.2 semiring distributivity. Where no witness exists yet, the tag is `Th_coqc-elig` (eligible, not yet
+> checked), never a bare `Th_coqc`.
 
 ---
 
@@ -735,7 +737,7 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
 - **Singleton / pair fibers.** for `a,b` in fiber `X` at resolution `λ`: `{a}_λ`, `{a,b}_λ` are
   sub-fibers selected by finitely many `∼_λ`-classes (fiber-formation is already licensed, §0.5.3).
 - **Ordered pair (`δ_R`-Kuratowski).** `(a,b)_λ := {{a}_λ, {a,b}_λ}`; degeneracy `a =_λ b` is *detected*
-  as a `δ_R` count (`|outer|=1` vs `2`), not hidden. **Th 10.1 (injectivity, `Th_coqc`-elig):**
+  as a `δ_R` count (`|outer|=1` vs `2`), not hidden. **Th 10.1 (injectivity, `Th_coqc` — witness `formal/IDM_FiniteWitnesses.v: kuratowski_pair_inj`):**
   `(a,b)=(c,d) ⟺ a=_λc ∧ b=_λd`, by a finite case-split on `|{·,·}|∈{1,2}` — every step a decidable
   finite readout.
 - **Cartesian product.** `X ×_λ Y := {(a,b)_λ : a∈X, b∈Y}` by finite enumeration (A8: no infinite
@@ -1247,7 +1249,8 @@ graph-theoretic invariant is an `L_R` readout:
   make curvature a second retained difference summing to a topological invariant — geometry and
   combinatorics meet with no continuum (`Th_coqc`-elig in the mined DEC toolkit).
 - **Pigeonhole and Ramsey-type bounds** are finite existence readouts: with more distinctions than
-  classes, two must collide — a one-line `δ_R` counting argument (`Th_coqc`-elig).
+  classes, two must collide — a one-line `δ_R` counting argument (`Th_coqc`, witness
+  `formal/IDM_FiniteWitnesses.v: pigeonhole`; the handshake identity `Σdeg=2|E|` is `handshake_lemma`).
 
 **Breadth closure.** With Parts XII–XV the foundation now carries dedicated, tier-honest chapters for
 algebra, linear algebra, complex analysis, and combinatorics/graph theory — each derived from `δ_R`,
@@ -1318,7 +1321,8 @@ principle, not an external framework imported on top.
 - **Functor = readout-preserving map; natural transformation = an admissible family** of such maps.
 - **Finite Yoneda (the readout-first principle, categorically):** a retained object is determined, up to
   `∼_λ`, by the family of its admissible readouts `⟨O(g·−)⟩` — "an object *is* its readouts"
-  (`Th_coqc`-elig for finite presentations; the full enriched Yoneda is `Dr`).
+  (`Th_coqc` for the finite readout-vector fact — witness `formal/IDM_FiniteWitnesses.v: finite_yoneda`;
+  the full enriched Yoneda is `Dr`).
 - **`+ℝ-Open`:** a **topos** structure on the substrate is explicitly **not** claimed (§10.7 caveat).
 
 ---
@@ -1418,6 +1422,8 @@ construct the continuum layer *as a readout* and prove it computes identically.
 | operator on a continuum (`∂²`) | I2 | graph Laplacian `L_R` (Th 4.3); `∂²` a `+ℝ` readout |
 
 # Appendix B — Machine-checked theorem index (tier · witness)
+
+**Local witnesses (this repo, `formal/IDM_FiniteWitnesses.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). Reproduce: `cd formal && coqc -q IDM_FiniteWitnesses.v` then `Print Assumptions`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`
