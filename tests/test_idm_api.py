@@ -102,3 +102,42 @@ def test_analysis():
 
 def test_registry_size():
     assert len(idm.kinds()) >= 45          # a genuinely comprehensive solver
+
+
+def test_number_theory_extended():
+    assert idm.solve({"kind": "sigma", "n": 28})["value"] == 56
+    assert idm.solve({"kind": "prime_pi", "N": 100})["value"] == 25
+    assert idm.solve({"kind": "next_prime", "n": 100})["value"] == 101
+    assert idm.solve({"kind": "base_convert", "n": 255, "base": 16})["value"] == "ff"
+    assert idm.solve({"kind": "derangements", "n": 5})["value"] == 44
+    assert idm.solve({"kind": "multinomial", "ks": [2, 2, 1]})["value"] == 30
+    assert idm.solve({"kind": "faulhaber", "power": 2, "N": 10})["value"] == 385
+    assert idm.solve({"kind": "primitive_root", "p": 7})["value"] == 3
+    assert idm.solve({"kind": "bezout", "a": 240, "b": 46})["value"] == {"gcd": 2, "x": -9, "y": 47}
+
+
+def test_poly_and_matrix_extended():
+    assert idm.solve({"kind": "matrix_transpose", "matrix": [[1, 2, 3], [4, 5, 6]]})["value"] == [[1, 4], [2, 5], [3, 6]]
+    assert idm.solve({"kind": "matrix_rank", "matrix": [[1, 2], [2, 4]]})["value"] == 1
+    assert idm.solve({"kind": "poly_from_roots", "roots": [1, 2, 3]})["value"][0]["exact"] == "-6/1"  # constant term -6
+    assert idm.solve({"kind": "convolution", "a": [1, 1, 1], "b": [1, 1]})["value"][1]["exact"] == "2/1"
+
+
+def test_geometry():
+    assert idm.solve({"kind": "polygon_area", "points": [[0, 0], [4, 0], [4, 3], [0, 3]]})["value"]["exact"] == "12/1"
+    assert abs(_val(idm.solve({"kind": "distance", "p": [0, 0], "q": [3, 4]})) - 5.0) < 1e-12
+    assert idm.solve({"kind": "dot", "u": [1, 2, 3], "v": [4, 5, 6]})["value"]["exact"] == "32/1"
+
+
+def test_discrete_structures():
+    assert idm.solve({"kind": "mst", "n": 4, "edges": [[0, 1, 1], [1, 2, 2], [2, 3, 3], [0, 3, 10]]})["value"]["weight"] == 6
+    assert idm.solve({"kind": "max_flow", "n": 4, "edges": [[0, 1, 3], [0, 2, 2], [1, 2, 1], [1, 3, 2], [2, 3, 3]], "source": 0, "sink": 3})["value"] == 5
+    assert idm.solve({"kind": "topological_sort", "n": 4, "edges": [[0, 1], [1, 2], [0, 2], [2, 3]]})["value"] == [0, 1, 2, 3]
+    assert idm.solve({"kind": "topological_sort", "n": 2, "edges": [[0, 1], [1, 0]]})["status"] == "HOLD"  # cyclic
+    assert idm.solve({"kind": "is_bipartite", "n": 4, "edges": [[0, 1], [1, 2], [2, 3], [3, 0]]})["value"]["bipartite"] is True
+    assert idm.solve({"kind": "set_operation", "op": "intersection", "a": [1, 2, 3], "b": [2, 3, 4]})["value"] == [2, 3]
+    assert idm.solve({"kind": "truth_table", "expr": "a or not a", "vars": ["a"]})["value"]["tautology"] is True
+
+
+def test_lots_of_kinds():
+    assert len(idm.kinds()) >= 100          # comprehensive

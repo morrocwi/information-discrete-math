@@ -149,3 +149,42 @@ def poly_roots(coeffs, it=500, tol=mp.mpf("1e-28")):
 def eigenvalues(A):
     """eigenvalues of a square matrix: exact ℚ characteristic polynomial, then Durand–Kerner roots."""
     return poly_roots(char_poly(A))
+
+
+def gradient(f, point, names, h=mp.mpf("1e-15")):
+    """∇f at a point — finite central differences per named variable (f takes keyword args)."""
+    g = []
+    for i, nm in enumerate(names):
+        pu = dict(zip(names, point)); pd = dict(zip(names, point))
+        pu[nm] = R(point[i]) + h; pd[nm] = R(point[i]) - h
+        g.append((f(**pu) - f(**pd)) / (2 * h))
+    return g
+
+
+def convolution(a, b):
+    """discrete convolution (a * b)[k] = Σ a[i] b[k-i] — finite, exact when inputs are rational."""
+    a = [Q(x) if float(x) == x and (isinstance(x, int) or (isinstance(x, float) and x.is_integer())) else R(x) for x in a]
+    b = [Q(x) if float(x) == x and (isinstance(x, int) or (isinstance(x, float) and x.is_integer())) else R(x) for x in b]
+    out = [0] * (len(a) + len(b) - 1)
+    for i, ai in enumerate(a):
+        for j, bj in enumerate(b): out[i + j] = out[i + j] + ai * bj
+    return out
+
+
+def arc_length(f, a, b, N=2000):
+    """arc length ∫_a^b √(1+f'(x)²) dx — finite quadrature with finite derivative."""
+    a, b = R(a), R(b); h = (b - a) / N; s = R(0)
+    for i in range(N):
+        x = a + (i + mp.mpf("0.5")) * h
+        d = F.derivative(f, x); s += mp.sqrt(1 + d * d)
+    return s * h
+
+
+def fixed_point(g, x0, it=500, tol=mp.mpf("1e-28")):
+    """a fixed point of g (x = g(x)) by finite iteration from x0."""
+    x = R(x0)
+    for _ in range(it):
+        nx = g(x)
+        if abs(nx - x) < tol: return nx
+        x = nx
+    return x

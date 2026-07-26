@@ -48,7 +48,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**52 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**104 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)
@@ -71,7 +71,23 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 **Optimization / paths** (tropical semirings, `Th_coqc` laws) — `shortest_path` · `critical_path` ·
 `widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
 
-**Engineering readouts** — `readouts` (`data`, opt. `only`)
+**Number theory (extended)** — `num_divisors` · `sigma` · `next_prime` · `prime_pi` · `integer_sqrt` ·
+`is_perfect_square` · `integer_root` · `digital_root` · `base_convert` · `bezout` · `legendre_symbol` ·
+`jacobi_symbol` · `discrete_log` · `primitive_root` · `lucas` · `derangements` · `perm_count` ·
+`comb_with_rep` · `multinomial` · `faulhaber`
+
+**Polynomial algebra** — `poly_add` · `poly_mul` · `poly_divmod` · `poly_gcd` · `poly_derivative` ·
+`poly_integral` · `poly_from_roots`
+
+**Matrix (extended)** — `matrix_transpose` · `matrix_trace` · `matrix_add` · `matrix_power` ·
+`matrix_rank` · `rref`
+
+**Geometry (exact ℚ)** — `dot` · `cross` · `polygon_area` · `triangle_area` · `distance` · `vector_norm`
+
+**Analysis (extended)** — `gradient` · `convolution` · `arc_length` · `fixed_point` · `summation`
+
+**Discrete structures** — `mst` · `connected_components` · `topological_sort` · `is_bipartite` ·
+`max_flow` · `set_operation` · `powerset` · `truth_table`
 
 String `f`/`seq` are evaluated in a **locked finite namespace** — `exp`/`log`/`sin`/`cos`/`erf`/`sqrt`/`pi`
 resolve to the framework's finite functions, no Python builtins, so even a user's `exp(-x**2)` is

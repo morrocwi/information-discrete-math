@@ -175,3 +175,175 @@ def rational_roots(coeffs):
         for qd in facs(an):
             cands.add(Q(p, qd)); cands.add(Q(-p, qd))
     return sorted({r for r in cands if poly_eval(c, r) == 0})
+
+# ================================================================ number theory (extended) =========
+def num_divisors(n):
+    r = 1
+    for e in factorize(n).values(): r *= (e + 1)
+    return r
+def sigma(n, k=1):
+    """sum of the k-th powers of the divisors of n (k=1 → σ(n))."""
+    r = 1
+    for p, e in factorize(n).items():
+        r *= sum(p ** (k * i) for i in range(e + 1))
+    return r
+def next_prime(n):
+    m = n + 1
+    while not is_prime(m): m += 1
+    return m
+def prime_pi(N):
+    return len(primes_up_to(N))
+def integer_sqrt(n): return isqrt(int(n))
+def is_perfect_square(n):
+    if n < 0: return False
+    r = isqrt(int(n)); return r * r == n
+def integer_root(n, k):
+    if n < 0 and k % 2 == 0: return None
+    r = int(round(abs(n) ** (1.0 / k)))
+    for c in (r - 1, r, r + 1):
+        if c >= 0 and c ** k == abs(n): return c if n >= 0 else -c
+    return None
+def digital_root(n, base=10):
+    n = abs(n)
+    while n >= base: n = sum(int(d) for d in _digits(n, base))
+    return n
+def _digits(n, base):
+    if n == 0: return [0]
+    d = []
+    while n: d.append(n % base); n //= base
+    return d[::-1]
+def base_convert(n, base):
+    """digits of |n| in the given base (2..36), most significant first, as a string."""
+    n = int(n); sign = "-" if n < 0 else ""; n = abs(n)
+    if n == 0: return "0"
+    alpha = "0123456789abcdefghijklmnopqrstuvwxyz"; out = ""
+    while n: out = alpha[n % base] + out; n //= base
+    return sign + out
+def bezout(a, b):
+    """extended Euclid: returns (g, x, y) with a·x + b·y = g = gcd(a,b)."""
+    return _egcd(int(a), int(b))
+def legendre_symbol(a, p):
+    a %= p
+    if a == 0: return 0
+    ls = pow(a, (p - 1) // 2, p)
+    return -1 if ls == p - 1 else ls
+def jacobi_symbol(a, n):
+    a %= n; result = 1
+    while a:
+        while a % 2 == 0:
+            a //= 2
+            if n % 8 in (3, 5): result = -result
+        a, n = n, a
+        if a % 4 == 3 and n % 4 == 3: result = -result
+        a %= n
+    return result if n == 1 else 0
+def discrete_log(g, h, p):
+    """smallest x with g^x ≡ h (mod p) by baby-step giant-step, or None."""
+    m = isqrt(p - 1) + 1; table = {}
+    e = 1
+    for j in range(m): table[e] = j; e = e * g % p
+    factor = pow(g, (p - 2) * m % (p - 1) if is_prime(p) else -m, p) if is_prime(p) else pow(mod_inverse(g, p), m, p)
+    e = h
+    for i in range(m):
+        if e in table: return i * m + table[e]
+        e = e * factor % p
+    return None
+def primitive_root(p):
+    if p == 2: return 1
+    phi = p - 1; facs = list(factorize(phi))
+    for g in range(2, p):
+        if all(pow(g, phi // q, p) != 1 for q in facs): return g
+    return None
+def lucas(n):
+    a, b = 2, 1
+    for _ in range(n): a, b = b, a + b
+    return a
+def derangements(n):
+    d = [1, 0]
+    for k in range(2, n + 1): d.append((k - 1) * (d[k - 1] + d[k - 2]))
+    return d[n]
+def perm_count(n, k): return factorial(n) // factorial(n - k) if 0 <= k <= n else 0
+def comb_with_rep(n, k): return binomial(n + k - 1, k)
+def multinomial(ks):
+    from functools import reduce
+    num = factorial(sum(ks)); den = reduce(lambda a, b: a * b, (factorial(k) for k in ks), 1)
+    return num // den
+def faulhaber(p, N):
+    """Σ_{i=1}^{N} i^p exact — finite sum in exact ℤ."""
+    return sum(i ** p for i in range(1, N + 1))
+
+# ================================================================ polynomials (algebra) ============
+def _ptrim(c):
+    c = [Q(x) for x in c]
+    while len(c) > 1 and c[-1] == 0: c = c[:-1]
+    return c
+def poly_add(a, b):
+    a, b = [Q(x) for x in a], [Q(x) for x in b]; n = max(len(a), len(b))
+    return _ptrim([(a[i] if i < len(a) else Q(0)) + (b[i] if i < len(b) else Q(0)) for i in range(n)])
+def poly_mul(a, b):
+    a, b = [Q(x) for x in a], [Q(x) for x in b]; r = [Q(0)] * (len(a) + len(b) - 1)
+    for i, ai in enumerate(a):
+        for j, bj in enumerate(b): r[i + j] += ai * bj
+    return _ptrim(r)
+def poly_divmod(a, b):
+    a, b = _ptrim(a), _ptrim(b); q = [Q(0)] * (max(len(a) - len(b) + 1, 1)); r = a[:]
+    while len(r) >= len(b) and r != [Q(0)]:
+        if len(r) < len(b): break
+        coef = r[-1] / b[-1]; deg = len(r) - len(b); q[deg] = coef
+        for i in range(len(b)): r[deg + i] -= coef * b[i]
+        r = _ptrim(r)
+        if len(r) < len(b): break
+    return _ptrim(q), _ptrim(r)
+def poly_gcd(a, b):
+    a, b = _ptrim(a), _ptrim(b)
+    while b != [Q(0)]:
+        _, r = poly_divmod(a, b); a, b = b, r
+    lead = a[-1]; return [x / lead for x in a] if lead != 0 else a
+def poly_derivative(c):
+    c = [Q(x) for x in c]; return _ptrim([c[i] * i for i in range(1, len(c))]) if len(c) > 1 else [Q(0)]
+def poly_integral(c):
+    c = [Q(x) for x in c]; return [Q(0)] + [c[i] / (i + 1) for i in range(len(c))]
+def poly_from_roots(roots):
+    p = [Q(1)]
+    for r in roots: p = poly_mul(p, [-Q(r), Q(1)])
+    return p
+
+# ================================================================ matrix (extended) ================
+def transpose(A): return [list(row) for row in zip(*A)]
+def trace(A): return sum(Q(A[i][i]) for i in range(len(A)))
+def mat_add(A, B): return [[Q(A[i][j]) + Q(B[i][j]) for j in range(len(A[0]))] for i in range(len(A))]
+def mat_power(A, k):
+    n = len(A); R_ = [[Q(1) if i == j else Q(0) for j in range(n)] for i in range(n)]; B = _M(A)
+    while k:
+        if k & 1: R_ = mat_mul(R_, B)
+        B = mat_mul(B, B); k >>= 1
+    return R_
+def rref(A):
+    """reduced row-echelon form over ℚ, returning (rref, rank)."""
+    M = _M(A); rows, cols = len(M), len(M[0]); r = 0
+    for c in range(cols):
+        piv = next((i for i in range(r, rows) if M[i][c] != 0), None)
+        if piv is None: continue
+        M[r], M[piv] = M[piv], M[r]; inv = M[r][c]; M[r] = [v / inv for v in M[r]]
+        for i in range(rows):
+            if i != r and M[i][c] != 0:
+                f = M[i][c]; M[i] = [M[i][j] - f * M[r][j] for j in range(cols)]
+        r += 1
+        if r == rows: break
+    return M, r
+def matrix_rank(A): return rref(A)[1]
+
+# ================================================================ geometry (exact ℚ) ===============
+def dot(u, v): return sum(Q(a) * Q(b) for a, b in zip(u, v))
+def cross3(u, v):
+    return [Q(u[1]) * Q(v[2]) - Q(u[2]) * Q(v[1]), Q(u[2]) * Q(v[0]) - Q(u[0]) * Q(v[2]),
+            Q(u[0]) * Q(v[1]) - Q(u[1]) * Q(v[0])]
+def cross2(u, v): return Q(u[0]) * Q(v[1]) - Q(u[1]) * Q(v[0])
+def polygon_area(pts):
+    """signed area of a simple polygon by the shoelace formula — exact ℚ."""
+    n = len(pts); s = Q(0)
+    for i in range(n):
+        x1, y1 = Q(pts[i][0]), Q(pts[i][1]); x2, y2 = Q(pts[(i + 1) % n][0]), Q(pts[(i + 1) % n][1])
+        s += x1 * y2 - x2 * y1
+    return abs(s) / 2
+def triangle_area(a, b, c): return polygon_area([a, b, c])

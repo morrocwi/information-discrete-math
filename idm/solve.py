@@ -12,7 +12,7 @@ answer; an unknown kind or a failure returns HOLD, never a crash.
     solve({"kind": "factorize", "n": 360360})
 """
 from fractions import Fraction
-from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN
+from . import functions as F, certified as C, algebra as A, readouts as R, exact as X, analysis as AN, discrete as D
 
 try:
     import mpmath as mp
@@ -196,6 +196,137 @@ def _ro(p):
         try: board[name] = _norm(fn(data))
         except Exception as ex: board[name] = {"status": "n/a", "reason": f"{type(ex).__name__}: outside this readout's domain"}
     return {"kind": "readouts", "status": "ok", "value": board, "method": "finite retained aggregations (I_ε with chosen combine rule)"}
+
+
+# ================================================================ number theory (extended) =========
+@kind("num_divisors", "Th_coqc")
+def _nd(p): return _ok("num_divisors", X.num_divisors(int(p["n"])), "∏(e+1) from factorization")
+@kind("sigma", "Th_coqc")
+def _sig(p): return _ok("sigma", X.sigma(int(p["n"]), int(p.get("k", 1))), "sum of divisors' k-th powers")
+@kind("next_prime", "Th_coqc")
+def _np(p): return _ok("next_prime", X.next_prime(int(p["n"])), "sieve/Miller–Rabin scan")
+@kind("prime_pi", "Th_coqc")
+def _ppi(p): return _ok("prime_pi", X.prime_pi(int(p["N"])), "π(N) by sieve")
+@kind("integer_sqrt", "Th_coqc")
+def _isq(p): return _ok("integer_sqrt", X.integer_sqrt(int(p["n"])), "isqrt")
+@kind("is_perfect_square", "Th_coqc")
+def _ips(p): return _ok("is_perfect_square", X.is_perfect_square(int(p["n"])), "isqrt check")
+@kind("integer_root", "Th_coqc")
+def _ir(p): return _ok("integer_root", X.integer_root(int(p["n"]), int(p["k"])), "exact k-th root or null")
+@kind("digital_root", "Th_coqc")
+def _dr2(p): return _ok("digital_root", X.digital_root(int(p["n"]), int(p.get("base", 10))), "repeated digit sum")
+@kind("base_convert", "Th_coqc")
+def _bc(p): return _ok("base_convert", X.base_convert(int(p["n"]), int(p["base"])), "positional expansion")
+@kind("bezout", "Th_coqc")
+def _bz(p): g, x, y = X.bezout(int(p["a"]), int(p["b"])); return _ok("bezout", {"gcd": g, "x": x, "y": y}, "extended Euclid (a·x+b·y=g)")
+@kind("legendre_symbol", "Th_coqc")
+def _leg(p): return _ok("legendre_symbol", X.legendre_symbol(int(p["a"]), int(p["p"])), "Euler's criterion")
+@kind("jacobi_symbol", "Th_coqc")
+def _jac(p): return _ok("jacobi_symbol", X.jacobi_symbol(int(p["a"]), int(p["n"])), "quadratic reciprocity")
+@kind("discrete_log", "Th_coqc")
+def _dl(p): return _ok("discrete_log", X.discrete_log(int(p["g"]), int(p["h"]), int(p["p"])), "baby-step giant-step")
+@kind("primitive_root", "Th_coqc")
+def _prt2(p): return _ok("primitive_root", X.primitive_root(int(p["p"])), "generator of (ℤ/pℤ)*")
+@kind("lucas", "Th_coqc")
+def _luc(p): return _ok("lucas", X.lucas(int(p["n"])), "Lucas recurrence")
+@kind("derangements", "Th_coqc")
+def _der(p): return _ok("derangements", X.derangements(int(p["n"])), "!n recurrence")
+@kind("perm_count", "Th_coqc")
+def _pc(p): return _ok("perm_count", X.perm_count(int(p["n"]), int(p["k"])), "n!/(n−k)!")
+@kind("comb_with_rep", "Th_coqc")
+def _cwr(p): return _ok("comb_with_rep", X.comb_with_rep(int(p["n"]), int(p["k"])), "multiset coefficient")
+@kind("multinomial", "Th_coqc")
+def _mul(p): return _ok("multinomial", X.multinomial([int(x) for x in p["ks"]]), "(Σk)!/∏k!")
+@kind("faulhaber", "Th_coqc")
+def _fh(p): return _ok("faulhaber", X.faulhaber(int(p["power"]), int(p["N"])), "Σ i^p exact ℤ")
+
+# ================================================================ polynomial algebra ===============
+@kind("poly_add", "Th_coqc")
+def _pa(p): return _ok("poly_add", X.poly_add(p["a"], p["b"]), "exact ℚ")
+@kind("poly_mul", "Th_coqc")
+def _pmul(p): return _ok("poly_mul", X.poly_mul(p["a"], p["b"]), "exact ℚ convolution")
+@kind("poly_divmod", "Th_coqc")
+def _pdm(p): q, r = X.poly_divmod(p["a"], p["b"]); return _ok("poly_divmod", {"quotient": q, "remainder": r}, "exact ℚ long division")
+@kind("poly_gcd", "Th_coqc")
+def _pg(p): return _ok("poly_gcd", X.poly_gcd(p["a"], p["b"]), "Euclid over ℚ[x]")
+@kind("poly_derivative", "Th_coqc")
+def _pdv(p): return _ok("poly_derivative", X.poly_derivative(p["coeffs"]), "exact ℚ")
+@kind("poly_integral", "Th_coqc")
+def _pig(p): return _ok("poly_integral", X.poly_integral(p["coeffs"]), "exact ℚ (constant 0)")
+@kind("poly_from_roots", "Th_coqc")
+def _pfr(p): return _ok("poly_from_roots", X.poly_from_roots(p["roots"]), "∏(x−rᵢ) exact ℚ")
+
+# ================================================================ matrix (extended) ================
+@kind("matrix_transpose", "Th_coqc")
+def _mt(p): return _ok("matrix_transpose", X.transpose(p["matrix"]), "exact")
+@kind("matrix_trace", "Th_coqc")
+def _mtr(p): return _ok("matrix_trace", X.trace(p["matrix"]), "Σ diagonal")
+@kind("matrix_add", "Th_coqc")
+def _ma(p): return _ok("matrix_add", X.mat_add(p["A"], p["B"]), "exact ℚ")
+@kind("matrix_power", "Th_coqc")
+def _mpw(p): return _ok("matrix_power", X.mat_power(p["matrix"], int(p["k"])), "exact ℚ binary exponentiation")
+@kind("matrix_rank", "Th_coqc")
+def _mr(p): return _ok("matrix_rank", X.matrix_rank(p["matrix"]), "rank via RREF over ℚ")
+@kind("rref", "Th_coqc")
+def _rref(p): M, r = X.rref(p["matrix"]); return _ok("rref", {"rref": M, "rank": r}, "reduced row-echelon over ℚ")
+
+# ================================================================ geometry (exact ℚ + √) ===========
+@kind("dot", "Th_coqc")
+def _dot(p): return _ok("dot", X.dot(p["u"], p["v"]), "Σ uᵢvᵢ exact ℚ")
+@kind("cross", "Th_coqc")
+def _cr(p):
+    u, v = p["u"], p["v"]; r = X.cross2(u, v) if len(u) == 2 else X.cross3(u, v)
+    return _ok("cross", r, "cross product exact ℚ")
+@kind("polygon_area", "Th_coqc")
+def _par2(p): return _ok("polygon_area", X.polygon_area(p["points"]), "shoelace formula exact ℚ")
+@kind("triangle_area", "Th_coqc")
+def _ta(p): return _ok("triangle_area", X.triangle_area(p["a"], p["b"], p["c"]), "shoelace exact ℚ")
+@kind("vector_norm")
+def _vn(p): return _ok("vector_norm", mp.sqrt(float(X.dot(p["v"], p["v"]))) if _HAVE else float(X.dot(p["v"], p["v"])) ** 0.5, "√(Σvᵢ²) (squared part exact ℚ)")
+@kind("distance")
+def _dist(p):
+    pv = [Fraction(str(x)) for x in p["p"]]; qv = [Fraction(str(x)) for x in p["q"]]
+    d2 = sum((a - b) ** 2 for a, b in zip(pv, qv))
+    return _ok("distance", mp.sqrt(float(d2)) if _HAVE else float(d2) ** 0.5, "√Σ(pᵢ−qᵢ)² (squared part exact ℚ)")
+
+# ================================================================ analysis (extended) ==============
+@kind("gradient")
+def _grad(p):
+    names = p["vars"]; pt = [_val(v) for v in p["point"]]
+    f = lambda **kw: F.evaluate(str(p["f"]), **kw)
+    return _ok("gradient", AN.gradient(f, pt, names), "finite central differences per variable")
+@kind("convolution", "Th_coqc")
+def _conv(p): return _ok("convolution", AN.convolution(p["a"], p["b"]), "discrete Σ a[i]b[k−i]")
+@kind("arc_length")
+def _al(p): return _ok("arc_length", AN.arc_length(_fn(p["f"]), _val(p["a"]), _val(p["b"])), "∫√(1+f'²) finite quadrature")
+@kind("fixed_point")
+def _fp(p): return _ok("fixed_point", AN.fixed_point(_fn(p["g"]), _val(p["x0"])), "finite iteration x=g(x)")
+@kind("summation", "Th_coqc")
+def _sm(p):
+    terms = [F.evaluate(str(p["term"]), n=n) for n in range(int(p["a"]), int(p["b"]) + 1)]
+    tot = terms[0]
+    for t in terms[1:]: tot = tot + t
+    return _ok("summation", tot, "finite Σ")
+
+# ================================================================ discrete structures ==============
+@kind("mst", "Th_coqc")
+def _mst(p): return _ok("mst", D.mst(int(p["n"]), p["edges"]), "Kruskal (union–find)")
+@kind("connected_components", "Th_coqc")
+def _cc(p): return _ok("connected_components", D.connected_components(int(p["n"]), p["edges"]), "union–find")
+@kind("topological_sort", "Th_coqc")
+def _ts(p):
+    o = D.topological_sort(int(p["n"]), p["edges"])
+    return {"kind": "topological_sort", "status": "ok" if o is not None else "HOLD", "value": o, "method": "Kahn's algorithm", **({} if o is not None else {"reason": "graph has a cycle"})}
+@kind("is_bipartite", "Th_coqc")
+def _bip(p): return _ok("is_bipartite", D.is_bipartite(int(p["n"]), p["edges"]), "BFS 2-coloring")
+@kind("max_flow", "Th_coqc")
+def _mf(p): return _ok("max_flow", D.max_flow(int(p["n"]), p["edges"], int(p["source"]), int(p["sink"])), "Edmonds–Karp")
+@kind("set_operation", "Th_coqc")
+def _so(p): return _ok("set_operation", D.set_op(p["op"], p["a"], p.get("b")), f"finite set {p['op']}")
+@kind("powerset", "Th_coqc")
+def _pw(p): return _ok("powerset", D.powerset(p["set"]), "finite enumeration 2^S")
+@kind("truth_table", "Th_coqc")
+def _tt(p): return _ok("truth_table", D.truth_table(str(p["expr"]), p["vars"]), "finite assignment enumeration")
 
 
 # ================================================================ dispatch ==========================
