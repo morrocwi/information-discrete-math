@@ -48,7 +48,9 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**169 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+**175 problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python), grouped by area:
+
+**Symbolic (exact CAS)** — `symbolic_diff` (`expr`,`var`) · `simplify` · `expand` · `symbolic_integrate` (polynomial + elementary, HOLD when no elementary antiderivative) · `symbolic_solve` (linear/quadratic radicals, rational roots) · `symbolic_series` (exact Taylor)
 
 **Certified computation** (ships a proven bound + ACCEPT/HOLD)
 `geometric_series` (`r`,`eps`) · `exp` (`x`,`eps`) · `integral` (`f`,`a`,`b`,`eps`) · `certified_limit` (`seq`,`eps`)

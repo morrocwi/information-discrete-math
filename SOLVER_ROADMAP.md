@@ -74,7 +74,11 @@ discrete transforms; the "continuous" transform is the readout of the finite one
 
 ---
 
-## P0-support — Symbolic layer (to *state* continuum problems and return closed forms)
+## P0-support — Symbolic layer  ← ✅ DONE (exact CAS: idm/symbolic.py)
+
+> **Status:** our own exact symbolic engine — parse · diff · simplify · expand · integrate (HOLD when no elementary antiderivative) · solve · Taylor series — shipped as solver kinds. SymPy used only as a test reference.
+
+### original plan
 
 A world-class engine must manipulate expressions, not only evaluate them. **FIT ★★** (an expression is a
 finite tree = a finite readout; no continuum needed to transform it).

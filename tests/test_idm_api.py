@@ -266,3 +266,24 @@ def test_optimization():
     r = idm.solve({"kind": "least_squares", "A": [[1, 0], [1, 1], [1, 2]], "b": [1, 3, 5]})
     assert r["value"]["x"][0]["exact"] == "1/1" and r["value"]["x"][1]["exact"] == "2/1"
     assert near(idm.solve({"kind": "lagrange_min", "f": "x**2+y**2", "constraints": ["x+y-1"], "vars": ["x", "y"], "x0": [0.2, 0.9]})["value"]["argmin"], [0.5, 0.5])
+
+
+def test_symbolic():
+    # differentiation (verified by evaluating vs a numeric derivative through the engine)
+    import idm.symbolic as S
+    import mpmath as mp
+    for expr, pt in [("sin(x)*exp(x)", 1.0), ("x**3 + 2*x", 1.5), ("log(x)", 2.0), ("sqrt(x)", 4.0)]:
+        d = S.simplify(S.diff(S.parse(expr), "x"))
+        num = (float(S.evaluate(S.parse(expr), {"x": pt + 1e-8})) - float(S.evaluate(S.parse(expr), {"x": pt - 1e-8}))) / 2e-8
+        assert abs(float(S.evaluate(d, {"x": pt})) - num) < 1e-4, expr
+    # expand / simplify / integrate through the solver
+    assert idm.solve({"kind": "simplify", "expr": "2*x + 3*x - x"})["value"] == "4*x"
+    assert abs(float(S.evaluate(S.parse(idm.solve({"kind": "expand", "expr": "(x+1)**3"})["value"]), {"x": 2})) - 27) < 1e-9
+    r = idm.solve({"kind": "symbolic_integrate", "expr": "x**2 + cos(x)", "var": "x"})
+    assert r["status"] == "ok" and "sin(x)" in r["value"]
+    # honest HOLD: the Gaussian has no elementary antiderivative
+    assert idm.solve({"kind": "symbolic_integrate", "expr": "exp(x**2)", "var": "x"})["status"] == "HOLD"
+    # symbolic Taylor is exact
+    assert [c for c in idm.solve({"kind": "symbolic_series", "expr": "exp(x)", "var": "x", "n": 4})["value"]] == ["1", "1", "1/2", "1/6", "1/24"]
+    # solve quadratic
+    assert idm.solve({"kind": "symbolic_solve", "expr": "x**2 - 5*x + 6", "var": "x"})["value"]["discriminant"] == "1"
