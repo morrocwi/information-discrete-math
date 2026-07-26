@@ -28,7 +28,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: install Coq
-        run: sudo apt-get update && sudo apt-get install -y coq
-      - name: verify formal core (compile every witness + Print Assumptions axiom-free)
-        run: bash formal/verify.sh
+      # Pin Coq 8.20 — the version every witness is written and verified against (see the file
+      # headers and the README badge). Ubuntu's `apt install coq` ships 8.18, on which two of the
+      # pre-existing witnesses do not compile; the axiom-free claim is a claim *about 8.20*, so CI
+      # must verify on 8.20. docker-coq-action pulls a prebuilt coqorg/coq:8.20 image.
+      - uses: coq-community/docker-coq-action@v1
+        with:
+          coq_version: '8.20'
+          ocaml_version: 'default'
+          custom_script: |
+            startGroup "verify formal core (compile every witness + Print Assumptions axiom-free)"
+              sudo chown -R "$(whoami)" .
+              bash formal/verify.sh
+            endGroup
