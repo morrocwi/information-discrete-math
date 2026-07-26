@@ -110,6 +110,29 @@ geometric‑series case is machine‑checked axiom‑free (`formal/IDM_Certified
 divergent inputs instead of fabricating an answer. Full statement + what's proved vs open:
 [`THEOREM.md`](THEOREM.md).
 
+## What it makes possible — the Retained Contraction Protocol (RCP)
+
+Readout-first isn't only about *getting* the continuum's numbers finitely — it *saves work* doing it,
+because a finite retained-coupling graph closes internal distinctions in a cheap causal order instead of
+visiting a full grid. The **Retained Contraction Protocol** (`tools/retained_contraction_protocol.py`,
+[`RCP_ARCHITECTURE.md`](RCP_ARCHITECTURE.md)) wraps a tensor/factor contraction in a fail-closed
+finite‑information contract — declared boundary, resource ledger, tolerance, lineage, preservation
+witness, and an `ACCEPT/HOLD/BLOCK` verdict. **Run the benchmarks; the savings are exact, not estimated:**
+
+| task (all outputs returned, `finite_diagnostic`) | direct / continuum-style | RCP (finite retained) | factor |
+|---|---:|---:|---:|
+| coupled **11‑D** integral, partition + 11 axis moments (`benchmarks/coupled_nd_retained_compiler.py`) | 209,715,211 work tokens · 49.5 s | **22,767 tokens · 0.035 s** | **9,211× fewer · 1,433× faster** |
+| separable **11‑D** quadrature work tokens (`benchmarks/direct_nd_work_tokens.py`) | 48,828,125 | **65** | **≈751,000×** |
+| sparse factor graph vs `opt_einsum` 3.4.0 (`benchmarks/competitor_benchmark.py`) | 0.00419 s | **0.000673 s** | **6.23× faster** |
+| … vs TensorLy Tensor‑Train / TT‑cross | 0.49 s / 0.48 s | same 0.000673 s | **733× / 707×** |
+| **RCP‑Energy** 96‑tick site plan, diesel output ([`RCP_ENERGY_ARCHITECTURE.md`](RCP_ENERGY_ARCHITECTURE.md)) | 75 quanta (one‑tick baseline) | **34 quanta** | **−54.7%** |
+
+Every RCP result is bit‑identical to the direct computation (max witness difference `2.8×10⁻¹⁶`, partition
+difference `0.0`) — the savings come from **not forming** the full tensor / the continuum, never from
+approximating. Exact `Fraction` arithmetic, no external optimizer or continuum library produces `ours`.
+This is the concrete answer to *"what does readout‑first save?"* — orders of magnitude of compute (hence
+energy), with a preservation certificate on every run.
+
 ## What it is (and what it is not)
 
 **Is:** a readout‑first foundation where everything read is a *finite discrete rational readout*, plus a

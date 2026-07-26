@@ -16,6 +16,10 @@ jobs:
         run: python3 prove_it_full.py
       - name: tool self-checks
         run: python3 tools/idm_tools.py && python3 tools/idm_discipline.py && python3 tools/framework_compliance.py && python3 tools/certified_readout.py && python3 tools/aggregate.py && python3 tools/eng_readouts.py
+      - name: RCP self-checks (retained contraction / energy — pure finite)
+        run: python3 tools/retained_contraction_protocol.py && python3 tools/retained_burden_algebra.py && python3 tools/retained_energy_protocol.py && python3 validation/rcp_energy_selfcheck.py
+      - name: RCP energy + N-D work-token benchmarks (reproduce the savings)
+        run: python3 benchmarks/rcp_energy_challenge.py && python3 benchmarks/direct_nd_work_tokens.py --dimension 9 --nodes-per-axis 5
       - name: validations
         run: for f in validation/*.py; do echo "== $f =="; python3 "$f" || exit 1; done
       - name: pytest

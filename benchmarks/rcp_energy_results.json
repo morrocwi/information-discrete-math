@@ -1,0 +1,145 @@
+{
+  "algebra": "Retained Burden Algebra over exact rational readouts",
+  "exact_small": {
+    "action_count_per_tick": 6,
+    "causal_one_tick_baseline": {
+      "diesel_kwh": "7/4",
+      "grid_kwh": "7/4",
+      "priority_readout": [
+        "7/1",
+        "7/1",
+        "42/1",
+        "0/1",
+        "0/1",
+        "4/1"
+      ]
+    },
+    "difference_vs_baseline": {
+      "diesel_kwh_saved": "5/4",
+      "diesel_quanta_saved": "5/1",
+      "diesel_reduction_fraction": "5/7",
+      "grid_kwh_saved": "-5/4",
+      "grid_quanta_saved": "-5/1",
+      "total_source_kwh_change": "0/1",
+      "total_source_quanta_change": "0/1"
+    },
+    "energy_quantum_kwh": "1/4",
+    "honesty_fence": "finite mathematical stress tape; not an empirical facility claim; no external solver or continuum library produced ours",
+    "preflight": {
+      "candidate_bound": 1944,
+      "lineage_digest": "e3f5a6ea51e06b4400fe2f2a891d707d4ad34b6a0aeb31d6c8002b8011d39d5a",
+      "state_bound": 54,
+      "status": "ACCEPT",
+      "work_bound": 9726
+    },
+    "problem": "finite-energy-exact-six-tick",
+    "rcp_energy": {
+      "admissible_records": 249,
+      "candidate_records": 336,
+      "diesel_kwh": "1/2",
+      "elapsed_seconds": 0.0070914279986027395,
+      "grid_kwh": "3/1",
+      "output_readout": [
+        "2/1",
+        "12/1",
+        "4/1",
+        "112/5",
+        "8/1",
+        "0/1",
+        "0/1",
+        "6/1"
+      ],
+      "peak_grid_kw_readout": "4/1",
+      "peak_retained_states": 15,
+      "priority_readout": [
+        "2/1",
+        "12/1",
+        "112/5",
+        "8/1",
+        "0/1",
+        "4/1"
+      ],
+      "replay_preserved": true,
+      "status": "ACCEPT",
+      "witness_method": "complete finite history enumeration",
+      "work_tokens": 1135
+    },
+    "ticks": 6,
+    "tier": "finite_diagnostic",
+    "witness_detail": {
+      "admissible_histories": 9324,
+      "total_histories": 46656
+    }
+  },
+  "full_96_tick": {
+    "action_count_per_tick": 20,
+    "causal_one_tick_baseline": {
+      "diesel_kwh": "75/4",
+      "grid_kwh": "165/2",
+      "priority_readout": [
+        "75/1",
+        "330/1",
+        "3629/4",
+        "5/1",
+        "13/1",
+        "9/1"
+      ]
+    },
+    "difference_vs_baseline": {
+      "diesel_kwh_saved": "41/4",
+      "diesel_quanta_saved": "41/1",
+      "diesel_reduction_fraction": "41/75",
+      "grid_kwh_saved": "-23/2",
+      "grid_quanta_saved": "-46/1",
+      "total_source_kwh_change": "5/4",
+      "total_source_quanta_change": "5/1"
+    },
+    "energy_quantum_kwh": "1/4",
+    "honesty_fence": "finite mathematical stress tape; not an empirical facility claim; no external solver or continuum library produced ours",
+    "preflight": {
+      "candidate_bound": 823680,
+      "lineage_digest": "801eb7095ac4d91c5171cd43318ba5fafa5027bded94e448c8658fe8525ce51d",
+      "state_bound": 429,
+      "status": "ACCEPT",
+      "work_bound": 4118496
+    },
+    "problem": "finite-cold-store-96-tick-stress-tape",
+    "rcp_energy": {
+      "admissible_records": 277758,
+      "candidate_records": 410120,
+      "diesel_kwh": "17/2",
+      "elapsed_seconds": 6.465071395999985,
+      "grid_kwh": "94/1",
+      "output_readout": [
+        "34/1",
+        "376/1",
+        "11/1",
+        "3153/4",
+        "85/1",
+        "0/1",
+        "3/1",
+        "14/1"
+      ],
+      "peak_grid_kw_readout": "11/1",
+      "peak_retained_states": 231,
+      "priority_readout": [
+        "34/1",
+        "376/1",
+        "3153/4",
+        "85/1",
+        "0/1",
+        "11/1"
+      ],
+      "replay_preserved": true,
+      "status": "ACCEPT",
+      "witness_method": "reversed action-order retention plus exact lineage replay",
+      "work_tokens": 1268962
+    },
+    "ticks": 96,
+    "tier": "finite_diagnostic",
+    "witness_detail": {
+      "alternate_candidates": 410120
+    }
+  },
+  "protocol": "RCP-Energy/1.0"
+}
