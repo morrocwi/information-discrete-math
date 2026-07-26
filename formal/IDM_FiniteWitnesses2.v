@@ -38,12 +38,12 @@ Proof. intro n. exists (S n). apply tape_count_succ. Qed.
 (* ---- W8  Th 10.3: "same size" = an admissible bijection. For duplicate-   *)
 (*         free readouts, having the same members forces equal counts.        *)
 Theorem same_set_same_size :
-  forall (A : Type) (eqA : forall x y : A, {x = y} + {x <> y}) (l l' : list A),
+  forall (A : Type) (l l' : list A),
     NoDup l -> NoDup l' ->
     (forall x, In x l <-> In x l') ->
     length l = length l'.
 Proof.
-  intros A eqA l l' Hnd Hnd' Hiff.
+  intros A l l' Hnd Hnd' Hiff.
   assert (Hincl  : incl l l')  by (intros x Hx; apply Hiff; exact Hx).
   assert (Hincl' : incl l' l)  by (intros x Hx; apply Hiff; exact Hx).
   apply NoDup_incl_length in Hincl;  [| exact Hnd].

@@ -764,7 +764,7 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
 - **Potential infinite** = a `δ_R`-generated tape `Tape(n+1)=σ(Tape n)`, each stage finite with
   `Counting(Tape n)=n+1`. **Th 10.4 (`Th_coqc`, witness `formal/IDM_FiniteWitnesses2.v: tape_count_succ` / `tape_no_terminal`):**
   strict growth ⇒ no terminal stage (an unbounded *process*, no completed object).
-- **Actual infinite refused — analytically.** **Th 10.5 (`Th_coqc`, witness `formal/IDM_FiniteWitnesses2.v: no_infinite_readout`):** `∀ l:list A, ∃n, length l = n`.
+- **Actual infinite refused — analytically.** **Th 10.5 (`Th_coqc`, witness `formal/IDM_FiniteWitnesses2.v: no_infinite_readout` — the witness proves the *finite-length* fact `∀ l:list A, ∃n, length l = n`; the exclusion of an *infinite inhabitant* is the structural property of the inductive type `list A`, not this lemma):**
   Every readout inhabits `list A`, which has *no infinite inhabitant* — actual `∞` is excluded because
   the readout type never had room for it, not by fiat. *(Cantor-style comparison of two tapes' growth
   is per-schema `finite_diagnostic`, not one closed theorem.)*
@@ -1134,9 +1134,10 @@ The number tower *is* the worked example, so this chapter only makes the abstrac
   dimension `FPdim(τ)=φ` is explicitly **not** an ordinary representation dimension (§4.4, Cor 4.1) — the
   integrality of ordinary dimensions is a `Th_coqc`-elig finite fact.
 - **Lagrange / orbit–counting = finite counting theorems.** `|H|` divides `|G|`; orbit size divides
-  `|G|` — **Th 12.3 (`Th_coqc` for the cyclic case — witness `formal/IDM_FiniteWitnesses2.v: lagrange_order_div`:
-  the order `n/gcd(g,n)` divides `|ℤ_n|=n`; the general Cayley-coset partition is `Th_coqc`-elig):** a
-  decidable finite readout.
+  `|G|` — **Th 12.3.** The **divisibility core** is machine-checked (`Th_coqc`, witness
+  `formal/IDM_FiniteWitnesses2.v: lagrange_order_div`: `(n/gcd(g,n)) ∣ n`); that `n/gcd(g,n)` *is* the
+  additive order of `g` in `ℤ_n`, and the general Cayley-coset partition, are standard but **not
+  formalized here** (`Th_coqc`-elig / `Dr`). A decidable finite readout.
 - **Galois solvability = radical-tower reachability (`Dr`).** A readout is "solvable by radicals" iff it
   is reachable from `ℚ` by a finite tower of `⊕,⊗,÷,^,√` (§7 operators). The abstract correspondence
   (solvable group ↔ radical tower) is `Dr`/`finite_diagnostic` here — stated as the framework's reading,
@@ -1556,25 +1557,32 @@ time, or can it become singular — infinite velocity — in finite time?).
   finite-`ε` value the engineer needs is computed without paradox.
 
 **The mathematical bounds we have discovered (the PDE frontier, made precise).** The stance is not
-hand-waving — the retained-information PDE layer carries *proved* bounds *(extracted from the URCF
-relaxation-inertia turbulence pack and the DHRG spectral pack, Lahtee; tiers as marked)*:
+hand-waving — the retained-information PDE layer carries the following bounds *(the relaxation-inertia
+equation and its energy identity are from the URCF turbulence pack; the telegraph coarse-grain is the
+PGFT/DHRG substrate form; the spectral bound is the standard Davis–Kahan theorem applied to `L_R` here —
+Lahtee; tiers as marked)*:
 
 - **Relaxation-inertia equation.** The retained turbulence/field state obeys
   `τ_R · dI_R/dt + L_R·I_R = S_R + η_R` — a first-order relaxation under the retained operator `L_R`,
   inertia `τ_R > 0`, drive `S_R`, and a **logged, bounded** residual `η_R` (`Dr`; `η_R` is not a free
   error bin). Its mild solution is the semigroup `I_R(t) = e^{−t τ_R⁻¹ L_R} I_R(0) + …`.
-- **No-blow-up bound (`Th_coqc`, witness `formal/IDM_Keystone.v: relaxation_dissipation`).** Because the
-  keystone gives `L_R ⪰ 0` (`B(Φ,Φ)=I(Φ) ≥ 0`, §5.1), the homogeneous retained energy **dissipates**:
-  `d/dt‖I_R‖² = −(2/τ_R)·B(I_R,I_R) ≤ 0`. A positive-semidefinite retained operator **can never grow the
-  homogeneous mode** — a discrete, machine-checked no-blow-up bound. This is the rigorous content behind
-  "finite-ε schemes don't explode": positive-semidefiniteness of `L_R`, not luck.
-- **Finite propagation speed (`Dr`).** The telegraph coarse-grain `τ_c·u_tt + u_t = D·Δu` (§0.5-substrate)
-  propagates signals at the **finite speed `√(D/τ_c)`** — no infinite propagation (unlike the parabolic
-  heat limit `τ_c→0`). The `+∞`-velocity pathology is an artifact of the `τ_c→0` non-readout.
-- **Spectral-mode stability, Davis–Kahan (`Dr`).** The dominant retained mode (the Fiedler mode — the
-  slowest-relaxing nonzero `L_R` eigenvector) is recovered under perturbation `E` with angular error
-  `sin θ ≤ 2‖E‖ / Δ_spec`, where `Δ_spec` is the spectral margin. So the *structure* the scheme reads is
-  stable exactly when the spectral gap dominates the noise — a quantitative, falsifiable margin.
+- **No-blow-up bound.** For the homogeneous relaxation `τ_R dI_R/dt = −L_R I_R`, the standard energy
+  identity gives `d/dt‖I_R‖² = −(2/τ_R)·⟨I_R, L_R I_R⟩ = −(2/τ_R)·B(I_R,I_R)` (`Dr` — the ODE/derivative
+  step, not machine-checked here). The **decisive sign** is machine-checked: `B(I_R,I_R) ≥ 0` and hence
+  `−(2/τ_R)·B(I_R,I_R) ≤ 0` is `Th_coqc` (witness `formal/IDM_Keystone.v: relaxation_dissipation`, resting
+  on the keystone `L_R ⪰ 0`, §5.1). So a positive-semidefinite retained operator **cannot grow the
+  homogeneous mode** — the rigorous content behind "finite-ε schemes don't explode" is the machine-checked
+  positive-semidefiniteness of `L_R`, not luck; the dissipation *identity* itself is the standard `Dr` step.
+- **Finite propagation speed (`Dr`).** The telegraph coarse-grain `τ_c·u_tt + u_t = D·Δu` (the PGFT/DHRG
+  substrate form) is a telegrapher's equation, which propagates signals at the **finite speed `√(D/τ_c)`**
+  (standard, not sourced verbatim) — no infinite propagation (unlike the parabolic heat limit `τ_c→0`).
+  The `+∞`-velocity pathology is an artifact of the `τ_c→0` non-readout.
+- **Spectral-mode stability, Davis–Kahan (`Dr`).** By the standard Davis–Kahan sin-θ theorem applied
+  **directly to `L_R`**, its dominant retained mode (the Fiedler mode) is recovered under an operator
+  perturbation `E` with `sin θ ≤ 2‖E‖ / Δ_spec`, where `Δ_spec` is **`L_R`'s own spectral gap** — the mode
+  is stable exactly when that gap dominates the noise. *(Caveat, per the DHRG source: this dynamical gap
+  `Δ_spec` of `L_R` is distinct from and must not be conflated with the data-recoverability gap `σ_a²` in
+  DHRG's readout-side Theorem 5, whose bound is `sin θ ≤ 2‖N‖/σ_a²`; both gaps are separately required.)*
 
 *(Honesty fence, inherited from the source packs: these are bounds on the **retained-information
 structural model** — finite-dimensional, over our `L_R` — and a theorem-facing scaffold; they are **not**
