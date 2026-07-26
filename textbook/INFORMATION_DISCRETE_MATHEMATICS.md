@@ -1,7 +1,14 @@
-# Information Discrete Mathematics
-## A Foundation from the Retained Difference — axioms, definitions, theorems, principles
+# Information Discrete Mathematics & Calculus
+## A Foundation from the Retained Difference — axioms, definitions, operators, theorems, principles, and a complete discrete calculus
 
 **Developed by Yaoharee Lahtee.**
+
+> **Edition note (v0.2 — completeness-first).** This edition prioritises **complete coverage** of
+> the findings, definitions, operators, and results — from the roots up through a full *information
+> discrete calculus*. **Proofs are stated by reference to the machine-checked witnesses where they
+> exist and are otherwise deferred to the next version (v-proofs);** where a result is asserted
+> ahead of its proof it is marked `[results-first]`. The goal here is the closed skeleton, not the
+> full proof tower — the proofs come next.
 
 > A world-class mathematical foundation built from ONE primitive — the *retained difference* — and
 > carried, by definition-and-theorem, up to the number tower, discrete analysis, geometry, and the
@@ -271,6 +278,144 @@ value). Consistent infinities in classical mathematics each *pay this price* (li
 `ℵ₀+1=ℵ₀` drops cancellation; extended reals drop totality; ZFC drops unrestricted comprehension).
 So the discrete/finite interior is the **only** region where operators keep all their properties —
 by necessity, not taste.
+
+---
+
+# Part VII — Complete operator reference (self-contained; no other math text is needed)
+
+Every operator used anywhere is **defined here from the primitive**, with its domain, its
+recursion, its governing theorems, and its discrete-honest boundary (which inputs are refused
+non-readouts). Nothing is imported from an outside textbook — this Part closes the operator set.
+
+## 7.1 Logic operators (on RDL judgements — Part I)
+
+- **`¬` negation** — `¬p` flips `p`'s obstruction polarity; NOT `ex falso` (Ax-RDL3). `¬¬p ⊢ p`
+  only in the classical limit (Th 1.5).
+- **`∧` conjunction** — `p ∧ q` retains both distinctions; `obstruction(p∧q) =` the join of the two.
+  Commutative, associative, idempotent (`Th_coqc`, `RDL.v`).
+- **`∨` disjunction** — `p ∨ q` retains either distinction; De Morgan up to obstruction.
+- **`→` implication** — `p → q :=` the retained transformation carrying `p`'s distinction to `q`'s.
+  (`p→q ≡ ¬p∨q` **only** in the classical limit — do not assume it paraconsistently.)
+- **`↔` biconditional** — `(p→q) ∧ (q→p)`.
+- **`∀` universal** (over `D`) — `∀n.φ(n) := φ(0)` and `φ` closed under `succ` (grounded in RD5
+  induction).
+- **`∃` existential** — `∃n.φ(n) :=` a witness `n` is **constructible** (constructive existence; no
+  pure excluded-middle existence).
+
+## 7.2 Equality and order operators
+
+- **`=` equality** — Def (readout-equivalence): `x = y ⟺ O(x)=O(y)` for every readout `O`
+  (indistinguishable to every reader); on `D`, structural via `succ`-recursion. Reflexive,
+  symmetric, transitive, and **substitutive** (Leibniz). (`Th_coqc`.)
+- **`≠` / `#` apartness** — `¬(x=y)`; constructively, a genuine distinction is exhibited (on `ℝ`,
+  apartness `x # y` is primitive, `≠` its negation-form).
+- **`≺ / ⪯` order** — Def on `D`: `a ≺ b ⟺ ∃k≠0, a⊕k=b`. Total, well-ordered (Th 2.3). Lifted
+  compatibly to `ℤ, ℚ`; on `ℝ` the strict `Rlt` is **cotransitive** (Th 3.7) and `Rle` a partial
+  order — **no total `≤` constructively** (Pr 3.1).
+- **`< ≤ > ≥`** := the `≺ / ⪯` instances per number system.
+
+## 7.3 Arithmetic operators (each defined from `succ`, recursively)
+
+- **`⊕` addition (`+`)** — `a⊕0 := a`; `a⊕succ(b) := succ(a⊕b)`. **Th 7.1:** commutative,
+  associative, cancellative, `0` identity (semiring, Th 2.2). Lifted to `ℤ/ℚ/ℝ` as `+`.
+- **`⊖` subtraction (`−`)** — total on `ℤ` as `a ⊕ (−b)`, `−b` the additive inverse (Grothendieck,
+  Th 3.1). On `D` it is **PARTIAL** (truncated: `a⊖b` defined only when `b ⪯ a`) — *subtraction
+  below zero is refused; that refusal is exactly where `ℤ` is born.*
+- **`⊗` multiplication (`×`)** — `a⊗0 := 0`; `a⊗succ(b) := (a⊗b)⊕a`. **Th 7.2:** commutative,
+  associative, distributes over `⊕`, `1` identity (semiring). Lifted to `ℤ` (ring), `ℚ/ℝ` (field).
+- **`÷` division** — on `ℚ`: `a÷b := a ⊗ b⁻¹`, `b⁻¹` the multiplicative inverse (Th 3.4, `qmul_inv`),
+  **defined iff `b ≠ 0`**. **`÷0` is REFUSED** — the endpoint principle (Th 6.1): at `0` the operator
+  loses invertibility; `1/0` is the reciprocal non-readout to `∞` (Pr 0.2), never a value. On `D/ℤ`:
+  **Euclidean division** `a = q⊗b ⊕ r` with `0 ⪯ r ≺ b` (quotient + remainder), total for `b ≠ 0`.
+- **`^` exponentiation (ยกกำลัง)** — `a^0 := 1`; `a^succ(n) := a^n ⊗ a` (iterated `⊗`). **Th 7.3:**
+  `a^(m⊕n) = a^m ⊗ a^n`, `(a^m)^n = a^(m⊗n)`, `(a⊗b)^n = a^n ⊗ b^n`. Integer exponents on `ℚ`:
+  `a^(−n) := 1/a^n` (`a ≠ 0`). **Rational / real exponents are a READOUT:** `a^(p/q)` is the root
+  (7.3 root); `a^x` for `x ∈ ℝ` is the limit of `a^(ℚ-approximants)` — the finite approximants
+  appear, the "value" is a readout-invariant. Convention `0^0 := 1` (empty product), stated.
+- **`√ / ⁿ√` root (รูท)** — `ⁿ√a :=` the `r` with `r^n = a` (`r ⪰ 0` for even `n`). **Th 7.4:** when
+  `a` is an `n`-th power in `ℚ`, `ⁿ√a ∈ ℚ` (exact readout). **Otherwise `ⁿ√a` is a NON-READOUT**
+  (Th A.1, `InfoIrrationalNonReadout`: `√2 ∉ ℚ`) — only its regular Cauchy sequence of
+  `ℚ`-approximants appears; "`√2` the number" is a boundary, never an appearance. It is *computed* by
+  a discrete bisection/Newton sequence over `ℚ` that converges by Cauchy-completeness (Th 3.6) — no
+  `ℝ` is needed to run it.
+
+## 7.4 Derived operators (all reduce to 7.1–7.3)
+
+- **`|·|` absolute value** — `|a| := a` if `a ⪰ 0` else `⊖a`; non-negative, `|a⊕b| ⪯ |a|⊕|b|`.
+- **`gcd / lcm`** — from Euclidean division (7.3 `÷`).
+- **`Δ` difference, `Σ` sum** — the discrete-calculus operators (Th 3.2–3.3), inverse to each other.
+- **`⟨·,·⟩_G` inner product, `‖·‖_G` norm** — `‖x‖_G := √⟨x,x⟩_G` (root over `ℚ`, a readout if
+  irrational); the **overlap fraction** (Def 4.2a) is the ONLY angle-like operator — trig-free.
+
+## 7.5 The refused operations (the endpoint boundary, made explicit — Th 6.1)
+
+`÷0` (loses invertibility) · a supremum/exponent reaching `∞` (`D` has no maximal element) · `ⁿ√`
+of a non-`n`-th-power **as an exact value** (a non-readout) · any limit that "lands" at `∞` or an
+exact `0`. All refused as non-readouts; only the finite `ℚ`-approach appears. **This closes the
+operator set:** every total operation is defined from `succ`; every partial one has its refused
+inputs named — so no external mathematics is required to evaluate any expression in this book.
+
+---
+
+# Part VIII — Information Discrete Calculus (the calculus of retained difference; `[results-first]`)
+
+The calculus built entirely on the difference `Δ` and sum `Σ` operators over `ℚ` (no reals) — the
+discrete analogue **and root** of continuum calculus; continuum calculus is recovered last, as a
+readout. Results and definitions are stated here; proofs are v-proofs (next version).
+
+## 8.1 Sequences, shift, difference
+
+- **Def.** a sequence is a map `f : D → F` (`F = ℚ` or a field). Shift `E f(n) := f(n+1)`.
+- **Def.** forward difference `Δf := (E−1)f`, i.e. `Δf(n)=f(n+1)⊖f(n)`; backward `∇f(n)=f(n)⊖f(n−1)`;
+  higher `Δᵏ`. **Newton forward-difference (discrete Taylor):**
+  `f(n) = Σ_{k} \binom{n}{k} Δᵏf(0)` — exact, finite, no limit.
+
+## 8.2 Sum, the discrete FTC, and integration-by-parts
+
+- **Def.** antidifference `Σ_a^b f := f(a)⊕…⊕f(b−1)`.
+- **Th 8.1 (discrete FTC).** `Σ_a^b Δf = f(b)⊖f(a)` (telescoping) and `Δ(Σf)=f` (Th 3.2).
+- **Th 8.2 (summation by parts).** `Σ f·Δg = f·g ⊖ Σ (Eg)·Δf` — discrete integration by parts.
+
+## 8.3 Falling powers — the natural discrete monomials
+
+- **Def.** falling factorial `n^{(k)} := n(n−1)…(n−k+1)`, `n^{(0)}:=1`.
+- **Th 8.3 (discrete power rule).** `Δ n^{(k)} = k·n^{(k−1)}` and `Σ n^{(k)} = n^{(k+1)}/(k+1)` —
+  the clean power rule holds for **falling** powers (WHY they, not ordinary powers, are the discrete
+  monomials). Stirling numbers convert ordinary ↔ falling powers.
+
+## 8.4 Difference equations (the discrete ODEs)
+
+- **Def.** linear difference equation `Σ_i c_i f(n+i) = g(n)`; solved by characteristic roots
+  (homogeneous) + a particular part.
+- **Def.** the discrete exponential `2^n` (eigenfunction of `E`) and the retained growth law
+  `Δf = a·f ⟹ f(n)=f(0)(1+a)^n` — the discrete root of `e^{ax}`; the continuum `e` is its `h→0`
+  readout (+ℝ).
+
+## 8.5 Formal series, generating functions, discrete transforms
+
+- **Def.** ordinary / exponential **generating functions** as `ℚ`-formal power series (formal — no
+  convergence, hence no continuum needed).
+- **Def.** the **Z-transform** (discrete Laplace); the **discrete Fourier** on `n`-th roots-of-unity
+  **read out as overlap fractions / turning numbers** (Def 4.2) — never continuum angles.
+
+## 8.6 The calculus of the graph operator `L_R` (discrete exterior calculus)
+
+- **Def.** coboundary `d`, its adjoint `δ`, gradient/divergence/curl, the **Hodge** decomposition and
+  **harmonic forms** — the discrete de Rham complex over `ℚ`.
+- **Def.** discrete **Green's function** of `L_R`; the **heat step** `(1 − τ L_R)`; the **spine wave**
+  `M∂²_t + D∂_t + K·L_R` (Part V's operator in motion) — all exact over `ℚ`.
+
+## 8.7 Continuum calculus as the last readout (`+ℝ-axioms`)
+
+- The continuum derivative `f'(x)=lim_{h→0} Δf/h` and integral `∫` are recovered as **readouts** of
+  `Δ / Σ` under `h→0` sampling — the final rung, flagged `+ℝ`, never the primitive. `InfoContinuumLimit`.
+
+## 8.8 The information reading (why it is *information* calculus)
+
+`Δ` = local change of distinction, `Σ` = accumulated retained record, `L_R` = information diffusion;
+energy and action are readouts of the information functional (Th 5.1). **Discrete calculus is the
+calculus of retained-information flow** — continuum calculus is what a finite reader reconstructs
+from it.
 
 ---
 
