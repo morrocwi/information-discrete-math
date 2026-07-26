@@ -35,6 +35,7 @@ declare -a THMS=(
   "laplacian_rowsum_zero:IDM_Matrix"
   "laplacian_ones_in_kernel:IDM_Matrix"
   "twirl_image_scalar:IDM_Matrix"
+  "twirl_idempotent:IDM_Matrix"
 )
 
 fail=0

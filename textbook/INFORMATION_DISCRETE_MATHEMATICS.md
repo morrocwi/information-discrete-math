@@ -1189,11 +1189,14 @@ A symmetry can *eliminate free parameters*, and the mechanism is a single linear
 **averaging / Reynolds projector**. For a finite symmetry group `G` acting on matrices, the average
 `Π(X) = (1/|G|)·Σ_{g∈G} g·X·g⁻¹` is an **idempotent projector** onto the `G`-invariant subspace, and the
 number of surviving free parameters equals that subspace's dimension `= (1/|G|)·Σ_g tr ρ(g)`. When the
-only invariant is the trace, `Π` collapses to the **isotropy twirl** `Π(X) = (tr X / n)·I`, whose image
-is the **one-dimensional scalar line** `ℚ·I` (`Th_coqc`, witnesses `formal/IDM_Matrix.v:
-twirl_image_scalar`, `scalar_line_one_dim`). So a full metric on an `n`-dimensional retained space —
+only invariant is the trace, `Π` collapses to the **isotropy twirl** `Π(X) = (tr X / n)·I`, a genuine
+**idempotent projector** — `Π(Π(X))=Π(X)` is machine-checked (`Th_coqc`, witness `formal/IDM_Matrix.v:
+twirl_idempotent`, via `trace_twirl`) — whose image is the **one-dimensional scalar line** `ℚ·I`
+(`twirl_image_scalar`, `scalar_line_one_dim`). So a full metric on an `n`-dimensional retained space —
 `n(n+1)/2` free symmetric components — averaged by a symmetry whose only invariant is the trace, retains
-**exactly one scalar**.
+**exactly one scalar**. *(What is mechanized is the reduced twirl `Π(X)=(tr X/n)·I` — its idempotence and
+scalar image; the general finite-group average `Π(X)=(1/|G|)Σ_g gXg⁻¹` and the invariant-dimension count
+`(1/|G|)Σ_g tr ρ(g)` are the standard `Dr` reading, not separately mechanized here.)*
 
 This is the mathematics behind a **parameter economy**: the same operator that reads out isotropy is the
 one that cuts the parameter count. *(It is the abstract content extracted from the Standard-Model

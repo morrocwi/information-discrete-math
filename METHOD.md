@@ -4,6 +4,15 @@
 > Keeping them separate is what makes the method light: the tools are fixed and tested; the process is
 > a short, repeatable loop. Developed by Yaoharee Lahtee.
 
+## Rule 0 — translate into the information language FIRST (before any formalization)
+
+**Before formalizing any problem — a matrix, an equation, a proof, a physics result — first translate
+it into the information (retained-distinction) language of §7.0.** A matrix is a table of *retained
+couplings*; an eigenvalue is a *retained mode*; a projector is a *retained selection* (an idempotent
+that keeps a sub-distinction and discards the rest); a Jacobian is the *retained sensitivity* `D_ε` of a
+readout to its source. Never carry a world-language object (a "real matrix", a "smooth map", a
+"probability") straight into the formalism — restate it as a readout of retained distinctions, tier it,
+then formalize. This is the contamination gate applied at the *modelling* step, upstream of step 2.
 ## The tools (nouns — `tools/idm_tools.py`, all finite-ε over ℚ, none takes a continuum limit)
 
 | tool | what it is | replaces |

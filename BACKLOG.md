@@ -83,6 +83,20 @@ closure — they need the completed continuum, which the philosophy treats as a 
       (payload read only after ACCEPT, else raises) + `resource_admissibility` (pre-tick OOM gate). Self-
       check extended.
 
+
+## New extraction tasks (queued — translate to information language first, then formalize)
+
+- [ ] **Discrete Jacobian, sharper version.** Extract the discrete Jacobian/retention math from
+      `~/Downloads/jacobian_retention_clean_two_turns.m` (exact polynomial images in readout space
+      `(P,Q,R)`; retention lift `(P,Q,ψ)`) and `~/Downloads/URR_C_MASTER_0_4_DETAILED.yaml` (URR-C:
+      linear hidden-elimination / return-kernel exact algebra). Restate as the **retained sensitivity
+      operator** `D_ε` of a readout to its source (§7.0 language first), fold the sharper exact-algebra
+      form into Part VIII (discrete calculus), tier-honest. Goal: a Jacobian that does **not** rely on a
+      conjecture — a finite exact-algebra readout, per the DGG-conjecture-is-false lesson (finite
+      discrete counterexamples settle what continuum conjectures leave open).
+- [ ] **readout_genesis math harvest.** Scan `~/ANSE.ASIA/readout_genesis` for machine-checked / exact
+      mathematical results not yet in the textbook; extract and fold in (info-language first, tier-honest).
+
 ## Housekeeping (tracked, low priority — consistency not math)
 
 - [ ] Part X: `§10.9` sits physically after §10.10–10.12; renumber to `§10.13` (or move) and update the
