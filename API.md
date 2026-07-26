@@ -1,7 +1,7 @@
 # `idm` — the library & solver API
 
 Information Discrete Mathematics as a callable library and a REST service. Everything returns a
-**finite-discrete readout**, tier-tagged (`Th_coqc` / `finite_diagnostic`), and — where a bound is
+**finite-discrete readout**, tier-tagged (`Th_coqc` = a named machine-checked theorem governs it · `exact` = exact finite ℤ/ℚ computation · `finite_diagnostic` = numeric to tolerance), and — where a bound is
 proven — a certificate with an `ACCEPT` / `HOLD` verdict. No continuum library call ever produces an
 answer. The package is a clean facade over the repository's CI-verified modules.
 
@@ -73,7 +73,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 
 **Continuous optimization** — `gradient_descent` (`f`,`vars`,`x0`) · `newton_min` · `newton_system` (`F` list) · `least_squares` (`A`,`b` — exact ℚ) · `lagrange_min` (`f`,`constraints`,`vars`,`x0` — KKT)
 
-**Number theory** (exact, `Th_coqc`-tier) — `gcd` · `lcm` · `factorial` · `binomial` · `is_prime` ·
+**Number theory** (exact ℤ/ℚ, `exact` tier — deterministic, not individually Coq-proven) — `gcd` · `lcm` · `factorial` · `binomial` · `is_prime` ·
 `factorize` · `divisors` · `totient` · `primes` (`N`) · `modpow` · `mod_inverse` · `crt` · `fibonacci` ·
 `bernoulli` · `partition` · `catalan` · `stirling2` · `bell` · `continued_fraction`
 
@@ -82,7 +82,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 
 **Polynomials** — `poly_eval` · `rational_roots` (exact) · `poly_roots` (all complex)
 
-**Optimization / paths** (tropical semirings, `Th_coqc` laws) — `shortest_path` · `critical_path` ·
+**Optimization / paths** (`shortest_path`/`widest_path`/`minimax_path` are `Th_coqc`-backed by the tropical-semiring laws in `IDM_Tropical.v`; the rest are `exact`) — `shortest_path` · `critical_path` ·
 `widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
 
 **P2 · statistics & probability** (exact ℚ where possible) — `binomial` · `poisson` · `hypergeometric` · `geometric` · `normal` · `describe` · `z_test` · `t_test` · `chi_square_test` · `regression` (exact ℚ polynomial least-squares) · `multiple_regression` · `markov_absorbing` · `stationary` · `bayes_update`

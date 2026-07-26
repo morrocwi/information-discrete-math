@@ -18,13 +18,24 @@ def binomial(n, k):
     k = min(k, n - k); num = 1; den = 1
     for i in range(k): num *= (n - i); den *= (i + 1)
     return num // den
+# Deterministic Miller–Rabin: the FIRST 13 PRIMES are witnesses for every n strictly below this exact
+# bound. MR_DET_BOUND = 3,317,044,064,679,887,385,961,981 is the smallest strong pseudoprime to all of
+# them (Jaeschke / Sorenson–Webster), so the test is a PROOF of primality only for n < MR_DET_BOUND.
+# NOTE: base 41 is required — without it the smallest counterexample is 318665857834031151167461
+# (≈3.19e23, composite = 399165290221·798330580441) which passes bases {2..37} yet sits below the
+# 13-prime bound, producing a FALSE "prime" verdict. Above MR_DET_BOUND the same routine is only a
+# strong-probable-prime check, never a proof — callers must tier accordingly (see solve.py).
+MR_BASES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41)
+MR_DET_BOUND = 3317044064679887385961981
+
 def is_prime(n):
+    n = int(n)
     if n < 2: return False
-    for p in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):
+    for p in MR_BASES:
         if n % p == 0: return n == p
     d = n - 1; r = 0
     while d % 2 == 0: d //= 2; r += 1
-    for a in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):   # deterministic for n < 3.3e24
+    for a in MR_BASES:
         x = pow(a, d, n)
         if x in (1, n - 1): continue
         for _ in range(r - 1):
@@ -158,11 +169,15 @@ def poly_eval(coeffs, x):
     for c in reversed(coeffs): r = r * x + Q(c)
     return r
 def rational_roots(coeffs):
-    """all RATIONAL roots (exact) by the rational-root theorem + division."""
+    """all RATIONAL roots (exact) by the rational-root theorem + division. Coefficients are given
+    low-order first (c[0] + c[1]·x + …). x=0 is included whenever the constant term is 0."""
     c = [Q(x) for x in coeffs]
-    while len(c) > 1 and c[-1] == 0: c = c[:-1]
-    while len(c) > 1 and c[0] == 0: c = c[1:]  # (drops x=0 roots; reported separately)
-    if len(c) <= 1: return []
+    while len(c) > 1 and c[-1] == 0: c = c[:-1]           # drop leading (high-order) zeros
+    roots = set()
+    if len(c) > 1 and c[0] == 0:                          # a zero constant term ⇒ x=0 IS a root
+        roots.add(Q(0))
+        while len(c) > 1 and c[0] == 0: c = c[1:]         # factor out x^k, keep solving the rest
+    if len(c) <= 1: return sorted(roots)
     from math import gcd as _g
     den = 1
     for x in c: den = den * x.denominator // _g(den, x.denominator)
@@ -174,7 +189,8 @@ def rational_roots(coeffs):
     for p in facs(a0):
         for qd in facs(an):
             cands.add(Q(p, qd)); cands.add(Q(-p, qd))
-    return sorted({r for r in cands if poly_eval(c, r) == 0})
+    roots |= {r for r in cands if poly_eval(c, r) == 0}
+    return sorted(roots)
 
 # ================================================================ number theory (extended) =========
 def num_divisors(n):
@@ -198,11 +214,23 @@ def is_perfect_square(n):
     if n < 0: return False
     r = isqrt(int(n)); return r * r == n
 def integer_root(n, k):
+    """exact integer k-th root of n if one exists, else None. Pure integer arithmetic (binary search) —
+    no float, so it is correct for arbitrarily large n (a float k-th root loses precision past 2^53)."""
+    n = int(n); k = int(k)
+    if k < 1: return None
     if n < 0 and k % 2 == 0: return None
-    r = int(round(abs(n) ** (1.0 / k)))
-    for c in (r - 1, r, r + 1):
-        if c >= 0 and c ** k == abs(n): return c if n >= 0 else -c
-    return None
+    m = abs(n)
+    if m < 2: r = m
+    else:
+        lo, hi = 1, 1 << ((m.bit_length() + k - 1) // k + 1)   # hi ≥ true root
+        while lo <= hi:                                          # exact integer binary search
+            mid = (lo + hi) // 2; p = mid ** k
+            if p == m: r = mid; break
+            if p < m: lo = mid + 1
+            else: hi = mid - 1
+        else: return None
+    if r ** k != m: return None
+    return r if n >= 0 else -r
 def digital_root(n, base=10):
     n = abs(n)
     while n >= base: n = sum(int(d) for d in _digits(n, base))

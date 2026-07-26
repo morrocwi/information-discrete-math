@@ -151,31 +151,72 @@ def chromatic_number(n, edges):
 
 
 # ---------------------------------------------------------------- linear programming (exact simplex) ----
-def linear_program(c, A, b, sense="max"):
-    """max (or min) cᵀx  subject to  A x ≤ b,  x ≥ 0, by the simplex method with EXACT rational pivoting
-    (Bland's rule against cycling). Returns the optimal x and objective, or an unbounded/infeasible flag."""
-    m = len(A); n = len(c); sign = 1 if sense == "max" else -1
-    c = [Q(sign) * Q(ci) for ci in c]
-    # tableau: [A | I | b], objective row
-    T = [[Q(A[i][j]) for j in range(n)] + [Q(1 if k == i else 0) for k in range(m)] + [Q(b[i])] for i in range(m)]
-    obj = [-ci for ci in c] + [Q(0)] * m + [Q(0)]
-    basis = list(range(n, n + m))
-    for _ in range(10000):
-        col = next((j for j in range(n + m) if obj[j] < 0), None)   # Bland: first negative
-        if col is None: break
+def _lp_pivot(T, cost, basis, m, ncols, allowed):
+    """drive a tableau to optimality minimizing cost·vars (Bland's rule, exact ℚ). `allowed` bounds
+    which columns may ENTER (used to forbid artificials in Phase II). Returns 'optimal'/'unbounded'."""
+    for _ in range(100000):
+        cb = [cost[basis[i]] for i in range(m)]
+        red = {j: cost[j] - sum(cb[i] * T[i][j] for i in range(m)) for j in allowed}
+        col = next((j for j in allowed if red[j] < 0), None)      # Bland: first improving column
+        if col is None: return "optimal"
         ratios = [(T[i][-1] / T[i][col], i) for i in range(m) if T[i][col] > 0]
-        if not ratios: return {"status": "unbounded"}
+        if not ratios: return "unbounded"
         _, row = min(ratios, key=lambda r: (r[0], basis[r[1]]))
         piv = T[row][col]; T[row] = [x / piv for x in T[row]]; basis[row] = col
         for i in range(m):
             if i != row and T[i][col] != 0:
-                f = T[i][col]; T[i] = [T[i][j] - f * T[row][j] for j in range(n + m + 1)]
-        f = obj[col]
-        if f != 0: obj = [obj[j] - f * T[row][j] for j in range(n + m + 1)]
+                f = T[i][col]; T[i] = [T[i][j] - f * T[row][j] for j in range(ncols + 1)]
+    return "iteration_limit"
+
+def linear_program(c, A, b, sense="max"):
+    """max (or min) cᵀx subject to A x ≤ b, x ≥ 0 — EXACT rational TWO-PHASE simplex (Bland's rule).
+    Phase I builds a feasible basis using artificial variables and DETECTS INFEASIBILITY (if the minimal
+    artificial sum is > 0 the constraints cannot be satisfied); Phase II optimizes. Returns the optimal x
+    and objective, or status 'infeasible' / 'unbounded' — it never reports a bogus 'optimal'."""
+    m = len(A); n = len(c); sign = 1 if sense == "max" else -1
+    A = [[Q(A[i][j]) for j in range(n)] for i in range(m)]
+    b = [Q(bi) for bi in b]
+    cvec = [Q(ci) for ci in c]
+    # rows: [structural(n) | slack(m)] ; ensure rhs ≥ 0 (flip a row with negative rhs, which flips its slack)
+    rows = []
+    for i in range(m):
+        row = A[i][:] + [Q(1 if k == i else 0) for k in range(m)]
+        rhs = b[i]
+        if rhs < 0: row = [-v for v in row]; rhs = -rhs
+        rows.append([row, rhs])
+    need_art = [rows[i][0][n + i] != 1 for i in range(m)]       # own slack no longer +1 ⇒ needs an artificial
+    n_art = sum(need_art); ncols = n + m + n_art
+    T = []; basis = []; ai = 0
+    for i in range(m):
+        row, rhs = rows[i]; full = row + [Q(0)] * n_art
+        if need_art[i]:
+            full[n + m + ai] = Q(1); basis.append(n + m + ai); ai += 1
+        else:
+            basis.append(n + i)
+        T.append(full + [rhs])
+    art_cols = set(range(n + m, n + m + n_art))
+    if n_art:                                                   # ---- Phase I: minimize Σ artificials ----
+        cost1 = [Q(0)] * (n + m) + [Q(1)] * n_art
+        _lp_pivot(T, cost1, basis, m, ncols, list(range(ncols)))
+        art_sum = sum(cost1[basis[i]] * T[i][-1] for i in range(m))
+        if art_sum != 0:
+            return {"status": "infeasible", "reason": "the constraints A x ≤ b, x ≥ 0 have no common solution"}
+        for i in range(m):                                      # drive any artificial out of the basis (at 0)
+            if basis[i] in art_cols:
+                j = next((j for j in range(n + m) if T[i][j] != 0), None)
+                if j is not None:
+                    piv = T[i][j]; T[i] = [x / piv for x in T[i]]; basis[i] = j
+                    for r in range(m):
+                        if r != i and T[r][j] != 0:
+                            f = T[r][j]; T[r] = [T[r][k] - f * T[i][k] for k in range(ncols + 1)]
+    # ---- Phase II: optimize the real objective; artificials forbidden from re-entering ----
+    cost2 = [(-sign) * cvec[j] if j < n else Q(0) for j in range(ncols)]   # minimize −sign·cᵀx
+    st = _lp_pivot(T, cost2, basis, m, ncols, [j for j in range(n + m)])
+    if st == "unbounded": return {"status": "unbounded"}
     x = [Q(0)] * n
     for i in range(m):
         if basis[i] < n: x[basis[i]] = T[i][-1]
-    return {"status": "optimal", "x": x, "objective": Q(sign) * obj[-1]}
+    return {"status": "optimal", "x": x, "objective": sum(cvec[j] * x[j] for j in range(n))}
 
 
 # ---------------------------------------------------------------- SAT (DPLL) ----

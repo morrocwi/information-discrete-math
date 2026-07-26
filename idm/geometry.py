@@ -80,10 +80,18 @@ def closest_pair(points):
             "points": [[str(pts[pair[0]][0]), str(pts[pair[0]][1])], [str(pts[pair[1]][0]), str(pts[pair[1]][1])]] if pair else None}
 
 def in_circle(a, b, c, d):
-    """exact in-circle predicate (Delaunay test): is d inside the circle through a,b,c? sign of a 3×3 det.
-    +1 inside, −1 outside, 0 cocircular — the exact test Delaunay triangulation is built on."""
+    """exact in-circle predicate (Delaunay test): is d inside the circle through a,b,c?
+    +1 inside, −1 outside, 0 cocircular. The raw 3×3 determinant's sign depends on the winding of
+    (a,b,c); we normalize by the triangle's orientation so the geometric answer (inside/outside) is
+    invariant under vertex order — a reordering of a,b,c can never flip 'inside' to 'outside'.
+    Returns HOLD if a,b,c are collinear (they define no circle)."""
     a, b, c, d = _P(a), _P(b), _P(c), _P(d)
+    orient = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+    if orient == 0:
+        return {"status": "HOLD", "reason": "a, b, c are collinear — they define no circle"}
     def row(p): return (p[0] - d[0], p[1] - d[1], (p[0] - d[0]) ** 2 + (p[1] - d[1]) ** 2)
     ax, ay, az = row(a); bx, by, bz = row(b); cx, cy, cz = row(c)
     det = ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx)
-    return {"in_circle": (det > 0) - (det < 0), "det": det}
+    s = 1 if orient > 0 else -1                       # normalize: det·sign(orientation) is order-invariant
+    val = det * s
+    return {"in_circle": (val > 0) - (val < 0), "det": det, "oriented_det": val}

@@ -3,9 +3,13 @@
 `solve(problem)` takes a STRUCTURED problem (translate-first: the caller declares the `kind`, honoring
 the rule that a world-language request is translated into the information language before any math is
 done) and dispatches to the matching finite method. It always returns a normalized result with the
-value, an error bound where one is proven, a `status` (CERTIFIED / HOLD / ok), a tier
-(`Th_coqc` / `finite_diagnostic`), and the method used. No continuum library call ever produces the
-answer; an unknown kind or a failure returns HOLD, never a crash.
+value, an error bound where one is proven, a `status` (CERTIFIED / HOLD / ok), and a tier — one of
+`Th_coqc` (a named theorem in formal/ governs the result; a `coq_theorem` reference is attached),
+`exact` (exact, finite, decidable ℤ/ℚ computation — no floating point in the result, but no individual
+Coq proof of the implementation), or `finite_diagnostic` (numeric to a declared tolerance). The
+`Th_coqc` label is applied only where a proof mapping exists — exact-but-unproven handlers are `exact`,
+never inflated. No continuum library call ever produces the answer; an unknown kind or a failure
+returns HOLD, never a crash.
 
     solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e-8})
     solve({"kind": "eigenvalues", "matrix": [[2, 0], [0, 3]]})
@@ -140,7 +144,15 @@ def _fac(p): return _ok("factorial", X.factorial(int(p["n"])), "finite product")
 @kind("binomial", "Th_coqc")
 def _bin(p): return _ok("binomial", X.binomial(int(p["n"]), int(p["k"])), "finite product")
 @kind("is_prime", "Th_coqc")
-def _isp(p): return _ok("is_prime", X.is_prime(int(p["n"])), "deterministic Miller–Rabin")
+def _isp(p):
+    n = int(p["n"]); val = X.is_prime(n)
+    # a composite verdict is a proof (there is a witness); a prime verdict is a proof only below the
+    # deterministic Miller–Rabin bound — above it, "prime" is probabilistic, so tier down honestly.
+    certified = (val is False) or (n < X.MR_DET_BOUND)
+    tier = "Th_coqc" if certified else "finite_diagnostic"
+    method = ("deterministic Miller–Rabin (first 13 primes, n < %d)" % X.MR_DET_BOUND) if certified else \
+             "Miller–Rabin strong probable prime (n ≥ %d — beyond the deterministic bound, NOT proven)" % X.MR_DET_BOUND
+    return {"kind": "is_prime", "status": "ok", "value": val, "tier": tier, "method": method}
 @kind("factorize", "Th_coqc")
 def _fz(p): return _ok("factorize", {str(k): v for k, v in X.factorize(int(p["n"])).items()}, "trial division + Pollard ρ")
 @kind("divisors", "Th_coqc")
@@ -681,7 +693,13 @@ def _incir(p): return _ok("in_circle", GEO.in_circle(p["a"], p["b"], p["c"], p["
 
 # ===================== P2 · cryptographic number theory (exact, certificate-bearing) ================
 @kind("primality_certificate", "Th_coqc")
-def _isp(p): return _ok("primality_certificate", CY.is_prime(p["n"]), "deterministic Miller–Rabin with a checkable base-set certificate")
+def _pcert(p):
+    v = CY.is_prime(p["n"])
+    # certified compositeness/primality → Th_coqc; a probable prime above the bound → finite_diagnostic
+    tier = "Th_coqc" if v.get("certified") else "finite_diagnostic"
+    return {"kind": "primality_certificate", "status": "ok", "value": _norm(v), "tier": tier,
+            "method": "Miller–Rabin (first 13 primes) with a checkable witness; deterministic below "
+                      "%d, probable above" % CY.MR_DET_BOUND}
 @kind("modinv")
 def _minv(p):
     r = CY.modinv(int(p["a"]), int(p["m"]))
@@ -704,6 +722,23 @@ def _ecmul(p): return _ok("ec_mul", CY.ec_mul(p["k"], p["P"], p["a"], p["p"]), "
 def _seq0(expr):
     return expr if callable(expr) else (lambda n: F.evaluate(str(expr), n=n))
 
+# Tier honesty — a `Th_coqc` tag is reserved for kinds whose GOVERNING LAW is a named theorem that is
+# machine-checked axiom-free in formal/ (attached as `coq_theorem`). Every other exact/decidable ℤ/ℚ
+# computation is tier `exact` (the value is exact by construction, but no individual Coq proof of the
+# implementation is claimed); numeric-to-tolerance methods stay `finite_diagnostic`. This deliberately
+# strips the `Th_coqc` label from the many exact handlers that have no proof mapping (no tier inflation).
+_COQ_BACKED = {
+    "orient":            "IDM_Geometry.orient_* (orientation determinant, axiom-free)",
+    "convex_hull":       "IDM_Geometry.orient_* (branches only on the proven orientation sign)",
+    "point_in_polygon":  "IDM_Geometry.orient_* (proven orientation predicate; exact boundary)",
+    "segments_intersect":"IDM_Geometry.orient_* (proven orientation predicate)",
+    "shortest_path":     "IDM_Tropical.minplus_distrib (min-plus semiring law)",
+    "widest_path":       "IDM_Tropical.maxplus_distrib (max-plus semiring law)",
+    "minimax_path":      "IDM_Tropical.bottleneck_distrib (bottleneck semiring law)",
+    "spanning_tree_count":"IDM_Matrix.laplacian_* (Kirchhoff via the graph Laplacian)",
+    "geometric_series":  "IDM_Certified.geom_certified_identity (certified geometric-series bound)",
+}
+
 def solve(problem):
     if not isinstance(problem, dict) or "kind" not in problem:
         return {"status": "HOLD", "reason": "problem must be a dict with a 'kind' field"}
@@ -719,6 +754,12 @@ def solve(problem):
     except Exception as ex:
         return {"kind": k, "status": "HOLD", "reason": f"{type(ex).__name__}: {ex}"}
     res.setdefault("tier", tier)
+    # tier-honesty pass: keep Th_coqc only where a named machine-checked theorem governs the result
+    if res.get("tier") == "Th_coqc":
+        if k in _COQ_BACKED:
+            res["coq_theorem"] = _COQ_BACKED[k]
+        else:
+            res["tier"] = "exact"   # exact & decidable, but not individually machine-checked in Coq
     return res
 
 

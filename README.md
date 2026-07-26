@@ -118,9 +118,15 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
 
 **Every claim carries an honesty tier — evaluate each on its own tier, never promote evidence across tiers:**
 
-- `Th_coqc` — machine‑checked in Coq, axiom‑free.
+- `Th_coqc` — the result's **governing law is machine‑checked in Coq, axiom‑free**; the solver attaches
+  a `coq_theorem` pointing to the named witness in `formal/`. Reserved for the handful of kinds with a
+  real proof mapping (orientation‑predicate geometry, min/max/bottleneck path algebra, the certified
+  geometric series, Kirchhoff spanning‑tree) — **not** every exact handler.
+- `exact` — an **exact, finite, decidable ℤ/ℚ computation** (integers and `Fraction`, no floating point
+  in the result): the value is exact by construction, but no individual Coq proof of the *implementation*
+  is claimed (e.g. `factorize`, `gcd`, `is_prime` below its deterministic bound, exact‑ℚ linear algebra).
 - `finite_diagnostic` — a finite procedure reproduces the value to a **declared numeric tolerance** (this
-  is what the `prove_it*` suites are; agreement ≠ formal proof).
+  is what the `prove_it*` suites are, and what quadrature/ODE/probable‑prime results are; agreement ≠ formal proof).
 - `Dr` — design / interpretive narrative.
 - `+ℝ-Open` — honestly unsolved, or genuinely needs the completed continuum.
 

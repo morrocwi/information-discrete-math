@@ -63,8 +63,21 @@ def certified_root(expr, var, a, b, tol=mp.mpf(10) ** -25, it=400):
         m_neg = mhi < 0
         if m_neg == neg_left: a = m
         else: b = m
+    # RIGOROUS final check: an endpoint sign change is NOT sufficient — 1/x flips sign across its POLE
+    # at 0 with no root there. The intermediate-value theorem needs f CONTINUOUS across the bracket, so
+    # enclose f over the whole converged [a,b]: reject if it is unbounded (a singularity) or fails to
+    # rigorously contain 0.
+    try:
+        elo, ehi = _lohi(ieval(expr, {var: (a, b)}))
+    except Exception:
+        return {"status": "HOLD", "reason": "function undefined/singular on the bracket — no certified root"}
+    if not (mp.isfinite(elo) and mp.isfinite(ehi)):
+        return {"status": "HOLD", "reason": "function is unbounded on the bracket (a pole, not a root) — not certified"}
+    if not (elo <= 0 <= ehi):
+        return {"status": "HOLD", "reason": "no zero rigorously enclosed on the converged bracket (apparent sign "
+                                            "change was across a discontinuity) — not certified"}
     return {"status": "ok", "root_lo": a, "root_hi": b, "width": b - a, "certified": True,
-            "method": "interval bisection (intermediate-value theorem)"}
+            "method": "interval bisection (intermediate-value theorem), continuity verified by enclosure"}
 
 
 def certified_min(expr, var, a, b, tol=mp.mpf(10) ** -10, max_boxes=200000):

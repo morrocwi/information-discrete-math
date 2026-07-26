@@ -1,16 +1,25 @@
 """idm.crypto — cryptographic number theory as exact, certificate-bearing computation.
 
 This is the "domain pack" where every answer is exact and, where possible, CERTIFIED: a primality
-proof is a checkable witness (Miller–Rabin over a deterministic base set for the 64-bit range, plus a
-Lucas-style corroboration for the record), RSA/ECC arithmetic is exact modular arithmetic, and a
-discrete log is found by an exact meet-in-the-middle search. Nothing here rounds; nothing here trusts a
-float. All integers, all decidable.
+result carries a checkable witness — a Miller–Rabin base that PROVES compositeness (valid for any n),
+or, for a positive verdict, the deterministic base set that proves primality *only* below the proven
+bound; RSA/ECC arithmetic is exact modular arithmetic, and a discrete log is an exact meet-in-the-middle
+search. Nothing here rounds; nothing here trusts a float. All integers, all decidable — and above the
+deterministic bound the primality verdict is honestly downgraded to a probable prime, never certified.
 """
 from math import gcd, isqrt
 
+# The first 13 primes are a deterministic Miller–Rabin witness set for every n strictly below this exact
+# bound (the smallest strong pseudoprime to all of them). Base 41 is essential: dropping it lets the
+# composite 318665857834031151167461 (= 399165290221·798330580441) pass bases {2..37} while still lying
+# below the 13-prime bound — a false "prime". Above MR_DET_BOUND, passing every base proves nothing.
+MR_BASES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41)
+MR_DET_BOUND = 3317044064679887385961981
 
-# ---------------- primality (deterministic + witnesses) ----------------
-def _mr_witness(a, n):
+
+def _mr_passes(a, n):
+    """True if n passes the Miller–Rabin test for base a (a is NOT a witness of compositeness)."""
+    if a % n == 0: return True
     d = n - 1; r = 0
     while d % 2 == 0: d //= 2; r += 1
     x = pow(a, d, n)
@@ -21,16 +30,31 @@ def _mr_witness(a, n):
     return False
 
 def is_prime(n):
-    """deterministic primality for n < 3.3·10²⁴ via the first 13 primes as Miller–Rabin bases.
-    Returns the certificate (the base set) so the verdict is independently checkable."""
+    """Primality with a checkable, tier-honest certificate:
+      • a small prime factor or a Miller–Rabin witness PROVES compositeness (certified, any n);
+      • passing every base with n < MR_DET_BOUND PROVES primality (certified deterministic);
+      • passing every base with n ≥ MR_DET_BOUND is only a strong probable prime — NOT certified."""
     n = int(n)
-    if n < 2: return {"prime": False, "n": n}
-    for p in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):
-        if n % p == 0: return {"prime": n == p, "n": n, "small_factor": None if n == p else p}
-    bases = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)
-    ok = all(_mr_witness(a, n) for a in bases)
-    return {"prime": ok, "n": n, "certificate": {"type": "deterministic Miller–Rabin", "bases": list(bases),
-            "valid_below": "3.317e24"}}
+    if n < 2: return {"prime": False, "n": n, "certified": True,
+                      "certificate": {"type": "definition", "reason": "n < 2 is not prime"}}
+    for p in MR_BASES:
+        if n % p == 0:
+            if n == p: return {"prime": True, "n": n, "certified": True,
+                               "certificate": {"type": "small prime", "value": p}}
+            return {"prime": False, "n": n, "certified": True,
+                    "certificate": {"type": "composite: trial factor", "factor": p}}
+    for a in MR_BASES:
+        if not _mr_passes(a, n):                       # a witness — a PROOF of compositeness for any n
+            return {"prime": False, "n": n, "certified": True,
+                    "certificate": {"type": "composite: Miller–Rabin witness", "witness_base": a}}
+    if n < MR_DET_BOUND:
+        return {"prime": True, "n": n, "certified": True,
+                "certificate": {"type": "deterministic Miller–Rabin", "bases": list(MR_BASES),
+                                "valid_below": str(MR_DET_BOUND)}}
+    return {"prime": True, "n": n, "certified": False,     # beyond the proven bound — honestly downgraded
+            "certificate": None,
+            "note": f"strong probable prime to the first 13 primes, but n ≥ {MR_DET_BOUND} (the deterministic "
+                    "Miller–Rabin bound) — primality is NOT proven here, only probable"}
 
 def next_prime(n):
     """smallest prime > n (deterministic test)."""

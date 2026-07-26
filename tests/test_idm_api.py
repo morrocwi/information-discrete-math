@@ -428,3 +428,56 @@ def test_server_endpoints():
         assert post("/parse", {"text": "do my laundry"})["status"] == "HOLD"
     finally:
         httpd.shutdown()
+
+
+def test_adversarial_counterexamples():
+    """Regression guard for the 7 counterexamples found in independent adversarial review (2026-07-26).
+    Each once produced a WRONG answer or an inflated tier; each must now be correct or HOLD."""
+    # 1. primality: the smallest strong pseudoprime to bases {2..37} is COMPOSITE (needs base 41)
+    N = 318665857834031151167461
+    assert idm.solve({"kind": "is_prime", "n": N})["value"] is False
+    pc = idm.solve({"kind": "primality_certificate", "n": N})["value"]
+    assert pc["prime"] is False and pc["certificate"]["witness_base"] == 41
+    # a prime beyond the deterministic bound must NOT be certified Th_coqc (it is only probable)
+    big_prime = 2**89 - 1
+    rp = idm.solve({"kind": "is_prime", "n": big_prime})
+    assert rp["value"] is True and rp["tier"] == "finite_diagnostic"
+    # 2. certified_root must not certify a "root" across a pole (1/x on [-1,1] has none)
+    cr = idm.solve({"kind": "certified_root", "expr": "1/x", "var": "x", "a": -1, "b": 1})
+    assert cr["value"].get("status") == "HOLD" or cr["status"] == "HOLD"
+    # 3. rational_roots of x(x-1) must include 0
+    rr = sorted(v["exact"] for v in idm.solve({"kind": "rational_roots", "coeffs": [0, -1, 1]})["value"])
+    assert rr == ["0/1", "1/1"]
+    # 4. integer_root must be exact for large perfect powers (no float)
+    big = 100000000000000000123 ** 3
+    assert idm.solve({"kind": "integer_root", "n": big, "k": 3})["value"] == 100000000000000000123
+    assert idm.solve({"kind": "integer_root", "n": big + 1, "k": 3})["value"] is None
+    # 5. an infeasible LP must be reported infeasible, never "optimal"
+    inf = idm.solve({"kind": "linear_program", "c": [1], "A": [[1], [-1]], "b": [0, -1], "sense": "max"})
+    assert inf["value"]["status"] == "infeasible"
+    # 6. in_circle inside/outside must not flip with triangle winding
+    ccw = idm.solve({"kind": "in_circle", "a": [0, 0], "b": [1, 0], "c": [0, 1], "d": ["1/4", "1/4"]})["value"]["in_circle"]
+    cw = idm.solve({"kind": "in_circle", "a": [0, 0], "b": [0, 1], "c": [1, 0], "d": ["1/4", "1/4"]})["value"]["in_circle"]
+    assert ccw == 1 and cw == 1
+    assert idm.solve({"kind": "in_circle", "a": [0, 0], "b": [1, 1], "c": [2, 2], "d": [3, 3]})["value"].get("status") == "HOLD"
+    # 7. a distribution with an out-of-domain parameter must HOLD, not return a negative variance
+    assert idm.solve({"kind": "binomial", "n": 10, "k": 3, "p": 2})["status"] == "HOLD"
+    assert idm.solve({"kind": "geometric", "p": 0})["status"] == "HOLD"
+    assert idm.solve({"kind": "normal", "x": 1, "sigma": 0})["status"] == "HOLD"
+
+
+def test_tier_honesty():
+    """Th_coqc is reserved for kinds with a named machine-checked theorem (a coq_theorem is attached);
+    exact-but-unproven handlers must be tier `exact`, never Th_coqc (no tier inflation)."""
+    # backed by a real theorem → Th_coqc + coq_theorem reference
+    o = idm.solve({"kind": "orient", "a": [0, 0], "b": [1, 0], "c": [0, 1]})
+    assert o["tier"] == "Th_coqc" and "IDM_Geometry" in o["coq_theorem"]
+    sp = idm.solve({"kind": "shortest_path", "matrix": [[0, 3, None], [3, 0, 1], [None, 1, 0]], "source": 0, "target": 2})
+    assert sp["tier"] == "Th_coqc" and "Tropical" in sp["coq_theorem"]
+    # exact but NOT individually Coq-proven → tier 'exact', and NO coq_theorem
+    for kind, prob in [("factorize", {"n": 360360}), ("gcd", {"a": 48, "b": 36}),
+                       ("is_prime", {"n": 97}), ("matrix_determinant", {"matrix": [[1, 2], [3, 4]]}),
+                       ("in_circle", {"a": [0, 0], "b": [1, 0], "c": [0, 1], "d": [5, 5]})]:
+        r = idm.solve(dict(kind=kind, **prob))
+        assert r["tier"] == "exact", f"{kind} should be exact, got {r['tier']}"
+        assert "coq_theorem" not in r

@@ -21,7 +21,10 @@ def _binom_pmf(n, k, p):
 
 def binomial(n, k=None, p=Q(1, 2)):
     """exact binomial pmf/cdf: P(X=k) and P(X≤k) for X~Bin(n,p), all rational."""
-    p = Q(p); mean = Q(n) * p; var = Q(n) * p * (1 - p)
+    p = Q(p)
+    if not (0 <= p <= 1): raise ValueError(f"binomial needs a probability p∈[0,1], got {p}")
+    if int(n) != n or n < 0: raise ValueError(f"binomial needs a non-negative integer n, got {n}")
+    mean = Q(n) * p; var = Q(n) * p * (1 - p)
     out = {"mean": mean, "variance": var}
     if k is not None:
         out["pmf"] = _binom_pmf(n, k, p)
@@ -30,6 +33,8 @@ def binomial(n, k=None, p=Q(1, 2)):
 
 def poisson(lam, k=None):
     """Poisson pmf/cdf with rational λ — P(X=k)=e^{-λ}λ^k/k! as a finite readout."""
+    if float(lam) < 0: raise ValueError(f"Poisson needs rate λ≥0, got {lam}")
+    if k is not None and (int(k) != k or k < 0): raise ValueError(f"Poisson needs a non-negative integer k, got {k}")
     lam_m = mp.mpf(str(lam)); mean = mp.mpf(str(lam))
     out = {"mean": mean, "variance": mean}
     if k is not None:
@@ -39,6 +44,8 @@ def poisson(lam, k=None):
 
 def hypergeometric(N, K, n, k):
     """exact hypergeometric pmf/cdf: drawing n from N with K successes, P(X=k) rational."""
+    if not (0 <= K <= N and 0 <= n <= N and N >= 1):
+        raise ValueError(f"hypergeometric needs 0≤K≤N, 0≤n≤N, N≥1 (got N={N},K={K},n={n})")
     def pmf(i):
         if i < max(0, n - (N - K)) or i > min(K, n): return Q(0)
         return Q(comb(K, i) * comb(N - K, n - i), comb(N, n))
@@ -47,7 +54,9 @@ def hypergeometric(N, K, n, k):
 
 def geometric(p, k=None):
     """geometric pmf/cdf on {1,2,…}: P(X=k)=(1-p)^{k-1} p, exact rational."""
-    p = Q(p); out = {"mean": Q(1) / p, "variance": (1 - p) / p ** 2}
+    p = Q(p)
+    if not (0 < p <= 1): raise ValueError(f"geometric needs a success probability p∈(0,1], got {p}")
+    out = {"mean": Q(1) / p, "variance": (1 - p) / p ** 2}
     if k is not None:
         out["pmf"] = (1 - p) ** (k - 1) * p
         out["cdf"] = 1 - (1 - p) ** k
@@ -55,6 +64,7 @@ def geometric(p, k=None):
 
 def normal(x, mu=0, sigma=1):
     """standard/general normal pdf & cdf as a finite readout (cdf via erf series)."""
+    if float(sigma) <= 0: raise ValueError(f"normal needs standard deviation σ>0, got {sigma}")
     x = mp.mpf(str(x)); mu = mp.mpf(str(mu)); s = mp.mpf(str(sigma))
     z = (x - mu) / s
     pdf = mp.e ** (-z * z / 2) / (s * mp.sqrt(2 * mp.pi))

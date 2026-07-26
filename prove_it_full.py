@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""prove_it_full.py — 1000 CONTINUUM-FRONTIER problems from real systems, each a FINITE-DISCRETE readout.
+"""prove_it_full.py — 1278 CONTINUUM-FRONTIER problems from real systems, each a FINITE-DISCRETE readout.
 
     DON'T TRUST THE CLAIMS. RUN THIS.   ->   python3 prove_it_full.py
 
 Where prove_it.py captures the 10 *roots* of the continuum in ~2 seconds, this is the full breadth:
-~1000 problems that working scientists and engineers actually solve — spread across
+~1278 problems that working scientists and engineers actually solve — spread across
 
     • physics       (quantum, thermodynamics, optics, relativity, waves)
     • biochem       (reaction kinetics, diffusion, binding, populations, statistics)
@@ -45,7 +45,7 @@ def load(domain):
 
 def main():
     print("=" * 100)
-    print("  prove_it_full.py — 1000 continuum-frontier problems, each a FINITE-DISCRETE readout")
+    print("  prove_it_full.py — 1278 continuum-frontier problems, each a FINITE-DISCRETE readout")
     print("  engine: mpmath = arbitrary-precision finite (floating) arithmetic; NO continuum function produces any 'ours' value")
     print("=" * 100)
     grand_ok = grand_tot = 0
@@ -73,9 +73,13 @@ def main():
     print("=" * 100)
     if worst:
         print(f"  ({len(worst)} rows below tolerance — see them by domain above.)")
-    # release gate: >=99% and every domain present
-    passed = grand_tot >= 900 and grand_ok >= int(0.99 * grand_tot)
-    print(f"  VERDICT: {'the continuum frontier is computable from finite readouts — TRUSTWORTHY at scale' if passed else 'INCOMPLETE — see failures/missing domains above'}.")
+    # release gate: EVERY problem must pass, and the full advertised battery must be present.
+    # (No ≥99% slack — the README badge asserts the exact count, so the gate must too.)
+    EXPECTED = 1278
+    passed = grand_tot >= EXPECTED and grand_ok == grand_tot
+    if grand_tot < EXPECTED:
+        print(f"  WARNING: only {grand_tot} problems ran, fewer than the advertised {EXPECTED}.")
+    print(f"  VERDICT: {f'the continuum frontier is computable from finite readouts — {grand_ok}/{grand_tot} TRUSTWORTHY at scale' if passed else 'INCOMPLETE — some rows failed or the battery is short (see above)'}.")
     sys.exit(0 if passed else 1)
 
 if __name__ == "__main__":
