@@ -3,12 +3,42 @@
 
 **Developed by Yaoharee Lahtee.**
 
-> **Edition note (v0.2 — completeness-first).** This edition prioritises **complete coverage** of
-> the findings, definitions, operators, and results — from the roots up through a full *information
-> discrete calculus*. **Proofs are stated by reference to the machine-checked witnesses where they
-> exist and are otherwise deferred to the next version (v-proofs);** where a result is asserted
-> ahead of its proof it is marked `[results-first]`. The goal here is the closed skeleton, not the
-> full proof tower — the proofs come next.
+> **Edition note (v1.0.0 — release; completeness-first, proofs next).** This release organises the
+> existing knowledge base and re-synthesises it from the latest findings into one coherent
+> foundation, so it can be **used to do physics calculations precisely** in the readout-first
+> framework. It prioritises **complete coverage** — from the roots up through a full information
+> discrete calculus, the powerful analytic tools, and the reconciliations with the external record.
+> **Proofs are stated by reference to the machine-checked witnesses where they exist and are
+> otherwise `[results-first]` sketches deferred to the next version (v-proofs).** The goal is the
+> closed, usable skeleton, not yet the full proof tower.
+
+## Contents
+
+- **Part 0** — Foundations of the foundation (the commitment; injected infinities/zeros)
+- **Part 0.5** — The reader, resolution, and coarse-graining (the substrate: `A`, `G_λ`, admissible `E=Ẽ∘G_λ`, sets/functions/equality, S-layers, A8)
+- **Part I** — Retained-Distinction Logic (RDL)
+- **Part II** — The primitive `δ_R` and the genesis of number (`RD1–RD9`, `D`)
+- **Part III** — The number tower `ℤ→ℚ→ℝ` (the continuum as a readout)
+- **Part IV** — Geometry from retained difference (distance = resistance; angle = overlap)
+- **Part V** — The retained-information operator `L_R` (`B(Φ,Φ)=I(Φ)`)
+- **Part VI** — The continuum as a readout; the injected-infinity diagnosis
+- **Part VII** — Complete operator reference (`¬∧∨→↔∀∃`, `= ≠ < ≤`, `+ − × ÷ ^ √ log`); §7.0 the information language
+- **Part VIII** — Information discrete calculus (`D_ε`, `I_ε`, FTCC, series, spectral window)
+- **Part IX** — Powerful tools re-adapted (Ramanujan summation, Euler–Maclaurin, zeta reg., q-calculus, …)
+- **Part X** — Integrated extensions (pairs/products/functions from `δ_R`; cardinality; analysis; probability; geometry-from-the-graph; and reconciliations with causal-set theory, network/spectral-graph theory, Bishop, category theory, Shannon)
+- **Appendices A/B/C** — contaminated-concept table · machine-checked theorem index · axiom-dependence discipline
+
+## Using this to calculate physics (the release purpose)
+
+To compute a physical quantity in this framework: (1) declare the **resolution `λ`/`ε`** and the
+**admissible readout** `E=Ẽ∘G_λ` (Part 0.5); (2) express the quantity in the **operator language**
+(Part VII §7.0) and the **causal finite-`ε` calculus** (Part VIII: `D_ε`, `I_ε`, FTCC) — never a
+continuum primitive; (3) read spectra / mass-ratios / distances from `L_R` and Born-rule **overlap
+fractions**, not from angles or coordinates (Parts IV–V, VII); (4) if a divergent or asymptotic
+expression appears, use the **re-adapted tools of Part IX** (regularization = the finite retained
+readout), declaring the limit only after an **A8 stability** proof; (5) tier every result
+(`Th_coqc`/`finite_diagnostic`/`Dr`/`+ℝ-Open`) and refuse the continuum endpoints. The pre-write
+checklist of the companion skill enforces this.
 
 > A world-class mathematical foundation built from ONE primitive — the *retained difference* — and
 > carried, by definition-and-theorem, up to the number tower, discrete analysis, geometry, and the
@@ -841,6 +871,41 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
 - **Spectral ceiling / `τ_c` floor (Th_coqc).** a Rayleigh-quotient bound gives the spectral ceiling
   without any eigenvalue-existence theory — the exact `λ₂` (Cheeger/Fiedler) as a real number stays
   `+ℝ-Open`; use Sturm brackets for a `ℚ`-enclosure instead.
+
+## 10.11 Mined from readout_universe and readout_genesis (logic dynamics + root axioms)
+
+- **Logic as residual flow (`finite_diagnostic`, readout_universe C1–C3).** inference is a **monotone
+  descent**: under constant evidence a Lyapunov functional `V` decreases to `0` (C1: `V→8.2e-26`, 0
+  violations); a settled conclusion **revises** under an evidence flip (C2: `+1→−1`). So *proof itself
+  is a discrete gradient flow of retained distinction* — the dynamical face of Part I's logic.
+- **Vagueness / Sorites, machine-checked axiom-free (`Th_coqc`, `code/UPL_Sorites.v`, readout_universe
+  C7).** the sorites is resolved on the monotone scope without a sharp cutoff — reuse this witness for
+  the book's treatment of a "gap ≠ assertion" (Ax-RDL4): a heap-predicate is a coarse-grained readout,
+  not a knife-edge.
+- **The nine root axioms `RD1–RD9` ("the information DNA", readout_genesis PART I / readout_universe
+  v2.0).** the exact same `RD1–RD9` that generate `D` (Part II) are the shared root of both repos —
+  confirming the number tower's axioms are the canonical foundation, not this book's invention.
+- **Geometry-dominance defect bound (`finite_diagnostic`, readout_genesis).** the living-geometry mixing
+  current (`II.8a`) carries a *computable* defect bound (per-operator boundary `h_exact≈0.6827`) — a
+  concrete finite readout of "how much geometry moved", usable in Part IV/X's curvature layer.
+
+## 10.12 Reconciliation with Shannon information theory (กระทบยอด)
+
+*(Shannon 1948; Cover–Thomas 2006; Kolmogorov 1965; Chaitin 1966.)*
+- **Entropy = expected retained-distinction count (`Dr`/`Th_coqc`-elig).** `H = Σ p_i · log_2(1/p_i)`
+  is the *expected number of binary distinctions (bits)* to name one retained state — literally the
+  expectation (§10.6) of the `log` operator (§7.3). Information "is" retained distinction; entropy is
+  its retained average. **Native, not imported.**
+- **Channel = coarse-graining `G_λ`.** a noisy channel is exactly a `G_λ` that discards sub-resolution
+  distinctions; capacity = the most retained distinction that survives it.
+- **Data-processing inequality = coarse-graining monotonicity (`Th_coqc`-elig).** post-processing
+  (another admissible map through `G_λ`) can never *increase* retained distinguishability:
+  `I(X;Z) ≤ I(X;Y)` for `X→Y→Z` — a one-line consequence of `E = Ẽ∘G_λ` (composition of coarse-grainings
+  loses, never gains). This makes the DPI a theorem about admissible descriptions.
+- **Kolmogorov complexity = minimal generating record.** the complexity of a readout = the length of
+  the shortest `δ_R`-record whose self-composition (`^`, §7.3) regenerates it — the same "generator
+  readout" as `√`/`log`, now on programs. Randomness = a record with no shorter generator (a
+  non-compressible retained distinction).
 
 ## 10.9 The honest Open frontier (`+ℝ-Open` / `Dr` — named, not hidden)
 
