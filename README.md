@@ -35,7 +35,8 @@ mesh, or reference value supplied — and reports a tier-honest `ACCEPT`/`HOLD` 
 **The comparison is designed to be credible, not self-serving** — the chart computes its own winner
 from the data (if a competitor were faster, it would say so), and the run emits three independent
 verdicts so speed never covers for incorrectness. Numbers below are the **recorded run on this host**
-(single medians; 95% confidence intervals are tracked as future work):
+(medians shown here; the **95% bootstrap CI** is recorded in the JSON, used to decide the speed
+verdict, and plotted per-case in the detail forest plot):
 
 **Primary same-work claim** — lowest _k_ eigenvalues of the *identical* symmetric tridiagonal matrix to
 the declared tolerance, native vs SciPy's requested-only LAPACK route:

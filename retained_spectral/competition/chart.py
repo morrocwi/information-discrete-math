@@ -390,8 +390,13 @@ def render_detail(data: dict, output_path: Path) -> Path:
             ax.spines[s].set_visible(False)
         ax.tick_params(length=0)
 
-    ci_note = "95% bootstrap CI, 4000 resamples, recorded seed" if any_ci \
-        else "CI unavailable (need ≥2 repeats)"
+    # read the resample count + seed from the record itself, so the caption never drifts from what
+    # actually produced the intervals.
+    _ci_meta = next((e2e[n].get("scipy_speedup_over_native", {}) for n in names
+                     if e2e[n].get("scipy_speedup_over_native", {}).get("resamples")), {})
+    _res, _seed = _ci_meta.get("resamples"), _ci_meta.get("seed")
+    ci_note = (f"95% bootstrap CI, {_res:,} resamples, seed {_seed}" if any_ci and _res
+               else "95% bootstrap CI" if any_ci else "CI unavailable (need ≥2 repeats)")
     fig.text(
         0.055, 0.03,
         f"Left: {ci_note} — a native win needs the whole interval right of 1×.  "
