@@ -26,31 +26,40 @@ mesh, or reference value supplied — and reports a tier-honest `ACCEPT`/`HOLD` 
 
 <div align="center">
 
-<img src="assets/retained_spectral_hero.png" alt="Same operator, only the eigensolver changes: native Retained Multilevel Sturm is 1.6× faster than SciPy's LAPACK tridiagonal solver and ~1,963× faster than JAX's dense route" width="820">
+<img src="assets/retained_spectral_hero.png" alt="Same operator, every standard eigensolver — lower is faster: native Retained Multilevel Sturm solves in 0.35 ms, 1.6x faster than SciPy eigh_tridiagonal and 144-2796x faster than SciPy eigh, SciPy eigsh/ARPACK, JAX eigvalsh and NumPy eigvalsh" width="900">
+
+**[▶ Reproduce it in one click (Google Colab)](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)** — installs, runs, and redraws the chart on a fresh machine.
 
 </div>
 
-**The comparison is designed to be credible, not self-serving.** Every solver receives the *identical*
-native-built operator; only the eigensolver differs, and all use each library's own standard API — so
-anyone can rerun it:
+**The comparison is designed to be credible, not self-serving.** Every eigensolver receives the
+*identical* native-built operator; only the solve kernel differs, and each uses its own standard API —
+so anyone can rerun it. **Lower is faster** — the native bar is the shortest:
 
-- **1.6× faster** than SciPy's `eigh_tridiagonal` (both requested-only, LAPACK) and **~1,963× faster**
-  than JAX's dense `eigvalsh`, on the same matrix — **eigenvalues cross-checked identical**.
+- vs **SciPy `eigh_tridiagonal`** (LAPACK tridiagonal, requested-only): **1.6× faster**.
+- vs the dense / iterative routes — **SciPy `eigh`**, **NumPy `eigvalsh`**, **SciPy `eigsh` (ARPACK)**,
+  **JAX `eigvalsh`**: **144–2,796× faster** (they solve the whole spectrum / iterate; native reads only
+  the requested modes). **Every solver that converges returns the same eigenvalues — cross-checked
+  identical** (a non-converging run, e.g. ARPACK on one case, is disclosed, never scored as agreement).
+- End-to-end from raw input, the native pipeline also beats an independent SciPy pipeline **7 / 7,
+  3.56× geomean**.
 - **7 / 7** targets (harmonic, displaced, squeezed ω=16, Pöschl–Teller, Morse, factorized sextic, pure
   quartic) hit **published/analytic eigenvalues** within tolerance — external truth, not a self-graded
   score. `finite_diagnostic` tier: a discrete rational-readout agreement-and-cost claim, **not** a
-  continuum-limit proof or an empirical-physics claim.
+  continuum-limit proof or an empirical-physics claim. (Dense-route time depends on the linked BLAS/LAPACK.)
 
 ```bash
 pip install "information-discrete-math[spectral-bench] @ git+https://github.com/morrocwi/information-discrete-math"
 python3 -c "import retained_spectral as rs; print(rs.solve(rs.examples()['harmonic_low4']).values)"  # (0.5, 1.5, 2.5, 3.5)
 python3 -m retained_spectral.competition.run     # regenerate the results JSON on YOUR machine
-python3 -m retained_spectral.competition.chart    # redraw the chart above from that JSON
+python3 -m retained_spectral.competition.chart    # redraw the charts above from that JSON
 ```
 
-→ **Product & API:** [`retained_spectral/`](retained_spectral/) · **reproducible results:**
-[`retained_spectral/results/competition_results.json`](retained_spectral/results/competition_results.json)
-· **per-case detail:** [`assets/retained_spectral_detail.png`](assets/retained_spectral_detail.png)
+→ **Reproduce (Colab):** [reproduce.ipynb](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)
+· **Product & API:** [`retained_spectral/`](retained_spectral/) · **run script:**
+[`competition/run.py`](retained_spectral/competition/run.py) · **reproducible results:**
+[`competition_results.json`](retained_spectral/results/competition_results.json) · **per-case detail:**
+[`assets/retained_spectral_detail.png`](assets/retained_spectral_detail.png)
 
 ---
 

@@ -32,5 +32,8 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["idm", "retained_spectral", "retained_spectral.competition"]
 
+[tool.setuptools.package-data]
+retained_spectral = ["results/*.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

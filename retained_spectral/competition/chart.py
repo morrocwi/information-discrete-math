@@ -3,12 +3,13 @@
 
 Dark-theme figures drawn only from measured numbers in the JSON record:
 
-* ``retained_spectral_hero.png`` — one clear comparison: throughput
-  (solves per second, higher is better) on one identical operator, native
-  Retained Multilevel Sturm against the standard ``scipy.linalg.eigh_tridiagonal``
-  and ``jax.numpy.linalg.eigvalsh`` calls; the native bar is highlighted.
-* ``retained_spectral_detail.png`` — per-case breakdown: same-operator speedup
-  and end-to-end wall-clock.
+* ``retained_spectral_hero.png`` — one clear comparison: median solve time
+  (milliseconds, log scale, lower is faster) on one identical operator, native
+  Retained Multilevel Sturm against every standard eigensolver in the audit
+  (SciPy ``eigh_tridiagonal``/``eigh``, NumPy ``eigvalsh``, SciPy ``eigsh``/ARPACK,
+  JAX ``eigvalsh``); the native bar is the shortest and is highlighted ★.
+* ``retained_spectral_detail.png`` — per-case breakdown: every solver's
+  times-slower-than-native and the end-to-end wall-clock.
 
 Usage::
 
@@ -164,69 +165,97 @@ def render_hero(data: dict, output_path: Path) -> Path:
 
     audit = data["executor_audit"]["cases"]
     names = list(audit.keys())
-    have_jax = all(audit[n].get("jax_hot_median_seconds") for n in names)
 
-    # geometric-mean throughput (solves/sec) across the 7 identical-operator cases
-    native_tput = _geomean([1.0 / audit[n]["native_hot_median_seconds"] for n in names])
-    scipy_tput = _geomean([1.0 / audit[n]["scipy_hot_median_seconds"] for n in names])
-    entries = [("Retained\nMultilevel Sturm", native_tput, NATIVE, True)]
-    entries.append(("SciPy\neigh_tridiagonal", scipy_tput, SCIPY, False))
-    if have_jax:
-        jax_tput = _geomean([1.0 / audit[n]["jax_hot_median_seconds"] for n in names])
-        entries.append(("JAX\neigvalsh (dense)", jax_tput, JAX, False))
+    # geometric-mean SOLVE TIME (ms) across the identical-operator cases —
+    # lower is faster, so the native bar is the shortest.
+    native_ms = _geomean([audit[n]["native_hot_median_seconds"] for n in names]) * 1e3
+    solver_names = list(audit[names[0]]["solvers"].keys())
+    comp: list[tuple[str, float]] = []
+    for s in solver_names:
+        times = [
+            audit[n]["solvers"][s]["hot_median_seconds"]
+            for n in names
+            if "hot_median_seconds" in audit[n]["solvers"][s]
+        ]
+        if times:
+            comp.append((s, _geomean(times) * 1e3))
+    comp.sort(key=lambda t: t[1])  # fastest competitor first
+
+    palette = {
+        "SciPy eigh_tridiagonal": "#58A6FF",
+        "SciPy eigsh (ARPACK)": "#3FB0AC",
+        "SciPy eigh (dense)": "#BC8CFF",
+        "NumPy eigvalsh (dense)": "#E3A857",
+        "JAX eigvalsh (dense)": "#F778BA",
+    }
+    short = {
+        "SciPy eigh_tridiagonal": "SciPy\neigh_tridiagonal",
+        "SciPy eigsh (ARPACK)": "SciPy eigsh\n(ARPACK)",
+        "SciPy eigh (dense)": "SciPy eigh\n(dense)",
+        "NumPy eigvalsh (dense)": "NumPy\neigvalsh",
+        "JAX eigvalsh (dense)": "JAX\neigvalsh",
+    }
+    entries = [("Retained\nMultilevel Sturm", native_ms, NATIVE, True)]
+    for s, ms in comp:
+        entries.append((short.get(s, s), ms, palette.get(s, MUTED), False))
 
     labels = [e[0] for e in entries]
     values = [e[1] for e in entries]
     colors = [e[2] for e in entries]
 
-    fig, ax = plt.subplots(figsize=(10.0, 6.4))
-    fig.subplots_adjust(left=0.10, right=0.96, top=0.71, bottom=0.19)
+    fig, ax = plt.subplots(figsize=(12.4, 6.6))
+    fig.subplots_adjust(left=0.09, right=0.975, top=0.70, bottom=0.17)
     x = np.arange(len(entries))
-    bars = ax.bar(x, values, width=0.62, color=colors, zorder=3)
+    bars = ax.bar(x, values, width=0.66, color=colors, zorder=3)
 
     ax.set_yscale("log")
-    ax.set_ylabel("solves per second on one identical operator  (log, higher is better)",
-                  fontsize=10.5)
+    ax.set_ylabel("median solve time, ms   (log — lower is faster ↓)", fontsize=11)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, fontsize=11.5, color=TEXT)
+    ax.set_xticklabels(labels, fontsize=10.5, color=TEXT)
     ax.grid(axis="y", color=GRID, lw=0.9, zorder=0)
     ax.set_axisbelow(True)
     for s in ("top", "right", "left"):
         ax.spines[s].set_visible(False)
     ax.tick_params(length=0)
 
-    top = max(values)
+    hi = max(values)
     for i, (bar, val) in enumerate(zip(bars, values)):
         cx = bar.get_x() + bar.get_width() / 2
-        ax.text(cx, val * 1.25, f"{val:,.0f}/s", ha="center", va="bottom",
-                fontsize=14, fontweight="bold", color=TEXT)
+        label = f"{val:.2f} ms" if val < 10 else f"{val:,.0f} ms"
+        ax.text(cx, val * 1.4, label, ha="center", va="bottom",
+                fontsize=12, fontweight="bold", color=TEXT)
         if i == 0:
-            ax.text(cx, val * 2.6, "★  fastest", ha="center", va="bottom",
+            ax.text(cx, val * 5.5, "★ fastest", ha="center", va="bottom",
                     fontsize=13, fontweight="bold", color=GOLD)
         else:
-            factor = values[0] / val
-            tag = f"{factor:,.0f}× slower" if factor >= 100 else f"{factor:.1f}× slower"
-            ax.text(cx, val * 2.6, tag, ha="center", va="bottom",
-                    fontsize=11, color=MUTED)
-    ax.set_ylim(top=top * 7.0)
+            factor = val / values[0]
+            tag = f"{factor:,.0f}× slower" if factor >= 10 else f"{factor:.1f}× slower"
+            ax.text(cx, val * 5.5, tag, ha="center", va="bottom",
+                    fontsize=10.5, color=MUTED)
+    ax.set_ylim(top=hi * 30.0)
 
     env = data["environment"]
     fig.suptitle(
-        "Same operator — only the eigensolver changes",
-        x=0.10, y=0.95, ha="left", fontsize=19, fontweight="bold", color=TEXT,
+        "Same operator, every standard eigensolver — lower is faster",
+        x=0.09, y=0.955, ha="left", fontsize=18, fontweight="bold", color=TEXT,
     )
-    sg = values[0] / values[1]
-    line1 = f"Native Retained Multilevel Sturm is {sg:.1f}× faster than SciPy's LAPACK tridiagonal solver"
-    if have_jax:
-        line1 += f" and {values[0] / values[-1]:,.0f}× faster than JAX."
+    tri = next((ms for s, ms in comp if s == "SciPy eigh_tridiagonal"), None)
+    if tri:
+        line1 = (f"Native Retained Multilevel Sturm solves in {native_ms:.2f} ms — "
+                 f"{tri / native_ms:.1f}× faster than SciPy's LAPACK tridiagonal solver.")
     else:
-        line1 += "."
-    line2 = "Same eigenvalues (cross-checked), on the identical native-built matrix."
-    fig.text(0.10, 0.855, line1, ha="left", fontsize=10.5, color=MUTED)
-    fig.text(0.10, 0.815, line2, ha="left", fontsize=10.5, color=MUTED)
+        line1 = f"Native Retained Multilevel Sturm solves in {native_ms:.2f} ms."
+    slow = [ms / native_ms for s, ms in comp if "dense" in s or "ARPACK" in s]
+    line2 = ""
+    if slow:
+        line2 = (f"{min(slow):,.0f}–{max(slow):,.0f}× faster than every dense / iterative route — "
+                 "same eigenvalues (cross-checked), identical matrix.")
+    fig.text(0.09, 0.850, line1, ha="left", fontsize=10.5, color=MUTED)
+    fig.text(0.09, 0.808, line2, ha="left", fontsize=10.5, color=MUTED)
     fig.text(
-        0.10, 0.025,
-        f"7/7 cases hit published/analytic eigenvalues within tolerance  ·  finite_diagnostic tier\n"
+        0.09, 0.015,
+        f"7/7 hit published/analytic eigenvalues within tolerance  ·  finite_diagnostic tier  ·  "
+        f"dense-route time depends on the linked BLAS/LAPACK\n"
         f"measured on this host — numpy {env['numpy']}, scipy {env['scipy']}, "
         f"jax {env['jax']}, numba {env['numba']}",
         ha="left", fontsize=8.5, color=MUTED,
@@ -251,38 +280,40 @@ def render_detail(data: dict, output_path: Path) -> Path:
     labels = [_SHORT.get(n, n) for n in names]
     x = np.arange(len(names))
 
-    scipy_ratio = [audit[n]["scipy_to_native_time_ratio"] for n in names]
-    jax_ratio = [audit[n].get("jax_to_native_time_ratio") for n in names]
-    have_jax = all(r is not None for r in jax_ratio)
+    # every competitor's per-case ×slower-than-native factor
+    palette = {
+        "SciPy eigh_tridiagonal": "#58A6FF",
+        "SciPy eigsh (ARPACK)": "#3FB0AC",
+        "SciPy eigh (dense)": "#BC8CFF",
+        "NumPy eigvalsh (dense)": "#E3A857",
+        "JAX eigvalsh (dense)": "#F778BA",
+    }
+    solver_names = [s for s in audit[names[0]]["solvers"] if s in palette]
     native_ms = [e2e[n]["native"]["hot_median_seconds"] * 1e3 for n in names]
     scipy_ms = [e2e[n]["scipy"]["hot_median_seconds"] * 1e3 for n in names]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13.6, 5.4))
-    fig.subplots_adjust(left=0.06, right=0.985, top=0.83, bottom=0.20, wspace=0.19)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14.4, 5.6))
+    fig.subplots_adjust(left=0.055, right=0.985, top=0.82, bottom=0.22, wspace=0.17)
     summ = data["end_to_end"]["summary"]
 
     fig.suptitle(
         "Per-case detail",
-        x=0.06,
-        y=0.95,
-        ha="left",
-        fontsize=15,
-        fontweight="bold",
-        color=TEXT,
+        x=0.055, y=0.95, ha="left", fontsize=15, fontweight="bold", color=TEXT,
     )
 
-    w = 0.4
-    if have_jax:
-        ax1.bar(x - w / 2, scipy_ratio, w, color=SCIPY, label="vs SciPy eigh_tridiagonal", zorder=3)
-        ax1.bar(x + w / 2, jax_ratio, w, color=JAX, label="vs JAX eigvalsh (dense)", zorder=3)
-    else:
-        ax1.bar(x, scipy_ratio, 0.55, color=SCIPY, label="vs SciPy eigh_tridiagonal", zorder=3)
+    m = len(solver_names)
+    bw = 0.8 / m
+    for j, s in enumerate(solver_names):
+        ratios = [audit[n]["solvers"][s].get("to_native_time_ratio", np.nan) for n in names]
+        ax1.bar(x + (j - (m - 1) / 2) * bw, ratios, bw, color=palette[s],
+                label=s, zorder=3)
     ax1.axhline(1.0, color=NATIVE, lw=2.2, zorder=2)
-    ax1.text(len(names) - 0.5, 1.05, "native = 1×", va="bottom", ha="right",
+    ax1.text(len(names) - 0.5, 1.08, "native = 1×", va="bottom", ha="right",
              color=NATIVE, fontsize=9.5, fontweight="bold")
     ax1.set_yscale("log")
-    ax1.set_ylabel("times faster than native  (log)", fontsize=10)
-    ax1.set_title("Same-operator executor audit", loc="left", fontsize=12, color=TEXT, fontweight="bold")
+    ax1.set_ylabel("times slower than native  (log)", fontsize=10)
+    ax1.set_title("Same-operator executor audit — all solvers", loc="left",
+                  fontsize=12, color=TEXT, fontweight="bold")
 
     w2 = 0.4
     ax2.bar(x - w2 / 2, native_ms, w2, color=NATIVE, label="native RMS", zorder=3)

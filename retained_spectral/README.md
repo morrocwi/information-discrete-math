@@ -5,6 +5,8 @@
 **A ready-to-use, readout-first solver for 1-D Schrödinger spectra.** _Part of
 [Information Discrete Mathematics](../README.md) by Yaoharee Lahtee._
 
+**[▶ Reproduce the competition in one click (Google Colab)](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)**
+
 </div>
 
 ---
@@ -75,10 +77,12 @@ python3 -m pytest tests/test_retained_spectral.py -q
 
 Two independent measurements are recorded:
 
-1. **Same-operator executor audit** *(the credible comparison)* — native, `scipy.linalg.eigh_tridiagonal`,
-   and `jax.numpy.linalg.eigvalsh` all solve one **identical** native-built operator. Only the solve
-   kernel differs; eigenvalues are cross-checked. This isolates the solver and removes any "the
-   competitor was handicapped" objection.
+1. **Same-operator executor audit** *(the credible comparison)* — native and every standard eigensolver
+   solve one **identical** native-built operator: `scipy.linalg.eigh_tridiagonal`, `scipy.linalg.eigh`
+   (dense), `numpy.linalg.eigvalsh` (dense), `scipy.sparse.linalg.eigsh` (ARPACK), and
+   `jax.numpy.linalg.eigvalsh` (dense). Only the solve kernel differs; eigenvalues are cross-checked.
+   This isolates the solver and removes any "the competitor was handicapped" objection. (Dense-route
+   wall-clock depends on the linked BLAS/LAPACK backend.)
 2. **End-to-end independent pipelines** *(full disclosure)* — the native pipeline and an independent
    SciPy pipeline each receive the same raw input and own their entire schedule. The SciPy competitor
    here is **our own construction**, so it is reported as supplementary, not as the headline.
