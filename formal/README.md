@@ -5,7 +5,7 @@ of the `Th_coqc` corpus is external: `research_universal_solver`, `readout_genes
 
 ## Reproduce
 
-**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 55 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
+**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 127 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
 
 ### Manual
 
@@ -58,5 +58,15 @@ rm -f _chk.v *.vo *.glob *.vos *.vok
 | `Deps_sum`/`Deps_product` (`IDM_Calculus.v`) | §10.5 | the ε-form (ε cancels exactly) |
 | `FTCC_telescope`/`summation_by_parts` (`IDM_Calculus.v`) | §8.2 | exact discrete FTC + integration by parts |
 | `FTCC_exact` / `FTCC_eps_exact` (`IDM_Bridge.v`) | §20.2 | continuum-maya exact core: `I_ε(D_ε f)=f[N]−f[0]` (zero residue) |
+| `bit_extraction_exact` / `profile_injective` (`IDM_DeclarationBound.v`) | Declaration Bound | Sturm profile `i↦i+b_i` recovers every bit; distinct strings ⇒ distinct profiles (irreducible fooling family) |
+| `bcube_length` / `bcube_nodup` (`IDM_DeclarationBound.v`) | Declaration Bound | the n-bit cube has exactly `2ⁿ` distinct strings (counting backbone) |
+| `deferred_record_bits` (`IDM_DeclarationBound.v`) | Declaration Bound | **deferred lower bound**: any scheme keeping a distinct record per n-bit string must retain `≥ n` bits for some string (pigeonhole over the `<2ⁿ` short records) — Θ(n) |
+| `declared_forgets_tail` / `declaration_separation` (`IDM_DeclarationBound.v`) | Declaration Bound | declared regime depends only on the prefix up to the threshold ⇒ single accumulator, Θ(1); the separation deferred-Θ(n) vs declared-Θ(1) |
 
 All checked axiom-free under Coq 8.20 (`Print Assumptions` = *Closed under the global context*).
+
+The **Declaration Bound** row-set formalises the finite combinatorial core of the retained-state
+separation (a Sturm threshold query costs Θ(1) retained state when *declared in advance* but Θ(n)
+when *deferred*). The one spectral ingredient (the fooling family's Sturm count equals `i+b_i`) is
+verified numerically in [`demos/verify_declaration_bound.py`](../demos/verify_declaration_bound.py),
+not re-derived in Coq — an honest fence, stated in the file header.
