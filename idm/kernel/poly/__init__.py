@@ -13,10 +13,13 @@ from .univariate import (
     UPoly, add, mul, divmod_, gcd, factor, derivative, cancel, resultant, discriminant,
     sturm_chain, count_real_roots, isolate_real_roots, square_free_factorization,
 )
+from .partial_fractions import PartialFraction, apart, together, extended_gcd
+from .summation import gosper_sum
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
     "UPoly", "add", "mul", "divmod_", "gcd", "factor",
     "derivative", "cancel", "resultant", "discriminant",
     "sturm_chain", "count_real_roots", "isolate_real_roots", "square_free_factorization",
+    "PartialFraction", "apart", "together", "extended_gcd", "gosper_sum",
 ]
