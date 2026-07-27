@@ -236,6 +236,22 @@ def _rlim(p):
             "value": {"limit_type": r.status, "limit": _norm(r.value), "sign": r.sign,
                       "removable": r.removable},
             "method": "exact ℚ rational-function limit (cancel + degree/pole analysis)"}
+@kind("linear_ode", "exact")
+def _lode(p):
+    # CAS-grade EXACT general solution of a linear constant-coefficient homogeneous ODE
+    # Σ coeffs[i]·y^(i) = 0, from the characteristic polynomial factored exactly over ℚ. HOLDs
+    # honestly on an irreducible degree-≥3 characteristic factor (roots not in radicals).
+    from idm.kernel.poly.ode_linear import solve_linear_ode
+    try:
+        sol = solve_linear_ode(p["coeffs"])
+    except (KeyError, ValueError, TypeError, ZeroDivisionError) as e:
+        return {"kind": "linear_ode", "status": "HOLD", "reason": str(e),
+                "method": "exact ℚ characteristic polynomial"}
+    return {"kind": "linear_ode", "status": "ok" if sol.status == "solved" else "HOLD",
+            "value": {"solution_status": sol.status, "order": sol.order, "general": sol.general,
+                      "basis": sol.basis, "unresolved": sol.unresolved},
+            "method": "exact ℚ characteristic polynomial (factor over ℚ → root-type basis)",
+            **({} if sol.status == "solved" else {"reason": "; ".join(sol.unresolved)})}
 @kind("char_poly", "Th_coqc")
 def _cp(p): return _ok("char_poly", AN.char_poly(p["matrix"]), "Faddeev–LeVerrier (exact ℚ)")
 @kind("eigenvalues")

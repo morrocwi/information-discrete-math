@@ -22,6 +22,7 @@ from .matrix_minpoly import minimal_polynomial, eval_poly_at_matrix
 from .factorize import factor_over_Q
 from .linsolve import LinearSolution, rref, linear_solve, matvec
 from .limits import LimitResult, rational_limit, rational_limit_oneside
+from .ode_linear import ODESolution, solve_linear_ode
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
@@ -34,4 +35,5 @@ __all__ = [
     "minimal_polynomial", "eval_poly_at_matrix", "factor_over_Q",
     "LinearSolution", "rref", "linear_solve", "matvec",
     "LimitResult", "rational_limit", "rational_limit_oneside",
+    "ODESolution", "solve_linear_ode",
 ]
