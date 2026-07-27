@@ -148,5 +148,59 @@ def test_factor_needs_a_field():
         P.factor(P.UPoly([-1, 0, 1], P.ZRing()))
 
 
+# ------------------------------------------------------------------ cancel / resultant / discriminant
+def test_cancel_reduces_to_lowest_terms():
+    Qr = P.QRing()
+    # (x^2-1)/(x-1) = (x+1)/1
+    num = P.UPoly([-1, 0, 1], Qr)
+    den = P.UPoly([-1, 1], Qr)
+    r = P.cancel(num, den)
+    assert r["num"].coeffs == [Q(1), Q(1)]        # x + 1
+    assert r["den"].coeffs == [Q(1)]              # 1
+    # cross-multiplication identity: reduced_num * den == reduced_den * num
+    assert P.mul(r["num"], den) == P.mul(r["den"], num)
+
+
+def test_cancel_shared_quadratic_factor():
+    Qr = P.QRing()
+    # ((x-1)(x-2)) / ((x-1)(x-3)) -> (x-2)/(x-3)
+    num = P.mul(P.UPoly([-1, 1], Qr), P.UPoly([-2, 1], Qr))
+    den = P.mul(P.UPoly([-1, 1], Qr), P.UPoly([-3, 1], Qr))
+    r = P.cancel(num, den)
+    assert P.mul(r["num"], den) == P.mul(r["den"], num)   # exact cross-multiply
+    assert r["common"].coeffs == [Q(-1), Q(1)]            # gcd = x - 1
+
+
+def test_resultant_zero_iff_common_root():
+    Qr = P.QRing()
+    a = P.mul(P.UPoly([-1, 1], Qr), P.UPoly([-2, 1], Qr))   # (x-1)(x-2)
+    shared = P.UPoly([-2, 1], Qr)                            # x-2 (shares root 2)
+    coprime = P.UPoly([-3, 1], Qr)                           # x-3 (no shared root)
+    assert P.resultant(a, shared) == Q(0)
+    assert P.resultant(a, coprime) != Q(0)
+    # res(x-1, x-2) = -1 (known value)
+    assert P.resultant(P.UPoly([-1, 1], Qr), P.UPoly([-2, 1], Qr)) == Q(-1)
+
+
+def test_discriminant_matches_b2_minus_4ac():
+    Qr = P.QRing()
+    # x^2 - 5x + 6 : disc = 25 - 24 = 1
+    assert P.discriminant(P.UPoly([6, -5, 1], Qr)) == Q(1)
+    # x^2 - 2 : disc = 8
+    assert P.discriminant(P.UPoly([-2, 0, 1], Qr)) == Q(8)
+    # x^2 + 1 : disc = -4  (negative -> no real roots, matches P1.5)
+    assert P.discriminant(P.UPoly([1, 0, 1], Qr)) == Q(-4)
+    # general 2x^2+3x+5: b^2-4ac = 9-40 = -31
+    assert P.discriminant(P.UPoly([5, 3, 2], Qr)) == Q(-31)
+
+
+def test_resultant_needs_field_and_positive_degree():
+    Qr = P.QRing()
+    with pytest.raises(ValueError):
+        P.resultant(P.UPoly([1, 1], P.ZRing()), P.UPoly([1, 1], P.ZRing()))
+    with pytest.raises(ValueError):
+        P.resultant(P.UPoly([5], Qr), P.UPoly([1, 1], Qr))     # degree 0
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
