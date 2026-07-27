@@ -246,5 +246,48 @@ def test_sturm_needs_ordered_field():
         P.sturm_chain(P.UPoly([1, 1], P.GFRing(5)))   # GF(p) is not ordered
 
 
+# ------------------------------------------------------------------ square-free factorization (P2)
+def _pow(g, n):
+    r = P.UPoly([Q(1)], P.QRing())
+    for _ in range(n):
+        r = P.mul(r, g)
+    return r
+
+
+def _reconstruct(lead, factors):
+    r = P.UPoly([lead], P.QRing())
+    for g, i in factors:
+        r = P.mul(r, _pow(g, i))
+    return r
+
+
+def test_square_free_factorization_exposes_multiplicities():
+    x_1, x_2 = _poly([-1, 1]), _poly([-2, 1])          # (x-1), (x-2)
+    p = P.mul(_pow(x_1, 2), _pow(x_2, 3))              # (x-1)^2 (x-2)^3
+    lead, factors = P.square_free_factorization(p)
+    assert lead == Q(1)
+    assert {(tuple(g.coeffs), i) for g, i in factors} == {
+        ((Q(-1), Q(1)), 2), ((Q(-2), Q(1)), 3)}
+    assert _reconstruct(lead, factors) == p            # lead · ∏ g_i^i rebuilds p exactly
+
+
+def test_square_free_factorization_keeps_leading_coefficient():
+    p = P.UPoly([Q(3), Q(-6), Q(3)], P.QRing())        # 3(x-1)^2
+    lead, factors = P.square_free_factorization(p)
+    assert lead == Q(3)
+    assert [(tuple(g.coeffs), i) for g, i in factors] == [((Q(-1), Q(1)), 2)]
+    assert _reconstruct(lead, factors) == p
+
+
+def test_square_free_polynomial_has_one_factor_of_multiplicity_one():
+    p = _poly([-2, 0, 1])                              # x^2 - 2, already square-free
+    lead, factors = P.square_free_factorization(p)
+    assert [i for _, i in factors] == [1]
+    assert _reconstruct(lead, factors) == p
+    # each square-free factor is genuinely square-free: gcd(g, g') is a unit
+    for g, _ in factors:
+        assert P.gcd(g, P.derivative(g)).degree() == 0
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
