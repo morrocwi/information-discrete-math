@@ -56,6 +56,15 @@ the declared tolerance, native vs SciPy's requested-only LAPACK route:
 > Correctness (the tolerance and the three credibility layers) does **not** depend on Numba — only the
 > wall-clock claim does, so correctness paths never trip the guard.
 
+**Also — the strongest same-work peer, LAPACK MRRR (`dstemr`).** MRRR is the state-of-the-art
+requested-only tridiagonal driver, so it is the fairest possible comparison. It is timed **through
+`ctypes` with `jobz='N'`** (`retained_spectral.competition.mrrr` / `bench_mrrr`), because SciPy's f2py
+MRRR wrapper declares a dense `(n,n)` eigenvector array and **allocates ~74.5 GiB at n=100,000 even
+with `jobz='N'`** — a SciPy-wrapped MRRR timing measures that doomed allocation, not the solver, and is
+invalid. Against the honest ctypes MRRR the native kernel is **~3.8–4.9× faster** (n = 20k–400k,
+k = 4–1024). It is an optional comparator, never a credibility gate (a host without a resolvable BLAS
+`dstemr` simply skips it).
+
 **Supplementary — alternative standard routes on the same finite operator** (they compute the *whole*
 spectrum / iterate, i.e. **not the same work**): SciPy `eigh`, NumPy `eigvalsh`, SciPy `eigsh` (ARPACK),
 JAX `eigvalsh` run **~150–1,900× slower**. Shown for completeness, not as the headline.
