@@ -1,0 +1,3889 @@
+{
+ "Ci": {
+  "kind": "Ci",
+  "method": "finite series/recurrence \u2014 Ci",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.33740392290096865549591753327",
+   "float": 0.33740392290096866
+  }
+ },
+ "E1": {
+  "kind": "E1",
+  "method": "finite series/recurrence \u2014 E1",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.21938393439551975284389244608",
+   "float": 0.21938393439551976
+  }
+ },
+ "Ei": {
+  "kind": "Ei",
+  "method": "finite series/recurrence \u2014 Ei",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.89511781635593727629979226371",
+   "float": 1.8951178163559372
+  }
+ },
+ "L2_readout": {
+  "N": 3,
+  "approximant": {
+   "nodes": 3,
+   "quadrature_\u03a3 w\u1d62|f(x\u1d62)|\u00b2": {
+    "exact": "1",
+    "float": 1.0
+   }
+  },
+  "kind": "L2_readout",
+  "note": "the completed L\u00b2 space / the exact integral is +\u211d-Open; only a finite mesh sum is shown",
+  "status": "+R_OPEN",
+  "target": "\u2016f\u2016\u00b2_{L\u00b2(X,\u03bc)} = \u222b|f|\u00b2 d\u03bc",
+  "tier": "+\u211d-Open"
+ },
+ "Si": {
+  "kind": "Si",
+  "method": "finite series/recurrence \u2014 Si",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.946083070367183014941353313823",
+   "float": 0.946083070367183
+  }
+ },
+ "adjoint": {
+  "kind": "adjoint",
+  "method": "M*=conj(M)\u1d40, exact",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "2",
+     "float": 2.0
+    },
+    {
+     "float": [
+      0.0,
+      1.0
+     ],
+     "im": "1",
+     "re": "0"
+    }
+   ],
+   [
+    {
+     "float": [
+      0.0,
+      -1.0
+     ],
+     "im": "-1",
+     "re": "0"
+    },
+    {
+     "exact": "3",
+     "float": 3.0
+    }
+   ]
+  ]
+ },
+ "airy_Ai": {
+  "kind": "airy_Ai",
+  "method": "finite series/recurrence \u2014 airy_Ai",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.135292416385008066744910852449",
+   "float": 0.13529241638500808
+  }
+ },
+ "arc_length": {
+  "kind": "arc_length",
+  "method": "\u222b\u221a(1+f'\u00b2) finite quadrature",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.47894283891069755611101367553",
+   "float": 1.4789428389106976
+  }
+ },
+ "argument_principle": {
+  "kind": "argument_principle",
+  "method": "(1/2\u03c0i)\u222e f'/f = #zeros\u2212#poles",
+  "status": "ok",
+  "tier": "exact",
+  "value": 1
+ },
+ "assignment": {
+  "kind": "assignment",
+  "method": "Hungarian algorithm (exact \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "assignment": [
+    0,
+    1
+   ],
+   "cost": {
+    "exact": "5/1",
+    "float": 5.0
+   }
+  }
+ },
+ "base_convert": {
+  "kind": "base_convert",
+  "method": "positional expansion",
+  "status": "ok",
+  "tier": "exact",
+  "value": "ff"
+ },
+ "bayes_update": {
+  "kind": "bayes_update",
+  "method": "exact rational Bayes renormalization",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "evidence": {
+    "exact": "1/2",
+    "float": 0.5
+   },
+   "posterior": [
+    {
+     "exact": "9/10",
+     "float": 0.9
+    },
+    {
+     "exact": "1/10",
+     "float": 0.1
+    }
+   ]
+  }
+ },
+ "bell": {
+  "kind": "bell",
+  "method": "\u03a3 Stirling2",
+  "status": "ok",
+  "tier": "exact",
+  "value": 52
+ },
+ "bellman_ford": {
+  "kind": "bellman_ford",
+  "method": "Bellman\u2013Ford (neg-cycle aware)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "distances": [
+    0,
+    2,
+    5
+   ],
+   "negative_cycle": false
+  }
+ },
+ "bernoulli": {
+  "kind": "bernoulli",
+  "method": "finite recurrence \u03a3C(m+1,k)B_k=0",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "1/42",
+   "float": 0.023809523809523808
+  }
+ },
+ "bessel_I": {
+  "kind": "bessel_I",
+  "method": "finite series/recurrence \u2014 bessel_I",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.26606587775200833559824462521",
+   "float": 1.2660658777520084
+  }
+ },
+ "bessel_J": {
+  "kind": "bessel_J",
+  "method": "finite series/recurrence \u2014 bessel_J",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.765197686557966551449717526103",
+   "float": 0.7651976865579666
+  }
+ },
+ "beta": {
+  "kind": "beta",
+  "method": "finite series/recurrence \u2014 beta",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.0833333333333277777711640211651",
+   "float": 0.08333333333332778
+  }
+ },
+ "bezout": {
+  "kind": "bezout",
+  "method": "extended Euclid (a\u00b7x+b\u00b7y=g)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "gcd": 2,
+   "x": -9,
+   "y": 47
+  }
+ },
+ "binomial": {
+  "kind": "binomial",
+  "method": "exact binomial pmf/cdf over \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "cdf": {
+    "exact": "11/64",
+    "float": 0.171875
+   },
+   "mean": {
+    "exact": "5/1",
+    "float": 5.0
+   },
+   "pmf": {
+    "exact": "15/128",
+    "float": 0.1171875
+   },
+   "variance": {
+    "exact": "5/2",
+    "float": 2.5
+   }
+  }
+ },
+ "bipartite_matching": {
+  "kind": "bipartite_matching",
+  "method": "augmenting-path matching",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "pairs": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "size": 2
+  }
+ },
+ "catalan": {
+  "kind": "catalan",
+  "method": "C(2n,n)/(n+1)",
+  "status": "ok",
+  "tier": "exact",
+  "value": 16796
+ },
+ "cauchy_schwarz_check": {
+  "kind": "cauchy_schwarz_check",
+  "method": "exact \u211a comparison |\u27e8u,v\u27e9|\u00b2 \u2264 \u27e8u,u\u27e9\u27e8v,v\u27e9",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "holds": true,
+   "lhs": "121",
+   "rhs": "125"
+  }
+ },
+ "certified_limit": {
+  "bound": {
+   "digits": "4.87052856512517765059540428847e-19",
+   "float": 4.870528565125177e-19
+  },
+  "kind": "certified_limit",
+  "method": "Richardson with a-posteriori contraction certificate",
+  "reason": "Richardson depth 12, diagonal contracted to gap\u2264\u03b5 (a-posteriori certificate)",
+  "status": "CERTIFIED",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "2.71828182845904538930828076263",
+   "float": 2.7182818284590455
+  }
+ },
+ "certified_min": {
+  "kind": "certified_min",
+  "method": "rigorous global-minimum bracket by interval branch-and-bound",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "argmin_near": {
+    "digits": "2.99999999995634425431489944458",
+    "float": 2.9999999999563443
+   },
+   "certified": true,
+   "min_lower": {
+    "digits": "1.0",
+    "float": 1.0
+   },
+   "min_upper": {
+    "digits": "1.00000000000000000000762329653",
+    "float": 1.0
+   }
+  }
+ },
+ "certified_root": {
+  "kind": "certified_root",
+  "method": "interval bisection \u2014 root proven by the intermediate-value theorem",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "certified": true,
+   "method": "interval bisection (intermediate-value theorem), continuity verified by enclosure",
+   "root_hi": {
+    "digits": "1.41421356237309504880168876492",
+    "float": 1.4142135623730951
+   },
+   "root_lo": {
+    "digits": "1.41421356237309504880168871322",
+    "float": 1.4142135623730951
+   },
+   "status": "ok",
+   "width": {
+    "digits": "5.16987882845642296794630432544e-26",
+    "float": 5.169878828456423e-26
+   }
+  }
+ },
+ "char_poly": {
+  "kind": "char_poly",
+  "method": "Faddeev\u2013LeVerrier (exact \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "6/1",
+    "float": 6.0
+   },
+   {
+    "exact": "-5/1",
+    "float": -5.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "characteristic_poly": {
+  "kind": "characteristic_poly",
+  "method": "Faddeev\u2013LeVerrier, exact \u211a[i] coefficients",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "1",
+    "float": 1.0
+   },
+   {
+    "exact": "-5",
+    "float": -5.0
+   },
+   {
+    "exact": "6",
+    "float": 6.0
+   }
+  ]
+ },
+ "chebyshev_T": {
+  "kind": "chebyshev_T",
+  "method": "finite series/recurrence \u2014 chebyshev_T",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "-1.0",
+   "float": -1.0
+  }
+ },
+ "chebyshev_U": {
+  "kind": "chebyshev_U",
+  "method": "finite series/recurrence \u2014 chebyshev_U",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "-1.0",
+   "float": -1.0
+  }
+ },
+ "chi_square_test": {
+  "kind": "chi_square_test",
+  "method": "Pearson \u03c7\u00b2, statistic exact \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "chi2": {
+    "exact": "20/1",
+    "float": 20.0
+   },
+   "df": 3,
+   "p_value": {
+    "digits": "0.000169742435552826430795944494494",
+    "float": 0.00016974243555282643
+   },
+   "reject_at_0.05": true
+  }
+ },
+ "choi_matrix": {
+  "kind": "choi_matrix",
+  "method": "J=\u03a3\u2090 vec(K\u2090)vec(K\u2090)*, exact \u211a[i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "1",
+     "float": 1.0
+    }
+   ],
+   [
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ],
+   [
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ],
+   [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "1",
+     "float": 1.0
+    }
+   ]
+  ]
+ },
+ "chromatic_number": {
+  "kind": "chromatic_number",
+  "method": "backtracking colouring",
+  "status": "ok",
+  "tier": "exact",
+  "value": 3
+ },
+ "closest_pair": {
+  "kind": "closest_pair",
+  "method": "exact squared-distance closest pair",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "distance_squared": {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   "pair_indices": [
+    0,
+    2
+   ],
+   "points": [
+    [
+     "0",
+     "0"
+    ],
+    [
+     "1",
+     "0"
+    ]
+   ]
+  }
+ },
+ "coin_change": {
+  "kind": "coin_change",
+  "method": "coin DP (min + #ways)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "min_coins": 3,
+   "num_ways": 11
+  }
+ },
+ "comb_with_rep": {
+  "kind": "comb_with_rep",
+  "method": "multiset coefficient",
+  "status": "ok",
+  "tier": "exact",
+  "value": 35
+ },
+ "completeness_readout": {
+  "N": 3,
+  "approximant": {
+   "index": 3,
+   "x_N": {
+    "exact": "17/12",
+    "float": 1.4166666666666667
+   }
+  },
+  "kind": "completeness_readout",
+  "note": "the completed limit is a non-readout (I1); only the finite rational tail is shown",
+  "observed_tail_spacing": {
+   "exact": "1/10",
+   "float": 0.1
+  },
+  "status": "+R_OPEN",
+  "target": "lim_{n\u2192\u221e} x\u2099 \u2208 H (a completed real)",
+  "tier": "+\u211d-Open"
+ },
+ "connected_components": {
+  "kind": "connected_components",
+  "method": "union\u2013find",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    0,
+    1
+   ],
+   [
+    2,
+    3
+   ]
+  ]
+ },
+ "constant": {
+  "kind": "constant",
+  "method": "finite series (Machin/Taylor/atanh)",
+  "name": "pi",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "3.14159265358979323846264338328",
+   "float": 3.141592653589793
+  }
+ },
+ "continued_fraction": {
+  "kind": "continued_fraction",
+  "method": "Euclidean CF expansion",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   4,
+   2,
+   6,
+   7
+  ]
+ },
+ "contour_integral": {
+  "kind": "contour_integral",
+  "method": "finite sum around |z\u2212c|=r",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "im": {
+    "digits": "6.28318530717958647692528676656",
+    "float": 6.283185307179586
+   },
+   "re": {
+    "digits": "3.58549326415240588830649182006e-43",
+    "float": 3.585493264152406e-43
+   }
+  }
+ },
+ "convergence_test": {
+  "kind": "convergence_test",
+  "method": "nth-term \u2192 ratio \u2192 Raabe cascade (HOLD when genuinely inconclusive)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "rho": "2.005",
+   "test": "Raabe",
+   "verdict": "CONVERGES"
+  }
+ },
+ "convex_hull": {
+  "coq_theorem": "IDM_Geometry.orient_* (branches only on the proven orientation sign)",
+  "kind": "convex_hull",
+  "method": "exact monotone-chain hull (rational orientation)",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": {
+   "hull": [
+    [
+     "0",
+     "0"
+    ],
+    [
+     "1",
+     "0"
+    ],
+    [
+     "1",
+     "1"
+    ],
+    [
+     "0",
+     "1"
+    ]
+   ],
+   "vertices": 4
+  }
+ },
+ "convolution": {
+  "kind": "convolution",
+  "method": "discrete \u03a3 a[i]b[k\u2212i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "critical_path": {
+  "all_pairs": null,
+  "kind": "critical_path",
+  "method": "generalized Floyd\u2013Warshall over the critical semiring (IDM_Tropical)",
+  "status": "ok",
+  "tier": "exact",
+  "value": 2
+ },
+ "cross": {
+  "kind": "cross",
+  "method": "cross product exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "0/1",
+    "float": 0.0
+   },
+   {
+    "exact": "0/1",
+    "float": 0.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "crt": {
+  "kind": "crt",
+  "method": "Chinese remainder",
+  "status": "ok",
+  "tier": "exact",
+  "value": 23
+ },
+ "derangements": {
+  "kind": "derangements",
+  "method": "!n recurrence",
+  "status": "ok",
+  "tier": "exact",
+  "value": 44
+ },
+ "derivative": {
+  "kind": "derivative",
+  "method": "finite central difference D_\u03b5 + Richardson",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "2.71828182845903957227297630408",
+   "float": 2.7182818284590398
+  }
+ },
+ "describe": {
+  "kind": "describe",
+  "method": "exact sample moments over \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "max": {
+    "exact": "9/1",
+    "float": 9.0
+   },
+   "mean": {
+    "exact": "5/1",
+    "float": 5.0
+   },
+   "min": {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   "n": 8,
+   "std": {
+    "digits": "2.13808993529939507747642784704",
+    "float": 2.138089935299395
+   },
+   "variance": {
+    "exact": "32/7",
+    "float": 4.571428571428571
+   }
+  }
+ },
+ "digamma": {
+  "kind": "digamma",
+  "method": "finite series/recurrence \u2014 digamma",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.422784335057537747510054946748",
+   "float": 0.42278433505753776
+  }
+ },
+ "digital_root": {
+  "kind": "digital_root",
+  "method": "repeated digit sum",
+  "status": "ok",
+  "tier": "exact",
+  "value": 6
+ },
+ "dijkstra": {
+  "kind": "dijkstra",
+  "method": "Dijkstra (nonneg weights)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "distances": [
+    0,
+    2,
+    5
+   ],
+   "prev": [
+    -1,
+    0,
+    1
+   ]
+  }
+ },
+ "diophantine_linear": {
+  "kind": "diophantine_linear",
+  "method": "extended Euclid",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "dx": 2,
+   "dy": -1,
+   "x0": 3,
+   "y0": 0
+  }
+ },
+ "dirichlet_beta": {
+  "kind": "dirichlet_beta",
+  "method": "finite series/recurrence \u2014 dirichlet_beta",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.915965594175266622415405210292",
+   "float": 0.9159655941752666
+  }
+ },
+ "dirichlet_eta": {
+  "kind": "dirichlet_eta",
+  "method": "finite series/recurrence \u2014 dirichlet_eta",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.822467033424113218304794683504",
+   "float": 0.8224670334241132
+  }
+ },
+ "discrete_log": {
+  "kind": "discrete_log",
+  "method": "baby-step giant-step",
+  "status": "ok",
+  "tier": "exact",
+  "value": 26
+ },
+ "distance": {
+  "kind": "distance",
+  "method": "\u221a\u03a3(p\u1d62\u2212q\u1d62)\u00b2 (squared part exact \u211a)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "5.0",
+   "float": 5.0
+  }
+ },
+ "divisors": {
+  "kind": "divisors",
+  "method": "from factorization",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   1,
+   2,
+   4,
+   7,
+   14,
+   28
+  ]
+ },
+ "dot": {
+  "kind": "dot",
+  "method": "\u03a3 u\u1d62v\u1d62 exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "32/1",
+   "float": 32.0
+  }
+ },
+ "double_integral": {
+  "kind": "double_integral",
+  "method": "finite 2-D midpoint grid",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.25",
+   "float": 0.25
+  }
+ },
+ "ec_add": {
+  "kind": "ec_add",
+  "method": "exact elliptic-curve point addition over F_p",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   6,
+   3
+  ]
+ },
+ "ec_mul": {
+  "kind": "ec_mul",
+  "method": "exact EC scalar multiply (double-and-add) over F_p",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "point": [
+    10,
+    6
+   ]
+  }
+ },
+ "edit_distance": {
+  "kind": "edit_distance",
+  "method": "Levenshtein DP",
+  "status": "ok",
+  "tier": "exact",
+  "value": 3
+ },
+ "eigenvalues": {
+  "kind": "eigenvalues",
+  "method": "exact \u211a char-poly + Durand\u2013Kerner roots",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "im": {
+     "digits": "-5.67274206276755606369828706048e-124",
+     "float": -5.672742062767556e-124
+    },
+    "re": {
+     "digits": "2.0",
+     "float": 2.0
+    }
+   },
+   {
+    "im": {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    "re": {
+     "digits": "3.0",
+     "float": 3.0
+    }
+   }
+  ]
+ },
+ "elliptic_E": {
+  "kind": "elliptic_E",
+  "method": "finite series/recurrence \u2014 elliptic_E",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.35064388104767550252017473534",
+   "float": 1.3506438810476755
+  }
+ },
+ "elliptic_K": {
+  "kind": "elliptic_K",
+  "method": "finite series/recurrence \u2014 elliptic_K",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.8540746773013719184338503472",
+   "float": 1.8540746773013719
+  }
+ },
+ "erf": {
+  "kind": "erf",
+  "method": "finite series/recurrence \u2014 erf",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.842700792949714869341220635083",
+   "float": 0.8427007929497149
+  }
+ },
+ "erfc": {
+  "kind": "erfc",
+  "method": "finite series/recurrence \u2014 erfc",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.157299207050285130658779364917",
+   "float": 0.15729920705028513
+  }
+ },
+ "evaluate": {
+  "kind": "evaluate",
+  "method": "locked finite namespace eval",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": 14
+ },
+ "exp": {
+  "bound": {
+   "digits": "4.81599059376837439778860050301e-11",
+   "float": 4.8159905937683743e-11
+  },
+  "kind": "exp",
+  "method": "finite Taylor tail bound (|x|\u2264\u00bd) \u2014 Th_coqc",
+  "reason": "Taylor N=9, tail |x|^(N+1)/((N+1)!(1\u2212|x|))",
+  "status": "CERTIFIED",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.49182469761128751107930716462",
+   "float": 1.4918246976112874
+  }
+ },
+ "expand": {
+  "kind": "expand",
+  "method": "distribute products/powers over sums, exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": "(1 + x**3 + 3*x**2 + 3*x)"
+ },
+ "factorial": {
+  "kind": "factorial",
+  "method": "finite product",
+  "status": "ok",
+  "tier": "exact",
+  "value": 3628800
+ },
+ "factorize": {
+  "kind": "factorize",
+  "method": "trial division + Pollard \u03c1",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "11": 1,
+   "13": 1,
+   "2": 3,
+   "3": 2,
+   "5": 1,
+   "7": 1
+  }
+ },
+ "faulhaber": {
+  "kind": "faulhaber",
+  "method": "\u03a3 i^p exact \u2124",
+  "status": "ok",
+  "tier": "exact",
+  "value": 385
+ },
+ "fft": {
+  "kind": "fft",
+  "method": "radix-2 Cooley\u2013Tukey",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "im": {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    "re": {
+     "digits": "10.0",
+     "float": 10.0
+    }
+   },
+   {
+    "im": {
+     "digits": "2.0",
+     "float": 2.0
+    },
+    "re": {
+     "digits": "-2.0",
+     "float": -2.0
+    }
+   },
+   {
+    "im": {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    "re": {
+     "digits": "-2.0",
+     "float": -2.0
+    }
+   },
+   {
+    "im": {
+     "digits": "-2.0",
+     "float": -2.0
+    },
+    "re": {
+     "digits": "-2.0",
+     "float": -2.0
+    }
+   }
+  ]
+ },
+ "fibonacci": {
+  "kind": "fibonacci",
+  "method": "fast doubling",
+  "status": "ok",
+  "tier": "exact",
+  "value": 12586269025
+ },
+ "fixed_point": {
+  "kind": "fixed_point",
+  "method": "finite iteration x=g(x)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.739085133215160641655312087645",
+   "float": 0.7390851332151607
+  }
+ },
+ "fourier_series": {
+  "kind": "fourier_series",
+  "method": "finite DFT of one period",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "a": [
+    {
+     "digits": "-0.3926990816875",
+     "float": -0.3926990816875
+    },
+    {
+     "digits": "-0.3926990816875",
+     "float": -0.3926990816875
+    },
+    {
+     "digits": "-0.3926990816875",
+     "float": -0.3926990816875
+    }
+   ],
+   "a0": {
+    "digits": "5.8904862253125",
+    "float": 5.8904862253125
+   },
+   "b": [
+    {
+     "digits": "-1.974231601889123187825143233",
+     "float": -1.9742316018891233
+    },
+    {
+     "digits": "-0.948059448941422428921576159296",
+     "float": -0.9480594489414225
+    },
+    {
+     "digits": "-0.58771570864695810946008229165",
+     "float": -0.5877157086469581
+    }
+   ]
+  }
+ },
+ "fourier_transform": {
+  "kind": "fourier_transform",
+  "reason": "NameError: name 'x' is not defined",
+  "status": "HOLD"
+ },
+ "fresnel_C": {
+  "kind": "fresnel_C",
+  "method": "finite series/recurrence \u2014 fresnel_C",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.779893400376822829474206413653",
+   "float": 0.7798934003768229
+  }
+ },
+ "fresnel_S": {
+  "kind": "fresnel_S",
+  "method": "finite series/recurrence \u2014 fresnel_S",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.438259147390354766076756696625",
+   "float": 0.43825914739035476
+  }
+ },
+ "function": {
+  "kind": "function",
+  "method": "finite sin",
+  "name": "sin",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.84147098480789650665250232163",
+   "float": 0.8414709848078965
+  }
+ },
+ "gamma": {
+  "kind": "gamma",
+  "method": "finite series/recurrence \u2014 gamma",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "23.9999999999999999999999999997",
+   "float": 24.0
+  }
+ },
+ "gauss_quadrature": {
+  "kind": "gauss_quadrature",
+  "method": "5-point Gauss\u2013Legendre (finite nodes)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.333333333333333333333333333333",
+   "float": 0.3333333333333333
+  }
+ },
+ "gcd": {
+  "kind": "gcd",
+  "method": "Euclid",
+  "status": "ok",
+  "tier": "exact",
+  "value": 12
+ },
+ "geometric": {
+  "kind": "geometric",
+  "method": "exact geometric pmf/cdf over \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "cdf": {
+    "exact": "5/9",
+    "float": 0.5555555555555556
+   },
+   "mean": {
+    "exact": "3/1",
+    "float": 3.0
+   },
+   "pmf": {
+    "exact": "2/9",
+    "float": 0.2222222222222222
+   },
+   "variance": {
+    "exact": "6/1",
+    "float": 6.0
+   }
+  }
+ },
+ "geometric_series": {
+  "bound": {
+   "exact": "1/1694577218886",
+   "float": 5.901176935786916e-13
+  },
+  "coq_theorem": "IDM_Certified.geom_certified_identity (certified geometric-series bound)",
+  "kind": "geometric_series",
+  "method": "geometric series, exact \u211a error r^N/(1-r) \u2014 Th_coqc",
+  "reason": "geometric, N=26 terms, exact error r^N/(1\u2212r)",
+  "status": "CERTIFIED",
+  "tier": "Th_coqc",
+  "value": {
+   "exact": "1270932914164/847288609443",
+   "float": 1.4999999999994098
+  }
+ },
+ "gershgorin": {
+  "kind": "gershgorin",
+  "method": "Gershgorin discs enclosing every eigenvalue",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "certified": true,
+   "discs": [
+    {
+     "center": {
+      "digits": "2.0",
+      "float": 2.0
+     },
+     "radius": {
+      "digits": "0.1",
+      "float": 0.1
+     }
+    },
+    {
+     "center": {
+      "digits": "3.0",
+      "float": 3.0
+     },
+     "radius": {
+      "digits": "0.1",
+      "float": 0.1
+     }
+    }
+   ],
+   "spectrum_bound": {
+    "hi": {
+     "digits": "3.1",
+     "float": 3.1
+    },
+    "lo": {
+     "digits": "1.9",
+     "float": 1.9
+    }
+   }
+  }
+ },
+ "gershgorin_bound": {
+  "kind": "gershgorin_bound",
+  "method": "max_i \u03a3\u2c7c(|re|+|im|) \u2014 exact sqrt-free operator-norm upper bound",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "4",
+   "float": 4.0
+  }
+ },
+ "gradient": {
+  "kind": "gradient",
+  "method": "finite central differences per variable",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "digits": "2.00000000000000000000000001142",
+    "float": 2.0
+   },
+   {
+    "digits": "3.99999999999999999999999997692",
+    "float": 4.0
+   }
+  ]
+ },
+ "gradient_descent": {
+  "kind": "gradient_descent",
+  "method": "steepest descent + backtracking line search",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "argmin": [
+    {
+     "digits": "0.999999999999798261728274460266",
+     "float": 0.9999999999997983
+    },
+    {
+     "digits": "1.99999999999959652345654892053",
+     "float": 1.9999999999995965
+    }
+   ],
+   "min": {
+    "digits": "2.0349165139403852154784703952e-25",
+    "float": 2.0349165139403852e-25
+   }
+  }
+ },
+ "gram_matrix": {
+  "kind": "gram_matrix",
+  "method": "G\u1d62\u2c7c=\u27e8v\u1d62,v\u2c7c\u27e9, exact Hermitian \u211a[i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "1",
+     "float": 1.0
+    }
+   ],
+   [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "2",
+     "float": 2.0
+    }
+   ]
+  ]
+ },
+ "gram_schmidt": {
+  "kind": "gram_schmidt",
+  "method": "exact \u211a[i] Gram\u2013Schmidt (orthogonalize only, no sqrt)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "orthogonal": [
+    [
+     {
+      "exact": "1",
+      "float": 1.0
+     },
+     {
+      "exact": "1",
+      "float": 1.0
+     },
+     {
+      "exact": "0",
+      "float": 0.0
+     }
+    ],
+    [
+     {
+      "exact": "1/2",
+      "float": 0.5
+     },
+     {
+      "exact": "-1/2",
+      "float": -0.5
+     },
+     {
+      "exact": "1",
+      "float": 1.0
+     }
+    ]
+   ],
+   "squared_norms": [
+    {
+     "exact": "2",
+     "float": 2.0
+    },
+    {
+     "exact": "3/2",
+     "float": 1.5
+    }
+   ]
+  }
+ },
+ "hermite_H": {
+  "kind": "hermite_H",
+  "method": "finite series/recurrence \u2014 hermite_H",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "-5.0",
+   "float": -5.0
+  }
+ },
+ "hermite_normal_form": {
+  "kind": "hermite_normal_form",
+  "method": "column HNF (exact \u2124)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    2,
+    0
+   ],
+   [
+    0,
+    4
+   ]
+  ]
+ },
+ "hurwitz_zeta": {
+  "kind": "hurwitz_zeta",
+  "method": "finite series/recurrence \u2014 hurwitz_zeta",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.64493395580498570820972836952",
+   "float": 1.6449339558049858
+  }
+ },
+ "hyp1f1": {
+  "kind": "hyp1f1",
+  "method": "finite series/recurrence \u2014 hyp1f1",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.29744254140025629369730157563",
+   "float": 1.2974425414002564
+  }
+ },
+ "hyp2f1": {
+  "kind": "hyp2f1",
+  "method": "finite series/recurrence \u2014 hyp2f1",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.38629436111989061883446424292",
+   "float": 1.3862943611198906
+  }
+ },
+ "hypergeometric": {
+  "kind": "hypergeometric",
+  "method": "exact hypergeometric pmf/cdf over \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "cdf": {
+    "exact": "504127/529690",
+    "float": 0.9517396968037909
+   },
+   "mean": {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   "pmf": {
+    "exact": "11115/52969",
+    "float": 0.20983971757065453
+   }
+  }
+ },
+ "ifft": {
+  "kind": "ifft",
+  "method": "inverse DFT",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "im": {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    "re": {
+     "digits": "2.5",
+     "float": 2.5
+    }
+   },
+   {
+    "im": {
+     "digits": "-0.5",
+     "float": -0.5
+    },
+    "re": {
+     "digits": "-0.5",
+     "float": -0.5
+    }
+   },
+   {
+    "im": {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    "re": {
+     "digits": "-0.5",
+     "float": -0.5
+    }
+   },
+   {
+    "im": {
+     "digits": "0.5",
+     "float": 0.5
+    },
+    "re": {
+     "digits": "-0.5",
+     "float": -0.5
+    }
+   }
+  ]
+ },
+ "improper_integral": {
+  "bound": {
+   "digits": "4.02460515725960603319190365535e-10",
+   "float": 4.024605157259606e-10
+  },
+  "kind": "improper_integral",
+  "method": "exp\u2013sinh / sinh\u2013sinh DE (semi/doubly-infinite), a-posteriori certified",
+  "reason": "exp\u2013sinh DE, level 4, |\u0394 between levels| \u2264 \u03b5",
+  "status": "CERTIFIED",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.999999999999999990822602954282",
+   "float": 1.0
+  }
+ },
+ "in_circle": {
+  "kind": "in_circle",
+  "method": "exact in-circle (Delaunay) determinant sign",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "det": {
+    "exact": "3/8",
+    "float": 0.375
+   },
+   "in_circle": 1,
+   "oriented_det": {
+    "exact": "3/8",
+    "float": 0.375
+   }
+  }
+ },
+ "infinite_orthonormal_basis_readout": {
+  "N": 2,
+  "approximant": {
+   "normalization_tier": "exact",
+   "orthonormal_first_N": {
+    "count": 2,
+    "exact_normalization": true,
+    "orthonormal": [
+     [
+      {
+       "exact": "1",
+       "float": 1.0
+      },
+      {
+       "exact": "0",
+       "float": 0.0
+      }
+     ],
+     [
+      {
+       "exact": "0",
+       "float": 0.0
+      },
+      {
+       "exact": "1",
+       "float": 1.0
+      }
+     ]
+    ]
+   }
+  },
+  "kind": "infinite_orthonormal_basis_readout",
+  "note": "completeness of the span (that {e\u2096} is a basis of the whole H) is +\u211d-Open \u2014 only the finite orthonormal set is computed",
+  "status": "+R_OPEN",
+  "target": "a complete orthonormal basis of an infinite-dim H",
+  "tier": "+\u211d-Open"
+ },
+ "infinite_spectral_readout": {
+  "N": null,
+  "approximant": null,
+  "finite_dim_alternative": "spectral_decomposition",
+  "kind": "infinite_spectral_readout",
+  "note": "not computed: needs completeness + algebraic closure of \u2102 (FTA) \u2014 +\u211d-Open. Use idm.solve({'kind':'spectral_decomposition', ...}) for the finite-dim exact/certified case",
+  "status": "+R_OPEN",
+  "target": "spectral decomposition of an operator on an infinite-dim H",
+  "tier": "+\u211d-Open"
+ },
+ "inner_product": {
+  "kind": "inner_product",
+  "method": "\u27e8u,v\u27e9=\u03a3 conj(u\u1d62)v\u1d62, exact \u211a[i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "32",
+   "float": 32.0
+  }
+ },
+ "integer_root": {
+  "kind": "integer_root",
+  "method": "exact k-th root or null",
+  "status": "ok",
+  "tier": "exact",
+  "value": 3
+ },
+ "integer_sqrt": {
+  "kind": "integer_sqrt",
+  "method": "isqrt",
+  "status": "ok",
+  "tier": "exact",
+  "value": 12
+ },
+ "integral": {
+  "bound": {
+   "digits": "4.57453754018849689912180559867e-10",
+   "float": 4.574537540188497e-10
+  },
+  "kind": "integral",
+  "method": "double-exponential DE quadrature (tanh/exp/sinh\u2013sinh), a-posteriori certified",
+  "reason": "tanh\u2013sinh DE, level 5, |\u0394 between levels| \u2264 \u03b5",
+  "status": "CERTIFIED",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.7724538509055159891554272768",
+   "float": 1.7724538509055159
+  }
+ },
+ "interpolate": {
+  "kind": "interpolate",
+  "method": "Lagrange interpolation (exact \u211a when rational)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "exact": "13/1",
+   "float": 13.0
+  }
+ },
+ "interval_enclose": {
+  "kind": "interval_enclose",
+  "method": "single-shot rigorous interval evaluation",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "certified": true,
+   "hi": {
+    "digits": "4.0",
+    "float": 4.0
+   },
+   "lo": {
+    "digits": "1.0",
+    "float": 1.0
+   },
+   "width": {
+    "digits": "3.0",
+    "float": 3.0
+   }
+  }
+ },
+ "inverse_laplace": {
+  "kind": "inverse_laplace",
+  "method": "fixed-Talbot deformed contour",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "2.71828182845904523536028762943",
+   "float": 2.718281828459045
+  }
+ },
+ "is_bipartite": {
+  "kind": "is_bipartite",
+  "method": "BFS 2-coloring",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "bipartite": true,
+   "coloring": [
+    0,
+    1,
+    0,
+    1
+   ]
+  }
+ },
+ "is_completely_positive": {
+  "kind": "is_completely_positive",
+  "method": "Choi PSD via eigenvalue-sign test (per-instance exact/finite_diagnostic)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "completely_positive": true,
+   "eigenvalues": [
+    "0",
+    "0",
+    "0",
+    "2"
+   ]
+  }
+ },
+ "is_idempotent": {
+  "kind": "is_idempotent",
+  "method": "decidable exact M\u00b7M == M",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "is_normal": {
+  "kind": "is_normal",
+  "method": "decidable exact MM* == M*M",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "is_orthogonal": {
+  "kind": "is_orthogonal",
+  "method": "decidable exact \u27e8u,v\u27e9 == 0",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "is_perfect_square": {
+  "kind": "is_perfect_square",
+  "method": "isqrt check",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "is_prime": {
+  "kind": "is_prime",
+  "method": "deterministic Miller\u2013Rabin (first 13 primes, n < 3317044064679887385961981)",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "is_self_adjoint": {
+  "kind": "is_self_adjoint",
+  "method": "decidable exact M == M*",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "is_separable_ppt": {
+  "kind": "is_separable_ppt",
+  "method": "PPT: negative PT eigenvalue \u21d2 entangled (exact witness)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "eigenvalues": [
+    "-1/2",
+    "1/2",
+    "1/2",
+    "1/2"
+   ],
+   "separable": false,
+   "witness": "negative partial-transpose eigenvalue"
+  }
+ },
+ "is_unitary": {
+  "kind": "is_unitary",
+  "method": "decidable exact M*M == I",
+  "status": "ok",
+  "tier": "exact",
+  "value": true
+ },
+ "jacobi_symbol": {
+  "kind": "jacobi_symbol",
+  "method": "quadratic reciprocity",
+  "status": "ok",
+  "tier": "exact",
+  "value": 1
+ },
+ "knapsack": {
+  "kind": "knapsack",
+  "method": "0/1 knapsack DP",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "items": [
+    1,
+    2
+   ],
+   "max_value": 220
+  }
+ },
+ "l2_readout": {
+  "N": 5,
+  "approximant": {
+   "first_N_coordinates": [
+    "1",
+    "1/2",
+    "1/4",
+    "1/8",
+    "1/16"
+   ],
+   "partial_energy_\u03a3|xk|\u00b2": {
+    "exact": "341/256",
+    "float": 1.33203125
+   }
+  },
+  "kind": "l2_readout",
+  "note": "the completed \u2113\u00b2 element and its total norm need the tail \u03a3_{k>N}|x\u2096|\u00b2 (a limit) \u2014 +\u211d-Open",
+  "status": "+R_OPEN",
+  "target": "x \u2208 \u2113\u00b2 (square-summable sequence)",
+  "tier": "+\u211d-Open"
+ },
+ "lagrange_min": {
+  "kind": "lagrange_min",
+  "method": "Newton on the KKT system (Lagrange multipliers)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "argmin": [
+    {
+     "digits": "0.5",
+     "float": 0.5
+    },
+    {
+     "digits": "0.5",
+     "float": 0.5
+    }
+   ],
+   "min": {
+    "digits": "0.5",
+    "float": 0.5
+   },
+   "multipliers": [
+    {
+     "digits": "1.00000000000000000000013085987",
+     "float": 1.0
+    }
+   ]
+  }
+ },
+ "laguerre_L": {
+  "kind": "laguerre_L",
+  "method": "finite recurrence \u2014 associated Laguerre",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "-0.145833333333333333333333333333",
+   "float": -0.14583333333333334
+  }
+ },
+ "lambert_W": {
+  "kind": "lambert_W",
+  "method": "finite series/recurrence \u2014 lambert_W",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.56714329040978387299996866221",
+   "float": 0.5671432904097838
+  }
+ },
+ "laplace_transform": {
+  "kind": "laplace_transform",
+  "method": "\u222b_0^\u221e f e^{\u2212st} dt (exp\u2013sinh DE)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.0",
+   "float": 1.0
+  }
+ },
+ "laurent_series": {
+  "kind": "laurent_series",
+  "reason": "NameError: name 'z' is not defined",
+  "status": "HOLD"
+ },
+ "lcm": {
+  "kind": "lcm",
+  "method": "a\u00b7b/gcd",
+  "status": "ok",
+  "tier": "exact",
+  "value": 12
+ },
+ "lcs": {
+  "kind": "lcs",
+  "method": "longest common subsequence DP",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "lcs": [
+    "B",
+    "C",
+    "A",
+    "B"
+   ],
+   "length": 4
+  }
+ },
+ "least_squares": {
+  "kind": "least_squares",
+  "method": "exact-\u211a normal equations (A\u1d40A)x=A\u1d40b",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "residual_sq": {
+    "exact": "1/6",
+    "float": 0.16666666666666666
+   },
+   "x": [
+    {
+     "exact": "2/3",
+     "float": 0.6666666666666666
+    },
+    {
+     "exact": "1/2",
+     "float": 0.5
+    }
+   ]
+  }
+ },
+ "legendre_P": {
+  "kind": "legendre_P",
+  "method": "finite series/recurrence \u2014 legendre_P",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "-0.4375",
+   "float": -0.4375
+  }
+ },
+ "legendre_symbol": {
+  "kind": "legendre_symbol",
+  "method": "Euler's criterion",
+  "status": "ok",
+  "tier": "exact",
+  "value": -1
+ },
+ "lhopital": {
+  "kind": "lhopital",
+  "method": "L'H\u00f4pital via finite derivatives",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.999999999999997916666728670634",
+   "float": 0.9999999999999979
+  }
+ },
+ "li": {
+  "kind": "li",
+  "method": "finite series/recurrence \u2014 li",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.04516378011749330567786021858",
+   "float": 1.0451637801174933
+  }
+ },
+ "limit": {
+  "kind": "limit",
+  "method": "Richardson on h=1/n (A8 plateau)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "2.71828182845904594782813233063",
+   "float": 2.718281828459046
+  }
+ },
+ "limit_infinity": {
+  "kind": "limit_infinity",
+  "reason": "NameError: name 'n' is not defined",
+  "status": "HOLD"
+ },
+ "limit_oneside": {
+  "kind": "limit_oneside",
+  "method": "Richardson plateau of f(a\u00b11/n)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.0",
+   "float": 1.0
+  }
+ },
+ "linear_program": {
+  "kind": "linear_program",
+  "method": "two-phase exact rational simplex (Bland's rule)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "objective": {
+    "exact": "12/1",
+    "float": 12.0
+   },
+   "status": "optimal",
+   "x": [
+    {
+     "exact": "4/1",
+     "float": 4.0
+    },
+    {
+     "exact": "0/1",
+     "float": 0.0
+    }
+   ]
+  }
+ },
+ "liouville": {
+  "kind": "liouville",
+  "method": "\u03bb(n)=(\u22121)^\u03a9(n)",
+  "status": "ok",
+  "tier": "exact",
+  "value": -1
+ },
+ "lucas": {
+  "kind": "lucas",
+  "method": "Lucas recurrence",
+  "status": "ok",
+  "tier": "exact",
+  "value": 123
+ },
+ "markov_absorbing": {
+  "kind": "markov_absorbing",
+  "method": "absorbing chain expected steps, exact \u211a fundamental matrix",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "expected_steps": {
+    "1": {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   },
+   "method": "fundamental matrix N=(I-Q)\u207b\u00b9, exact \u211a"
+  }
+ },
+ "matrix_add": {
+  "kind": "matrix_add",
+  "method": "exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "4/1",
+     "float": 4.0
+    },
+    {
+     "exact": "6/1",
+     "float": 6.0
+    }
+   ]
+  ]
+ },
+ "matrix_determinant": {
+  "kind": "matrix_determinant",
+  "method": "fraction-free Gaussian elimination",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "-2/1",
+   "float": -2.0
+  }
+ },
+ "matrix_exp": {
+  "kind": "matrix_exp",
+  "method": "e^A = \u03a3 A^k/k! (finite series)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   [
+    {
+     "digits": "1.0",
+     "float": 1.0
+    },
+    {
+     "digits": "1.0",
+     "float": 1.0
+    }
+   ],
+   [
+    {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    {
+     "digits": "1.0",
+     "float": 1.0
+    }
+   ]
+  ]
+ },
+ "matrix_inverse": {
+  "kind": "matrix_inverse",
+  "method": "exact \u211a Gauss\u2013Jordan",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "1/1",
+     "float": 1.0
+    },
+    {
+     "exact": "0/1",
+     "float": 0.0
+    }
+   ],
+   [
+    {
+     "exact": "0/1",
+     "float": 0.0
+    },
+    {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   ]
+  ]
+ },
+ "matrix_multiply": {
+  "kind": "matrix_multiply",
+  "method": "exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "19/1",
+     "float": 19.0
+    },
+    {
+     "exact": "22/1",
+     "float": 22.0
+    }
+   ],
+   [
+    {
+     "exact": "43/1",
+     "float": 43.0
+    },
+    {
+     "exact": "50/1",
+     "float": 50.0
+    }
+   ]
+  ]
+ },
+ "matrix_power": {
+  "kind": "matrix_power",
+  "method": "exact \u211a binary exponentiation",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "1/1",
+     "float": 1.0
+    },
+    {
+     "exact": "3/1",
+     "float": 3.0
+    }
+   ],
+   [
+    {
+     "exact": "0/1",
+     "float": 0.0
+    },
+    {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   ]
+  ]
+ },
+ "matrix_rank": {
+  "kind": "matrix_rank",
+  "method": "rank via RREF over \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": 1
+ },
+ "matrix_trace": {
+  "kind": "matrix_trace",
+  "method": "\u03a3 diagonal",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "5/1",
+   "float": 5.0
+  }
+ },
+ "matrix_transpose": {
+  "kind": "matrix_transpose",
+  "method": "exact",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    1,
+    4
+   ],
+   [
+    2,
+    5
+   ],
+   [
+    3,
+    6
+   ]
+  ]
+ },
+ "max_flow": {
+  "kind": "max_flow",
+  "method": "Edmonds\u2013Karp",
+  "status": "ok",
+  "tier": "exact",
+  "value": 4
+ },
+ "mellin_transform": {
+  "kind": "mellin_transform",
+  "reason": "NameError: name 'x' is not defined",
+  "status": "HOLD"
+ },
+ "mertens": {
+  "kind": "mertens",
+  "method": "\u03a3 \u03bc(k)",
+  "status": "ok",
+  "tier": "exact",
+  "value": -1
+ },
+ "minimax_path": {
+  "all_pairs": null,
+  "coq_theorem": "IDM_Tropical.bottleneck_distrib (bottleneck semiring law)",
+  "kind": "minimax_path",
+  "method": "generalized Floyd\u2013Warshall over the minimax semiring (IDM_Tropical)",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": 1
+ },
+ "minimize": {
+  "kind": "minimize",
+  "method": "golden-section search",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "argmin": {
+    "digits": "3.00000000000000000000338813179",
+    "float": 3.0
+   },
+   "min": {
+    "digits": "1.0",
+    "float": 1.0
+   }
+  }
+ },
+ "mobius": {
+  "kind": "mobius",
+  "method": "\u03bc(n) from factorization",
+  "status": "ok",
+  "tier": "exact",
+  "value": -1
+ },
+ "mod_inverse": {
+  "kind": "mod_inverse",
+  "method": "extended Euclid",
+  "status": "ok",
+  "tier": "exact",
+  "value": 4
+ },
+ "modinv": {
+  "kind": "modinv",
+  "method": "extended Euclidean inverse",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "inverse": 4
+  }
+ },
+ "modpow": {
+  "kind": "modpow",
+  "method": "square-and-multiply",
+  "status": "ok",
+  "tier": "exact",
+  "value": 24
+ },
+ "modular_sqrt": {
+  "kind": "modular_sqrt",
+  "method": "Tonelli\u2013Shanks",
+  "status": "ok",
+  "tier": "exact",
+  "value": 4
+ },
+ "mst": {
+  "kind": "mst",
+  "method": "Kruskal (union\u2013find)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "components": 1,
+   "connected": true,
+   "edges": [
+    [
+     0,
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     2
+    ],
+    [
+     2,
+     3,
+     3
+    ]
+   ],
+   "weight": 6
+  }
+ },
+ "multidim_integral": {
+  "kind": "multidim_integral",
+  "method": "nested Gauss\u2013Legendre over the box (RCP for coupled high-D)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.25",
+   "float": 0.25
+  }
+ },
+ "multinomial": {
+  "kind": "multinomial",
+  "method": "(\u03a3k)!/\u220fk!",
+  "status": "ok",
+  "tier": "exact",
+  "value": 30
+ },
+ "multiple_regression": {
+  "kind": "multiple_regression",
+  "method": "exact multiple linear least-squares over \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "coeffs": [
+    {
+     "exact": "3/1",
+     "float": 3.0
+    },
+    {
+     "exact": "2/1",
+     "float": 2.0
+    },
+    {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   ],
+   "intercept": {
+    "exact": "3/1",
+    "float": 3.0
+   },
+   "slopes": [
+    {
+     "exact": "2/1",
+     "float": 2.0
+    },
+    {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   ]
+  }
+ },
+ "newton_min": {
+  "kind": "newton_min",
+  "method": "Newton: x \u2190 x \u2212 H\u207b\u00b9\u2207f (finite gradient & Hessian)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "argmin": [
+    {
+     "digits": "1.0",
+     "float": 1.0
+    }
+   ],
+   "min": {
+    "digits": "3.39178154301639128821193430357e-63",
+    "float": 3.3917815430163913e-63
+   }
+  }
+ },
+ "newton_system": {
+  "kind": "newton_system",
+  "method": "Newton with finite-difference Jacobian",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "residual": {
+    "digits": "2.54358423958543718096027161424e-24",
+    "float": 2.5435842395854372e-24
+   },
+   "root": [
+    {
+     "digits": "1.4142135623730950488016896235",
+     "float": 1.4142135623730951
+    }
+   ]
+  }
+ },
+ "next_prime": {
+  "kind": "next_prime",
+  "method": "sieve/Miller\u2013Rabin scan",
+  "status": "ok",
+  "tier": "exact",
+  "value": 101
+ },
+ "norm_squared": {
+  "kind": "norm_squared",
+  "method": "\u2016v\u2016\u00b2=\u03a3|v\u1d62|\u00b2, exact \u211a \u2265 0",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "25",
+   "float": 25.0
+  }
+ },
+ "normal": {
+  "kind": "normal",
+  "method": "normal pdf/cdf via erf (finite readout)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "cdf": {
+    "digits": "0.975002104851779565863415730959",
+    "float": 0.9750021048517795
+   },
+   "pdf": {
+    "digits": "0.0584409443334514603197486160899",
+    "float": 0.05844094433345146
+   },
+   "sf": {
+    "digits": "0.0249978951482204341365842690408",
+    "float": 0.024997895148220435
+   },
+   "z": {
+    "digits": "1.96",
+    "float": 1.96
+   }
+  }
+ },
+ "null_space": {
+  "kind": "null_space",
+  "method": "kernel basis from RREF (exact \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "-2/1",
+     "float": -2.0
+    },
+    {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   ]
+  ]
+ },
+ "num_divisors": {
+  "kind": "num_divisors",
+  "method": "\u220f(e+1) from factorization",
+  "status": "ok",
+  "tier": "exact",
+  "value": 9
+ },
+ "ode": {
+  "kind": "ode",
+  "method": "finite RK4 (= I_\u03b5 of the field)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "2.71828182845816221947341002349",
+   "float": 2.7182818284581622
+  }
+ },
+ "ode_bvp": {
+  "at": 0.5,
+  "kind": "ode_bvp",
+  "method": "finite-difference tridiagonal",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.5",
+   "float": 0.5
+  }
+ },
+ "ode_system": {
+  "kind": "ode_system",
+  "reason": "TypeError: idm.functions.evaluate() got multiple values for keyword argument 'x'",
+  "status": "HOLD"
+ },
+ "operator_norm": {
+  "error_bound": {
+   "rayleigh_residual": "8.06049e-125"
+  },
+  "kind": "operator_norm",
+  "method": "largest singular value via power iteration on M*M (certified residual)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "float": 4.0,
+   "norm": "4.0"
+  }
+ },
+ "orient": {
+  "coq_theorem": "IDM_Geometry.orient_* (orientation determinant, axiom-free)",
+  "kind": "orient",
+  "method": "exact sign of the orientation determinant",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": {
+   "det": {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   "orientation": 1
+  }
+ },
+ "orthonormal_basis": {
+  "kind": "orthonormal_basis",
+  "method": "Gram\u2013Schmidt + normalization (exact when every norm is a perfect square, else certified numeric sqrt)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "count": 1,
+   "exact_normalization": true,
+   "orthonormal": [
+    [
+     {
+      "exact": "3/5",
+      "float": 0.6
+     },
+     {
+      "exact": "4/5",
+      "float": 0.8
+     }
+    ]
+   ]
+  }
+ },
+ "oscillatory_integral": {
+  "bound": {
+   "digits": "2.14428707329306955533963390329e-26",
+   "float": 2.1442870732930697e-26
+  },
+  "kind": "oscillatory_integral",
+  "method": "high-level DE quadrature",
+  "reason": "tanh\u2013sinh DE, level 4, |\u0394 between levels| \u2264 \u03b5",
+  "status": "CERTIFIED",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.61256319075938270377528031234e-20",
+   "float": 1.6125631907593827e-20
+  }
+ },
+ "pade": {
+  "kind": "pade",
+  "reason": "IndexError: list index out of range",
+  "status": "HOLD"
+ },
+ "partial_trace": {
+  "kind": "partial_trace",
+  "method": "exact block-sum partial trace (keep=0)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ],
+   [
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ]
+  ]
+ },
+ "partition": {
+  "kind": "partition",
+  "method": "Euler pentagonal recurrence",
+  "status": "ok",
+  "tier": "exact",
+  "value": 190569292
+ },
+ "path_count": {
+  "all_pairs": null,
+  "kind": "path_count",
+  "method": "generalized Floyd\u2013Warshall over the path_count semiring (IDM_Tropical)",
+  "status": "ok",
+  "tier": "exact",
+  "value": 1
+ },
+ "pde_heat": {
+  "kind": "pde_heat",
+  "reason": "ValueError: could not convert string to float: 'left'",
+  "status": "HOLD"
+ },
+ "pde_laplace": {
+  "kind": "pde_laplace",
+  "reason": "missing required field 'lam'",
+  "status": "HOLD"
+ },
+ "pde_poisson": {
+  "kind": "pde_poisson",
+  "reason": "ValueError: not enough values to unpack (expected 4, got 2)",
+  "status": "HOLD"
+ },
+ "pde_wave": {
+  "kind": "pde_wave",
+  "reason": "ValueError: could not convert string to float: 'left'",
+  "status": "HOLD"
+ },
+ "pell": {
+  "kind": "pell",
+  "method": "continued fraction of \u221aD",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "x": 8,
+   "y": 3
+  }
+ },
+ "perm_count": {
+  "kind": "perm_count",
+  "method": "n!/(n\u2212k)!",
+  "status": "ok",
+  "tier": "exact",
+  "value": 20
+ },
+ "point_in_polygon": {
+  "coq_theorem": "IDM_Geometry.orient_* (proven orientation predicate; exact boundary)",
+  "kind": "point_in_polygon",
+  "method": "exact ray-crossing with boundary test",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": {
+   "inside": true,
+   "on_boundary": false
+  }
+ },
+ "poisson": {
+  "kind": "poisson",
+  "method": "Poisson pmf/cdf, finite readout of e^{-\u03bb}",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "cdf": {
+    "digits": "0.406005849709838075681998484917",
+    "float": 0.40600584970983805
+   },
+   "mean": {
+    "digits": "2.0",
+    "float": 2.0
+   },
+   "pmf": {
+    "digits": "0.270670566473225383787998989945",
+    "float": 0.2706705664732254
+   },
+   "variance": {
+    "digits": "2.0",
+    "float": 2.0
+   }
+  }
+ },
+ "poly_add": {
+  "kind": "poly_add",
+  "method": "exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "4/1",
+    "float": 4.0
+   },
+   {
+    "exact": "6/1",
+    "float": 6.0
+   }
+  ]
+ },
+ "poly_derivative": {
+  "kind": "poly_derivative",
+  "method": "exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   {
+    "exact": "6/1",
+    "float": 6.0
+   }
+  ]
+ },
+ "poly_divmod": {
+  "kind": "poly_divmod",
+  "method": "exact \u211a long division",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "quotient": [
+    {
+     "exact": "6/1",
+     "float": 6.0
+    },
+    {
+     "exact": "-5/1",
+     "float": -5.0
+    },
+    {
+     "exact": "1/1",
+     "float": 1.0
+    }
+   ],
+   "remainder": [
+    {
+     "exact": "0/1",
+     "float": 0.0
+    }
+   ]
+  }
+ },
+ "poly_eval": {
+  "kind": "poly_eval",
+  "method": "Horner (exact \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "17/1",
+   "float": 17.0
+  }
+ },
+ "poly_from_roots": {
+  "kind": "poly_from_roots",
+  "method": "\u220f(x\u2212r\u1d62) exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "-6/1",
+    "float": -6.0
+   },
+   {
+    "exact": "11/1",
+    "float": 11.0
+   },
+   {
+    "exact": "-6/1",
+    "float": -6.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "poly_gcd": {
+  "kind": "poly_gcd",
+  "method": "Euclid over \u211a[x]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "-1/1",
+    "float": -1.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "poly_integral": {
+  "kind": "poly_integral",
+  "method": "exact \u211a (constant 0)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "0/1",
+    "float": 0.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "poly_mul": {
+  "kind": "poly_mul",
+  "method": "exact \u211a convolution",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  ]
+ },
+ "poly_roots": {
+  "kind": "poly_roots",
+  "method": "Durand\u2013Kerner (all complex roots)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "im": {
+     "digits": "0.0",
+     "float": 0.0
+    },
+    "re": {
+     "digits": "1.0",
+     "float": 1.0
+    }
+   },
+   {
+    "im": {
+     "digits": "1.78591779887855465971216179423e-101",
+     "float": 1.7859177988785547e-101
+    },
+    "re": {
+     "digits": "3.0",
+     "float": 3.0
+    }
+   },
+   {
+    "im": {
+     "digits": "-9.91383530201425477841415842121e-118",
+     "float": -9.913835302014255e-118
+    },
+    "re": {
+     "digits": "2.0",
+     "float": 2.0
+    }
+   }
+  ]
+ },
+ "polygon_area": {
+  "kind": "polygon_area",
+  "method": "shoelace formula exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "12/1",
+   "float": 12.0
+  }
+ },
+ "polylog": {
+  "kind": "polylog",
+  "method": "finite series/recurrence \u2014 polylog",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.58224052646501250590265632016",
+   "float": 0.5822405264650125
+  }
+ },
+ "polynomial_positivity": {
+  "certificate": {
+   "boundary_equality": true,
+   "certificate": "circuit polynomial / weighted AM-GM (SONC)",
+   "circuit_number": "3",
+   "comparison": {
+    "abs_inner_coeff_pow_n": "27",
+    "circuit_number_pow_n": "27",
+    "n": 3
+   },
+   "inner_coefficient": "-3",
+   "inner_exponent": [
+    2,
+    2
+   ],
+   "inner_term_even": true,
+   "necessary_and_sufficient": true,
+   "outer_coefficients": [
+    "1",
+    "1",
+    "1"
+   ],
+   "outer_exponents": [
+    [
+     4,
+     2
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "weights": [
+    "1/3",
+    "1/3",
+    "1/3"
+   ]
+  },
+  "kind": "polynomial_positivity",
+  "method": "circuit polynomial / weighted AM-GM",
+  "status": "CERTIFIED",
+  "tier": "exact",
+  "value": true,
+  "zeros": [
+   {
+    "point": [
+     "1",
+     "1"
+    ]
+   },
+   {
+    "point": [
+     "1",
+     "-1"
+    ]
+   },
+   {
+    "point": [
+     "-1",
+     "1"
+    ]
+   },
+   {
+    "point": [
+     "-1",
+     "-1"
+    ]
+   }
+  ]
+ },
+ "powerset": {
+  "kind": "powerset",
+  "method": "finite enumeration 2^S",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [],
+   [
+    1
+   ],
+   [
+    2
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    3
+   ],
+   [
+    1,
+    3
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    1,
+    2,
+    3
+   ]
+  ]
+ },
+ "primality_certificate": {
+  "kind": "primality_certificate",
+  "method": "Miller\u2013Rabin (first 13 primes) with a checkable witness; deterministic below 3317044064679887385961981, probable above",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "certificate": {
+    "bases": [
+     2,
+     3,
+     5,
+     7,
+     11,
+     13,
+     17,
+     19,
+     23,
+     29,
+     31,
+     37,
+     41
+    ],
+    "type": "deterministic Miller\u2013Rabin",
+    "valid_below": "3317044064679887385961981"
+   },
+   "certified": true,
+   "n": 97,
+   "prime": true
+  }
+ },
+ "prime_pi": {
+  "kind": "prime_pi",
+  "method": "\u03c0(N) by sieve",
+  "status": "ok",
+  "tier": "exact",
+  "value": 25
+ },
+ "primes": {
+  "kind": "primes",
+  "method": "sieve of Eratosthenes",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   2,
+   3,
+   5,
+   7,
+   11,
+   13,
+   17,
+   19,
+   23,
+   29,
+   31,
+   37,
+   41,
+   43,
+   47
+  ]
+ },
+ "primitive_root": {
+  "kind": "primitive_root",
+  "method": "generator of (\u2124/p\u2124)*",
+  "status": "ok",
+  "tier": "exact",
+  "value": 3
+ },
+ "project": {
+  "kind": "project",
+  "method": "P\u00b7v, exact \u211a[i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "1",
+    "float": 1.0
+   },
+   {
+    "exact": "2",
+    "float": 2.0
+   },
+   {
+    "exact": "0",
+    "float": 0.0
+   }
+  ]
+ },
+ "projection_matrix": {
+  "kind": "projection_matrix",
+  "method": "P=A(A*A)\u207b\u00b9A*, exact \u211a[i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ],
+   [
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ],
+   [
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    },
+    {
+     "exact": "0",
+     "float": 0.0
+    }
+   ]
+  ]
+ },
+ "rational_roots": {
+  "kind": "rational_roots",
+  "method": "rational-root theorem (exact)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "1/1",
+    "float": 1.0
+   },
+   {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   {
+    "exact": "3/1",
+    "float": 3.0
+   }
+  ]
+ },
+ "reachability": {
+  "all_pairs": null,
+  "kind": "reachability",
+  "method": "generalized Floyd\u2013Warshall over the reachability semiring (IDM_Tropical)",
+  "status": "ok",
+  "tier": "exact",
+  "value": 1
+ },
+ "readouts": {
+  "kind": "readouts",
+  "method": "finite retained aggregations (I_\u03b5 with chosen combine rule)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "L1": {
+    "exact": "23/1",
+    "float": 23.0
+   },
+   "L2": 11.532562594670797,
+   "Linf": 9,
+   "argmax": 5,
+   "argmin": 4,
+   "count": 6,
+   "crest_factor": 1.9115792785929293,
+   "energy": {
+    "exact": "133/1",
+    "float": 133.0
+   },
+   "form_factor": 1.2282127732022203,
+   "geometric_mean": {
+    "reason": "ValueError: outside this readout's domain",
+    "status": "n/a"
+   },
+   "harmonic_mean": 12.134831460674157,
+   "mad": {
+    "exact": "7/2",
+    "float": 3.5
+   },
+   "max": 9,
+   "mean(avg)": {
+    "exact": "11/6",
+    "float": 1.8333333333333333
+   },
+   "median": {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   "min": -5,
+   "mode": 3,
+   "peak(|max|)": 9,
+   "peak_to_peak": 14,
+   "power(meansq)": {
+    "exact": "133/6",
+    "float": 22.166666666666668
+   },
+   "range": 14,
+   "rms": 4.708148963941845,
+   "std_pop": 4.336537277085896,
+   "std_samp": 4.750438576243952,
+   "sum": {
+    "exact": "11/1",
+    "float": 11.0
+   },
+   "variance_pop": {
+    "exact": "677/36",
+    "float": 18.805555555555557
+   },
+   "variance_samp": {
+    "exact": "677/30",
+    "float": 22.566666666666666
+   }
+  }
+ },
+ "regression": {
+  "kind": "regression",
+  "method": "exact polynomial least-squares over \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "coeffs": [
+    {
+     "exact": "1/1",
+     "float": 1.0
+    },
+    {
+     "exact": "2/1",
+     "float": 2.0
+    }
+   ],
+   "degree": 1,
+   "r_squared": {
+    "exact": "1/1",
+    "float": 1.0
+   }
+  }
+ },
+ "regularized_sum": {
+  "kind": "regularized_sum",
+  "method": "smoothed sum \u03a3n^p e^{\u2212\u03b5n}, pole removed (\u03b6(\u2212p))",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "-0.0833333333333333333333337409364",
+   "float": -0.08333333333333333
+  }
+ },
+ "residue_integral": {
+  "kind": "residue_integral",
+  "reason": "ValueError: Invalid literal for Fraction: 'z'",
+  "status": "HOLD"
+ },
+ "root_find": {
+  "kind": "root_find",
+  "method": "bisection / finite Newton",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.41421356237309504880168872421",
+   "float": 1.4142135623730951
+  }
+ },
+ "rref": {
+  "kind": "rref",
+  "method": "reduced row-echelon over \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "rank": 2,
+   "rref": [
+    [
+     {
+      "exact": "1/1",
+      "float": 1.0
+     },
+     {
+      "exact": "0/1",
+      "float": 0.0
+     },
+     {
+      "exact": "-1/1",
+      "float": -1.0
+     }
+    ],
+    [
+     {
+      "exact": "0/1",
+      "float": 0.0
+     },
+     {
+      "exact": "1/1",
+      "float": 1.0
+     },
+     {
+      "exact": "2/1",
+      "float": 2.0
+     }
+    ]
+   ]
+  }
+ },
+ "rsa_decrypt": {
+  "kind": "rsa_decrypt",
+  "method": "exact modular exponentiation",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "message": 65
+  }
+ },
+ "rsa_encrypt": {
+  "kind": "rsa_encrypt",
+  "method": "exact modular exponentiation",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "cipher": 2790
+  }
+ },
+ "rsa_keygen": {
+  "kind": "rsa_keygen",
+  "method": "exact RSA keypair",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "phi": 3120,
+   "private": {
+    "d": 2753,
+    "n": 3233
+   },
+   "public": {
+    "e": 17,
+    "n": 3233
+   }
+  }
+ },
+ "sat": {
+  "kind": "sat",
+  "method": "DPLL with unit propagation",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "assignment": {
+    "1": true,
+    "2": true,
+    "3": false
+   },
+   "satisfiable": true
+  }
+ },
+ "segments_intersect": {
+  "coq_theorem": "IDM_Geometry.orient_* (proven orientation predicate)",
+  "kind": "segments_intersect",
+  "method": "exact orientation-sign intersection test",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": {
+   "intersect": true
+  }
+ },
+ "series_accelerate": {
+  "kind": "series_accelerate",
+  "method": "Wynn \u03b5-algorithm",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.785398163397448358437771349242",
+   "float": 0.7853981633974484
+  }
+ },
+ "series_sum": {
+  "kind": "series_sum",
+  "method": "finite partial sum",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.999999999999999111821580299875",
+   "float": 0.9999999999999991
+  }
+ },
+ "set_operation": {
+  "kind": "set_operation",
+  "method": "finite set intersection",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   2,
+   3
+  ]
+ },
+ "shortest_path": {
+  "all_pairs": null,
+  "coq_theorem": "IDM_Tropical.minplus_distrib (min-plus semiring law)",
+  "kind": "shortest_path",
+  "method": "generalized Floyd\u2013Warshall over the shortest semiring (IDM_Tropical)",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": 4
+ },
+ "sigma": {
+  "kind": "sigma",
+  "method": "sum of divisors' k-th powers",
+  "status": "ok",
+  "tier": "exact",
+  "value": 56
+ },
+ "simplify": {
+  "kind": "simplify",
+  "method": "constant folding + like-term collection",
+  "status": "ok",
+  "tier": "exact",
+  "value": "(1 + 2*x)"
+ },
+ "singular_integral": {
+  "bound": {
+   "digits": "3.81197957755187596460953485715e-16",
+   "float": 3.811979577551876e-16
+  },
+  "kind": "singular_integral",
+  "method": "tanh\u2013sinh DE \u2014 clusters nodes so fast it absorbs endpoint singularities",
+  "reason": "tanh\u2013sinh DE, level 4, |\u0394 between levels| \u2264 \u03b5",
+  "status": "CERTIFIED",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.99999999999999803371133787475",
+   "float": 1.999999999999998
+  }
+ },
+ "smith_normal_form": {
+  "kind": "smith_normal_form",
+  "method": "invariant factors d\u2081|d\u2082|\u2026 (exact \u2124)",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   2,
+   4
+  ]
+ },
+ "solve_linear": {
+  "kind": "solve_linear",
+  "method": "exact \u211a Gauss\u2013Jordan",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "4/5",
+    "float": 0.8
+   },
+   {
+    "exact": "7/5",
+    "float": 1.4
+   }
+  ]
+ },
+ "spanning_tree_count": {
+  "coq_theorem": "IDM_Matrix.laplacian_* (Kirchhoff via the graph Laplacian)",
+  "kind": "spanning_tree_count",
+  "method": "Kirchhoff (Laplacian cofactor det)",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": 3
+ },
+ "spectral_decomposition": {
+  "kind": "spectral_decomposition",
+  "method": "characteristic_poly \u2192 rational roots \u2192 exact null spaces (all eigenvalues rational)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "eigenpairs": [
+    {
+     "eigenvalue": {
+      "exact": "1",
+      "float": 1.0
+     },
+     "eigenvector_exact": [
+      {
+       "exact": "-1",
+       "float": -1.0
+      },
+      {
+       "exact": "1",
+       "float": 1.0
+      }
+     ]
+    },
+    {
+     "eigenvalue": {
+      "exact": "3",
+      "float": 3.0
+     },
+     "eigenvector_exact": [
+      {
+       "exact": "1",
+       "float": 1.0
+      },
+      {
+       "exact": "1",
+       "float": 1.0
+      }
+     ]
+    }
+   ],
+   "eigenvalues": [
+    {
+     "exact": "1",
+     "float": 1.0
+    },
+    {
+     "exact": "3",
+     "float": 3.0
+    }
+   ],
+   "exact": true
+  }
+ },
+ "stationary": {
+  "kind": "stationary",
+  "method": "stationary distribution, exact \u211a",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "stationary": [
+    {
+     "exact": "1/3",
+     "float": 0.3333333333333333
+    },
+    {
+     "exact": "2/3",
+     "float": 0.6666666666666666
+    }
+   ]
+  }
+ },
+ "stirling2": {
+  "kind": "stirling2",
+  "method": "recurrence",
+  "status": "ok",
+  "tier": "exact",
+  "value": 15
+ },
+ "sturm_liouville": {
+  "kind": "sturm_liouville",
+  "method": "finite-difference + Sturm-sequence bisection",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "digits": "0.999917758287563388805587795277",
+    "float": 0.9999177582875634
+   },
+   {
+    "digits": "3.99868423504435768188750870626",
+    "float": 3.9986842350443577
+   },
+   {
+    "digits": "8.99334000980328819934528273704",
+    "float": 8.993340009803289
+   }
+  ]
+ },
+ "subset_sum": {
+  "kind": "subset_sum",
+  "method": "reachability DP",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "reachable": true,
+   "subset": [
+    4,
+    5
+   ]
+  }
+ },
+ "summation": {
+  "kind": "summation",
+  "reason": "NameError: name 'k' is not defined",
+  "status": "HOLD"
+ },
+ "symbolic_diff": {
+  "kind": "symbolic_diff",
+  "method": "exact symbolic differentiation",
+  "status": "ok",
+  "tier": "exact",
+  "value": "3*x**2"
+ },
+ "symbolic_integrate": {
+  "kind": "symbolic_integrate",
+  "method": "polynomial + elementary antiderivative",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": "1/3*x**3 + C"
+ },
+ "symbolic_series": {
+  "kind": "symbolic_series",
+  "method": "exact symbolic Taylor by repeated differentiation",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   "1",
+   "1",
+   "1/2",
+   "1/6",
+   "1/24",
+   "1/120"
+  ]
+ },
+ "symbolic_solve": {
+  "kind": "symbolic_solve",
+  "method": "exact linear/quadratic radicals; rational roots for higher degree",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "discriminant": "8",
+   "solutions": [
+    "(-(0) + sqrt(8))/(2*(1))",
+    "(-(0) - sqrt(8))/(2*(1))"
+   ]
+  }
+ },
+ "t_test": {
+  "kind": "t_test",
+  "method": "one-sample t-test, p via regularized incomplete beta",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "df": 29,
+   "p_value": {
+    "digits": "0.078203320172067743809735110063",
+    "float": 0.07820332017206774
+   },
+   "reject_at_0.05": false,
+   "t": {
+    "digits": "1.82574185835055371152323260934",
+    "float": 1.8257418583505538
+   }
+  }
+ },
+ "taylor_series": {
+  "kind": "taylor_series",
+  "method": "f^(k)(x0)/k! by centered finite differences + Richardson",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "digits": "1.0",
+    "float": 1.0
+   },
+   {
+    "digits": "0.999999999186182778841130154663",
+    "float": 0.9999999991861828
+   },
+   {
+    "digits": "0.4999999978297400060784202879",
+    "float": 0.49999999782974003
+   },
+   {
+    "digits": "0.166666664903256408744391993994",
+    "float": 0.1666666649032564
+   },
+   {
+    "digits": "0.0416666658527502005688065839906",
+    "float": 0.0416666658527502
+   },
+   {
+    "digits": "0.00833333307332104809126627204028",
+    "float": 0.008333333073321049
+   }
+  ]
+ },
+ "tensor_product": {
+  "kind": "tensor_product",
+  "method": "Kronecker product u\u2297v, exact \u211a[i]",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   {
+    "exact": "3",
+    "float": 3.0
+   },
+   {
+    "exact": "4",
+    "float": 4.0
+   },
+   {
+    "exact": "6",
+    "float": 6.0
+   },
+   {
+    "exact": "8",
+    "float": 8.0
+   }
+  ]
+ },
+ "topological_sort": {
+  "kind": "topological_sort",
+  "method": "Kahn's algorithm",
+  "status": "ok",
+  "tier": "exact",
+  "value": [
+   0,
+   1,
+   2,
+   3
+  ]
+ },
+ "totient": {
+  "kind": "totient",
+  "method": "Euler \u03c6 from factorization",
+  "status": "ok",
+  "tier": "exact",
+  "value": 12
+ },
+ "triangle_area": {
+  "kind": "triangle_area",
+  "method": "shoelace exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "exact": "6/1",
+   "float": 6.0
+  }
+ },
+ "truth_table": {
+  "kind": "truth_table",
+  "method": "finite assignment enumeration",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "contradiction": false,
+   "rows": [
+    {
+     "a": false,
+     "result": true
+    },
+    {
+     "a": true,
+     "result": true
+    }
+   ],
+   "satisfiable": true,
+   "tautology": true,
+   "variables": [
+    "a"
+   ]
+  }
+ },
+ "vector_norm": {
+  "kind": "vector_norm",
+  "method": "\u221a(\u03a3v\u1d62\u00b2) (squared part exact \u211a)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "5.0",
+   "float": 5.0
+  }
+ },
+ "verified_range": {
+  "kind": "verified_range",
+  "method": "rigorous [min,max] enclosure by interval subdivision",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "certified": true,
+   "max": {
+    "digits": "3.000091552734375",
+    "float": 3.000091552734375
+   },
+   "method": "interval subdivision (rigorous)",
+   "min": {
+    "digits": "-1.00009155250154435634613037109",
+    "float": -1.0000915525015444
+   }
+  }
+ },
+ "von_mangoldt": {
+  "kind": "von_mangoldt",
+  "method": "\u039b(n)=ln p if n=p^k else 0",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": 0.6931471805599453
+ },
+ "widest_path": {
+  "all_pairs": null,
+  "coq_theorem": "IDM_Tropical.maxplus_distrib (max-plus semiring law)",
+  "kind": "widest_path",
+  "method": "generalized Floyd\u2013Warshall over the widest semiring (IDM_Tropical)",
+  "status": "ok",
+  "tier": "Th_coqc",
+  "value": 1
+ },
+ "z_test": {
+  "kind": "z_test",
+  "method": "one-sample z-test, p via erfc",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "p_value": {
+    "digits": "0.0678891548618290236446021511482",
+    "float": 0.06788915486182902
+   },
+   "reject_at_0.05": false,
+   "z": {
+    "digits": "1.82574185835055371152323260934",
+    "float": 1.8257418583505538
+   }
+  }
+ },
+ "z_transform": {
+  "kind": "z_transform",
+  "method": "\u03a3 x[n] z^{\u2212n}",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "im": {
+    "digits": "0.0",
+    "float": 0.0
+   },
+   "re": {
+    "digits": "2.75",
+    "float": 2.75
+   }
+  }
+ },
+ "zeta": {
+  "kind": "zeta",
+  "method": "\u03b6: Euler\u2013Maclaurin (s>1) / \u2212B_{n+1}/(n+1) (s\u22640)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.64493406684822643660958936701",
+   "float": 1.6449340668482264
+  }
+ }
+}
