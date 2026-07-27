@@ -17,7 +17,7 @@ from __future__ import annotations
 from fractions import Fraction as Q
 from typing import Optional
 
-from .. import symbolic as SYM
+from . import cas as SYM
 from . import poly as P
 
 
