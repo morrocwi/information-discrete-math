@@ -101,10 +101,17 @@ def test_both_solvers_accept_same_raw_input():
 def test_executor_audit_cross_checks_agree():
     problem = rs.examples()["harmonic_low4"]
     record = executor_audit_case(problem, intervals=256, repeats=1, jax_bundle=None)
-    assert record["scipy_vs_native_max_abs_difference"] <= 1e-6
-    # On the identical operator the native requested-only kernel should not be
-    # slower than the dense-free SciPy call by more than a small factor.
-    assert record["scipy_to_native_time_ratio"] > 0.0
+    solvers = record["solvers"]
+    # More than one competitor must actually be exercised on the same operator.
+    assert len(solvers) >= 3
+    # Every competitor that ran must agree with native on the eigenvalues.
+    for name, entry in solvers.items():
+        if "hot_median_seconds" in entry:
+            assert entry["max_abs_difference"] <= 1e-6, name
+            assert entry["to_native_time_ratio"] > 0.0, name
+    assert record["cross_check_ok"] is True
+    # The standard tridiagonal LAPACK call must be one of the competitors.
+    assert "SciPy eigh_tridiagonal" in solvers
 
 
 if __name__ == "__main__":

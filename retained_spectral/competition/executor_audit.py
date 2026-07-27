@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""Same-operator executor audit: native vs SciPy vs JAX.
+"""Same-operator executor audit: native vs every standard eigensolver.
 
-All three solvers receive one identical finite operator that the native solver
-already constructed (same window, same interval count, same samples).  Only the
+All solvers receive one identical finite operator that the native solver already
+constructed (same window, same interval count, same samples).  Only the
 *execution* of the eigenvalue solve differs, so this isolates the solve kernel:
 
-* native  — the retained requested-only Sturm/bisection kernel, O(k·N) work and
-  O(N) memory, computing only the requested low modes;
-* SciPy    — ``scipy.linalg.eigh_tridiagonal`` with ``select="i"`` (a tuned
-  LAPACK tridiagonal solver, also requested-only);
-* JAX      — ``jnp.linalg.eigvalsh`` on the densified operator (x64, JIT), the
-  standard dense route, which computes the whole spectrum.
+* native                    — retained requested-only Sturm/bisection, O(k·N)
+  work and O(N) memory, computing only the requested low modes;
+* SciPy ``eigh_tridiagonal`` — LAPACK tridiagonal, requested-only (``select="i"``);
+* SciPy ``eigh`` (dense)     — LAPACK dense, whole spectrum;
+* NumPy ``eigvalsh`` (dense) — LAPACK dense, whole spectrum;
+* SciPy ``eigsh`` (ARPACK)   — iterative, k smallest-algebraic;
+* JAX ``eigvalsh`` (dense)   — XLA dense, whole spectrum (optional).
 
-This is an executor comparison, not an independent JAX/SciPy pipeline: neither
-library performs the well search, window admission, or mesh refinement — those
-remain the native method's.  The dense JAX route is the only eigensolver JAX
-exposes here; its O(N^2) memory and whole-spectrum cost are real properties of
-that route, reported honestly rather than hidden.
+This is an executor comparison, not an independent pipeline: none of the
+libraries perform the well search, window admission, or mesh refinement — those
+remain the native method's.  The dense/iterative routes' whole-spectrum cost and
+O(N^2) memory are real properties reported honestly, not hidden.  Dense-route
+wall-clock also depends on the linked BLAS/LAPACK backend.
 """
 
 from __future__ import annotations
@@ -83,12 +84,18 @@ def executor_audit_case(
     fixed and modest so the dense JAX route stays memory-safe.
     """
 
-    from scipy.linalg import eigh_tridiagonal
+    import scipy.linalg as sla
+    import scipy.sparse as sp
+    import scipy.sparse.linalg as spla
 
+    k = problem.modes
     native_full = retained_raw_input_readout(problem)
     window = native_full.window
     diagonal, off_diagonal, _spacing = retained_tridiagonal(
         problem, window, intervals
+    )
+    dense = (
+        np.diag(diagonal) + np.diag(off_diagonal, 1) + np.diag(off_diagonal, -1)
     )
 
     # native requested-only solve on this exact grid
@@ -103,68 +110,80 @@ def executor_audit_case(
     )
     native_values = np.asarray(native_readout.values)
 
-    # SciPy tridiagonal executor on the same operator
-    scipy_seconds, scipy_values = _hot_median(
-        lambda: eigh_tridiagonal(
-            diagonal,
-            off_diagonal,
-            select="i",
-            select_range=(0, problem.modes - 1),
-            eigvals_only=True,
-            check_finite=False,
+    # Every competitor below receives the IDENTICAL operator (dense/tridiagonal
+    # forms of the same matrix); only the eigensolver differs.
+    competitors: list[tuple[str, str, object]] = [
+        (
+            "SciPy eigh_tridiagonal",
+            "LAPACK tridiagonal, requested-only",
+            lambda: sla.eigh_tridiagonal(
+                diagonal, off_diagonal, select="i",
+                select_range=(0, k - 1), eigvals_only=True, check_finite=False,
+            ),
         ),
-        repeats=repeats,
-    )
-    scipy_values = np.asarray(scipy_values)
+        (
+            "SciPy eigh (dense)",
+            "LAPACK dense, whole spectrum",
+            lambda: sla.eigh(dense, eigvals_only=True, check_finite=False)[:k],
+        ),
+        (
+            "NumPy eigvalsh (dense)",
+            "LAPACK dense, whole spectrum",
+            lambda: np.linalg.eigvalsh(dense)[:k],
+        ),
+        (
+            "SciPy eigsh (ARPACK)",
+            "ARPACK iterative, k smallest-algebraic",
+            lambda: np.sort(
+                spla.eigsh(
+                    sp.diags(
+                        [off_diagonal, diagonal, off_diagonal], [-1, 0, 1]
+                    ).tocsc(),
+                    k=k, which="SA", return_eigenvectors=False,
+                )
+            ),
+        ),
+    ]
+    if jax_bundle is not None:
+        _jax, jnp, dense_eigvalsh = jax_bundle
+        dense_jnp = jnp.asarray(dense)
+        competitors.append((
+            "JAX eigvalsh (dense)",
+            "XLA dense, whole spectrum",
+            lambda: np.asarray(dense_eigvalsh(dense_jnp))[:k],
+        ))
 
-    record: dict[str, object] = {
+    solvers: dict[str, object] = {}
+    all_ok = True
+    for name, kind, fn in competitors:
+        try:
+            seconds, values = _hot_median(fn, repeats=repeats)
+            values = np.asarray(values)
+            diff = float(np.max(np.abs(values - native_values)))
+        except Exception as error:  # a competitor that cannot run is disclosed
+            solvers[name] = {"kind": kind, "error": f"{type(error).__name__}: {error}"}
+            continue
+        ok = diff <= cross_check_tol
+        all_ok = all_ok and ok
+        solvers[name] = {
+            "kind": kind,
+            "hot_median_seconds": seconds,
+            "to_native_time_ratio": seconds / native_seconds,
+            "max_abs_difference": diff,
+            "cross_check_ok": ok,
+        }
+
+    return {
         "intervals": intervals,
         "interior_points": diagonal.size,
         "window": [float(window[0]), float(window[1])],
-        "requested_modes": problem.modes,
+        "requested_modes": k,
+        "dense_matrix_bytes": int(dense.nbytes),
         "native_hot_median_seconds": native_seconds,
         "native_working_bytes": int(native_readout.working_bytes),
-        "scipy_hot_median_seconds": scipy_seconds,
-        "scipy_to_native_time_ratio": scipy_seconds / native_seconds,
-        "scipy_vs_native_max_abs_difference": float(
-            np.max(np.abs(scipy_values - native_values))
-        ),
+        "solvers": solvers,
+        "cross_check_ok": bool(all_ok),
     }
-
-    if jax_bundle is not None:
-        _jax, jnp, dense_eigvalsh = jax_bundle
-        dense = (
-            np.diag(diagonal)
-            + np.diag(off_diagonal, 1)
-            + np.diag(off_diagonal, -1)
-        )
-        dense_jnp = jnp.asarray(dense)
-
-        def _run_jax():
-            return np.asarray(dense_eigvalsh(dense_jnp))[: problem.modes]
-
-        jax_seconds, jax_values = _hot_median(_run_jax, repeats=repeats)
-        jax_values = np.asarray(jax_values)
-        record.update(
-            {
-                "jax_hot_median_seconds": jax_seconds,
-                "jax_to_native_time_ratio": jax_seconds / native_seconds,
-                "jax_dense_matrix_bytes": int(dense.nbytes),
-                "jax_dense_to_native_memory_ratio": (
-                    dense.nbytes / native_readout.working_bytes
-                ),
-                "jax_vs_native_max_abs_difference": float(
-                    np.max(np.abs(jax_values - native_values))
-                ),
-            }
-        )
-
-    record["cross_check_ok"] = bool(
-        record["scipy_vs_native_max_abs_difference"] <= cross_check_tol
-        and record.get("jax_vs_native_max_abs_difference", 0.0)
-        <= cross_check_tol
-    )
-    return record
 
 
 def run_executor_audit(
