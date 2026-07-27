@@ -22,6 +22,17 @@ a prior report.  Run::
 from __future__ import annotations
 
 import argparse
+import os
+
+# Pin every BLAS/LAPACK/threading backend to a single thread BEFORE numpy/scipy/jax import, so a timing
+# comparison measures the algorithm, not the host's thread scheduler (B3). setdefault: the caller can
+# still override from the shell.
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+             "VECLIB_MAXIMUM_THREADS", "NUMEXPR_NUM_THREADS", "NUMBA_NUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+os.environ.setdefault("JAX_ENABLE_X64", "1")
+
 import json
 import platform
 import statistics
@@ -41,6 +52,7 @@ from retained_spectral.engine import (
 )
 from retained_spectral.competition.executor_audit import run_executor_audit
 from retained_spectral.competition.scipy_pipeline import scipy_raw_input_readout
+from retained_spectral.competition.stats import summarize, speedup_ci
 
 DEFAULT_RESULTS = (
     Path(__file__).resolve().parent.parent / "results" / "competition_results.json"
@@ -78,16 +90,31 @@ def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, ob
     problem = target.problem
     native_samples: list[float] = []
     scipy_samples: list[float] = []
-    native_result = retained_raw_input_readout(problem)
+    native_result = retained_raw_input_readout(problem)   # warm-up (outside timing)
     scipy_result = scipy_raw_input_readout(problem)
-    for _ in range(repeats):
-        started = time.perf_counter()
-        native_result = retained_raw_input_readout(problem)
-        native_samples.append(time.perf_counter() - started)
 
+    def _time_native():
         started = time.perf_counter()
-        scipy_result = scipy_raw_input_readout(problem)
-        scipy_samples.append(time.perf_counter() - started)
+        r = retained_raw_input_readout(problem)
+        return time.perf_counter() - started, r
+
+    def _time_scipy():
+        started = time.perf_counter()
+        r = scipy_raw_input_readout(problem)
+        return time.perf_counter() - started, r
+
+    for i in range(repeats):
+        # balanced ordering: alternate which pipeline runs first so neither is systematically
+        # favoured by cache/thermal state (B3).
+        order = (_time_native, _time_scipy) if i % 2 == 0 else (_time_scipy, _time_native)
+        for fn in order:
+            dt, r = fn()
+            if fn is _time_native:
+                native_samples.append(dt)
+                native_result = r
+            else:
+                scipy_samples.append(dt)
+                scipy_result = r
 
     native_seconds = float(statistics.median(native_samples))
     scipy_seconds = float(statistics.median(scipy_samples))
@@ -115,6 +142,9 @@ def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, ob
             "correct": scipy_error <= problem.tolerance,
         },
         "scipy_to_native_time_ratio": scipy_seconds / native_seconds,
+        "native_stats": summarize(native_samples),
+        "scipy_stats": summarize(scipy_samples),
+        "scipy_speedup_over_native": speedup_ci(native_samples, scipy_samples),
     }
 
 
@@ -165,9 +195,16 @@ def run_competition(
     fairness_verdict = "ACCEPT" if (executor_cross_check_all and executor_complete_all) else "HOLD"
     # median-based (confidence intervals are B3): ACCEPT only if native is faster in EVERY case;
     # if any case has a competitor faster it is HOLD (never silently an overall ACCEPT).
-    if native_wins == n:
+    # CI-based speed verdict on the PRIMARY same-work peer (SciPy eigh_tridiagonal, kernel-only):
+    # native win requires the 95% bootstrap CI of the speedup to sit entirely above 1 in EVERY case.
+    peer = "SciPy eigh_tridiagonal"
+    peer_verdicts = [
+        c["solvers"].get(peer, {}).get("speedup_over_native", {}).get("verdict", "insufficient-samples")
+        for c in audit_cases.values()
+    ]
+    if peer_verdicts and all(v == "native_faster" for v in peer_verdicts):
         speed_verdict = "ACCEPT"
-    elif any(r < 1.0 for r in ratios):
+    elif any(v == "competitor_faster" for v in peer_verdicts):
         speed_verdict = "HOLD"
     else:
         speed_verdict = "TIE"
@@ -222,9 +259,11 @@ def run_competition(
         "verdicts": {
             "correctness": correctness_verdict,   # native AND scipy hit references within DECLARED tol
             "fairness": fairness_verdict,          # executor audit cross-checked AND complete (no solver errors)
-            "speed": speed_verdict,                # median-based; TIE/HOLD if a competitor is ever faster
-            "note": "speed is median-based; 95% confidence intervals are future work (B3). "
-                    "verdict=ACCEPT requires correctness AND fairness AND speed all ACCEPT.",
+            "speed": speed_verdict,                # from the 95% bootstrap CI of the same-work peer speedup
+            "note": "speed ACCEPT requires the 95% bootstrap CI of native-vs-SciPy-eigh_tridiagonal "
+                    "(kernel-only) to sit above 1 in EVERY case; TIE if a CI straddles 1, HOLD if a "
+                    "competitor's CI is below 1. Overall ACCEPT requires correctness AND fairness AND "
+                    "speed all ACCEPT. Multi-process runs are the remaining B3 item.",
         },
         "tier": "finite_diagnostic",
     }

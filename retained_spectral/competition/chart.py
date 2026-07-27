@@ -273,7 +273,7 @@ def render_hero(data: dict, output_path: Path) -> Path:
     fig.text(
         0.09, 0.02,
         f"{nc}/{tc} within declared tolerance  ·  finite_diagnostic tier  ·  median of hot calls "
-        f"(95% CI is future work)  ·  {agg_note}\n"
+        f"(95% bootstrap CI recorded in the JSON)  ·  {agg_note}\n"
         f"this host: numpy {env['numpy']}, scipy {env['scipy']}, jax {env['jax']}, numba {env['numba']}"
         f"  ·  dense-route time depends on the linked BLAS/LAPACK",
         ha="left", fontsize=8.5, color=MUTED,
