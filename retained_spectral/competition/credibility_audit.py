@@ -29,12 +29,14 @@ from scipy.linalg import eigh_tridiagonal
 from retained_spectral.engine import (
     RawSpectralProblem,
     _finite_native_readout,
+    raw_benchmark_targets,
     retained_raw_input_readout,
     retained_tridiagonal,
     warm_native_kernel,
 )
 from retained_spectral.competition.scipy_pipeline import scipy_raw_input_readout
 from retained_spectral.competition.run import run_competition
+from retained_spectral.competition.correctness import three_layer_case
 
 
 @dataclass(frozen=True)
@@ -345,6 +347,20 @@ def run_cold_start() -> dict[str, object]:
     return records
 
 
+def run_three_layer_correctness() -> dict[str, object]:
+    """Three independent correctness layers per declared spectrum (B4): external analytic reference,
+    an extended-precision recomputation of the same discrete operator, and a Sturm sign-count index
+    certificate. A speed benchmark is only trustworthy on top of an independently-checked correct answer.
+    """
+    cases: dict[str, object] = {}
+    all_ok = True
+    for target in raw_benchmark_targets():
+        rec = three_layer_case(target.problem, target.reference)
+        cases[target.problem.name] = rec
+        all_ok = all_ok and rec["ok"]
+    return {"all_ok": bool(all_ok), "cases": cases}
+
+
 def run_credibility_audit(
     *,
     include_jax: bool = True,
@@ -361,6 +377,7 @@ def run_credibility_audit(
     adversarial = run_adversarial()
     scaling = run_scaling(repeats=scaling_repeats)
     cold_start = run_cold_start()
+    three_layer = run_three_layer_correctness()
 
     # Two separate axes, never conflated (the repo's tier-honesty rule):
     #   (1) credibility gates — is the reproduction itself sound? correctness on the adversarial
@@ -371,6 +388,7 @@ def run_credibility_audit(
     #       WITHOUT making the reproduction less credible. It is reported, not gated: a green
     #       credibility run never silently implies the native method won every peer contest.
     credibility_gates = {
+        "three_layer_correctness_all": three_layer["all_ok"],
         "adversarial_correctness_all": adversarial["all_ok"],
         "scaling_cross_checks_all": scaling["all_cross_checks"],
         "source_commit_recorded": baseline["source_commit"] != "not-recorded",
@@ -391,6 +409,7 @@ def run_credibility_audit(
             "github_runner_os": os.environ.get("RUNNER_OS", "local"),
         },
         "baseline": baseline,
+        "three_layer_correctness": three_layer,
         "adversarial": adversarial,
         "scaling": scaling,
         "cold_start": cold_start,

@@ -164,6 +164,35 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
     assert "thread_environment" in result["environment"]
 
 
+def test_three_layer_correctness_passes_declared_cases():
+    """B4 — every declared spectrum passes all three independent correctness layers (analytic
+    reference, extended-precision same-operator recomputation, Sturm sign-count certificate)."""
+    from retained_spectral.competition.correctness import three_layer_case
+
+    for target in engine.raw_benchmark_targets()[:3]:      # a fast representative subset
+        rec = three_layer_case(target.problem, target.reference)
+        assert rec["ok"], (target.problem.name, rec["layers"])
+        assert rec["layers"]["extended_precision_ok"]
+        assert rec["layers"]["sturm_certificate_ok"]
+
+
+def test_sturm_certificate_rejects_a_wrong_eigenvalue():
+    """The Sturm index certificate is a real gate: move one eigenvalue off its true position and the
+    sign-count must stop bracketing it at the right index (a negative control)."""
+    from retained_spectral.competition.correctness import sturm_index_certificate
+
+    target = engine.raw_benchmark_targets()[0]
+    native = engine.retained_raw_input_readout(target.problem)
+    diag, off, _ = engine.retained_tridiagonal(target.problem, native.window, 768)
+    good = list(map(float, engine.native_eigvals_from_tridiagonal(
+        diag, off, target.problem.modes, target.problem.tolerance)))
+    assert sturm_index_certificate(diag, off, good, abs_delta=1e-6)["ok"]
+
+    bad = list(good)
+    bad[-1] = bad[-1] + 5.0                                # a grossly wrong top eigenvalue
+    assert not sturm_index_certificate(diag, off, bad, abs_delta=1e-6)["ok"]
+
+
 def test_charts_render_ci_and_raw_samples(tmp_path, monkeypatch):
     """render_hero / render_detail draw from the measured record: the detail forest plot needs the
     per-case bootstrap CI and the raw samples the run now records."""
