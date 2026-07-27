@@ -1425,6 +1425,24 @@
    ]
   }
  },
+ "groebner_basis": {
+  "kind": "groebner_basis",
+  "method": "Buchberger's algorithm \u2192 reduced Gr\u00f6bner basis, exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "basis": [
+    "y^2 - 1/2",
+    "x - y"
+   ],
+   "order": "grevlex",
+   "size": 2,
+   "variables": [
+    "x",
+    "y"
+   ]
+  }
+ },
  "hermite_H": {
   "kind": "hermite_H",
   "method": "finite series/recurrence \u2014 hermite_H",
