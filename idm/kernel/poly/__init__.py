@@ -20,6 +20,7 @@ from .subresultant import subresultant_prs, resultant_prs, gcd_prs
 from .interpolate import lagrange, newton
 from .matrix_minpoly import minimal_polynomial, eval_poly_at_matrix
 from .factorize import factor_over_Q
+from .linsolve import LinearSolution, rref, linear_solve, matvec
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
@@ -30,4 +31,5 @@ __all__ = [
     "characteristic_polynomial", "real_eigenvalues",
     "subresultant_prs", "resultant_prs", "gcd_prs", "lagrange", "newton",
     "minimal_polynomial", "eval_poly_at_matrix", "factor_over_Q",
+    "LinearSolution", "rref", "linear_solve", "matvec",
 ]
