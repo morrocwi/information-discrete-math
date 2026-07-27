@@ -43,29 +43,67 @@ def _scipy_tridiagonal(
     return diagonal, off_diagonal
 
 
+def _scalar_potential(problem: RawSpectralProblem, value: float) -> float:
+    return float(
+        potential_values(problem, np.asarray((value,), dtype=np.float64))[0]
+    )
+
+
+def _discover_well(problem: RawSpectralProblem) -> tuple[float, float]:
+    """Independent, reference-blind well search: an expanding finite probe (no fixed box)
+    followed by a local SciPy minimizer inside the discovered cell. Replaces the earlier
+    fixed [-32, 32] bounded search so a well centred far from the origin is still found."""
+
+    center = 0.0
+    radius = 8.0
+    grid = np.empty(0)
+    minimum_index = 0
+    for _ in range(10):
+        grid = np.linspace(center - radius, center + radius, 2049)
+        with np.errstate(over="ignore", invalid="ignore"):
+            values = potential_values(problem, grid)
+        finite = np.isfinite(values)
+        if not np.any(finite):
+            raise RuntimeError("SciPy well search found no finite potential sample")
+        safe_values = np.where(finite, values, np.inf)
+        minimum_index = int(np.argmin(safe_values))
+        edge = 128
+        if edge <= minimum_index < grid.size - edge:
+            break
+        center = float(grid[minimum_index])
+        radius *= 2.0
+    else:
+        raise RuntimeError("SciPy well search did not place the minimum in the probe interior")
+
+    lo_index = max(0, minimum_index - 2)
+    hi_index = min(grid.size - 1, minimum_index + 2)
+    left = float(grid[lo_index])
+    right = float(grid[hi_index])
+    if not right > left:
+        return float(grid[minimum_index]), radius / 1024.0
+
+    result = minimize_scalar(
+        lambda x: _scalar_potential(problem, float(x)),
+        bounds=(left, right),
+        method="bounded",
+        options={"xatol": 1.0e-9},
+    )
+    located = float(result.x) if result.success else float(grid[minimum_index])
+    return located, radius / 1024.0
+
+
 def _initial_window(
     problem: RawSpectralProblem,
 ) -> tuple[float, tuple[float, float]]:
-    """SciPy-owned bounded minimization and curvature scale."""
+    """SciPy-owned expanding well search and curvature scale."""
 
-    def scalar_potential(value: float) -> float:
-        return float(
-            potential_values(problem, np.asarray((value,), dtype=np.float64))[0]
-        )
-
-    search = minimize_scalar(
-        scalar_potential,
-        bounds=(-32.0, 32.0),
-        method="bounded",
-        options={"xatol": 1.0e-7},
-    )
-    center = float(search.x)
-    step = 1.0e-3 * (1.0 + abs(center))
+    center, probe_floor = _discover_well(problem)
+    step = max(1.0e-3 * (1.0 + abs(center)), probe_floor)
     curvature = max(
         (
-            scalar_potential(center - step)
-            - 2.0 * scalar_potential(center)
-            + scalar_potential(center + step)
+            _scalar_potential(problem, center - step)
+            - 2.0 * _scalar_potential(problem, center)
+            + _scalar_potential(problem, center + step)
         )
         / step**2,
         0.0,
@@ -85,8 +123,9 @@ def _turning_tail_pass(
 
     left, right = window
     grid = np.linspace(left, right, 1025)
-    values = potential_values(problem, grid)
-    allowed = values <= energy
+    with np.errstate(over="ignore", invalid="ignore"):
+        values = potential_values(problem, grid)
+    allowed = np.isfinite(values) & (values <= energy)
     if not np.any(allowed):
         return False
     if side == "left":
@@ -98,6 +137,8 @@ def _turning_tail_pass(
         boundary_value = float(values[-1])
         distance = float(right - grid[allowed_index])
     barrier = boundary_value - energy
+    if not math.isfinite(barrier):
+        return True
     if barrier <= 0.0:
         return False
     score = 2.0 * math.sqrt(2.0 * barrier) * distance
@@ -187,7 +228,7 @@ def scipy_raw_input_readout(
     problem: RawSpectralProblem,
     *,
     max_intervals: int = 1_048_576,
-    max_window_rounds: int = 8,
+    max_window_rounds: int = 10,
 ) -> RawSpectralResult:
     """End-to-end SciPy pipeline from the same uncalibrated input."""
 

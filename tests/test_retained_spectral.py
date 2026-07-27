@@ -118,5 +118,51 @@ def test_executor_audit_cross_checks_agree():
     assert "SciPy eigh_tridiagonal" in solvers
 
 
+# ---------------------------------------------------------------- consolidated credibility layer
+
+
+def test_scipy_pipeline_finds_far_off_center_well():
+    """The consolidated SciPy pipeline uses an unbounded expanding well search — a harmonic well
+    centred at 80 (far outside the old fixed [-32, 32] box) must still be located and solved."""
+    problem = engine.RawSpectralProblem(
+        name="c80", potential="harmonic",
+        parameters=(("omega", 1.0), ("center", 80.0)), modes=4, tolerance=5e-7,
+    )
+    result = scipy_pipeline.scipy_raw_input_readout(problem)
+    assert result.status == "ACCEPT"
+    lo, hi = result.window
+    assert lo <= 80.0 <= hi                       # the discovered window brackets the true centre
+    for got, want in zip(result.values, (0.5, 1.5, 2.5, 3.5)):
+        assert abs(got - want) <= problem.tolerance
+
+
+def test_credibility_audit_exposes_adversarial_suite():
+    """The consolidated credibility audit (imports repointed off the removed *_strict modules)
+    must import and declare its adversarial suite, including the far-off-origin well."""
+    from retained_spectral.competition import credibility_audit as ca
+
+    targets = ca.adversarial_targets()
+    assert len(targets) == 8
+    names = {t.problem.name for t in targets}
+    assert "audit_harmonic_center80" in names     # the far-centred stressor
+    assert "audit_factorized_double_well" in names
+
+
+def test_run_competition_reports_gates_and_provenance(monkeypatch):
+    """run_competition records the strict gates (both pipelines must ACCEPT), the source commit,
+    the frozen thread environment, and the seeded ordering — the provenance the audit gates on."""
+    monkeypatch.setenv("GITHUB_SHA", "unit-test-sha")
+    from retained_spectral.competition.run import run_competition
+
+    result = run_competition(repeats=2, audit_repeats=1, include_jax=False)
+    gates = result["verdict_gates"]
+    for key in ("native_correct_all", "scipy_correct_all", "native_accept_all",
+                "scipy_accept_all", "speed_ci_native_faster_all"):
+        assert key in gates
+    assert result["source_commit"] == "unit-test-sha"
+    assert result["end_to_end"]["seed"] == 20260727
+    assert "thread_environment" in result["environment"]
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

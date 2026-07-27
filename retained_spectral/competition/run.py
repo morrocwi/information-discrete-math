@@ -35,6 +35,7 @@ os.environ.setdefault("JAX_ENABLE_X64", "1")
 
 import json
 import platform
+import random
 import statistics
 import sys
 import time
@@ -84,7 +85,7 @@ def _timed(solver, problem, *, repeats: int) -> tuple[float, object]:
     return float(statistics.median(samples)), result
 
 
-def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, object]:
+def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int, seed: int = 20260727) -> dict[str, object]:
     """Interleave native RMS and independent SciPy on one raw problem."""
 
     problem = target.problem
@@ -103,10 +104,13 @@ def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, ob
         r = scipy_raw_input_readout(problem)
         return time.perf_counter() - started, r
 
-    for i in range(repeats):
-        # balanced ordering: alternate which pipeline runs first so neither is systematically
-        # favoured by cache/thermal state (B3).
-        order = (_time_native, _time_scipy) if i % 2 == 0 else (_time_scipy, _time_native)
+    # seeded-randomized ordering: shuffle which pipeline runs first on every repeat so neither is
+    # systematically favoured by cache/thermal state. The seed is recorded, so the interleaving is
+    # reproducible (stronger than a fixed alternation, which a solver could in principle phase-lock to).
+    rng = random.Random(f"{seed}:{problem.name}")
+    for _ in range(repeats):
+        order = [_time_native, _time_scipy]
+        rng.shuffle(order)
         for fn in order:
             dt, r = fn()
             if fn is _time_native:
@@ -154,13 +158,14 @@ def run_competition(
     audit_intervals: int = 768,
     audit_repeats: int = 5,
     include_jax: bool = True,
+    seed: int = 20260727,
 ) -> dict[str, object]:
     targets = raw_benchmark_targets()
     warm_native_kernel()
 
     end_to_end: dict[str, object] = {}
     for target in targets:
-        end_to_end[target.problem.name] = end_to_end_case(target, repeats=repeats)
+        end_to_end[target.problem.name] = end_to_end_case(target, repeats=repeats, seed=seed)
 
     ratios = [
         case["scipy_to_native_time_ratio"] for case in end_to_end.values()
@@ -170,6 +175,9 @@ def run_competition(
     scipy_correct = sum(case["scipy"]["correct"] for case in end_to_end.values())
     native_accept = sum(
         case["native"]["status"] == "ACCEPT" for case in end_to_end.values()
+    )
+    scipy_accept = sum(
+        case["scipy"]["status"] == "ACCEPT" for case in end_to_end.values()
     )
     native_wins = sum(r > 1.0 for r in ratios)
 
@@ -208,17 +216,24 @@ def run_competition(
         speed_verdict = "HOLD"
     else:
         speed_verdict = "TIE"
-    strict_accept = (
-        correctness_verdict == "ACCEPT"
-        and fairness_verdict == "ACCEPT"
-        and speed_verdict == "ACCEPT"
-        and native_accept == n
-    )
+    # Named gates (every one must pass for an overall ACCEPT). "both pipelines ACCEPT" is a stronger
+    # fairness bar than native-only: an unconverged competitor cannot flatter the native win.
+    verdict_gates = {
+        "native_correct_all": native_correct == n,
+        "scipy_correct_all": scipy_correct == n,
+        "native_accept_all": native_accept == n,
+        "scipy_accept_all": scipy_accept == n,
+        "executor_cross_check_all": executor_cross_check_all,
+        "executor_comparison_complete_all": executor_complete_all,
+        "speed_ci_native_faster_all": speed_verdict == "ACCEPT",
+    }
+    strict_accept = all(verdict_gates.values())
     verdict = "ACCEPT" if strict_accept else "HOLD"
 
     return {
         "schema": "idm.retained-spectral-competition.v1",
         "simulation": False,
+        "source_commit": os.environ.get("GITHUB_SHA", "not-recorded"),
         "claim_scope": (
             "finite_diagnostic agreement and wall-clock cost on seven declared "
             "1-D Schrodinger spectra; the native method is faster than an "
@@ -235,6 +250,16 @@ def run_competition(
             "scipy": _package_version("scipy"),
             "jax": _package_version("jax"),
             "jaxlib": _package_version("jaxlib"),
+            "thread_environment": {
+                name: os.environ.get(name, "unset")
+                for name in (
+                    "OMP_NUM_THREADS",
+                    "OPENBLAS_NUM_THREADS",
+                    "MKL_NUM_THREADS",
+                    "VECLIB_MAXIMUM_THREADS",
+                    "NUMEXPR_NUM_THREADS",
+                )
+            },
         },
         "end_to_end": {
             "boundary": (
@@ -242,11 +267,14 @@ def run_competition(
                 "tolerance); references consulted only after both return"
             ),
             "repeats": repeats,
+            "seed": seed,
+            "timing_order": "seeded-randomized per repeat after one untimed warm run",
             "summary": {
                 "cases": len(targets),
                 "native_correct": native_correct,
                 "scipy_correct": scipy_correct,
                 "native_accepted": native_accept,
+                "scipy_accepted": scipy_accept,
                 "native_faster_cases": native_wins,
                 "speedup_min": float(min(ratios)),
                 "speedup_max": float(max(ratios)),
@@ -256,14 +284,17 @@ def run_competition(
         },
         "executor_audit": audit,
         "verdict": verdict,
+        "verdict_gates": verdict_gates,
         "verdicts": {
             "correctness": correctness_verdict,   # native AND scipy hit references within DECLARED tol
             "fairness": fairness_verdict,          # executor audit cross-checked AND complete (no solver errors)
             "speed": speed_verdict,                # from the 95% bootstrap CI of the same-work peer speedup
             "note": "speed ACCEPT requires the 95% bootstrap CI of native-vs-SciPy-eigh_tridiagonal "
                     "(kernel-only) to sit above 1 in EVERY case; TIE if a CI straddles 1, HOLD if a "
-                    "competitor's CI is below 1. Overall ACCEPT requires correctness AND fairness AND "
-                    "speed all ACCEPT. Multi-process runs are the remaining B3 item.",
+                    "competitor's CI is below 1. Overall ACCEPT requires ALL verdict_gates: both "
+                    "pipelines correct AND both ACCEPT at the declared tolerance, executor cross-checks "
+                    "complete, and the CI-based speed win in every case. Multi-process runs are the "
+                    "remaining B3 item.",
         },
         "tier": "finite_diagnostic",
     }
@@ -274,6 +305,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--repeats", type=int, default=9)
     parser.add_argument("--audit-intervals", type=int, default=768)
     parser.add_argument("--audit-repeats", type=int, default=5)
+    parser.add_argument("--seed", type=int, default=20260727)
     parser.add_argument("--no-jax", action="store_true")
     parser.add_argument("--json", type=Path, default=DEFAULT_RESULTS)
     return parser.parse_args()
@@ -286,6 +318,7 @@ def main() -> int:
         audit_intervals=args.audit_intervals,
         audit_repeats=args.audit_repeats,
         include_jax=not args.no_jax,
+        seed=args.seed,
     )
     args.json.parent.mkdir(parents=True, exist_ok=True)
     args.json.write_text(
