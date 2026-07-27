@@ -319,6 +319,30 @@ else:  # pragma: no cover - dependency-light fallback
 # holds only when this is True. Benchmarks record it so a run without Numba is self-disclosing rather
 # than silently reporting slow numbers as if they were the compiled field.
 NATIVE_KERNEL_COMPILED = njit is not None
+KERNEL_FIELD = "compiled" if NATIVE_KERNEL_COMPILED else "interpreted_fallback"
+
+KERNEL_FALLBACK_NOTICE = (
+    "retained_spectral: numba is NOT installed, so the Sturm/bisection kernel is running as interpreted "
+    "Python. Correctness is unaffected, but ALL TIMINGS ARE INVALID as a speed claim: the interpreted "
+    "kernel measures ~70x SLOWER than scipy.linalg.eigh_tridiagonal, whereas the declared compiled field "
+    "measures ~2-3x FASTER. Do not report, chart, or compare timings from this run. Install the declared "
+    "field with:  pip install 'information-discrete-math[spectral-bench]'"
+)
+
+
+def require_compiled_kernel(context: str = "speed measurement") -> None:
+    """Fail CLOSED when a timing-bearing path runs without the compiled kernel. Correctness paths never
+    call this (the interpreted fallback is numerically identical); only speed/benchmark entry points do,
+    so an interpreted run raises HOLD instead of silently emitting ~70x-slower numbers as the declared
+    compiled field."""
+    if not NATIVE_KERNEL_COMPILED:
+        raise RuntimeError(f"HOLD ({context}) — {KERNEL_FALLBACK_NOTICE}")
+
+
+if not NATIVE_KERNEL_COMPILED:  # pragma: no cover - environment dependent
+    import warnings as _warnings
+
+    _warnings.warn(KERNEL_FALLBACK_NOTICE, RuntimeWarning, stacklevel=2)
 
 
 def warm_native_kernel() -> None:
