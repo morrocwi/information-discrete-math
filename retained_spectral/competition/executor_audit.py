@@ -30,7 +30,7 @@ import numpy as np
 
 from retained_spectral.engine import (
     RawSpectralProblem,
-    _finite_native_readout,
+    native_eigvals_from_tridiagonal,
     retained_raw_input_readout,
     retained_tridiagonal,
     warm_native_kernel,
@@ -77,11 +77,13 @@ def executor_audit_case(
     jax_bundle: object | None = None,
     cross_check_tol: float = 1e-6,
 ) -> dict[str, object]:
-    """Compare native, SciPy, and JAX on one identical operator.
+    """Field A (kernel-only): every solver receives an already-built operator representation of ONE
+    identical matrix, and only the eigenvalue solve is timed — the same timing boundary for all.
 
-    The window comes from a full native solve so the operator is a real,
-    admitted finite window rather than an arbitrary box.  ``intervals`` is held
-    fixed and modest so the dense JAX route stays memory-safe.
+    The window comes from a full native solve so the operator is a real, admitted finite window rather
+    than an arbitrary box. ``intervals`` is held fixed and modest so the dense JAX route stays
+    memory-safe. Operator construction, potential sampling, mesh/window discovery, dense/sparse
+    conversion, and device transfer are all done OUTSIDE the timed region (that is Field B / Field C).
     """
 
     import scipy.linalg as sla
@@ -91,27 +93,24 @@ def executor_audit_case(
     k = problem.modes
     native_full = retained_raw_input_readout(problem)
     window = native_full.window
-    diagonal, off_diagonal, _spacing = retained_tridiagonal(
-        problem, window, intervals
-    )
-    dense = (
-        np.diag(diagonal) + np.diag(off_diagonal, 1) + np.diag(off_diagonal, -1)
-    )
 
-    # native requested-only solve on this exact grid
-    native_seconds, native_readout = _hot_median(
-        lambda: _finite_native_readout(
-            problem,
-            window,
-            intervals,
-            energy_tolerance=problem.tolerance,
-        ),
+    # --- Field A (kernel-only): build EVERY operator representation OUTSIDE the timed region, so the
+    #     timed lambda contains only the eigenvalue solve. No potential sampling, window discovery, mesh
+    #     construction, dense conversion, sparse conversion, or JIT is charged to any solver's timing. ---
+    diagonal, off_diagonal, _spacing = retained_tridiagonal(problem, window, intervals)
+    dense = np.diag(diagonal) + np.diag(off_diagonal, 1) + np.diag(off_diagonal, -1)
+    csc = sp.diags([off_diagonal, diagonal, off_diagonal], [-1, 0, 1]).tocsc()   # ARPACK input, prebuilt
+    native_working_bytes = int(diagonal.nbytes + off_diagonal.nbytes)
+
+    # native requested-only solve on the PREBUILT tridiagonal — only the solve is timed (same boundary)
+    native_seconds, native_values = _hot_median(
+        lambda: native_eigvals_from_tridiagonal(diagonal, off_diagonal, k, problem.tolerance),
         repeats=repeats,
     )
-    native_values = np.asarray(native_readout.values)
+    native_values = np.asarray(native_values)
 
-    # Every competitor below receives the IDENTICAL operator (dense/tridiagonal
-    # forms of the same matrix); only the eigensolver differs.
+    # Every competitor receives an ALREADY-BUILT representation of the same matrix; only the solve is
+    # inside the timed lambda (ARPACK's CSC and JAX's device array are built above, outside timing).
     competitors: list[tuple[str, str, object]] = [
         (
             "SciPy eigh_tridiagonal",
@@ -134,19 +133,12 @@ def executor_audit_case(
         (
             "SciPy eigsh (ARPACK)",
             "ARPACK iterative, k smallest-algebraic",
-            lambda: np.sort(
-                spla.eigsh(
-                    sp.diags(
-                        [off_diagonal, diagonal, off_diagonal], [-1, 0, 1]
-                    ).tocsc(),
-                    k=k, which="SA", return_eigenvectors=False,
-                )
-            ),
+            lambda: np.sort(spla.eigsh(csc, k=k, which="SA", return_eigenvectors=False)),
         ),
     ]
     if jax_bundle is not None:
         _jax, jnp, dense_eigvalsh = jax_bundle
-        dense_jnp = jnp.asarray(dense)
+        dense_jnp = jnp.asarray(dense)   # device transfer done outside timing
         competitors.append((
             "JAX eigvalsh (dense)",
             "XLA dense, whole spectrum",
@@ -184,9 +176,11 @@ def executor_audit_case(
         "interior_points": diagonal.size,
         "window": [float(window[0]), float(window[1])],
         "requested_modes": k,
+        "field": "kernel_only",
+        "timing_boundary": "solve only — operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "dense_matrix_bytes": int(dense.nbytes),
         "native_hot_median_seconds": native_seconds,
-        "native_working_bytes": int(native_readout.working_bytes),
+        "native_working_bytes": native_working_bytes,
         "solvers": solvers,
         "cross_check_ok": bool(all_ok),
         "comparison_complete": bool(all_complete),   # False if any solver errored on this case

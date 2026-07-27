@@ -760,6 +760,22 @@ def result_as_dict(result: RawSpectralResult) -> dict[str, object]:
     return asdict(result)
 
 
+def native_eigvals_from_tridiagonal(diagonal, off_diagonal, k: int, energy_tolerance: float):
+    """Lowest-``k`` eigenvalues from a PREBUILT symmetric tridiagonal operator.
+
+    The retained requested-only Sturm-bracket + batched-bisection kernel with NO operator construction
+    inside — for a fair kernel-only timing boundary where every solver receives an already-built
+    operator representation and only the eigenvalue solve is timed.
+    """
+    diagonal = np.asarray(diagonal, dtype=np.float64)
+    off_diagonal = np.asarray(off_diagonal, dtype=np.float64)
+    lows, highs, _ = _validated_brackets(diagonal, off_diagonal, k, None, None)
+    values, _steps = _batched_bisection_native(
+        diagonal, off_diagonal, lows, highs, energy_tolerance, 96
+    )
+    return np.asarray(values)
+
+
 __all__ = [
     "RawBenchmarkTarget",
     "RawSpectralProblem",
@@ -769,5 +785,6 @@ __all__ = [
     "result_as_dict",
     "retained_raw_input_readout",
     "retained_tridiagonal",
+    "native_eigvals_from_tridiagonal",
     "warm_native_kernel",
 ]

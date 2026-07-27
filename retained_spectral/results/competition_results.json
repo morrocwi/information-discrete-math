@@ -12,10 +12,10 @@
             1.1057075255394011e-09,
             2.539625398867429e-09
           ],
-          "elapsed_seconds": 0.0035005880054086447,
+          "elapsed_seconds": 0.003222897998057306,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.003524055005982518,
+          "hot_median_seconds": 0.0032372159184888005,
           "max_reference_abs_error": 1.4648726676114165e-10,
           "mesh_shift": [
             1.1641559938269097e-10,
@@ -65,10 +65,10 @@
             9.565859215854289e-10,
             2.479345617700801e-09
           ],
-          "elapsed_seconds": 0.01607014494948089,
+          "elapsed_seconds": 0.01517324207816273,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.016194252064451575,
+          "hot_median_seconds": 0.015212911064736545,
           "max_reference_abs_error": 1.7241097438613906e-10,
           "mesh_shift": [
             1.9218626690076235e-11,
@@ -103,7 +103,7 @@
             4.773959005888173e-12
           ]
         },
-        "scipy_to_native_time_ratio": 4.595345996858685,
+        "scipy_to_native_time_ratio": 4.69938102610043,
         "tolerance": 2e-08
       },
       "factorized_sextic_ground": {
@@ -112,10 +112,10 @@
           "diagnostic_bounds": [
             4.149100751252767e-09
           ],
-          "elapsed_seconds": 0.0013689600164070725,
+          "elapsed_seconds": 0.0009871380170807242,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.0013138549402356148,
+          "hot_median_seconds": 0.0010020129848271608,
           "max_reference_abs_error": 2.876757346594454e-10,
           "mesh_shift": [
             4.0745940185092735e-09
@@ -150,10 +150,10 @@
           "diagnostic_bounds": [
             3.949866347096654e-09
           ],
-          "elapsed_seconds": 0.0027548220241442323,
+          "elapsed_seconds": 0.0020982439164072275,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.0026886119740083814,
+          "hot_median_seconds": 0.002108230022713542,
           "max_reference_abs_error": 2.602525154023697e-10,
           "mesh_shift": [
             3.948087663428384e-09
@@ -179,7 +179,7 @@
             1.7786836682701324e-12
           ]
         },
-        "scipy_to_native_time_ratio": 2.046353742465839,
+        "scipy_to_native_time_ratio": 2.1039947132792842,
         "tolerance": 2e-08
       },
       "harmonic_low4": {
@@ -191,10 +191,10 @@
             1.1057075255394011e-09,
             2.539625398867429e-09
           ],
-          "elapsed_seconds": 0.003647044999524951,
+          "elapsed_seconds": 0.0032270889496430755,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.0035537369549274445,
+          "hot_median_seconds": 0.003254676004871726,
           "max_reference_abs_error": 1.4648726676114165e-10,
           "mesh_shift": [
             1.1641559938269097e-10,
@@ -244,10 +244,10 @@
             9.565868097638486e-10,
             2.4793465058792208e-09
           ],
-          "elapsed_seconds": 0.016224842984229326,
+          "elapsed_seconds": 0.015588099020533264,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.01629719906486571,
+          "hot_median_seconds": 0.015347425010986626,
           "max_reference_abs_error": 1.7240830985087996e-10,
           "mesh_shift": [
             1.9218515667773772e-11,
@@ -282,7 +282,7 @@
             4.774847184307873e-12
           ]
         },
-        "scipy_to_native_time_ratio": 4.585932856473459,
+        "scipy_to_native_time_ratio": 4.715500095251878,
         "tolerance": 2e-08
       },
       "morse_lambda5_all_bound": {
@@ -295,10 +295,10 @@
             6.922587347801823e-08,
             5.328487127920223e-08
           ],
-          "elapsed_seconds": 0.029247949947603047,
+          "elapsed_seconds": 0.027048225048929453,
           "expected_modes": 5,
           "finest_intervals": 12442,
-          "hot_median_seconds": 0.029071670025587082,
+          "hot_median_seconds": 0.027150892070494592,
           "max_reference_abs_error": 9.007185663989503e-09,
           "mesh_shift": [
             4.051507573876734e-09,
@@ -353,10 +353,10 @@
             6.152658094116248e-08,
             5.085619220190907e-08
           ],
-          "elapsed_seconds": 0.1321188739966601,
+          "elapsed_seconds": 0.1262932630488649,
           "expected_modes": 5,
           "finest_intervals": 12448,
-          "hot_median_seconds": 0.13061910204123706,
+          "hot_median_seconds": 0.12569374404847622,
           "max_reference_abs_error": 5.350874174303577e-09,
           "mesh_shift": [
             2.255839959275363e-09,
@@ -394,7 +394,7 @@
             1.8574118909597814e-09
           ]
         },
-        "scipy_to_native_time_ratio": 4.493003048200334,
+        "scipy_to_native_time_ratio": 4.629451721959076,
         "tolerance": 1e-06
       },
       "poschl_teller_lambda3_all_bound": {
@@ -405,10 +405,10 @@
             9.853063920317595e-09,
             1.3872832993477857e-08
           ],
-          "elapsed_seconds": 0.011714698048308492,
+          "elapsed_seconds": 0.01175206305924803,
           "expected_modes": 3,
           "finest_intervals": 9830,
-          "hot_median_seconds": 0.01195991097483784,
+          "hot_median_seconds": 0.0120377839775756,
           "max_reference_abs_error": 1.105870950368626e-09,
           "mesh_shift": [
             1.99745908702198e-09,
@@ -453,10 +453,10 @@
             7.019870462698918e-09,
             1.3382873087497416e-08
           ],
-          "elapsed_seconds": 0.04789635702036321,
+          "elapsed_seconds": 0.04736786591820419,
           "expected_modes": 3,
           "finest_intervals": 9824,
-          "hot_median_seconds": 0.04875002696644515,
+          "hot_median_seconds": 0.04793902800884098,
           "max_reference_abs_error": 8.799717066132473e-10,
           "mesh_shift": [
             1.276871941513491e-09,
@@ -488,7 +488,7 @@
             1.4669543357825887e-11
           ]
         },
-        "scipy_to_native_time_ratio": 4.076119552144587,
+        "scipy_to_native_time_ratio": 3.982379821580405,
         "tolerance": 3e-07
       },
       "pure_quartic_ground": {
@@ -497,10 +497,10 @@
           "diagnostic_bounds": [
             2.2026539481245777e-09
           ],
-          "elapsed_seconds": 0.0009949590312317014,
+          "elapsed_seconds": 0.0009432770311832428,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.00100452802143991,
+          "hot_median_seconds": 0.0009514490375295281,
           "max_reference_abs_error": 1.0313810916429134e-10,
           "mesh_shift": [
             2.149725175648598e-09
@@ -535,10 +535,10 @@
           "diagnostic_bounds": [
             2.0912954701302056e-09
           ],
-          "elapsed_seconds": 0.0018225100357085466,
+          "elapsed_seconds": 0.0017400269862264395,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.001833404996432364,
+          "hot_median_seconds": 0.001758814905770123,
           "max_reference_abs_error": 1.3652706742917076e-10,
           "mesh_shift": [
             2.0909224351939315e-09
@@ -564,7 +564,7 @@
             3.730349362740526e-13
           ]
         },
-        "scipy_to_native_time_ratio": 1.8251407201208043,
+        "scipy_to_native_time_ratio": 1.8485644909967534,
         "tolerance": 2e-08
       },
       "squeezed_harmonic_omega16_low4": {
@@ -576,10 +576,10 @@
             1.5148650334140257e-08,
             4.326518876496266e-08
           ],
-          "elapsed_seconds": 0.0034342390717938542,
+          "elapsed_seconds": 0.0031966379610821605,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.003473839024081826,
+          "hot_median_seconds": 0.0032121429685503244,
           "max_reference_abs_error": 2.3038850827106216e-09,
           "mesh_shift": [
             1.86269577540088e-09,
@@ -629,10 +629,10 @@
             1.5305388956221577e-08,
             3.966954409406753e-08
           ],
-          "elapsed_seconds": 0.016017134999856353,
+          "elapsed_seconds": 0.015129800071008503,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.016121966997161508,
+          "hot_median_seconds": 0.015179318026639521,
           "max_reference_abs_error": 2.7585329576140794e-09,
           "mesh_shift": [
             3.0749625068438036e-10,
@@ -667,7 +667,7 @@
             7.639755494892597e-11
           ]
         },
-        "scipy_to_native_time_ratio": 4.6409654809559635,
+        "scipy_to_native_time_ratio": 4.725604736544499,
         "tolerance": 4e-07
       }
     },
@@ -678,9 +678,9 @@
       "native_correct": 7,
       "native_faster_cases": 7,
       "scipy_correct": 7,
-      "speedup_geomean": 3.5195557449079544,
-      "speedup_max": 4.6409654809559635,
-      "speedup_min": 1.8251407201208043
+      "speedup_geomean": 3.578111747723516,
+      "speedup_max": 4.725604736544499,
+      "speedup_min": 1.8485644909967534
     }
   },
   "environment": {
@@ -700,53 +700,55 @@
         "comparison_complete": true,
         "cross_check_ok": true,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.00046011502854526043,
-        "native_working_bytes": 12360,
+        "native_hot_median_seconds": 0.00044803309720009565,
+        "native_working_bytes": 12264,
         "requested_modes": 4,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 2.3943630499998108,
+            "hot_median_seconds": 1.0780044130515307,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 3.6441636375172948e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 5203.835783347561
+            "to_native_time_ratio": 2406.0820948013225
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.2475979079026729,
+            "hot_median_seconds": 0.13013244105968624,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6440166439888344e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 538.1217576950266
+            "to_native_time_ratio": 290.452740819654
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.05405175406485796,
+            "hot_median_seconds": 0.11021613399498165,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6440166439888344e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 117.4744372852864
+            "to_native_time_ratio": 245.99998233112257
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0007324960315600038,
+            "hot_median_seconds": 0.0007455570157617331,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 3.644107238187644e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 1.5919845823682977
+            "to_native_time_ratio": 1.6640668299305588
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.042413252987898886,
+            "hot_median_seconds": 0.038729329011403024,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 3.644172075212282e-09,
+            "max_abs_difference": 3.644171631123072e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 92.17967324822295
+            "to_native_time_ratio": 86.44300890589373
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -3.0,
           17.0
@@ -756,53 +758,55 @@
         "comparison_complete": true,
         "cross_check_ok": true,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0002975940005853772,
-        "native_working_bytes": 12288,
+        "native_hot_median_seconds": 0.00023857795167714357,
+        "native_working_bytes": 12264,
         "requested_modes": 1,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.16528338694479316,
+            "hot_median_seconds": 2.1710166819393635,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 3.558519619028871e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 555.3989214153353
+            "to_native_time_ratio": 9099.821113718417
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.16152068402152508,
+            "hot_median_seconds": 0.46593373897485435,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.5583402366545737e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 542.7551755203685
+            "to_native_time_ratio": 1952.962273753531
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.05925430601928383,
+            "hot_median_seconds": 0.44860833801794797,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.5583402366545737e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 199.11122503386713
+            "to_native_time_ratio": 1880.3428182040423
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.00025003193877637386,
+            "hot_median_seconds": 0.0002521269489079714,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 3.5592111066675043e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 0.8401780220184305
+            "to_native_time_ratio": 1.0567906511711653
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.21818157203961164,
+            "hot_median_seconds": 0.2156029500765726,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 3.5612102402667804e-09,
+            "max_abs_difference": 3.5587294449124815e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 733.1517826651118
+            "to_native_time_ratio": 903.7002311443181
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -7.3203046699917245,
           6.0703046699917245
@@ -812,53 +816,55 @@
         "comparison_complete": true,
         "cross_check_ok": true,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.00029445206746459007,
-        "native_working_bytes": 12360,
+        "native_hot_median_seconds": 0.0002206979552283883,
+        "native_working_bytes": 12264,
         "requested_modes": 4,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.2759569759946316,
+            "hot_median_seconds": 2.3335706630023196,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 3.6441636375172948e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 4333.326598727565
+            "to_native_time_ratio": 10573.594397770628
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.312519478960894,
+            "hot_median_seconds": 0.0508413549978286,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6438621009438066e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 4457.497922369772
+            "to_native_time_ratio": 230.36622584570685
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.3929422079818323,
+            "hot_median_seconds": 0.6748762700008228,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6438621009438066e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 4730.624647929644
+            "to_native_time_ratio": 3057.918091277421
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0006931050447747111,
+            "hot_median_seconds": 0.0006902419263496995,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 3.644107238187644e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 2.353880720698495
+            "to_native_time_ratio": 3.1275411031126485
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.038611370022408664,
+            "hot_median_seconds": 0.03752121399156749,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 3.6443830175869607e-09,
+            "max_abs_difference": 3.644017976256464e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 131.12955991403237
+            "to_native_time_ratio": 170.01160682589392
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -10.0,
           10.0
@@ -868,49 +874,51 @@
         "comparison_complete": false,
         "cross_check_ok": false,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0006019629072397947,
-        "native_working_bytes": 12384,
+        "native_hot_median_seconds": 0.0006171879358589649,
+        "native_working_bytes": 12264,
         "requested_modes": 5,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.6155984570505098,
+            "hot_median_seconds": 2.0539902489399537,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 2.3075391086813113e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 1022.6518106792305
+            "to_native_time_ratio": 3327.9818505871053
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.05366664903704077,
+            "hot_median_seconds": 1.6658203060505912,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 2.3075451061060903e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 89.15275076187113
+            "to_native_time_ratio": 2699.048716388474
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.05207363702356815,
+            "hot_median_seconds": 0.3291603639954701,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 2.3075451061060903e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 86.50638834599218
+            "to_native_time_ratio": 533.3227447768637
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.000744579010643065,
+            "hot_median_seconds": 0.000729074003174901,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 2.3210159438846745e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 1.2369184241886493
+            "to_native_time_ratio": 1.181283626615643
           },
           "SciPy eigsh (ARPACK)": {
             "error": "ArpackNoConvergence: ARPACK error -1: No convergence (7671 iterations, 0/5 eigenvectors converged)",
             "kind": "ARPACK iterative, k smallest-algebraic"
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -7.200122865564559,
           36.26894188803017
@@ -920,53 +928,55 @@
         "comparison_complete": true,
         "cross_check_ok": true,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0003059050068259239,
-        "native_working_bytes": 12336,
+        "native_hot_median_seconds": 0.0002711239503696561,
+        "native_working_bytes": 12264,
         "requested_modes": 3,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.5497009119717404,
+            "hot_median_seconds": 0.20663881301879883,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 7.910912636077683e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 1796.966050590173
+            "to_native_time_ratio": 762.1562489668033
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.06234220101032406,
+            "hot_median_seconds": 0.056968325981870294,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 7.910899846308439e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 203.7959484782152
+            "to_native_time_ratio": 210.11912043992604
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.047528502997010946,
+            "hot_median_seconds": 1.7849962461041287,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 7.910899846308439e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 155.37013758018406
+            "to_native_time_ratio": 6583.690757199529
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0006053850520402193,
+            "hot_median_seconds": 0.0006152329733595252,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 7.910912280806315e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 1.9789968733160204
+            "to_native_time_ratio": 2.269194486583364
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.04026276699732989,
+            "hot_median_seconds": 0.0376214369898662,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 7.910908639274794e-08,
+            "max_abs_difference": 7.910904908925431e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 131.6185289515105
+            "to_native_time_ratio": 138.7610240208301
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -20.63179516008016,
           20.63179516008016
@@ -976,53 +986,55 @@
         "comparison_complete": true,
         "cross_check_ok": true,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.00024800701066851616,
-        "native_working_bytes": 12288,
+        "native_hot_median_seconds": 0.0002165080513805151,
+        "native_working_bytes": 12264,
         "requested_modes": 1,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.1423229050124064,
+            "hot_median_seconds": 0.23421867098659277,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 1.1704477942409142e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 573.8664589713308
+            "to_native_time_ratio": 1081.8012055124502
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.8174780700355768,
+            "hot_median_seconds": 0.12366324802860618,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.1699788915464637e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 7328.333441609039
+            "to_native_time_ratio": 571.1715903408449
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.13962598098441958,
+            "hot_median_seconds": 0.06584886298514903,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.1699788915464637e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 562.9920727162119
+            "to_native_time_ratio": 304.140481452207
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0002557589905336499,
+            "hot_median_seconds": 0.0002542920410633087,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 1.1703835678389396e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 1.0312570997256807
+            "to_native_time_ratio": 1.1745154022766011
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.02994280098937452,
+            "hot_median_seconds": 0.03219378599897027,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 1.1706373093112177e-09,
+            "max_abs_difference": 1.1701007940345676e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 120.73368776415674
+            "to_native_time_ratio": 148.69556025142623
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -10.0,
           10.0
@@ -1032,53 +1044,55 @@
         "comparison_complete": true,
         "cross_check_ok": true,
         "dense_matrix_bytes": 4706312,
+        "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0004156259819865227,
-        "native_working_bytes": 12360,
+        "native_hot_median_seconds": 0.00040668598376214504,
+        "native_working_bytes": 12264,
         "requested_modes": 4,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.5710427400190383,
+            "hot_median_seconds": 2.1280275899916887,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 1.4558492722471783e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 3779.943526413086
+            "to_native_time_ratio": 5232.60617517689
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.04248518997337669,
+            "hot_median_seconds": 0.04626646707765758,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.4558010263954202e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 102.219764438967
+            "to_native_time_ratio": 113.76459707231281
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.9598569170339033,
+            "hot_median_seconds": 0.14991318597458303,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.4558010263954202e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 4715.434072881071
+            "to_native_time_ratio": 368.6214719960978
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0007295629475265741,
+            "hot_median_seconds": 0.0007922099903225899,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 1.4558402483544342e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 1.7553352753347151
+            "to_native_time_ratio": 1.9479648228691426
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.04203122004400939,
+            "hot_median_seconds": 0.03737755003385246,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 1.4558239769257852e-07,
+            "max_abs_difference": 1.4558515459839327e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 101.12750854293877
+            "to_native_time_ratio": 91.9076425700305
           }
         },
+        "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "window": [
           -2.5,
           2.5
