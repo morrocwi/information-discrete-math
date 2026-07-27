@@ -55,11 +55,22 @@ comparison is *incomplete* — disclosed, never scored as agreement, and never s
 aggregate (geomeans use the case set every solver completed). `finite_diagnostic` tier — a discrete
 rational-readout agreement-and-cost claim, **not** a continuum-limit proof or an empirical-physics claim.
 
+**Credibility is separate from speed.** `retained_spectral.competition.credibility_audit` certifies the
+*reproduction* on its own axis — every declared spectrum passes **three independent correctness layers**
+(external analytic reference · an extended-precision recomputation of the identical operator · a Sturm
+sign-count certificate), plus an **8‑case adversarial suite** (wells far off‑origin, narrow/broad, an
+8‑mode Morse well, a factorized double well, quartic covariance over five decades) and a **20‑point
+mode×grid scaling sweep**, all under a **pinned commit + frozen single‑thread environment** with a
+**95 % bootstrap CI** on the speedup. That `credibility` ACCEPT is reported *separately* from the
+speed/fairness verdict above: a competitor failing to converge lowers the speed field, **never** the
+reproduction's credibility, and a green audit never implies universal solver dominance.
+
 ```bash
 pip install "information-discrete-math[spectral-bench] @ git+https://github.com/morrocwi/information-discrete-math"
 python3 -c "import retained_spectral as rs; print(rs.solve(rs.examples()['harmonic_low4']).values)"  # (0.5, 1.5, 2.5, 3.5)
-python3 -m retained_spectral.competition.run     # regenerate the results JSON on YOUR machine
-python3 -m retained_spectral.competition.chart    # redraw the charts above from that JSON
+python3 -m retained_spectral.competition.run                 # regenerate the results JSON on YOUR machine
+python3 -m retained_spectral.competition.chart               # redraw the charts above from that JSON
+python3 -m retained_spectral.competition.credibility_audit   # 3-layer correctness + adversarial + scaling
 ```
 
 → **Reproduce (Colab):** [reproduce.ipynb](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)
