@@ -35,17 +35,20 @@ from retained_spectral.engine import (
     retained_tridiagonal,
     warm_native_kernel,
 )
+from retained_spectral.competition.stats import summarize, speedup_ci
 
 
-def _hot_median(fn: Callable[[], object], *, repeats: int) -> tuple[float, object]:
-    fn()  # warm dispatch outside timing
+def _hot_samples(fn: Callable[[], object], *, repeats: int, warmups: int = 3):
+    """Return (all timed samples in seconds, last value). Warm-up calls are outside timing."""
+    for _ in range(warmups):
+        fn()
     samples: list[float] = []
     value = None
     for _ in range(repeats):
         started = time.perf_counter()
         value = fn()
         samples.append(time.perf_counter() - started)
-    return float(statistics.median(samples)), value
+    return samples, value
 
 
 def _jax_solver():
@@ -103,10 +106,11 @@ def executor_audit_case(
     native_working_bytes = int(diagonal.nbytes + off_diagonal.nbytes)
 
     # native requested-only solve on the PREBUILT tridiagonal — only the solve is timed (same boundary)
-    native_seconds, native_values = _hot_median(
+    native_samples, native_values = _hot_samples(
         lambda: native_eigvals_from_tridiagonal(diagonal, off_diagonal, k, problem.tolerance),
         repeats=repeats,
     )
+    native_seconds = float(statistics.median(native_samples))
     native_values = np.asarray(native_values)
 
     # Every competitor receives an ALREADY-BUILT representation of the same matrix; only the solve is
@@ -150,7 +154,8 @@ def executor_audit_case(
     all_complete = True
     for name, kind, fn in competitors:
         try:
-            seconds, values = _hot_median(fn, repeats=repeats)
+            samples, values = _hot_samples(fn, repeats=repeats)
+            seconds = float(statistics.median(samples))
             values = np.asarray(values)
             diff = float(np.max(np.abs(values - native_values)))
         except Exception as error:  # a competitor that cannot run makes the comparison INCOMPLETE
@@ -166,6 +171,8 @@ def executor_audit_case(
             "kind": kind,
             "hot_median_seconds": seconds,
             "to_native_time_ratio": seconds / native_seconds,
+            "stats": summarize(samples),
+            "speedup_over_native": speedup_ci(native_samples, samples),
             "max_abs_difference": diff,
             "returned_modes": int(values.size),
             "cross_check_ok": ok,
@@ -180,6 +187,7 @@ def executor_audit_case(
         "timing_boundary": "solve only — operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
         "dense_matrix_bytes": int(dense.nbytes),
         "native_hot_median_seconds": native_seconds,
+        "native_stats": summarize(native_samples),
         "native_working_bytes": native_working_bytes,
         "solvers": solvers,
         "cross_check_ok": bool(all_ok),

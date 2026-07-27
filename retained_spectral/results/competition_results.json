@@ -12,10 +12,10 @@
             1.1057075255394011e-09,
             2.539625398867429e-09
           ],
-          "elapsed_seconds": 0.003222897998057306,
+          "elapsed_seconds": 0.0034242509864270687,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.0032372159184888005,
+          "hot_median_seconds": 0.0032939279917627573,
           "max_reference_abs_error": 1.4648726676114165e-10,
           "mesh_shift": [
             1.1641559938269097e-10,
@@ -50,6 +50,15 @@
             8.381872973473037e-11
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            3.256213036365807,
+            3.3349940786138177
+          ],
+          "mad_ms": 0.04106608685106039,
+          "median_ms": 3.2939279917627573,
+          "n_samples": 21
+        },
         "reference": [
           0.5,
           1.5,
@@ -65,10 +74,10 @@
             9.565859215854289e-10,
             2.479345617700801e-09
           ],
-          "elapsed_seconds": 0.01517324207816273,
+          "elapsed_seconds": 0.015307825990021229,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.015212911064736545,
+          "hot_median_seconds": 0.015320396982133389,
           "max_reference_abs_error": 1.7241097438613906e-10,
           "mesh_shift": [
             1.9218626690076235e-11,
@@ -103,7 +112,24 @@
             4.773959005888173e-12
           ]
         },
-        "scipy_to_native_time_ratio": 4.69938102610043,
+        "scipy_speedup_over_native": {
+          "ci95_high": 4.704351885620706,
+          "ci95_low": 4.596380960262436,
+          "ratio_median": 4.651102580398129,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            15.297629055567086,
+            15.404556063003838
+          ],
+          "mad_ms": 0.046095927245914936,
+          "median_ms": 15.320396982133389,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 4.651102580398129,
         "tolerance": 2e-08
       },
       "factorized_sextic_ground": {
@@ -112,10 +138,10 @@
           "diagnostic_bounds": [
             4.149100751252767e-09
           ],
-          "elapsed_seconds": 0.0009871380170807242,
+          "elapsed_seconds": 0.0010064139496535063,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.0010020129848271608,
+          "hot_median_seconds": 0.0010226869489997625,
           "max_reference_abs_error": 2.876757346594454e-10,
           "mesh_shift": [
             4.0745940185092735e-09
@@ -141,6 +167,15 @@
             7.450673274349349e-11
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            1.012139953672886,
+            1.0367250069975853
+          ],
+          "mad_ms": 0.014038057997822762,
+          "median_ms": 1.0226869489997625,
+          "n_samples": 21
+        },
         "reference": [
           0.0
         ],
@@ -150,10 +185,10 @@
           "diagnostic_bounds": [
             3.949866347096654e-09
           ],
-          "elapsed_seconds": 0.0020982439164072275,
+          "elapsed_seconds": 0.002085253014229238,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.002108230022713542,
+          "hot_median_seconds": 0.0021076719276607037,
           "max_reference_abs_error": 2.602525154023697e-10,
           "mesh_shift": [
             3.948087663428384e-09
@@ -179,7 +214,24 @@
             1.7786836682701324e-12
           ]
         },
-        "scipy_to_native_time_ratio": 2.1039947132792842,
+        "scipy_speedup_over_native": {
+          "ci95_high": 2.0897391097114024,
+          "ci95_low": 2.0278204236043837,
+          "ratio_median": 2.060916030777658,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            2.0851129665970802,
+            2.133861999027431
+          ],
+          "mad_ms": 0.022837892174720764,
+          "median_ms": 2.1076719276607037,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 2.060916030777658,
         "tolerance": 2e-08
       },
       "harmonic_low4": {
@@ -191,10 +243,10 @@
             1.1057075255394011e-09,
             2.539625398867429e-09
           ],
-          "elapsed_seconds": 0.0032270889496430755,
+          "elapsed_seconds": 0.0032498580403625965,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.003254676004871726,
+          "hot_median_seconds": 0.0032787020318210125,
           "max_reference_abs_error": 1.4648726676114165e-10,
           "mesh_shift": [
             1.1641559938269097e-10,
@@ -229,6 +281,15 @@
             8.381872973473037e-11
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            3.260124009102583,
+            3.315996960736811
+          ],
+          "mad_ms": 0.021023093722760677,
+          "median_ms": 3.2787020318210125,
+          "n_samples": 21
+        },
         "reference": [
           0.5,
           1.5,
@@ -244,10 +305,10 @@
             9.565868097638486e-10,
             2.4793465058792208e-09
           ],
-          "elapsed_seconds": 0.015588099020533264,
+          "elapsed_seconds": 0.015397640992887318,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.015347425010986626,
+          "hot_median_seconds": 0.015363977989181876,
           "max_reference_abs_error": 1.7240830985087996e-10,
           "mesh_shift": [
             1.9218515667773772e-11,
@@ -282,7 +343,24 @@
             4.774847184307873e-12
           ]
         },
-        "scipy_to_native_time_ratio": 4.715500095251878,
+        "scipy_speedup_over_native": {
+          "ci95_high": 4.713589935051464,
+          "ci95_low": 4.6625252143655525,
+          "ratio_median": 4.68599398178572,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            15.304612927138805,
+            15.426975092850626
+          ],
+          "mad_ms": 0.06299710366874933,
+          "median_ms": 15.363977989181876,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 4.68599398178572,
         "tolerance": 2e-08
       },
       "morse_lambda5_all_bound": {
@@ -295,10 +373,10 @@
             6.922587347801823e-08,
             5.328487127920223e-08
           ],
-          "elapsed_seconds": 0.027048225048929453,
+          "elapsed_seconds": 0.027709831949323416,
           "expected_modes": 5,
           "finest_intervals": 12442,
-          "hot_median_seconds": 0.027150892070494592,
+          "hot_median_seconds": 0.02789861394558102,
           "max_reference_abs_error": 9.007185663989503e-09,
           "mesh_shift": [
             4.051507573876734e-09,
@@ -336,6 +414,15 @@
             2.6822469800791282e-09
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            27.715979027561843,
+            28.017624048516154
+          ],
+          "mad_ms": 0.18263491801917553,
+          "median_ms": 27.89861394558102,
+          "n_samples": 21
+        },
         "reference": [
           -10.125,
           -6.125,
@@ -353,10 +440,10 @@
             6.152658094116248e-08,
             5.085619220190907e-08
           ],
-          "elapsed_seconds": 0.1262932630488649,
+          "elapsed_seconds": 0.12701228191144764,
           "expected_modes": 5,
           "finest_intervals": 12448,
-          "hot_median_seconds": 0.12569374404847622,
+          "hot_median_seconds": 0.1270279260352254,
           "max_reference_abs_error": 5.350874174303577e-09,
           "mesh_shift": [
             2.255839959275363e-09,
@@ -394,7 +481,24 @@
             1.8574118909597814e-09
           ]
         },
-        "scipy_to_native_time_ratio": 4.629451721959076,
+        "scipy_speedup_over_native": {
+          "ci95_high": 4.584696140092009,
+          "ci95_low": 4.533857896560395,
+          "ratio_median": 4.553198459357365,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            126.56103598419577,
+            127.65642802696675
+          ],
+          "mad_ms": 0.6285019917413592,
+          "median_ms": 127.02792603522539,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 4.553198459357365,
         "tolerance": 1e-06
       },
       "poschl_teller_lambda3_all_bound": {
@@ -405,10 +509,10 @@
             9.853063920317595e-09,
             1.3872832993477857e-08
           ],
-          "elapsed_seconds": 0.01175206305924803,
+          "elapsed_seconds": 0.013757138978689909,
           "expected_modes": 3,
           "finest_intervals": 9830,
-          "hot_median_seconds": 0.0120377839775756,
+          "hot_median_seconds": 0.01205091504380107,
           "max_reference_abs_error": 1.105870950368626e-09,
           "mesh_shift": [
             1.99745908702198e-09,
@@ -440,6 +544,15 @@
             8.940767015630513e-10
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            11.855429038405418,
+            12.456972035579383
+          ],
+          "mad_ms": 0.23913697805255651,
+          "median_ms": 12.05091504380107,
+          "n_samples": 21
+        },
         "reference": [
           -4.5,
           -2.0,
@@ -453,10 +566,10 @@
             7.019870462698918e-09,
             1.3382873087497416e-08
           ],
-          "elapsed_seconds": 0.04736786591820419,
+          "elapsed_seconds": 0.04937063704710454,
           "expected_modes": 3,
           "finest_intervals": 9824,
-          "hot_median_seconds": 0.04793902800884098,
+          "hot_median_seconds": 0.0480377139756456,
           "max_reference_abs_error": 8.799717066132473e-10,
           "mesh_shift": [
             1.276871941513491e-09,
@@ -488,7 +601,24 @@
             1.4669543357825887e-11
           ]
         },
-        "scipy_to_native_time_ratio": 3.982379821580405,
+        "scipy_speedup_over_native": {
+          "ci95_high": 4.126631817341655,
+          "ci95_low": 3.90539843825864,
+          "ratio_median": 3.986229576844952,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            47.847816022112966,
+            49.38739899080247
+          ],
+          "mad_ms": 0.4426540108397603,
+          "median_ms": 48.0377139756456,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 3.986229576844952,
         "tolerance": 3e-07
       },
       "pure_quartic_ground": {
@@ -497,10 +627,10 @@
           "diagnostic_bounds": [
             2.2026539481245777e-09
           ],
-          "elapsed_seconds": 0.0009432770311832428,
+          "elapsed_seconds": 0.0009443949675187469,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.0009514490375295281,
+          "hot_median_seconds": 0.0009593410650268197,
           "max_reference_abs_error": 1.0313810916429134e-10,
           "mesh_shift": [
             2.149725175648598e-09
@@ -526,6 +656,15 @@
             5.292877247597971e-11
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            0.9523569606244564,
+            0.9668139973655343
+          ],
+          "mad_ms": 0.0074729323387146,
+          "median_ms": 0.9593410650268197,
+          "n_samples": 21
+        },
         "reference": [
           0.420804974478
         ],
@@ -535,10 +674,10 @@
           "diagnostic_bounds": [
             2.0912954701302056e-09
           ],
-          "elapsed_seconds": 0.0017400269862264395,
+          "elapsed_seconds": 0.0017604210879653692,
           "expected_modes": 1,
           "finest_intervals": 1280,
-          "hot_median_seconds": 0.001758814905770123,
+          "hot_median_seconds": 0.0017810240387916565,
           "max_reference_abs_error": 1.3652706742917076e-10,
           "mesh_shift": [
             2.0909224351939315e-09
@@ -564,7 +703,24 @@
             3.730349362740526e-13
           ]
         },
-        "scipy_to_native_time_ratio": 1.8485644909967534,
+        "scipy_speedup_over_native": {
+          "ci95_high": 1.8786862348546933,
+          "ci95_low": 1.8352359018771818,
+          "ratio_median": 1.8565076631446664,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            1.7675450071692467,
+            1.8119639717042446
+          ],
+          "mad_ms": 0.019556027837097645,
+          "median_ms": 1.7810240387916565,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 1.8565076631446664,
         "tolerance": 2e-08
       },
       "squeezed_harmonic_omega16_low4": {
@@ -576,10 +732,10 @@
             1.5148650334140257e-08,
             4.326518876496266e-08
           ],
-          "elapsed_seconds": 0.0031966379610821605,
+          "elapsed_seconds": 0.003227579058147967,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.0032121429685503244,
+          "hot_median_seconds": 0.003292461042292416,
           "max_reference_abs_error": 2.3038850827106216e-09,
           "mesh_shift": [
             1.86269577540088e-09,
@@ -614,6 +770,15 @@
             1.061707166627457e-09
           ]
         },
+        "native_stats": {
+          "iqr_ms": [
+            3.258586977608502,
+            3.336321096867323
+          ],
+          "mad_ms": 0.04372093826532364,
+          "median_ms": 3.292461042292416,
+          "n_samples": 21
+        },
         "reference": [
           8.0,
           24.0,
@@ -629,10 +794,10 @@
             1.5305388956221577e-08,
             3.966954409406753e-08
           ],
-          "elapsed_seconds": 0.015129800071008503,
+          "elapsed_seconds": 0.015312016010284424,
           "expected_modes": 4,
           "finest_intervals": 5120,
-          "hot_median_seconds": 0.015179318026639521,
+          "hot_median_seconds": 0.015350639005191624,
           "max_reference_abs_error": 2.7585329576140794e-09,
           "mesh_shift": [
             3.0749625068438036e-10,
@@ -667,20 +832,37 @@
             7.639755494892597e-11
           ]
         },
-        "scipy_to_native_time_ratio": 4.725604736544499,
+        "scipy_speedup_over_native": {
+          "ci95_high": 4.714286174334776,
+          "ci95_low": 4.601067630931952,
+          "ratio_median": 4.662360103281148,
+          "resamples": 4000,
+          "seed": 20260727,
+          "verdict": "native_faster"
+        },
+        "scipy_stats": {
+          "iqr_ms": [
+            15.322422957979143,
+            15.394708956591785
+          ],
+          "mad_ms": 0.031147967092692852,
+          "median_ms": 15.350639005191624,
+          "n_samples": 21
+        },
+        "scipy_to_native_time_ratio": 4.662360103281148,
         "tolerance": 4e-07
       }
     },
-    "repeats": 9,
+    "repeats": 21,
     "summary": {
       "cases": 7,
       "native_accepted": 7,
       "native_correct": 7,
       "native_faster_cases": 7,
       "scipy_correct": 7,
-      "speedup_geomean": 3.578111747723516,
-      "speedup_max": 4.725604736544499,
-      "speedup_min": 1.8485644909967534
+      "speedup_geomean": 3.5464995800336823,
+      "speedup_max": 4.68599398178572,
+      "speedup_min": 1.8565076631446664
     }
   },
   "environment": {
@@ -703,49 +885,143 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.00044803309720009565,
+        "native_hot_median_seconds": 0.00022055895533412695,
+        "native_stats": {
+          "iqr_ms": [
+            0.218009517993778,
+            0.22317800903692842
+          ],
+          "mad_ms": 0.004050903953611851,
+          "median_ms": 0.22055895533412695,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 4,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.0780044130515307,
+            "hot_median_seconds": 0.09941000491380692,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 3.6441636375172948e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 2406.0820948013225
+            "speedup_over_native": {
+              "ci95_high": 550.0310553170691,
+              "ci95_low": 431.81319411565687,
+              "ratio_median": 450.71851543370667,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                96.04393102927133,
+                113.10564749874175
+              ],
+              "mad_ms": 4.221839946694672,
+              "median_ms": 99.41000491380692,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 450.71851543370667
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.13013244105968624,
+            "hot_median_seconds": 0.09341070300433785,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6440166439888344e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 290.452740819654
+            "speedup_over_native": {
+              "ci95_high": 1230.879093438306,
+              "ci95_low": 195.9130061191871,
+              "ratio_median": 423.5180696373405,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                43.58630703063682,
+                247.4738639430143
+              ],
+              "mad_ms": 53.65037498995662,
+              "median_ms": 93.41070300433785,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 423.5180696373405
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.11021613399498165,
+            "hot_median_seconds": 0.03407244896516204,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6440166439888344e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 245.99998233112257
+            "speedup_over_native": {
+              "ci95_high": 157.5902508583528,
+              "ci95_low": 149.01027952867187,
+              "ratio_median": 154.4822739731667,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                33.11488952022046,
+                34.42717302823439
+              ],
+              "mad_ms": 0.6435180548578501,
+              "median_ms": 34.07244896516204,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 154.4822739731667
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0007455570157617331,
+            "hot_median_seconds": 0.0006815820233896375,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 3.644107238187644e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 1.6640668299305588
+            "speedup_over_native": {
+              "ci95_high": 3.14806779260024,
+              "ci95_low": 3.0298056855188644,
+              "ratio_median": 3.090248692723005,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.676099443808198,
+                0.6818959955126047
+              ],
+              "mad_ms": 0.005168025381863117,
+              "median_ms": 0.6815820233896375,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 3.090248692723005
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.038729329011403024,
+            "hot_median_seconds": 0.03814042801968753,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 3.644171631123072e-09,
+            "max_abs_difference": 3.6441853978885774e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 86.44300890589373
+            "speedup_over_native": {
+              "ci95_high": 178.27961661301381,
+              "ci95_low": 168.70538903956597,
+              "ratio_median": 172.92622719357834,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                37.3583099571988,
+                38.86447346303612
+              ],
+              "mad_ms": 0.7895560702309012,
+              "median_ms": 38.14042801968753,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 172.92622719357834
           }
         },
         "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
@@ -761,49 +1037,143 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.00023857795167714357,
+        "native_hot_median_seconds": 0.00020980392582714558,
+        "native_stats": {
+          "iqr_ms": [
+            0.20920997485518456,
+            0.21605350775644183
+          ],
+          "mad_ms": 0.0009081559255719185,
+          "median_ms": 0.20980392582714558,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 1,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 2.1710166819393635,
+            "hot_median_seconds": 0.08354659099131823,
             "kind": "XLA dense, whole spectrum",
-            "max_abs_difference": 3.558519619028871e-09,
+            "max_abs_difference": 3.5585195843344016e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 9099.821113718417
+            "speedup_over_native": {
+              "ci95_high": 407.4237438422552,
+              "ci95_low": 381.6689815668903,
+              "ratio_median": 398.21271533379723,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                82.11424952605739,
+                84.90591298323125
+              ],
+              "mad_ms": 1.6587319551035762,
+              "median_ms": 83.54659099131823,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 398.21271533379723
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.46593373897485435,
+            "hot_median_seconds": 0.05390620301477611,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.5583402366545737e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 1952.962273753531
+            "speedup_over_native": {
+              "ci95_high": 2736.7223001270004,
+              "ci95_low": 187.39376840811866,
+              "ratio_median": 256.9361026122488,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                43.666275043506175,
+                572.8395439800806
+              ],
+              "mad_ms": 21.610448020510375,
+              "median_ms": 53.90620301477611,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 256.9361026122488
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.44860833801794797,
+            "hot_median_seconds": 0.03315019397996366,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.5583402366545737e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 1880.3428182040423
+            "speedup_over_native": {
+              "ci95_high": 168.39046085119793,
+              "ci95_low": 147.84771957278073,
+              "ratio_median": 158.00559426745727,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                31.852611515205353,
+                35.251824476290494
+              ],
+              "mad_ms": 1.4462739927694201,
+              "median_ms": 33.15019397996366,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 158.00559426745727
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0002521269489079714,
+            "hot_median_seconds": 0.00022810092195868492,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 3.5592111066675043e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 1.0567906511711653
+            "speedup_over_native": {
+              "ci95_high": 1.104855615519237,
+              "ci95_low": 1.0484748630525855,
+              "ratio_median": 1.0872099797913886,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.22611150052398443,
+                0.23138453252613544
+              ],
+              "mad_ms": 0.0021649757400155067,
+              "median_ms": 0.22810092195868492,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 1.0872099797913886
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.2156029500765726,
+            "hot_median_seconds": 0.2133632809855044,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 3.5587294449124815e-09,
+            "max_abs_difference": 3.5636721871999916e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 903.7002311443181
+            "speedup_over_native": {
+              "ci95_high": 1044.134194169133,
+              "ci95_low": 980.4174145065969,
+              "ratio_median": 1016.9651504104423,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                211.24446945032105,
+                217.89996599545702
+              ],
+              "mad_ms": 3.373197978362441,
+              "median_ms": 213.3632809855044,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 1016.9651504104423
           }
         },
         "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
@@ -819,49 +1189,143 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0002206979552283883,
+        "native_hot_median_seconds": 0.0002188830403611064,
+        "native_stats": {
+          "iqr_ms": [
+            0.21650799317285419,
+            0.22684503346681595
+          ],
+          "mad_ms": 0.005029025487601757,
+          "median_ms": 0.2188830403611064,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 4,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 2.3335706630023196,
+            "hot_median_seconds": 0.09445385297294706,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 3.6441636375172948e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 10573.594397770628
+            "speedup_over_native": {
+              "ci95_high": 491.1132402428254,
+              "ci95_low": 412.57025851986697,
+              "ratio_median": 431.526594372593,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                93.56910298811272,
+                105.34379445016384
+              ],
+              "mad_ms": 1.810009009204805,
+              "median_ms": 94.45385297294706,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 431.526594372593
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0508413549978286,
+            "hot_median_seconds": 0.10565968696027994,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6438621009438066e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 230.36622584570685
+            "speedup_over_native": {
+              "ci95_high": 1930.2347918719624,
+              "ci95_low": 267.6776437840506,
+              "ratio_median": 482.72212769872846,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                60.04815601045266,
+                312.7027459559031
+              ],
+              "mad_ms": 68.53691802825779,
+              "median_ms": 105.65968696027994,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 482.72212769872846
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.6748762700008228,
+            "hot_median_seconds": 0.03258888004347682,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 3.6438621009438066e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 3057.918091277421
+            "speedup_over_native": {
+              "ci95_high": 152.15605023268895,
+              "ci95_low": 142.34678884154218,
+              "ratio_median": 148.88718646137548,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                32.38228854024783,
+                32.994028995744884
+              ],
+              "mad_ms": 0.21776603534817696,
+              "median_ms": 32.58888004347682,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 148.88718646137548
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0006902419263496995,
+            "hot_median_seconds": 0.0006888449424877763,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 3.644107238187644e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 3.1275411031126485
+            "speedup_over_native": {
+              "ci95_high": 3.2116527671861896,
+              "ci95_low": 3.0088442880533717,
+              "ratio_median": 3.1470914391144302,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.6819659611210227,
+                0.6934545235708356
+              ],
+              "mad_ms": 0.005727051757276058,
+              "median_ms": 0.6888449424877763,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 3.1470914391144302
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.03752121399156749,
+            "hot_median_seconds": 0.03798174893017858,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 3.644017976256464e-09,
+            "max_abs_difference": 3.644097912314237e-09,
             "returned_modes": 4,
-            "to_native_time_ratio": 170.01160682589392
+            "speedup_over_native": {
+              "ci95_high": 177.58976667795986,
+              "ci95_low": 165.54512302317718,
+              "ratio_median": 173.52531684281013,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                37.283684010617435,
+                38.57518994482234
+              ],
+              "mad_ms": 0.694572925567627,
+              "median_ms": 37.98174893017858,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 173.52531684281013
           }
         },
         "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
@@ -877,41 +1341,118 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0006171879358589649,
+        "native_hot_median_seconds": 0.00030408904422074556,
+        "native_stats": {
+          "iqr_ms": [
+            0.3007365157827735,
+            0.3069525118917227
+          ],
+          "mad_ms": 0.003142980858683586,
+          "median_ms": 0.30408904422074556,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 5,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 2.0539902489399537,
+            "hot_median_seconds": 0.10346569097600877,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 2.3075391086813113e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 3327.9818505871053
+            "speedup_over_native": {
+              "ci95_high": 370.9402596756256,
+              "ci95_low": 309.0412820311588,
+              "ratio_median": 340.2480061100147,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                95.76491452753544,
+                109.00218901224434
+              ],
+              "mad_ms": 9.333178051747382,
+              "median_ms": 103.46569097600877,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 340.2480061100147
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.6658203060505912,
+            "hot_median_seconds": 0.13262270600534976,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 2.3075451061060903e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 2699.048716388474
+            "speedup_over_native": {
+              "ci95_high": 5813.777229475844,
+              "ci95_low": 222.48886702487076,
+              "ratio_median": 436.1311547583271,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                88.01769342971966,
+                1073.7540274858475
+              ],
+              "mad_ms": 85.56863700505346,
+              "median_ms": 132.62270600534976,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 436.1311547583271
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.3291603639954701,
+            "hot_median_seconds": 0.031424344051629305,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 2.3075451061060903e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 533.3227447768637
+            "speedup_over_native": {
+              "ci95_high": 104.97884931072126,
+              "ci95_low": 102.2609867822514,
+              "ratio_median": 103.33928383430222,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                31.31829050835222,
+                31.549395993351936
+              ],
+              "mad_ms": 0.13241998385637999,
+              "median_ms": 31.424344051629305,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 103.33928383430222
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.000729074003174901,
+            "hot_median_seconds": 0.0006848640041425824,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 2.3210159438846745e-07,
             "returned_modes": 5,
-            "to_native_time_ratio": 1.181283626615643
+            "speedup_over_native": {
+              "ci95_high": 2.28942767400446,
+              "ci95_low": 2.2255069241329344,
+              "ratio_median": 2.2521824352390123,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.6830139900557697,
+                0.689124979544431
+              ],
+              "mad_ms": 0.0018849968910217285,
+              "median_ms": 0.6848640041425824,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 2.2521824352390123
           },
           "SciPy eigsh (ARPACK)": {
             "error": "ArpackNoConvergence: ARPACK error -1: No convergence (7671 iterations, 0/5 eigenvectors converged)",
@@ -931,49 +1472,143 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0002711239503696561,
+        "native_hot_median_seconds": 0.00016957498155534267,
+        "native_stats": {
+          "iqr_ms": [
+            0.16922602662816644,
+            0.17034303164109588
+          ],
+          "mad_ms": 0.0004889443516731262,
+          "median_ms": 0.16957498155534267,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 3,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.20663881301879883,
+            "hot_median_seconds": 0.1066265709232539,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 7.910912636077683e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 762.1562489668033
+            "speedup_over_native": {
+              "ci95_high": 707.8686125173173,
+              "ci95_low": 592.058762595606,
+              "ratio_median": 628.7871591980986,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                102.02552803093567,
+                114.3748044851236
+              ],
+              "mad_ms": 6.021580891683698,
+              "median_ms": 106.6265709232539,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 628.7871591980986
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.056968325981870294,
+            "hot_median_seconds": 0.048941532033495605,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 7.910899846308439e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 210.11912043992604
+            "speedup_over_native": {
+              "ci95_high": 865.0210564704056,
+              "ci95_low": 277.1315197761634,
+              "ratio_median": 288.61292853818173,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                47.521133441478014,
+                131.80242048110813
+              ],
+              "mad_ms": 13.132547028362751,
+              "median_ms": 48.941532033495605,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 288.61292853818173
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 1.7849962461041287,
+            "hot_median_seconds": 0.03186944394838065,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 7.910899846308439e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 6583.690757199529
+            "speedup_over_native": {
+              "ci95_high": 188.76605404154944,
+              "ci95_low": 186.8441275304072,
+              "ratio_median": 187.9371806859357,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                31.803967023734003,
+                31.932580459397286
+              ],
+              "mad_ms": 0.06774603389203548,
+              "median_ms": 31.86944394838065,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 187.9371806859357
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0006152329733595252,
+            "hot_median_seconds": 0.0005703240167349577,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 7.910912280806315e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 2.269194486583364
+            "speedup_over_native": {
+              "ci95_high": 3.405346831238835,
+              "ci95_low": 3.290995152216032,
+              "ratio_median": 3.3632556613242275,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.5608955398201942,
+                0.5768894916400313
+              ],
+              "mad_ms": 0.007751979865133762,
+              "median_ms": 0.5703240167349577,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 3.3632556613242275
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0376214369898662,
+            "hot_median_seconds": 0.033275629044510424,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 7.910904908925431e-08,
+            "max_abs_difference": 7.910911481445737e-08,
             "returned_modes": 3,
-            "to_native_time_ratio": 138.7610240208301
+            "speedup_over_native": {
+              "ci95_high": 220.41646881226234,
+              "ci95_low": 190.05548369593515,
+              "ratio_median": 196.22958964409827,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                32.343317463528365,
+                37.04873804235831
+              ],
+              "mad_ms": 3.4601499792188406,
+              "median_ms": 33.275629044510424,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 196.22958964409827
           }
         },
         "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
@@ -989,49 +1624,143 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.0002165080513805151,
+        "native_hot_median_seconds": 0.00019276200328022242,
+        "native_stats": {
+          "iqr_ms": [
+            0.1889904960989952,
+            0.1988029689528048
+          ],
+          "mad_ms": 0.004051020368933678,
+          "median_ms": 0.19276200328022242,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 1,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.23421867098659277,
+            "hot_median_seconds": 0.09306463890243322,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 1.1704477942409142e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 1081.8012055124502
+            "speedup_over_native": {
+              "ci95_high": 605.2583081543628,
+              "ci95_low": 461.71728897472804,
+              "ratio_median": 482.7955578317117,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                91.2484839791432,
+                107.52050549490377
+              ],
+              "mad_ms": 3.063450916670263,
+              "median_ms": 93.06463890243322,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 482.7955578317117
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.12366324802860618,
+            "hot_median_seconds": 0.061873215017840266,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.1699788915464637e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 571.1715903408449
+            "speedup_over_native": {
+              "ci95_high": 9214.29809286157,
+              "ci95_low": 191.0805417036827,
+              "ratio_median": 320.9824237398788,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                41.61328898044303,
+                1756.4700694638304
+              ],
+              "mad_ms": 30.308210058137774,
+              "median_ms": 61.873215017840266,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 320.9824237398788
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.06584886298514903,
+            "hot_median_seconds": 0.03374237904790789,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.1699788915464637e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 304.140481452207
+            "speedup_over_native": {
+              "ci95_high": 181.23951711662505,
+              "ci95_low": 166.3442102478682,
+              "ratio_median": 175.04683741461145,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                33.032092498615384,
+                34.30460154777393
+              ],
+              "mad_ms": 0.5636189598590136,
+              "median_ms": 33.74237904790789,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 175.04683741461145
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0002542920410633087,
+            "hot_median_seconds": 0.00022956798784434795,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 1.1703835678389396e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 1.1745154022766011
+            "speedup_over_native": {
+              "ci95_high": 1.2380089518069992,
+              "ci95_low": 1.1347877214099078,
+              "ratio_median": 1.1909400397267083,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.22806704510003328,
+                0.23522548144683242
+              ],
+              "mad_ms": 0.0025150366127490997,
+              "median_ms": 0.22956798784434795,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 1.1909400397267083
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.03219378599897027,
+            "hot_median_seconds": 0.02633996505755931,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 1.1701007940345676e-09,
+            "max_abs_difference": 1.1704983093885346e-09,
             "returned_modes": 1,
-            "to_native_time_ratio": 148.69556025142623
+            "speedup_over_native": {
+              "ci95_high": 140.41441748979128,
+              "ci95_low": 130.37294242129508,
+              "ratio_median": 136.64500580681513,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                26.068037492223084,
+                26.76927956053987
+              ],
+              "mad_ms": 0.43099105823785067,
+              "median_ms": 26.33996505755931,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 136.64500580681513
           }
         },
         "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
@@ -1047,49 +1776,143 @@
         "field": "kernel_only",
         "interior_points": 767,
         "intervals": 768,
-        "native_hot_median_seconds": 0.00040668598376214504,
+        "native_hot_median_seconds": 0.0002104319864884019,
+        "native_stats": {
+          "iqr_ms": [
+            0.2079529222100973,
+            0.21168898092582822
+          ],
+          "mad_ms": 0.002025044523179531,
+          "median_ms": 0.2104319864884019,
+          "n_samples": 11
+        },
         "native_working_bytes": 12264,
         "requested_modes": 4,
         "solvers": {
           "JAX eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 2.1280275899916887,
+            "hot_median_seconds": 0.09687783697154373,
             "kind": "XLA dense, whole spectrum",
             "max_abs_difference": 1.4558492722471783e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 5232.60617517689
+            "speedup_over_native": {
+              "ci95_high": 482.45222606164,
+              "ci95_low": 450.58562379464445,
+              "ratio_median": 460.37600361142444,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                95.31751100439578,
+                100.64284404506907
+              ],
+              "mad_ms": 3.3757819328457117,
+              "median_ms": 96.87783697154373,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 460.37600361142444
           },
           "NumPy eigvalsh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.04626646707765758,
+            "hot_median_seconds": 0.059839784051291645,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.4558010263954202e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 113.76459707231281
+            "speedup_over_native": {
+              "ci95_high": 433.83368914641926,
+              "ci95_low": 199.64651578864095,
+              "ratio_median": 284.36638863640513,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                49.04440796235576,
+                81.20571851031855
+              ],
+              "mad_ms": 17.82777113839984,
+              "median_ms": 59.839784051291645,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 284.36638863640513
           },
           "SciPy eigh (dense)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.14991318597458303,
+            "hot_median_seconds": 0.032612554961815476,
             "kind": "LAPACK dense, whole spectrum",
             "max_abs_difference": 1.4558010263954202e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 368.6214719960978
+            "speedup_over_native": {
+              "ci95_high": 157.5409959048522,
+              "ci95_low": 152.4845560155278,
+              "ratio_median": 154.97907664153016,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                32.307383546140045,
+                32.874564931262285
+              ],
+              "mad_ms": 0.3772829659283161,
+              "median_ms": 32.612554961815476,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 154.97907664153016
           },
           "SciPy eigh_tridiagonal": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.0007922099903225899,
+            "hot_median_seconds": 0.0006772520719096065,
             "kind": "LAPACK tridiagonal, requested-only",
             "max_abs_difference": 1.4558402483544342e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 1.9479648228691426
+            "speedup_over_native": {
+              "ci95_high": 3.3461689746110443,
+              "ci95_low": 3.187625885070463,
+              "ratio_median": 3.2183893865723388,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                0.6757850642316043,
+                0.697331503033638
+              ],
+              "mad_ms": 0.0027940841391682625,
+              "median_ms": 0.6772520719096065,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 3.2183893865723388
           },
           "SciPy eigsh (ARPACK)": {
             "cross_check_ok": true,
-            "hot_median_seconds": 0.03737755003385246,
+            "hot_median_seconds": 0.03903600398916751,
             "kind": "ARPACK iterative, k smallest-algebraic",
-            "max_abs_difference": 1.4558515459839327e-07,
+            "max_abs_difference": 1.4558079897142306e-07,
             "returned_modes": 4,
-            "to_native_time_ratio": 91.9076425700305
+            "speedup_over_native": {
+              "ci95_high": 191.73927020526176,
+              "ci95_low": 180.3627462315992,
+              "ratio_median": 185.504136707463,
+              "resamples": 4000,
+              "seed": 20260727,
+              "verdict": "native_faster"
+            },
+            "stats": {
+              "iqr_ms": [
+                38.17035449901596,
+                40.075870987493545
+              ],
+              "mad_ms": 1.081913011148572,
+              "median_ms": 39.03600398916751,
+              "n_samples": 11
+            },
+            "to_native_time_ratio": 185.504136707463
           }
         },
         "timing_boundary": "solve only \u2014 operator representation (tridiagonal/dense/CSC/device) prebuilt outside timing",
@@ -1101,7 +1924,7 @@
     },
     "intervals": 768,
     "jax_available": true,
-    "repeats": 3
+    "repeats": 11
   },
   "schema": "idm.retained-spectral-competition.v1",
   "simulation": false,
@@ -1110,7 +1933,7 @@
   "verdicts": {
     "correctness": "ACCEPT",
     "fairness": "HOLD",
-    "note": "speed is median-based; 95% confidence intervals are future work (B3). verdict=ACCEPT requires correctness AND fairness AND speed all ACCEPT.",
+    "note": "speed ACCEPT requires the 95% bootstrap CI of native-vs-SciPy-eigh_tridiagonal (kernel-only) to sit above 1 in EVERY case; TIE if a CI straddles 1, HOLD if a competitor's CI is below 1. Overall ACCEPT requires correctness AND fairness AND speed all ACCEPT. Multi-process runs are the remaining B3 item.",
     "speed": "ACCEPT"
   }
 }
