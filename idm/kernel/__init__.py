@@ -40,6 +40,10 @@ from .eval import (
     real_ball, ball_add, ball_mul, ball_div, ball_apply,
     evaluate_exact, evaluate_certified, evaluate,
 )
+from .solution import (
+    Domain, SolutionKind, Solution, ExceptionalCase, SolutionSet,
+    solve as solve_equation, verify, verify_set,
+)
 
 __all__ = [
     # tiers
@@ -67,4 +71,7 @@ __all__ = [
     # numeric bridge
     "real_ball", "ball_add", "ball_mul", "ball_div", "ball_apply",
     "evaluate_exact", "evaluate_certified", "evaluate",
+    # solution objects
+    "Domain", "SolutionKind", "Solution", "ExceptionalCase", "SolutionSet",
+    "solve_equation", "verify", "verify_set",
 ]
