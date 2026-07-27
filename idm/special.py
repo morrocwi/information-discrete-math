@@ -10,7 +10,8 @@ constants π, γ used inside are themselves finite readouts. mpmath.mpf is the a
 from . import functions as F
 from .exact import factorial, binomial
 import mpmath as mp
-mp.mp.dps = 40
+_DPS = 40                                                # this module's declared working precision
+mp.mp.dps = _DPS
 R = mp.mpf
 _TINY = R(10) ** (-mp.mp.dps - 5)
 PI = F.pi()
@@ -18,8 +19,12 @@ GAMMA_E = None
 def _euler():                                            # Euler–Mascheroni γ as a finite readout
     global GAMMA_E
     if GAMMA_E is None:
-        N = 2000; H = mp.fsum(R(1) / n for n in range(1, N + 1))
-        GAMMA_E = H - F.log(R(N)) - R(1) / (2 * N) + R(1) / (12 * N ** 2)
+        # compute at the module's FIXED precision, never the ambient global dps — this constant is
+        # cached process-wide, so caching it at whatever precision a caller happened to leave would
+        # make every γ-dependent readout (E1, Ei, digamma, …) depend on call order.
+        with mp.workdps(_DPS):
+            N = 2000; H = mp.fsum(R(1) / n for n in range(1, N + 1))
+            GAMMA_E = H - F.log(R(N)) - R(1) / (2 * N) + R(1) / (12 * N ** 2)
     return GAMMA_E
 
 

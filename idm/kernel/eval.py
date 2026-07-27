@@ -60,15 +60,23 @@ def _rational_bounds(p: Q, prec_dps: int):
 
 
 def real_ball(value, prec_dps: int = 30) -> NUM.RealBall:
-    """A point (or [lo,hi]) ball from an exact rational / int / (lo,hi) pair — a rigorous enclosure."""
+    """A point (or [lo,hi]) ball from an exact rational / int / (lo,hi) pair — a rigorous enclosure.
+
+    Computes at ``prec_dps`` but restores the global mp/iv precision on exit, so this coercion never
+    leaks its dps to unrelated later code (the mpmath global is process-wide shared state)."""
+    _saved_iv = IVL._IV.dps
     IVL._IV.dps = prec_dps
-    mp.mp.dps = prec_dps
-    if isinstance(value, tuple):
-        lo, _ = _rational_bounds(Q(value[0]), prec_dps)   # lower endpoint rounded DOWN
-        _, hi = _rational_bounds(Q(value[1]), prec_dps)   # upper endpoint rounded UP
-    else:
-        lo, hi = _rational_bounds(Q(value), prec_dps)
-    return _from_iv(IVL._IV.mpf([lo, hi]), prec_dps)
+    try:
+        with mp.workdps(prec_dps):
+            if isinstance(value, tuple):
+                lo, _ = _rational_bounds(Q(value[0]), prec_dps)   # lower endpoint rounded DOWN
+                _, hi = _rational_bounds(Q(value[1]), prec_dps)   # upper endpoint rounded UP
+            else:
+                lo, hi = _rational_bounds(Q(value), prec_dps)
+            result = _from_iv(IVL._IV.mpf([lo, hi]), prec_dps)
+    finally:
+        IVL._IV.dps = _saved_iv
+    return result
 
 
 def ball_add(a: NUM.RealBall, b: NUM.RealBall) -> NUM.RealBall:

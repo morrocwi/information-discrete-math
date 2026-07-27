@@ -25,6 +25,28 @@ def test_ball_add_and_mul():
     assert float(p.lo) == 3.0 and float(p.hi) == 8.0
 
 
+def test_real_ball_and_coerce_do_not_leak_global_precision():
+    # These coercions compute at prec_dps but MUST restore mp.mp.dps on exit. The mpmath global
+    # precision is process-wide shared state; leaking it silently shifted the last digit of an
+    # unrelated later readout (a special function) and produced a cross-test flake. Lock the fix.
+    from idm.kernel import numbers as NUM
+
+    before = mp.mp.dps
+    K.real_ball(Q(1, 3), prec_dps=before + 50)
+    assert mp.mp.dps == before, "real_ball leaked its dps to the global context"
+
+    NUM.coerce_up(NUM.ExactRational(Q(1, 7)), NUM.RealBall, prec_dps=before + 40)
+    assert mp.mp.dps == before, "coerce_up leaked its dps to the global context"
+
+    # it restores to whatever the AMBIENT precision was, never a hardcoded value
+    mp.mp.dps = before + 7
+    try:
+        K.real_ball(Q(2, 9), prec_dps=before + 50)
+        assert mp.mp.dps == before + 7
+    finally:
+        mp.mp.dps = before
+
+
 def test_real_ball_rigorously_encloses_non_dyadic_rational():
     # 1/3 is not exactly representable in binary — the ball MUST bracket it (outward rounding),
     # not round to nearest (which would produce a point ball that excludes the true value).
