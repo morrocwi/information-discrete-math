@@ -6,6 +6,12 @@ Run: PYTHONPATH=. python3 -m pytest tests/test_benchmark_stats.py -q
 
 from __future__ import annotations
 
+import pytest
+
+# retained_spectral pulls in numpy, a BENCH-only dep (requirements-bench.txt) not installed in the
+# core solver CI. Skip cleanly rather than erroring collection when it is absent.
+pytest.importorskip("numpy")
+
 from retained_spectral.competition import stats as ST
 
 

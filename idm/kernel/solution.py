@@ -22,7 +22,7 @@ from enum import Enum
 from fractions import Fraction as Q
 from typing import List, Optional
 
-from .. import symbolic as SYM
+from . import cas as SYM
 from .tiers import HOLD, OK, Tier
 
 

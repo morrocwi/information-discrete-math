@@ -11,8 +11,12 @@ from __future__ import annotations
 import dataclasses
 import inspect
 
-import numpy as np
 import pytest
+
+# numpy / retained_spectral are BENCH-only deps (see requirements-bench.txt); the core solver CI
+# installs only mpmath+sympy. Skip this whole module cleanly when numpy is absent, instead of a hard
+# collection error — the benchmark suite runs wherever the bench deps are installed.
+np = pytest.importorskip("numpy")
 
 import retained_spectral as rs
 from retained_spectral import engine
