@@ -44,6 +44,7 @@ from .solution import (
     Domain, SolutionKind, Solution, ExceptionalCase, SolutionSet,
     solve as solve_equation, verify, verify_set,
 )
+from . import poly
 
 __all__ = [
     # tiers
@@ -74,4 +75,6 @@ __all__ = [
     # solution objects
     "Domain", "SolutionKind", "Solution", "ExceptionalCase", "SolutionSet",
     "solve_equation", "verify", "verify_set",
+    # polynomial tower
+    "poly",
 ]
