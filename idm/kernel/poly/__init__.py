@@ -16,6 +16,9 @@ from .univariate import (
 from .partial_fractions import PartialFraction, apart, together, extended_gcd
 from .summation import gosper_sum
 from .eigen import characteristic_polynomial, real_eigenvalues
+from .subresultant import subresultant_prs, resultant_prs, gcd_prs
+from .interpolate import lagrange, newton
+from .matrix_minpoly import minimal_polynomial, eval_poly_at_matrix
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
@@ -24,4 +27,6 @@ __all__ = [
     "sturm_chain", "count_real_roots", "isolate_real_roots", "square_free_factorization",
     "PartialFraction", "apart", "together", "extended_gcd", "gosper_sum",
     "characteristic_polynomial", "real_eigenvalues",
+    "subresultant_prs", "resultant_prs", "gcd_prs", "lagrange", "newton",
+    "minimal_polynomial", "eval_poly_at_matrix",
 ]
