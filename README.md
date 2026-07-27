@@ -82,7 +82,19 @@ python3 -c "import retained_spectral as rs; print(rs.solve(rs.examples()['harmon
 python3 -m retained_spectral.competition.run                 # regenerate the results JSON on YOUR machine
 python3 -m retained_spectral.competition.chart               # redraw the charts above from that JSON
 python3 -m retained_spectral.competition.credibility_audit   # 3-layer correctness + adversarial + scaling
+python3 -m demos.i2_morse_levels                             # real physics: I2 vibrational levels
+python3 -m demos.spectroscopic_inverse_sweep                 # inverse problem where per-solve speed pays off
 ```
+
+**Physics demos ([`demos/`](demos/)).** `demos/i2_morse_levels.py` solves the vibrational levels of
+molecular iodine (I2) in the Morse potential (standard textbook constants, atomic units) and checks
+them against the closed-form Morse formula *on the same operator* — a real, independent correctness
+witness: the discretisation error is ~0.14 cm⁻¹ at n=20k and ~0.006 cm⁻¹ at n=100k, shrinking as the
+grid is refined. `demos/spectroscopic_inverse_sweep.py` times many candidate `(D_e, a, r_e)` solves —
+the shape of a spectroscopic *inverse* problem — and projects the wall-clock of a 10k- or 1M-candidate
+fit from the measured per-candidate rate. Both are `finite_diagnostic`-tier discrete readouts, not
+continuum-limit proofs or measured claims about real iodine; both use the optional MRRR peer only when
+it is importable and skip it cleanly otherwise.
 
 → **Reproduce (Colab):** [reproduce.ipynb](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)
 · **Product & API:** [`retained_spectral/`](retained_spectral/) · **run script:**
