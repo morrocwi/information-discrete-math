@@ -6,6 +6,19 @@ authors = [{ name = "Yaoharee Lahtee" }]
 license = { text = "MIT" }
 requires-python = ">=3.9"
 dependencies = ["mpmath>=1.3.0", "sympy>=1.12"]
+
+[project.optional-dependencies]
+# Retained Spectral — the ready-to-use quantum spectrum product built on IDM.
+spectral = ["numpy>=1.24", "scipy>=1.10", "numba>=0.58"]
+# Everything needed to reproduce the competition benchmark and redraw its charts.
+spectral-bench = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "numba>=0.58",
+    "matplotlib>=3.6",
+    "jax>=0.4",
+]
+
 [project.urls]
 Homepage = "https://github.com/morrocwi/information-discrete-math"
 
@@ -17,7 +30,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["idm"]
+packages = ["idm", "retained_spectral", "retained_spectral.competition"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

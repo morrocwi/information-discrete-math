@@ -1,0 +1,820 @@
+{
+  "claim_scope": "finite_diagnostic agreement and wall-clock cost on seven declared 1-D Schrodinger spectra; the native method is faster than an independent SciPy pipeline end-to-end and than SciPy/JAX on an identical operator; no universal quantum-advantage or empirical-physics claim is made",
+  "end_to_end": {
+    "boundary": "both pipelines receive only (potential, parameters, modes, tolerance); references consulted only after both return",
+    "cases": {
+      "displaced_harmonic_low4": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            1.722949005689145e-10,
+            3.114175584073564e-10,
+            1.1057075255394011e-09,
+            2.539625398867429e-09
+          ],
+          "elapsed_seconds": 0.003436262020841241,
+          "finest_intervals": 5120,
+          "hot_median_seconds": 0.0038275830447673798,
+          "max_reference_abs_error": 1.4648726676114165e-10,
+          "mesh_shift": [
+            1.1641559938269097e-10,
+            2.1828538976365053e-10,
+            1.040515229533412e-09,
+            2.4558066691326985e-09
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 81992,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 1452218,
+          "reference_used_for_planning": false,
+          "solve_count": 7,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            0.4999999999930146,
+            1.5000000000718903,
+            2.50000000005615,
+            3.5000000001464873
+          ],
+          "window": [
+            -3.0,
+            17.0
+          ],
+          "window_shift": [
+            5.587930118622353e-11,
+            9.313216864370588e-11,
+            6.519229600598919e-11,
+            8.381872973473037e-11
+          ]
+        },
+        "reference": [
+          0.5,
+          1.5,
+          2.5,
+          3.5
+        ],
+        "reference_kind": "analytic",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            2.4260926601016308e-11,
+            2.556590494862121e-10,
+            9.565859215854289e-10,
+            2.479345617700801e-09
+          ],
+          "elapsed_seconds": 0.01558781205676496,
+          "finest_intervals": 5120,
+          "hot_median_seconds": 0.016629284946247935,
+          "max_reference_abs_error": 1.7241097438613906e-10,
+          "mesh_shift": [
+            1.9218626690076235e-11,
+            2.53979948183769e-10,
+            9.56008161523414e-10,
+            2.474571658694913e-09
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 81896,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 12,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            0.5000000000100008,
+            1.500000000008616,
+            2.5000000000627423,
+            3.500000000172411
+          ],
+          "window": [
+            -2.9999999999999956,
+            16.999999999999996
+          ],
+          "window_shift": [
+            5.0422999109400735e-12,
+            1.6791013024430868e-12,
+            5.777600620149315e-13,
+            4.773959005888173e-12
+          ]
+        },
+        "scipy_to_native_time_ratio": 4.344591548178565,
+        "tolerance": 2e-08
+      },
+      "factorized_sextic_ground": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            4.149100751252767e-09
+          ],
+          "elapsed_seconds": 0.0009997779270634055,
+          "finest_intervals": 1280,
+          "hot_median_seconds": 0.001067453995347023,
+          "max_reference_abs_error": 2.876757346594454e-10,
+          "mesh_shift": [
+            4.0745940185092735e-09
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 20480,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 92127,
+          "reference_used_for_planning": false,
+          "solve_count": 5,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            2.876757346594454e-10
+          ],
+          "window": [
+            -7.3203046699917245,
+            6.0703046699917245
+          ],
+          "window_shift": [
+            7.450673274349349e-11
+          ]
+        },
+        "reference": [
+          0.0
+        ],
+        "reference_kind": "factorization",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            3.949866347096654e-09
+          ],
+          "elapsed_seconds": 0.0020666049094870687,
+          "finest_intervals": 1280,
+          "hot_median_seconds": 0.0021967889042571187,
+          "max_reference_abs_error": 2.602525154023697e-10,
+          "mesh_shift": [
+            3.948087663428384e-09
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 20456,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 8,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            2.602525154023697e-10
+          ],
+          "window": [
+            -6.098618527518692,
+            7.343489435880397
+          ],
+          "window_shift": [
+            1.7786836682701324e-12
+          ]
+        },
+        "scipy_to_native_time_ratio": 2.0579705671933484,
+        "tolerance": 2e-08
+      },
+      "harmonic_low4": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            1.722949005689145e-10,
+            3.114175584073564e-10,
+            1.1057075255394011e-09,
+            2.539625398867429e-09
+          ],
+          "elapsed_seconds": 0.003618059097789228,
+          "finest_intervals": 5120,
+          "hot_median_seconds": 0.0032898749923333526,
+          "max_reference_abs_error": 1.4648726676114165e-10,
+          "mesh_shift": [
+            1.1641559938269097e-10,
+            2.1828538976365053e-10,
+            1.040515229533412e-09,
+            2.4558066691326985e-09
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 81992,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 1452218,
+          "reference_used_for_planning": false,
+          "solve_count": 7,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            0.4999999999930146,
+            1.5000000000718903,
+            2.50000000005615,
+            3.5000000001464873
+          ],
+          "window": [
+            -10.0,
+            10.0
+          ],
+          "window_shift": [
+            5.587930118622353e-11,
+            9.313216864370588e-11,
+            6.519229600598919e-11,
+            8.381872973473037e-11
+          ]
+        },
+        "reference": [
+          0.5,
+          1.5,
+          2.5,
+          3.5
+        ],
+        "reference_kind": "analytic",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            2.4260704556411383e-11,
+            2.568725232521274e-10,
+            9.565868097638486e-10,
+            2.4793465058792208e-09
+          ],
+          "elapsed_seconds": 0.016252003028057516,
+          "finest_intervals": 5120,
+          "hot_median_seconds": 0.015396376955322921,
+          "max_reference_abs_error": 1.7240830985087996e-10,
+          "mesh_shift": [
+            1.9218515667773772e-11,
+            2.53979948183769e-10,
+            9.56007717434204e-10,
+            2.474571658694913e-09
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 81896,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 12,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            0.5000000000100004,
+            1.5000000000086153,
+            2.5000000000627405,
+            3.5000000001724083
+          ],
+          "window": [
+            -10.0,
+            10.0
+          ],
+          "window_shift": [
+            5.042188888637611e-12,
+            2.892575068358383e-12,
+            5.790923296444817e-13,
+            4.774847184307873e-12
+          ]
+        },
+        "scipy_to_native_time_ratio": 4.679927654151686,
+        "tolerance": 2e-08
+      },
+      "morse_lambda5_all_bound": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            7.367018994841601e-09,
+            2.0955288171364828e-08,
+            4.0919816868267844e-08,
+            6.922587347801823e-08,
+            5.328487127920223e-08
+          ],
+          "elapsed_seconds": 0.02826924598775804,
+          "finest_intervals": 12442,
+          "hot_median_seconds": 0.03181767393834889,
+          "max_reference_abs_error": 9.007185663989503e-09,
+          "mesh_shift": [
+            4.051507573876734e-09,
+            1.6708440853108186e-08,
+            3.600238329681815e-08,
+            6.162614241134179e-08,
+            5.06026242991231e-08
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 199168,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 13060193,
+          "reference_used_for_planning": false,
+          "solve_count": 46,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            -10.124999999429367,
+            -6.124999997459751,
+            -3.1249999909928143,
+            -1.1249999925572063,
+            -0.1249999965986877
+          ],
+          "window": [
+            -7.200122865564559,
+            36.26894188803017
+          ],
+          "window_shift": [
+            3.3155114209648673e-09,
+            4.246847318256641e-09,
+            4.917433571449692e-09,
+            7.59973106667644e-09,
+            2.6822469800791282e-09
+          ]
+        },
+        "reference": [
+          -10.125,
+          -6.125,
+          -3.125,
+          -1.125,
+          -0.125
+        ],
+        "reference_kind": "analytic",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            2.411120192391536e-09,
+            1.6879642572575904e-08,
+            4.057572278171051e-08,
+            6.152658094116248e-08,
+            5.085619220190907e-08
+          ],
+          "elapsed_seconds": 0.12804146308917552,
+          "finest_intervals": 12448,
+          "hot_median_seconds": 0.13347372005227953,
+          "max_reference_abs_error": 5.350874174303577e-09,
+          "mesh_shift": [
+            2.255839959275363e-09,
+            1.5625956528708684e-08,
+            3.9647178429191854e-08,
+            6.032403976341527e-08,
+            4.8998780310949286e-08
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 199144,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 50,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            -10.124999999698929,
+            -6.12500000032643,
+            -3.124999998365496,
+            -1.1249999972471365,
+            -0.12499999464912583
+          ],
+          "window": [
+            -7.200137843945402,
+            36.269017346730735
+          ],
+          "window_shift": [
+            1.552802331161729e-10,
+            1.2536860438672193e-09,
+            9.285443525186565e-10,
+            1.2025411777472073e-09,
+            1.8574118909597814e-09
+          ]
+        },
+        "scipy_to_native_time_ratio": 4.194955304115039,
+        "tolerance": 1e-06
+      },
+      "poschl_teller_lambda3_all_bound": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            2.817023947443431e-09,
+            9.853063920317595e-09,
+            1.3872832993477857e-08
+          ],
+          "elapsed_seconds": 0.014539074036292732,
+          "finest_intervals": 9830,
+          "hot_median_seconds": 0.014650051947683096,
+          "max_reference_abs_error": 1.105870950368626e-09,
+          "mesh_shift": [
+            1.99745908702198e-09,
+            7.17084414070257e-09,
+            1.2978756291914806e-08
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 157328,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 4337969,
+          "reference_used_for_planning": false,
+          "solve_count": 26,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            -4.499999999529987,
+            -2.000000001105871,
+            -0.500000000294782
+          ],
+          "window": [
+            -20.63179516008016,
+            20.63179516008016
+          ],
+          "window_shift": [
+            8.195648604214512e-10,
+            2.682219779615025e-09,
+            8.940767015630513e-10
+          ]
+        },
+        "reference": [
+          -4.5,
+          -2.0,
+          -0.5
+        ],
+        "reference_kind": "analytic",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            1.2849543651327622e-09,
+            7.019870462698918e-09,
+            1.3382873087497416e-08
+          ],
+          "elapsed_seconds": 0.055220726993866265,
+          "finest_intervals": 9824,
+          "hot_median_seconds": 0.05415627500042319,
+          "max_reference_abs_error": 8.799717066132473e-10,
+          "mesh_shift": [
+            1.276871941513491e-09,
+            6.997594503843629e-09,
+            1.336820354413959e-08
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 157160,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 30,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            -4.499999999917691,
+            -1.9999999995206228,
+            -0.4999999991200283
+          ],
+          "window": [
+            -20.631746128841158,
+            20.63174612884137
+          ],
+          "window_shift": [
+            8.08242361927114e-12,
+            2.227595885528899e-11,
+            1.4669543357825887e-11
+          ]
+        },
+        "scipy_to_native_time_ratio": 3.6966609534096566,
+        "tolerance": 3e-07
+      },
+      "pure_quartic_ground": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            2.2026539481245777e-09
+          ],
+          "elapsed_seconds": 0.0010865218937397003,
+          "finest_intervals": 1280,
+          "hot_median_seconds": 0.0010182869154959917,
+          "max_reference_abs_error": 1.0313810916429134e-10,
+          "mesh_shift": [
+            2.149725175648598e-09
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 20480,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 93664,
+          "reference_used_for_planning": false,
+          "solve_count": 5,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            0.42080497458113814
+          ],
+          "window": [
+            -10.0,
+            10.0
+          ],
+          "window_shift": [
+            5.292877247597971e-11
+          ]
+        },
+        "reference": [
+          0.420804974478
+        ],
+        "reference_kind": "published numerical comparator",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            2.0912954701302056e-09
+          ],
+          "elapsed_seconds": 0.0017880770610645413,
+          "finest_intervals": 1280,
+          "hot_median_seconds": 0.0018763559637591243,
+          "max_reference_abs_error": 1.3652706742917076e-10,
+          "mesh_shift": [
+            2.0909224351939315e-09
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 20456,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 8,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            0.4208049746145271
+          ],
+          "window": [
+            -10.000000000000004,
+            9.999999999999996
+          ],
+          "window_shift": [
+            3.730349362740526e-13
+          ]
+        },
+        "scipy_to_native_time_ratio": 1.8426594068972992,
+        "tolerance": 2e-08
+      },
+      "squeezed_harmonic_omega16_low4": {
+        "native": {
+          "correct": true,
+          "diagnostic_bounds": [
+            3.2037990038702446e-09,
+            4.191022640043229e-09,
+            1.5148650334140257e-08,
+            4.326518876496266e-08
+          ],
+          "elapsed_seconds": 0.0032434299355372787,
+          "finest_intervals": 5120,
+          "hot_median_seconds": 0.003311734995804727,
+          "max_reference_abs_error": 2.3038850827106216e-09,
+          "mesh_shift": [
+            1.86269577540088e-09,
+            2.328381043525951e-09,
+            1.362128188020506e-08,
+            4.22034815983352e-08
+          ],
+          "method": "Retained Multilevel Sturm (RMS)",
+          "peak_working_bytes": 81992,
+          "per_case_schedule": false,
+          "reason": "mesh and decay gates passed; retained mesh correction transported across one same-spacing window witness",
+          "recurrence_updates": 1421769,
+          "reference_used_for_planning": false,
+          "solve_count": 7,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            7.999999998549893,
+            24.000000002206004,
+            40.0000000005743,
+            56.000000002303885
+          ],
+          "window": [
+            -2.5,
+            2.5
+          ],
+          "window_shift": [
+            1.3411032284693647e-09,
+            1.8626415965172782e-09,
+            1.5273684539351962e-09,
+            1.061707166627457e-09
+          ]
+        },
+        "reference": [
+          8.0,
+          24.0,
+          40.0,
+          56.0
+        ],
+        "reference_kind": "analytic",
+        "scipy": {
+          "correct": true,
+          "diagnostic_bounds": [
+            3.8817127290258213e-10,
+            4.109960372034038e-09,
+            1.5305388956221577e-08,
+            3.966954409406753e-08
+          ],
+          "elapsed_seconds": 0.01744873297866434,
+          "finest_intervals": 5120,
+          "hot_median_seconds": 0.015384851954877377,
+          "max_reference_abs_error": 2.7585329576140794e-09,
+          "mesh_shift": [
+            3.0749625068438036e-10,
+            4.063679170940304e-09,
+            1.5296123478947266e-08,
+            3.9593146539118607e-08
+          ],
+          "method": "Independent SciPy Richardson-stability pipeline",
+          "peak_working_bytes": 81896,
+          "per_case_schedule": false,
+          "reason": "Richardson mesh, decay-boundary, and window gates passed",
+          "recurrence_updates": 0,
+          "reference_used_for_planning": false,
+          "solve_count": 12,
+          "status": "ACCEPT",
+          "tier": "finite_diagnostic",
+          "values": [
+            8.000000000160007,
+            24.000000000137845,
+            40.00000000100385,
+            56.00000000275853
+          ],
+          "window": [
+            -2.500000000000001,
+            2.499999999999999
+          ],
+          "window_shift": [
+            8.067502221820178e-11,
+            4.6281201093734126e-11,
+            9.265477274311706e-12,
+            7.639755494892597e-11
+          ]
+        },
+        "scipy_to_native_time_ratio": 4.645556475492983,
+        "tolerance": 4e-07
+      }
+    },
+    "repeats": 9,
+    "summary": {
+      "cases": 7,
+      "native_accepted": 7,
+      "native_correct": 7,
+      "native_faster_cases": 7,
+      "scipy_correct": 7,
+      "speedup_geomean": 3.42727990552925,
+      "speedup_max": 4.679927654151686,
+      "speedup_min": 1.8426594068972992
+    }
+  },
+  "environment": {
+    "jax": "0.11.0",
+    "jaxlib": "0.11.0",
+    "numba": "0.65.1",
+    "numpy": "2.4.6",
+    "platform": "Linux-7.0.0-27-generic-x86_64-with-glibc2.43",
+    "processor": "unknown",
+    "python": "3.13.13",
+    "scipy": "1.17.1"
+  },
+  "executor_audit": {
+    "boundary": "identical native-constructed operator handed to every solver; this audits the solve kernel only, not an independent pipeline",
+    "cases": {
+      "displaced_harmonic_low4": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 380.7695792880259,
+        "jax_hot_median_seconds": 0.4260189749766141,
+        "jax_to_native_time_ratio": 1005.0769515983291,
+        "jax_vs_native_max_abs_difference": 3.6441636375172948e-09,
+        "native_hot_median_seconds": 0.0004238670226186514,
+        "native_working_bytes": 12360,
+        "requested_modes": 4,
+        "scipy_hot_median_seconds": 0.0007272569928318262,
+        "scipy_to_native_time_ratio": 1.7157668656052338,
+        "scipy_vs_native_max_abs_difference": 3.644107238187644e-09,
+        "window": [
+          -3.0,
+          17.0
+        ]
+      },
+      "factorized_sextic_ground": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 383.0006510416667,
+        "jax_hot_median_seconds": 0.1499101029476151,
+        "jax_to_native_time_ratio": 545.3358823205566,
+        "jax_vs_native_max_abs_difference": 3.558519619028871e-09,
+        "native_hot_median_seconds": 0.000274894991889596,
+        "native_working_bytes": 12288,
+        "requested_modes": 1,
+        "scipy_hot_median_seconds": 0.0002581330481916666,
+        "scipy_to_native_time_ratio": 0.9390241939923687,
+        "scipy_vs_native_max_abs_difference": 3.5592111066675043e-09,
+        "window": [
+          -7.3203046699917245,
+          6.0703046699917245
+        ]
+      },
+      "harmonic_low4": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 380.7695792880259,
+        "jax_hot_median_seconds": 0.5899630599888042,
+        "jax_to_native_time_ratio": 2378.1440421855627,
+        "jax_vs_native_max_abs_difference": 3.6441636375172948e-09,
+        "native_hot_median_seconds": 0.000248077092692256,
+        "native_working_bytes": 12360,
+        "requested_modes": 4,
+        "scipy_hot_median_seconds": 0.0006862609880045056,
+        "scipy_to_native_time_ratio": 2.7663214711074695,
+        "scipy_vs_native_max_abs_difference": 3.644107238187644e-09,
+        "window": [
+          -10.0,
+          10.0
+        ]
+      },
+      "morse_lambda5_all_bound": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 380.03165374677,
+        "jax_hot_median_seconds": 0.6063283450203016,
+        "jax_to_native_time_ratio": 872.952480151946,
+        "jax_vs_native_max_abs_difference": 2.3075391086813113e-07,
+        "native_hot_median_seconds": 0.0006945719942450523,
+        "native_working_bytes": 12384,
+        "requested_modes": 5,
+        "scipy_hot_median_seconds": 0.0008286670781672001,
+        "scipy_to_native_time_ratio": 1.1930614609186756,
+        "scipy_vs_native_max_abs_difference": 2.3210159438846745e-07,
+        "window": [
+          -7.200122865564559,
+          36.26894188803017
+        ]
+      },
+      "poschl_teller_lambda3_all_bound": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 381.5103761348898,
+        "jax_hot_median_seconds": 2.096017210977152,
+        "jax_to_native_time_ratio": 10327.290988611367,
+        "jax_vs_native_max_abs_difference": 7.910912636077683e-08,
+        "native_hot_median_seconds": 0.0002029590541496873,
+        "native_working_bytes": 12336,
+        "requested_modes": 3,
+        "scipy_hot_median_seconds": 0.0006352069322019815,
+        "scipy_to_native_time_ratio": 3.1297294661882926,
+        "scipy_vs_native_max_abs_difference": 7.910912280806315e-08,
+        "window": [
+          -20.63179516008016,
+          20.63179516008016
+        ]
+      },
+      "pure_quartic_ground": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 383.0006510416667,
+        "jax_hot_median_seconds": 0.47495468403212726,
+        "jax_to_native_time_ratio": 1891.6475036629017,
+        "jax_vs_native_max_abs_difference": 1.1704477942409142e-09,
+        "native_hot_median_seconds": 0.00025107990950345993,
+        "native_working_bytes": 12288,
+        "requested_modes": 1,
+        "scipy_hot_median_seconds": 0.0002505209995433688,
+        "scipy_to_native_time_ratio": 0.9977739757784826,
+        "scipy_vs_native_max_abs_difference": 1.1703835678389396e-09,
+        "window": [
+          -10.0,
+          10.0
+        ]
+      },
+      "squeezed_harmonic_omega16_low4": {
+        "cross_check_ok": true,
+        "interior_points": 767,
+        "intervals": 768,
+        "jax_dense_matrix_bytes": 4706312,
+        "jax_dense_to_native_memory_ratio": 380.7695792880259,
+        "jax_hot_median_seconds": 2.3612377549288794,
+        "jax_to_native_time_ratio": 5055.869116188475,
+        "jax_vs_native_max_abs_difference": 1.4558492722471783e-07,
+        "native_hot_median_seconds": 0.0004670290509238839,
+        "native_working_bytes": 12360,
+        "requested_modes": 4,
+        "scipy_hot_median_seconds": 0.0007567299762740731,
+        "scipy_to_native_time_ratio": 1.620306006183338,
+        "scipy_vs_native_max_abs_difference": 1.4558402483544342e-07,
+        "window": [
+          -2.5,
+          2.5
+        ]
+      }
+    },
+    "intervals": 768,
+    "jax_available": true,
+    "repeats": 5
+  },
+  "schema": "idm.retained-spectral-competition.v1",
+  "simulation": false,
+  "tier": "finite_diagnostic",
+  "verdict": "ACCEPT"
+}
