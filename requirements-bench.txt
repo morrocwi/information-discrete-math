@@ -17,6 +17,10 @@
 #
 # The Retained Spectral product has its own extras — install with
 #   pip install "information-discrete-math[spectral-bench]"
+# Its native Sturm kernel is JIT-compiled with **numba**; without numba it falls back to a
+# numerically-identical but far slower pure-Python path, so numba is what the ~1.65x speed claim
+# depends on (correctness does not). The pinned, reproducible set is requirements-spectral-lock.txt;
+# every results JSON records environment.native_kernel_compiled so a numba-less run is self-disclosing.
 
 numpy>=1.24
 numba>=0.58

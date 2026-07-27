@@ -314,6 +314,12 @@ else:  # pragma: no cover - dependency-light fallback
     _sturm_count_native = _sturm_count_python
     _batched_bisection_native = _batched_bisection_python
 
+# Whether the native Sturm kernel is actually the Numba/LLVM-compiled path. The pure-Python fallback is
+# numerically IDENTICAL (same exact float64 recurrence) but MUCH slower, so any wall-clock speed claim
+# holds only when this is True. Benchmarks record it so a run without Numba is self-disclosing rather
+# than silently reporting slow numbers as if they were the compiled field.
+NATIVE_KERNEL_COMPILED = njit is not None
+
 
 def warm_native_kernel() -> None:
     diagonal = np.asarray((2.0, 2.0, 2.0), dtype=np.float64)

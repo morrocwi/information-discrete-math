@@ -45,6 +45,15 @@ the declared tolerance, native vs SciPy's requested-only LAPACK route:
 - End-to-end from raw input vs an independent SciPy pipeline: native faster **7/7, ≈3.5× geomean**.
 - **7/7** targets hit **published/analytic eigenvalues** within the **declared** tolerance (no hidden floor).
 
+> [!IMPORTANT]
+> **The speed numbers require Numba.** The native Sturm kernel is JIT-compiled with Numba/LLVM; if
+> Numba is not installed it falls back to a **numerically identical but much slower pure-Python** path,
+> and the ≈1.65× headline would not hold. Install it via the pinned bench extras
+> (`pip install "information-discrete-math[spectral-bench]"`, or `requirements-spectral-lock.txt`). Every
+> results JSON records `environment.native_kernel_compiled` (true/false), so a run without the compiled
+> path is self-disclosing and is never presented as the headline field. Correctness (the tolerance and
+> the three credibility layers) does **not** depend on Numba — only the wall-clock claim does.
+
 **Supplementary — alternative standard routes on the same finite operator** (they compute the *whole*
 spectrum / iterate, i.e. **not the same work**): SciPy `eigh`, NumPy `eigvalsh`, SciPy `eigsh` (ARPACK),
 JAX `eigvalsh` run **~150–1,900× slower**. Shown for completeness, not as the headline.
