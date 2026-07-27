@@ -22,6 +22,17 @@ a prior report.  Run::
 from __future__ import annotations
 
 import argparse
+import os
+
+# Pin every BLAS/LAPACK/threading backend to a single thread BEFORE numpy/scipy/jax import, so a timing
+# comparison measures the algorithm, not the host's thread scheduler (B3). setdefault: the caller can
+# still override from the shell.
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+             "VECLIB_MAXIMUM_THREADS", "NUMEXPR_NUM_THREADS", "NUMBA_NUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+os.environ.setdefault("JAX_ENABLE_X64", "1")
+
 import json
 import platform
 import statistics
@@ -41,6 +52,7 @@ from retained_spectral.engine import (
 )
 from retained_spectral.competition.executor_audit import run_executor_audit
 from retained_spectral.competition.scipy_pipeline import scipy_raw_input_readout
+from retained_spectral.competition.stats import summarize, speedup_ci
 
 DEFAULT_RESULTS = (
     Path(__file__).resolve().parent.parent / "results" / "competition_results.json"
@@ -55,16 +67,11 @@ def _package_version(name: str) -> str:
 
 
 def _max_reference_error(values, reference) -> float:
-    length = min(len(values), len(reference))
-    if length == 0:
+    # A solver that returned the WRONG NUMBER of eigenvalues fails outright — never compare on the
+    # shorter prefix (that would let a partial result pass correctness).
+    if len(values) != len(reference) or len(reference) == 0:
         return float("inf")
-    return float(
-        np.max(
-            np.abs(
-                np.asarray(values[:length]) - np.asarray(reference[:length])
-            )
-        )
-    )
+    return float(np.max(np.abs(np.asarray(values) - np.asarray(reference))))
 
 
 def _timed(solver, problem, *, repeats: int) -> tuple[float, object]:
@@ -83,16 +90,31 @@ def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, ob
     problem = target.problem
     native_samples: list[float] = []
     scipy_samples: list[float] = []
-    native_result = retained_raw_input_readout(problem)
+    native_result = retained_raw_input_readout(problem)   # warm-up (outside timing)
     scipy_result = scipy_raw_input_readout(problem)
-    for _ in range(repeats):
-        started = time.perf_counter()
-        native_result = retained_raw_input_readout(problem)
-        native_samples.append(time.perf_counter() - started)
 
+    def _time_native():
         started = time.perf_counter()
-        scipy_result = scipy_raw_input_readout(problem)
-        scipy_samples.append(time.perf_counter() - started)
+        r = retained_raw_input_readout(problem)
+        return time.perf_counter() - started, r
+
+    def _time_scipy():
+        started = time.perf_counter()
+        r = scipy_raw_input_readout(problem)
+        return time.perf_counter() - started, r
+
+    for i in range(repeats):
+        # balanced ordering: alternate which pipeline runs first so neither is systematically
+        # favoured by cache/thermal state (B3).
+        order = (_time_native, _time_scipy) if i % 2 == 0 else (_time_scipy, _time_native)
+        for fn in order:
+            dt, r = fn()
+            if fn is _time_native:
+                native_samples.append(dt)
+                native_result = r
+            else:
+                scipy_samples.append(dt)
+                scipy_result = r
 
     native_seconds = float(statistics.median(native_samples))
     scipy_seconds = float(statistics.median(scipy_samples))
@@ -106,16 +128,23 @@ def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, ob
         "native": {
             **result_as_dict(native_result),
             "hot_median_seconds": native_seconds,
+            "expected_modes": len(target.reference),
+            "returned_modes": len(native_result.values),
             "max_reference_abs_error": native_error,
-            "correct": native_error <= max(problem.tolerance, 1e-6),
+            "correct": native_error <= problem.tolerance,   # the DECLARED tolerance, no hidden floor
         },
         "scipy": {
             **result_as_dict(scipy_result),
             "hot_median_seconds": scipy_seconds,
+            "expected_modes": len(target.reference),
+            "returned_modes": len(scipy_result.values),
             "max_reference_abs_error": scipy_error,
-            "correct": scipy_error <= max(problem.tolerance, 1e-6),
+            "correct": scipy_error <= problem.tolerance,
         },
         "scipy_to_native_time_ratio": scipy_seconds / native_seconds,
+        "native_stats": summarize(native_samples),
+        "scipy_stats": summarize(scipy_samples),
+        "scipy_speedup_over_native": speedup_ci(native_samples, scipy_samples),
     }
 
 
@@ -151,15 +180,41 @@ def run_competition(
         include_jax=include_jax,
     )
 
-    verdict = (
-        "ACCEPT"
-        if (
-            native_correct == len(targets)
-            and native_accept == len(targets)
-            and native_wins == len(targets)
-        )
-        else "HOLD"
+    n = len(targets)
+    audit_cases = audit.get("cases", {})
+    executor_cross_check_all = bool(audit_cases) and all(
+        c.get("cross_check_ok") for c in audit_cases.values()
     )
+    executor_complete_all = all(
+        c.get("comparison_complete", True) for c in audit_cases.values()
+    )
+
+    # THREE independent verdicts — speed never compensates for incorrectness, correctness never
+    # compensates for an unequal/incomplete comparison.
+    correctness_verdict = "ACCEPT" if (native_correct == n and scipy_correct == n) else "HOLD"
+    fairness_verdict = "ACCEPT" if (executor_cross_check_all and executor_complete_all) else "HOLD"
+    # median-based (confidence intervals are B3): ACCEPT only if native is faster in EVERY case;
+    # if any case has a competitor faster it is HOLD (never silently an overall ACCEPT).
+    # CI-based speed verdict on the PRIMARY same-work peer (SciPy eigh_tridiagonal, kernel-only):
+    # native win requires the 95% bootstrap CI of the speedup to sit entirely above 1 in EVERY case.
+    peer = "SciPy eigh_tridiagonal"
+    peer_verdicts = [
+        c["solvers"].get(peer, {}).get("speedup_over_native", {}).get("verdict", "insufficient-samples")
+        for c in audit_cases.values()
+    ]
+    if peer_verdicts and all(v == "native_faster" for v in peer_verdicts):
+        speed_verdict = "ACCEPT"
+    elif any(v == "competitor_faster" for v in peer_verdicts):
+        speed_verdict = "HOLD"
+    else:
+        speed_verdict = "TIE"
+    strict_accept = (
+        correctness_verdict == "ACCEPT"
+        and fairness_verdict == "ACCEPT"
+        and speed_verdict == "ACCEPT"
+        and native_accept == n
+    )
+    verdict = "ACCEPT" if strict_accept else "HOLD"
 
     return {
         "schema": "idm.retained-spectral-competition.v1",
@@ -201,6 +256,15 @@ def run_competition(
         },
         "executor_audit": audit,
         "verdict": verdict,
+        "verdicts": {
+            "correctness": correctness_verdict,   # native AND scipy hit references within DECLARED tol
+            "fairness": fairness_verdict,          # executor audit cross-checked AND complete (no solver errors)
+            "speed": speed_verdict,                # from the 95% bootstrap CI of the same-work peer speedup
+            "note": "speed ACCEPT requires the 95% bootstrap CI of native-vs-SciPy-eigh_tridiagonal "
+                    "(kernel-only) to sit above 1 in EVERY case; TIE if a CI straddles 1, HOLD if a "
+                    "competitor's CI is below 1. Overall ACCEPT requires correctness AND fairness AND "
+                    "speed all ACCEPT. Multi-process runs are the remaining B3 item.",
+        },
         "tier": "finite_diagnostic",
     }
 

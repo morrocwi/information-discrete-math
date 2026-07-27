@@ -26,27 +26,33 @@ mesh, or reference value supplied — and reports a tier-honest `ACCEPT`/`HOLD` 
 
 <div align="center">
 
-<img src="assets/retained_spectral_hero.png" alt="Same operator, every standard eigensolver — lower is faster: native Retained Multilevel Sturm solves in 0.35 ms, 1.6x faster than SciPy eigh_tridiagonal and 144-2796x faster than SciPy eigh, SciPy eigsh/ARPACK, JAX eigvalsh and NumPy eigvalsh" width="900">
+<img src="assets/retained_spectral_hero.png" alt="Same operator, median solve time (lower is faster): on this host native Retained Multilevel Sturm was the fastest, about 1.65x faster than SciPy eigh_tridiagonal (kernel-only field, prebuilt operator, solve-only timing); dense/iterative routes ran 150-1900x slower" width="900">
 
 **[▶ Reproduce it in one click (Google Colab)](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)** — installs, runs, and redraws the chart on a fresh machine.
 
 </div>
 
-**The comparison is designed to be credible, not self-serving.** Every eigensolver receives the
-*identical* native-built operator; only the solve kernel differs, and each uses its own standard API —
-so anyone can rerun it. **Lower is faster** — the native bar is the shortest:
+**The comparison is designed to be credible, not self-serving** — the chart computes its own winner
+from the data (if a competitor were faster, it would say so), and the run emits three independent
+verdicts so speed never covers for incorrectness. Numbers below are the **recorded run on this host**
+(single medians; 95% confidence intervals are tracked as future work):
 
-- vs **SciPy `eigh_tridiagonal`** (LAPACK tridiagonal, requested-only): **1.6× faster**.
-- vs the dense / iterative routes — **SciPy `eigh`**, **NumPy `eigvalsh`**, **SciPy `eigsh` (ARPACK)**,
-  **JAX `eigvalsh`**: **144–2,796× faster** (they solve the whole spectrum / iterate; native reads only
-  the requested modes). **Every solver that converges returns the same eigenvalues — cross-checked
-  identical** (a non-converging run, e.g. ARPACK on one case, is disclosed, never scored as agreement).
-- End-to-end from raw input, the native pipeline also beats an independent SciPy pipeline **7 / 7,
-  3.56× geomean**.
-- **7 / 7** targets (harmonic, displaced, squeezed ω=16, Pöschl–Teller, Morse, factorized sextic, pure
-  quartic) hit **published/analytic eigenvalues** within tolerance — external truth, not a self-graded
-  score. `finite_diagnostic` tier: a discrete rational-readout agreement-and-cost claim, **not** a
-  continuum-limit proof or an empirical-physics claim. (Dense-route time depends on the linked BLAS/LAPACK.)
+**Primary same-work claim** — lowest _k_ eigenvalues of the *identical* symmetric tridiagonal matrix to
+the declared tolerance, native vs SciPy's requested-only LAPACK route:
+
+- vs **SciPy `eigh_tridiagonal`**: native **≈1.65× faster** (geomean, this host) — **Field A / kernel-only**: every solver gets the *prebuilt* operator (tridiagonal/dense/CSC/device array built outside timing), only the eigenvalue solve is timed.
+- End-to-end from raw input vs an independent SciPy pipeline: native faster **7/7, ≈3.5× geomean**.
+- **7/7** targets hit **published/analytic eigenvalues** within the **declared** tolerance (no hidden floor).
+
+**Supplementary — alternative standard routes on the same finite operator** (they compute the *whole*
+spectrum / iterate, i.e. **not the same work**): SciPy `eigh`, NumPy `eigvalsh`, SciPy `eigsh` (ARPACK),
+JAX `eigvalsh` run **~150–1,900× slower**. Shown for completeness, not as the headline.
+
+**Verdicts (this run): correctness ACCEPT · speed ACCEPT · fairness HOLD → overall `HOLD`.** Fairness is
+HOLD because a supplementary solver (ARPACK) failed to converge on one case, so the full-field
+comparison is *incomplete* — disclosed, never scored as agreement, and never silently dropped from the
+aggregate (geomeans use the case set every solver completed). `finite_diagnostic` tier — a discrete
+rational-readout agreement-and-cost claim, **not** a continuum-limit proof or an empirical-physics claim.
 
 ```bash
 pip install "information-discrete-math[spectral-bench] @ git+https://github.com/morrocwi/information-discrete-math"

@@ -7,7 +7,8 @@ Dark-theme figures drawn only from measured numbers in the JSON record:
   (milliseconds, log scale, lower is faster) on one identical operator, native
   Retained Multilevel Sturm against every standard eigensolver in the audit
   (SciPy ``eigh_tridiagonal``/``eigh``, NumPy ``eigvalsh``, SciPy ``eigsh``/ARPACK,
-  JAX ``eigvalsh``); the native bar is the shortest and is highlighted ★.
+  JAX ``eigvalsh``); the fastest measured bar is highlighted ★ — computed from the data, so it
+  moves to whichever solver actually won on the host that produced the JSON.
 * ``retained_spectral_detail.png`` — per-case breakdown: every solver's
   times-slower-than-native and the end-to-end wall-clock.
 
@@ -165,21 +166,7 @@ def render_hero(data: dict, output_path: Path) -> Path:
 
     audit = data["executor_audit"]["cases"]
     names = list(audit.keys())
-
-    # geometric-mean SOLVE TIME (ms) across the identical-operator cases —
-    # lower is faster, so the native bar is the shortest.
-    native_ms = _geomean([audit[n]["native_hot_median_seconds"] for n in names]) * 1e3
     solver_names = list(audit[names[0]]["solvers"].keys())
-    comp: list[tuple[str, float]] = []
-    for s in solver_names:
-        times = [
-            audit[n]["solvers"][s]["hot_median_seconds"]
-            for n in names
-            if "hot_median_seconds" in audit[n]["solvers"][s]
-        ]
-        if times:
-            comp.append((s, _geomean(times) * 1e3))
-    comp.sort(key=lambda t: t[1])  # fastest competitor first
 
     palette = {
         "SciPy eigh_tridiagonal": "#58A6FF",
@@ -195,17 +182,41 @@ def render_hero(data: dict, output_path: Path) -> Path:
         "NumPy eigvalsh (dense)": "NumPy\neigvalsh",
         "JAX eigvalsh (dense)": "JAX\neigvalsh",
     }
-    entries = [("Retained\nMultilevel Sturm", native_ms, NATIVE, True)]
-    for s, ms in comp:
-        entries.append((short.get(s, s), ms, palette.get(s, MUTED), False))
 
-    labels = [e[0] for e in entries]
-    values = [e[1] for e in entries]
-    colors = [e[2] for e in entries]
+    # per-solver {case: median seconds}, present only where the solver actually ran
+    per_case = {"native": {n: audit[n]["native_hot_median_seconds"] for n in names}}
+    for s in solver_names:
+        got = {n: audit[n]["solvers"][s].get("hot_median_seconds") for n in names
+               if audit[n]["solvers"][s].get("hot_median_seconds") is not None}
+        if got:
+            per_case[s] = got
+    # aggregate ONLY over the case set every scored solver completed (no silently-dropped cases)
+    common = set(names)
+    for t in per_case.values():
+        common &= set(t)
+    common = sorted(common)
+
+    def gm(times):
+        return _geomean([times[n] for n in common]) * 1e3
+
+    # rank ALL solvers by measured time — native is NOT assumed first; the ★ lands on the true minimum,
+    # and if a competitor is fastest the chart says so without any source edit.
+    ranking = [("Retained\nMultilevel Sturm", gm(per_case["native"]), NATIVE, "native")]
+    for s in solver_names:
+        if s in per_case:
+            ranking.append((short.get(s, s), gm(per_case[s]), palette.get(s, MUTED), s))
+    ranking.sort(key=lambda e: e[1])
+
+    labels = [e[0] for e in ranking]
+    values = [e[1] for e in ranking]
+    colors = [e[2] for e in ranking]
+    native_ms = gm(per_case["native"])
+    fastest_ms = values[0]
+    incomplete = len(common) < len(names)
 
     fig, ax = plt.subplots(figsize=(12.4, 6.6))
     fig.subplots_adjust(left=0.09, right=0.975, top=0.70, bottom=0.17)
-    x = np.arange(len(entries))
+    x = np.arange(len(ranking))
     bars = ax.bar(x, values, width=0.66, color=colors, zorder=3)
 
     ax.set_yscale("log")
@@ -236,28 +247,35 @@ def render_hero(data: dict, output_path: Path) -> Path:
 
     env = data["environment"]
     fig.suptitle(
-        "Same operator, every standard eigensolver — lower is faster",
+        "Same operator — median solve time (lower is faster)",
         x=0.09, y=0.955, ha="left", fontsize=18, fontweight="bold", color=TEXT,
     )
-    tri = next((ms for s, ms in comp if s == "SciPy eigh_tridiagonal"), None)
-    if tri:
-        line1 = (f"Native Retained Multilevel Sturm solves in {native_ms:.2f} ms — "
-                 f"{tri / native_ms:.1f}× faster than SciPy's LAPACK tridiagonal solver.")
+    # subtitle computed from the data — flips automatically if a competitor is fastest
+    winner = ranking[0][0].replace("\n", " ")
+    if ranking[0][3] == "native":
+        line1 = f"Native Retained Multilevel Sturm was the fastest measured on this host — {native_ms:.2f} ms (median)."
     else:
-        line1 = f"Native Retained Multilevel Sturm solves in {native_ms:.2f} ms."
-    slow = [ms / native_ms for s, ms in comp if "dense" in s or "ARPACK" in s]
-    line2 = ""
-    if slow:
-        line2 = (f"{min(slow):,.0f}–{max(slow):,.0f}× faster than every dense / iterative route — "
-                 "same eigenvalues (cross-checked), identical matrix.")
+        line1 = (f"On this host the fastest was {winner} ({fastest_ms:.2f} ms, median); "
+                 f"native {native_ms:.2f} ms = {native_ms / fastest_ms:.2f}× slower.")
+    tri = gm(per_case["SciPy eigh_tridiagonal"]) if "SciPy eigh_tridiagonal" in per_case else None
+    if tri is not None:
+        rel = (f"{tri / native_ms:.1f}× faster" if tri > native_ms
+               else f"{native_ms / tri:.1f}× slower")
+        line2 = f"vs SciPy eigh_tridiagonal (the requested-only peer): native {rel}."
+    else:
+        line2 = ""
     fig.text(0.09, 0.850, line1, ha="left", fontsize=10.5, color=MUTED)
     fig.text(0.09, 0.808, line2, ha="left", fontsize=10.5, color=MUTED)
+    summ = data.get("end_to_end", {}).get("summary", {})
+    nc, tc = summ.get("native_correct", "?"), summ.get("cases", len(names))
+    agg_note = f"geomean over {len(common)}/{len(names)} common cases" if incomplete \
+        else f"geomean over all {len(names)} cases"
     fig.text(
-        0.09, 0.015,
-        f"7/7 hit published/analytic eigenvalues within tolerance  ·  finite_diagnostic tier  ·  "
-        f"dense-route time depends on the linked BLAS/LAPACK\n"
-        f"measured on this host — numpy {env['numpy']}, scipy {env['scipy']}, "
-        f"jax {env['jax']}, numba {env['numba']}",
+        0.09, 0.02,
+        f"{nc}/{tc} within declared tolerance  ·  finite_diagnostic tier  ·  median of hot calls "
+        f"(95% bootstrap CI recorded in the JSON)  ·  {agg_note}\n"
+        f"this host: numpy {env['numpy']}, scipy {env['scipy']}, jax {env['jax']}, numba {env['numba']}"
+        f"  ·  dense-route time depends on the linked BLAS/LAPACK",
         ha="left", fontsize=8.5, color=MUTED,
     )
 
