@@ -8,8 +8,9 @@ Two evaluators, both readout-first:
 * :func:`evaluate_certified` — ball (interval) arithmetic that reuses :mod:`idm.interval`'s rigorous
   ``mpmath.iv`` primitives; every ``Func`` node is routed through :mod:`idm.interval`'s finite-primitive
   namespace, and the result is a ``RealBall`` tagged ``finite_diagnostic`` (a self-disclosing enclosure,
-  never "the reals"). This closes the ``idm/symbolic.py:216`` bypass where ``evaluate`` re-``eval``'d a
-  string against its own namespace outside the tier bookkeeping.
+  never "the reals"). This is the tiered, enclosure-carrying alternative to the ``idm/symbolic.py:216``
+  bypass where ``evaluate`` re-``eval``'d a string against its own namespace outside the tier
+  bookkeeping (that legacy function is left intact; rerouting its callers is Phase-2 work).
 
 ``ball_add``/``ball_mul``/``ball_div``/``ball_apply`` are thin wraps of the same ``mpmath.iv`` engine
 ``idm.interval`` already uses, so a ball op agrees with ``interval.enclose``/``verified_range`` by
@@ -46,21 +47,27 @@ def _prec(*balls: NUM.RealBall) -> int:
     return max((b.prec_dps for b in balls), default=30)
 
 
-def _mpf_of(v):
-    """Exact-ish mpf of an int/Fraction — Fractions go through num/den, never mp.mpf(str(fraction))."""
-    if isinstance(v, Q):
-        return mp.mpf(v.numerator) / mp.mpf(v.denominator)
-    return mp.mpf(v)
+def _rational_bounds(p: Q, prec_dps: int):
+    """A guaranteed [lo, hi] enclosure of the exact rational ``p``, rounded OUTWARD.
+
+    Uses mpmath.iv arithmetic (directed rounding), so a non-dyadic rational like 1/3 is bracketed —
+    ``lo <= p <= hi`` always holds. A scalar round-to-nearest division would round inward and could
+    exclude the true value; that would silently break the enclosure certificate.
+    """
+    IVL._IV.dps = prec_dps
+    iv = IVL._IV.mpf(int(p.numerator)) / IVL._IV.mpf(int(p.denominator))
+    return mp.mpf(iv.a), mp.mpf(iv.b)
 
 
 def real_ball(value, prec_dps: int = 30) -> NUM.RealBall:
-    """A point (or [lo,hi]) ball from an exact rational / int / (lo,hi) pair."""
+    """A point (or [lo,hi]) ball from an exact rational / int / (lo,hi) pair — a rigorous enclosure."""
     IVL._IV.dps = prec_dps
     mp.mp.dps = prec_dps
     if isinstance(value, tuple):
-        lo, hi = _mpf_of(value[0]), _mpf_of(value[1])
+        lo, _ = _rational_bounds(Q(value[0]), prec_dps)   # lower endpoint rounded DOWN
+        _, hi = _rational_bounds(Q(value[1]), prec_dps)   # upper endpoint rounded UP
     else:
-        lo = hi = _mpf_of(value)
+        lo, hi = _rational_bounds(Q(value), prec_dps)
     return _from_iv(IVL._IV.mpf([lo, hi]), prec_dps)
 
 

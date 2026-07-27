@@ -25,6 +25,19 @@ def test_ball_add_and_mul():
     assert float(p.lo) == 3.0 and float(p.hi) == 8.0
 
 
+def test_real_ball_rigorously_encloses_non_dyadic_rational():
+    # 1/3 is not exactly representable in binary — the ball MUST bracket it (outward rounding),
+    # not round to nearest (which would produce a point ball that excludes the true value).
+    with mp.workdps(60):
+        true_third = mp.mpf(1) / mp.mpf(3)
+        true_twothird = mp.mpf(2) / mp.mpf(3)
+    b = K.real_ball(Q(1, 3), 30)
+    assert b.lo <= true_third <= b.hi
+    assert b.hi > b.lo                       # non-degenerate, since 1/3 is non-dyadic
+    iv = K.real_ball((Q(1, 3), Q(2, 3)), 30)
+    assert iv.lo <= true_third and iv.hi >= true_twothird
+
+
 def test_ball_add_agrees_with_interval_engine():
     # ball_add reproduces the same rigorous engine idm.interval uses
     a = K.real_ball((Q(1), Q(2)))
