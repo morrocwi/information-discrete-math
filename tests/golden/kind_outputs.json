@@ -3196,6 +3196,21 @@
    ]
   ]
  },
+ "rational_limit": {
+  "kind": "rational_limit",
+  "method": "exact \u211a rational-function limit (cancel + degree/pole analysis)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "limit": {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   "limit_type": "finite",
+   "removable": true,
+   "sign": null
+  }
+ },
  "rational_roots": {
   "kind": "rational_roots",
   "method": "rational-root theorem (exact)",
