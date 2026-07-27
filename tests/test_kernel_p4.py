@@ -80,6 +80,17 @@ def test_zring_is_not_a_field():
         P.divmod_(a, b)
 
 
+def test_gfring_rejects_composite_modulus():
+    # a composite modulus is NOT a field: Fermat's inverse is bogus and gcd would hang.
+    # Reject at construction (HOLD direction), never accept with a silently-wrong answer.
+    for composite in (4, 6, 9, 1):
+        with pytest.raises(ValueError):
+            P.GFRing(composite)
+    # primes are fine
+    for prime in (2, 3, 5, 7, 11):
+        assert P.GFRing(prime).p == prime
+
+
 def test_domain_mismatch_raises():
     a = P.UPoly([1, 1], P.QRing())
     b = P.UPoly([1, 1], P.GFRing(2))

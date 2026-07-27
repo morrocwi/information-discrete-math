@@ -66,14 +66,32 @@ class ZRing:
     def __repr__(self): return "ℤ"
 
 
+def _is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    if n % 2 == 0:
+        return n == 2
+    i = 3
+    while i * i <= n:
+        if n % i == 0:
+            return False
+        i += 2
+    return True
+
+
 class GFRing:
-    """The prime finite field GF(p) = ℤ/pℤ (p prime — inverse by Fermat's little theorem)."""
+    """The prime finite field GF(p) = ℤ/pℤ (p prime — inverse by Fermat's little theorem).
+
+    p MUST be prime: for a composite modulus ℤ/pℤ is not a field, Fermat's ``b^(p-2)`` is not an
+    inverse, and both scalar division and the Euclidean polynomial gcd would silently misbehave. So a
+    composite p is rejected at construction (the HOLD direction), never accepted with a wrong answer.
+    """
 
     is_field = True
 
     def __init__(self, p: int):
-        if p < 2:
-            raise ValueError("GF(p) requires p >= 2")
+        if not _is_prime(int(p)):
+            raise ValueError(f"GF(p) requires a PRIME p; {p} is not prime")
         self.p = int(p)
         self.name = f"GF({p})"
 
