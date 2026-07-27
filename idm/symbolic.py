@@ -97,29 +97,38 @@ def diff(e, v):
 
 
 # ---------------------------------------------------------------- simplify ----
-def simplify(e):
+def simplify(e, assumptions=None):
+    # assumptions (a kernel AssumptionSet) is OPTIONAL and defaults to None → behavior is byte-identical
+    # to before. When supplied, the nested-power collapse (bᵃ)ᶜ→b^(ac) is domain-GATED instead of
+    # unconditional (the idm/symbolic.py:117 fix), via idm.kernel.engine.pow_pow_collapse_safe.
     if isinstance(e, Q): return e
     h = e[0]
     if h == "var": return e
     if h == "func":
-        a = simplify(e[2])
+        a = simplify(e[2], assumptions)
         if e[1] == "exp" and a == Q(0): return Q(1)
         if e[1] in ("log",) and a == Q(1): return Q(0)
         if e[1] == "sin" and a == Q(0): return Q(0)
         if e[1] == "cos" and a == Q(0): return Q(1)
         return ("func", e[1], a)
     if h == "pow":
-        b = simplify(e[1]); ex = simplify(e[2])
+        b = simplify(e[1], assumptions); ex = simplify(e[2], assumptions)
         if isinstance(ex, Q) and ex == 0: return Q(1)
         if isinstance(ex, Q) and ex == 1: return b
         if isinstance(b, Q) and isinstance(ex, Q) and ex.denominator == 1 and ex >= 0: return b ** int(ex)
         if isinstance(b, Q) and b == 1: return Q(1)
-        if isinstance(b, tuple) and b[0] == "pow": return simplify(("pow", b[1], _mulq(b[2], ex)))
+        if isinstance(b, tuple) and b[0] == "pow":
+            if assumptions is None:
+                return simplify(("pow", b[1], _mulq(b[2], ex)))
+            from .kernel import engine as _eng
+            if _eng.pow_pow_collapse_safe(b[1], ex, assumptions):
+                return simplify(("pow", b[1], _mulq(b[2], ex)), assumptions)
+            return ("pow", b, ex)
         return ("pow", b, ex)
     if h == "add":
         flat = []
         for t in e[1]:
-            t = simplify(t)
+            t = simplify(t, assumptions)
             if isinstance(t, tuple) and t[0] == "add": flat += t[1]
             else: flat.append(t)
         num = sum((t for t in flat if isinstance(t, Q)), Q(0))
@@ -140,7 +149,7 @@ def simplify(e):
     if h == "mul":
         flat = []
         for f in e[1]:
-            f = simplify(f)
+            f = simplify(f, assumptions)
             if isinstance(f, tuple) and f[0] == "mul": flat += f[1]
             else: flat.append(f)
         num = Q(1)
