@@ -9,9 +9,12 @@ factorization, resultants, Gröbner, and algebraic/rational-function fields are 
 from __future__ import annotations
 
 from .coeffring import DomainMismatch, QRing, ZRing, GFRing
-from .univariate import UPoly, add, mul, divmod_, gcd, factor
+from .univariate import (
+    UPoly, add, mul, divmod_, gcd, factor, derivative, cancel, resultant, discriminant,
+)
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
     "UPoly", "add", "mul", "divmod_", "gcd", "factor",
+    "derivative", "cancel", "resultant", "discriminant",
 ]
