@@ -64,6 +64,7 @@ FIXTURES = {
     "eigenvalues": {"matrix": [[2, 0], [0, 3]]}, "null_space": {"matrix": [[1, 2], [2, 4]]},
     "rref": {"matrix": [[1, 2, 3], [4, 5, 6]]}, "solve_linear": {"A": [[2, 1], [1, 3]], "b": [3, 5]},
     "matrix_solve": {"A": [[2, 1], [1, 3]], "b": [3, 5]},
+    "rational_limit": {"num": [-1, 0, 1], "den": [-1, 1], "point": 1},
     "least_squares": {"A": [[1, 1], [1, 2], [1, 3]], "b": [1, 2, 2]},
     "hermite_normal_form": {"matrix": [[2, 4], [6, 8]]}, "smith_normal_form": {"matrix": [[2, 4], [6, 8]]},
     "gershgorin": {"matrix": [[2, "0.1"], ["0.1", 3]]},

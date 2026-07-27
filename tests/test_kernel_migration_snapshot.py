@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Migration safety net (P1.7 Batch 0): a byte-identical golden snapshot of every kind's output.
 
-Before any kind is migrated onto idm.kernel, this pins the CURRENT output of all 260 registered kinds
+Before any kind is migrated onto idm.kernel, this pins the CURRENT output of all 261 registered kinds
 (computed from tests/test_properties.py's FIXTURES) into tests/golden/kind_outputs.json. Every later
 migration batch must keep this test green — that is the automated "migration changed nothing observable"
 guarantee. If a migration deliberately improves a kind's output (reviewed), the golden file is

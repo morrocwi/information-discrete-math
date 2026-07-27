@@ -217,6 +217,25 @@ def _msolve(p):
     if not sol.is_solvable:
         d["reason"] = "no solution (inconsistent system)"
     return d
+@kind("rational_limit", "exact")
+def _rlim(p):
+    # CAS-grade EXACT limit of a rational function P(x)/Q(x) (coeffs low-order first) as x -> point,
+    # where the numeric `limit` kind only extrapolates: cancel removable singularities exactly, then
+    # a finite ℚ value, a signed ±∞, or an honest "does not exist" at a sign-flipping pole.
+    from idm.kernel.poly.limits import rational_limit, rational_limit_oneside
+    try:
+        side = p.get("side")
+        if side in ("+", "-"):
+            r = rational_limit_oneside(p["num"], p["den"], p["point"], side)
+        else:
+            r = rational_limit(p["num"], p["den"], p["point"])
+    except (KeyError, ValueError, TypeError, ZeroDivisionError) as e:
+        return {"kind": "rational_limit", "status": "HOLD", "reason": str(e),
+                "method": "exact ℚ rational-function limit"}
+    return {"kind": "rational_limit", "status": "ok",
+            "value": {"limit_type": r.status, "limit": _norm(r.value), "sign": r.sign,
+                      "removable": r.removable},
+            "method": "exact ℚ rational-function limit (cancel + degree/pole analysis)"}
 @kind("char_poly", "Th_coqc")
 def _cp(p): return _ok("char_poly", AN.char_poly(p["matrix"]), "Faddeev–LeVerrier (exact ℚ)")
 @kind("eigenvalues")
