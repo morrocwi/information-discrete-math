@@ -28,7 +28,7 @@ from fractions import Fraction as Q
 from typing import List, Optional, Sequence
 
 from .coeffring import QRing
-from .univariate import UPoly, cancel, _eval_at
+from .univariate import UPoly, cancel, divmod_, _eval_at
 
 
 @dataclass(frozen=True)
@@ -105,47 +105,50 @@ def _limit_at_point(num: UPoly, den: UPoly, a: Q, side: Optional[str] = None) ->
         # rn and rd coprime yet both zero at a is impossible; guard defensively.
         raise ValueError("internal: reduced numerator and denominator share the root a")
 
+    order, cofactor_sign = _pole_order_and_cofactor_sign(rd, a)
+
     if side is None:
-        # two-sided: compare the sign of rn/rd just left vs just right of the pole. Opposite signs
-        # (an odd-order pole) means the sides diverge to +∞ and -∞ -> the two-sided limit DNE; equal
-        # signs (an even-order pole) means both sides go to the same ±∞.
-        left = _signed_infinity(rn, rd, a, "-")
-        right = _signed_infinity(rn, rd, a, "+")
+        # two-sided: the two one-sided signs agree iff the pole order is EVEN (both sides → the same
+        # ±∞); an ODD-order pole flips sign across a, so the sides diverge to +∞ and -∞ → DNE.
+        right = _pole_sign(rn, a, cofactor_sign, order, "+")
+        left = _pole_sign(rn, a, cofactor_sign, order, "-")
         if left == right:
-            return LimitResult("infinite", None, left, removable=removable)
+            return LimitResult("infinite", None, right, removable=removable)
         return LimitResult("dne", None, None, removable=removable)
 
-    return LimitResult("infinite", None, _signed_infinity(rn, rd, a, side), removable=removable)
+    return LimitResult("infinite", None, _pole_sign(rn, a, cofactor_sign, order, side),
+                       removable=removable)
 
 
-def _signed_infinity(rn: UPoly, rd: UPoly, a: Q, side: str) -> int:
-    """Sign of ``rn/rd`` as ``x → a`` from ``side``, at a point where ``rd(a) = 0`` and ``rn(a) ≠ 0``.
+def _pole_order_and_cofactor_sign(rd: UPoly, a: Q):
+    """Factor ``rd = (x - a)^m · g(x)`` with ``g(a) ≠ 0`` (exact) and return ``(m, sign(g(a)))``.
 
-    Numerator sign is just ``sign(rn(a))``.  Denominator sign near a simple/multiple root is
-    ``sign(rd'... )`` — computed here concretely by evaluating ``rd`` a rational hair to the chosen
-    side of ``a``, which is exact (a tiny rational step never lands on another root for a small
-    enough step, and we only need its SIGN)."""
+    This is the exact way to read the one-sided sign of ``rd`` near ``a``: for small ``ε > 0``,
+    ``rd(a + ε) = ε^m · g(a + ε)`` has the sign of ``g(a)``, and ``rd(a - ε) = (-ε)^m · g(a - ε)`` has
+    the sign of ``(-1)^m · g(a)`` — no numeric probe step (and therefore no risk of a nearby second
+    root corrupting the sign, the bug a fixed-halving heuristic had)."""
+    D = rd.domain
+    divisor = UPoly([D.neg(a), D.one()], D)                 # (x - a)
+    g = rd
+    m = 0
+    while g.degree() >= 1:
+        q, r = divmod_(g, divisor)
+        if not r.is_zero():
+            break
+        g = q
+        m += 1
+    g_at = _eval_at(g, a)                                    # ≠ 0 by construction
+    return m, (1 if g_at > 0 else -1)
+
+
+def _pole_sign(rn: UPoly, a: Q, cofactor_sign: int, order: int, side: str) -> int:
+    """Sign of ``rn/rd`` as ``x → a`` from ``side`` at a pole of multiplicity ``order`` whose
+    denominator cofactor has sign ``cofactor_sign``.  ``rn(a) ≠ 0`` (rn, rd are coprime), so the
+    numerator contributes ``sign(rn(a))``; the denominator contributes ``cofactor_sign`` from the
+    right and ``(-1)^order · cofactor_sign`` from the left."""
     num_sign = 1 if _eval_at(rn, a) > 0 else -1
-    step = _safe_step(rd, a)
-    probe = a + step if side == "+" else a - step
-    den_val = _eval_at(rd, probe)
-    den_sign = 1 if den_val > 0 else -1
+    den_sign = cofactor_sign if side == "+" else cofactor_sign * (1 if order % 2 == 0 else -1)
     return num_sign * den_sign
-
-
-def _safe_step(rd: UPoly, a: Q) -> Q:
-    """A rational step small enough that ``a ± step`` is closer to ``a`` than any other real root of
-    ``rd`` — so the sign of ``rd`` at ``a ± step`` is the true one-sided sign.  Halve until the probe
-    point is not itself a root; bounded because ``rd`` has finitely many roots."""
-    step = Q(1, 2)
-    for _ in range(200):
-        if _eval_at(rd, a + step) != 0 and _eval_at(rd, a - step) != 0:
-            # also require monotone sign region: shrink a few more times for safety on multiple roots
-            if _eval_at(rd, a + step / 2) * _eval_at(rd, a + step) > 0 and \
-               _eval_at(rd, a - step / 2) * _eval_at(rd, a - step) > 0:
-                return step
-        step /= 2
-    return step
 
 
 def _limit_at_infinity(num: UPoly, den: UPoly, negative: bool) -> LimitResult:
