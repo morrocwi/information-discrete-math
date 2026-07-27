@@ -98,5 +98,55 @@ def test_domain_mismatch_raises():
         P.add(a, b)
 
 
+# ------------------------------------------------------------------ factor (Phase 2, depth)
+from idm.kernel.poly.univariate import _product   # back-verification helper
+
+
+def _back_verify(p):
+    f = P.factor(p)
+    recon = _product(f["factors"], f["unit"], f["remaining"])
+    assert recon == p, f"factor did not multiply back to the input: {recon} != {p}"
+    return f
+
+
+def test_factor_splits_over_Q():
+    Qr = P.QRing()
+    p = P.UPoly([-6, 11, -6, 1], Qr)          # x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
+    f = _back_verify(p)
+    assert f["complete"] is True and f["unit"] == Q(1)
+    roots = sorted(-fac.coeffs[0] for fac, m in f["factors"])   # (x - r) has constant -r
+    assert roots == [Q(1), Q(2), Q(3)]
+    assert all(m == 1 for _, m in f["factors"])
+
+
+def test_factor_handles_multiplicity_and_leading_unit():
+    Qr = P.QRing()
+    # 2*(x-1)^2*(x-2) = 2x^3 - 8x^2 + 10x - 4
+    p = P.UPoly([-4, 10, -8, 2], Qr)
+    f = _back_verify(p)
+    assert f["unit"] == Q(2) and f["complete"] is True
+    mults = sorted(m for _, m in f["factors"])
+    assert mults == [1, 2]
+
+
+def test_factor_irreducible_over_Q_is_incomplete():
+    p = P.UPoly([1, 0, 1], P.QRing())          # x^2 + 1: no rational roots
+    f = _back_verify(p)
+    assert f["complete"] is False
+    assert f["remaining"].coeffs == [Q(1), Q(0), Q(1)]   # the whole thing survives
+
+
+def test_factor_differs_over_GF2():
+    # x^2 + 1 is irreducible over ℚ but = (x+1)^2 over GF(2): SAME poly, different factorization
+    f = _back_verify(P.UPoly([1, 0, 1], P.GFRing(2)))
+    assert f["complete"] is True
+    assert f["factors"] == [(P.UPoly([1, 1], P.GFRing(2)), 2)]   # (x+1)^2
+
+
+def test_factor_needs_a_field():
+    with pytest.raises(ValueError):
+        P.factor(P.UPoly([-1, 0, 1], P.ZRing()))
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

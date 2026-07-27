@@ -108,4 +108,68 @@ def gcd(a: UPoly, b: UPoly) -> UPoly:
     return x.monic()
 
 
-__all__ = ["UPoly", "add", "mul", "divmod_", "gcd"]
+def _eval_at(p: UPoly, x):
+    """Horner evaluation at a domain element."""
+    D = p.domain
+    acc = D.zero()
+    for c in reversed(p.coeffs):
+        acc = D.add(D.mul(acc, x), c)
+    return acc
+
+
+def _roots(p: UPoly):
+    """All roots of p IN its coefficient domain (finitely enumerable for QRing/GFRing)."""
+    from .coeffring import QRing, GFRing
+    D = p.domain
+    if isinstance(D, GFRing):
+        return [x for x in range(D.p) if D.is_zero(_eval_at(p, x))]
+    if isinstance(D, QRing):
+        from ...exact import rational_roots
+        return list(rational_roots(list(p.coeffs)))
+    raise ValueError(f"root enumeration not supported over {D!r}")
+
+
+def factor(p: UPoly):
+    """Partial factorization over the coefficient domain (a FIELD).
+
+    Extracts every linear factor ``(x - r)`` for a root ``r`` in the domain, to full multiplicity, and
+    returns the leading unit, those factors with multiplicities, and the remaining factor (the part with
+    no domain roots — degree 0 iff the polynomial splits completely). Back-verifiable: unit · ∏(x-rᵢ)^mᵢ ·
+    remaining == p exactly. Over ℚ this is factorization into ℚ-linear factors; over GF(p) into GF(p)-linear
+    factors — the same call, a different factorization per domain.
+    """
+    D = p.domain
+    if not D.is_field:
+        raise ValueError(f"factor needs a field; {D!r} is not one")
+    if p.is_zero():
+        return {"unit": D.zero(), "factors": [], "remaining": p, "complete": False}
+    unit = p.lead()
+    work = p.monic()
+    linear = []
+    for r in sorted(set(_roots(work)), key=lambda z: (D.normalize(z) if hasattr(D, "p") else z)):
+        divisor = UPoly([D.neg(r), D.one()], D)          # (x - r)
+        mult = 0
+        while work.degree() >= 1:
+            q, rem = divmod_(work, divisor)
+            if not rem.is_zero():
+                break
+            work = q
+            mult += 1
+        if mult:
+            linear.append((divisor, mult))
+    return {"unit": unit, "factors": linear, "remaining": work,
+            "complete": work.degree() == 0}
+
+
+def _product(factors, unit, remaining):
+    """Reconstruct unit · ∏ factor^mult · remaining — used to back-verify factor()."""
+    D = remaining.domain
+    acc = UPoly([unit], D)
+    acc = mul(acc, remaining)
+    for f, m in factors:
+        for _ in range(m):
+            acc = mul(acc, f)
+    return acc
+
+
+__all__ = ["UPoly", "add", "mul", "divmod_", "gcd", "factor"]
