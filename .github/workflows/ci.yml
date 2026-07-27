@@ -31,7 +31,10 @@ jobs:
         # shift one dps-sensitive kind's last digit. Running the gate in its own process reproduces the
         # golden-capture condition exactly (passes 259/259). The underlying global-state leak is tracked
         # separately as a real library fix (must regenerate the golden when it lands).
-        run: pytest -q tests/test_kernel_migration_snapshot.py
+        # PYTHONPATH=. so ``import idm`` resolves: naming a single file makes pytest prepend tests/
+        # (not the repo root) to sys.path, unlike the un-pathed suite run above. Matches the test's
+        # own documented invocation.
+        run: PYTHONPATH=. pytest -q tests/test_kernel_migration_snapshot.py
   coq:
     runs-on: ubuntu-latest
     steps:
