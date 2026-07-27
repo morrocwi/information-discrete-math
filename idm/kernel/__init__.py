@@ -26,6 +26,11 @@ from .nodes import (
 )
 from .hashcons import struct_hash, canonical_order_key, InternTable
 from .legacy import from_legacy, to_legacy
+from .assumptions import (
+    PredKind, Verdict, Interval, Predicate, SymbolDomain, AssumptionSet,
+    DomainVerdict, DomainContradiction,
+    closure, query, entails, predicate, parse_assumptions, domain_of_expr,
+)
 
 __all__ = [
     # tiers
@@ -42,4 +47,8 @@ __all__ = [
     # hashcons + bridge
     "struct_hash", "canonical_order_key", "InternTable",
     "from_legacy", "to_legacy",
+    # assumptions / domains
+    "PredKind", "Verdict", "Interval", "Predicate", "SymbolDomain", "AssumptionSet",
+    "DomainVerdict", "DomainContradiction",
+    "closure", "query", "entails", "predicate", "parse_assumptions", "domain_of_expr",
 ]
