@@ -7,7 +7,8 @@ Dark-theme figures drawn only from measured numbers in the JSON record:
   (milliseconds, log scale, lower is faster) on one identical operator, native
   Retained Multilevel Sturm against every standard eigensolver in the audit
   (SciPy ``eigh_tridiagonal``/``eigh``, NumPy ``eigvalsh``, SciPy ``eigsh``/ARPACK,
-  JAX ``eigvalsh``); the native bar is the shortest and is highlighted ★.
+  JAX ``eigvalsh``); the fastest measured bar is highlighted ★ — computed from the data, so it
+  moves to whichever solver actually won on the host that produced the JSON.
 * ``retained_spectral_detail.png`` — per-case breakdown: every solver's
   times-slower-than-native and the end-to-end wall-clock.
 
