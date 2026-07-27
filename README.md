@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/mascot.png" alt="Information Discrete Mathematics mascot — a scholarly cat in tweed and spectacles" width="180">
+<img src="assets/idm_banner.png" alt="Information Discrete Mathematics — the continuum, computed as a readout of the discrete" width="880">
 
 # Information Discrete Mathematics
 
@@ -14,6 +14,43 @@
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 </div>
+
+---
+
+## 🌈 Featured math product — **Retained Spectral**
+
+A ready-to-use, readout-first **Schrödinger spectrum solver** built on this foundation — a concrete
+example of a *math product developed from this work*. It computes the lowest energy levels of
+`H = -½ d²/dx² + V(x)` from raw input alone `(potential, parameters, #modes, tolerance)` — no window,
+mesh, or reference value supplied — and reports a tier-honest `ACCEPT`/`HOLD` verdict.
+
+<div align="center">
+
+<img src="assets/retained_spectral_hero.png" alt="Same operator, only the eigensolver changes: native Retained Multilevel Sturm is 1.6× faster than SciPy's LAPACK tridiagonal solver and ~1,963× faster than JAX's dense route" width="820">
+
+</div>
+
+**The comparison is designed to be credible, not self-serving.** Every solver receives the *identical*
+native-built operator; only the eigensolver differs, and all use each library's own standard API — so
+anyone can rerun it:
+
+- **1.6× faster** than SciPy's `eigh_tridiagonal` (both requested-only, LAPACK) and **~1,963× faster**
+  than JAX's dense `eigvalsh`, on the same matrix — **eigenvalues cross-checked identical**.
+- **7 / 7** targets (harmonic, displaced, squeezed ω=16, Pöschl–Teller, Morse, factorized sextic, pure
+  quartic) hit **published/analytic eigenvalues** within tolerance — external truth, not a self-graded
+  score. `finite_diagnostic` tier: a discrete rational-readout agreement-and-cost claim, **not** a
+  continuum-limit proof or an empirical-physics claim.
+
+```bash
+pip install "information-discrete-math[spectral-bench] @ git+https://github.com/morrocwi/information-discrete-math"
+python3 -c "import retained_spectral as rs; print(rs.solve(rs.examples()['harmonic_low4']).values)"  # (0.5, 1.5, 2.5, 3.5)
+python3 -m retained_spectral.competition.run     # regenerate the results JSON on YOUR machine
+python3 -m retained_spectral.competition.chart    # redraw the chart above from that JSON
+```
+
+→ **Product & API:** [`retained_spectral/`](retained_spectral/) · **reproducible results:**
+[`retained_spectral/results/competition_results.json`](retained_spectral/results/competition_results.json)
+· **per-case detail:** [`assets/retained_spectral_detail.png`](assets/retained_spectral_detail.png)
 
 ---
 
