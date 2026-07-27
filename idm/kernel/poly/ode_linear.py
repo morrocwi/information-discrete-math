@@ -126,10 +126,10 @@ def solve_linear_ode(coeffs: Sequence[object]) -> ODESolution:
                                       "trig": trig, "term": term})
                         terms.append(f"C{ci}*{term}")
             else:
-                # irreducible over ℚ with disc > 0: two irrational real roots (-b ± √disc)/2
-                half_b = -b / 2
-                for sign, sgnstr in ((1, "+"), (-1, "-")):
-                    root_expr = f"({_fmt_q(half_b)} {sgnstr} sqrt({_fmt_q(disc)})/2)"
+                # irreducible over ℚ with disc > 0: two irrational real roots (-b ± √disc)/2,
+                # kept over a single denominator so the expression is unambiguous
+                for sgnstr in ("+", "-"):
+                    root_expr = f"(({_fmt_q(-b)} {sgnstr} sqrt({_fmt_q(disc)}))/2)"
                     for k in range(mult):
                         ci += 1
                         term = f"{_xpow(k)}e^({root_expr}*x)"
