@@ -6,7 +6,7 @@
 
 **The continuum, computed as a readout of the discrete.** _by Yaoharee Lahtee_
 
-[![solver](https://img.shields.io/badge/unified%20solver-261%20registered%20kinds-brightgreen)](API.md)
+[![solver](https://img.shields.io/badge/unified%20solver-262%20registered%20kinds-brightgreen)](API.md)
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
 [![Coq](https://img.shields.io/badge/Coq-8.20%20·%20120%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
@@ -95,7 +95,7 @@ python3 -m retained_spectral.competition.credibility_audit   # 3-layer correctne
 > [!TIP]
 > **A unified, general-purpose mathematical solver — not just a manifesto, and not a calculator with a
 > long menu.** One `idm.solve(problem)` call reads `problem["kind"]` and dispatches through a registry
-> supporting **261 registered problem kinds** — integrals, ODE/PDE, limits & series, special functions,
+> supporting **262 registered problem kinds** — integrals, ODE/PDE, limits & series, special functions,
 > transforms, optimization, an exact symbolic CAS, number theory, linear algebra, graphs/DP, exact‑ℚ LP
 > & SAT, **rigorous interval certification**, statistics, exact‑ℚ geometry, cryptographic number theory,
 > and a Hilbert‑space core — each a tier‑honest finite readout that returns `CERTIFIED` / `ok` / `HOLD`

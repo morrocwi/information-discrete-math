@@ -2013,6 +2013,32 @@
    "float": 1.0
   }
  },
+ "linear_ode": {
+  "kind": "linear_ode",
+  "method": "exact \u211a characteristic polynomial (factor over \u211a \u2192 root-type basis)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "basis": [
+    {
+     "poly_power": 0,
+     "root": "1",
+     "term": "e^x",
+     "type": "real"
+    },
+    {
+     "poly_power": 0,
+     "root": "2",
+     "term": "e^(2*x)",
+     "type": "real"
+    }
+   ],
+   "general": "C1*e^x + C2*e^(2*x)",
+   "order": 2,
+   "solution_status": "solved",
+   "unresolved": []
+  }
+ },
  "linear_program": {
   "kind": "linear_program",
   "method": "two-phase exact rational simplex (Bland's rule)",
