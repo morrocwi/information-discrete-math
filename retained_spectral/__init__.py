@@ -146,4 +146,10 @@ __all__ = [
     "retained_tridiagonal",
     "result_as_dict",
     "warm_native_kernel",
+    # Retained Mode Readout (eigenVECTORS from the retained Sturm pivots — no inverse iteration)
+    "modes",
+    "mode_readout",
+    "expectation",
 ]
+
+from retained_spectral.retained_mode import modes, mode_readout, expectation  # noqa: E402
