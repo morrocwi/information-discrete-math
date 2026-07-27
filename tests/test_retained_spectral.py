@@ -164,5 +164,25 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
     assert "thread_environment" in result["environment"]
 
 
+def test_charts_render_ci_and_raw_samples(tmp_path, monkeypatch):
+    """render_hero / render_detail draw from the measured record: the detail forest plot needs the
+    per-case bootstrap CI and the raw samples the run now records."""
+    pytest.importorskip("matplotlib")
+    monkeypatch.setenv("GITHUB_SHA", "chart-test")
+    from retained_spectral.competition.run import run_competition
+    from retained_spectral.competition.chart import render_hero, render_detail
+
+    data = run_competition(repeats=3, audit_repeats=2, include_jax=False)
+    # the record must carry the raw samples + per-case CI the new charts consume
+    a_case = next(iter(data["end_to_end"]["cases"].values()))
+    assert a_case["native_stats"]["samples_ms"]
+    assert "ci95_low" in a_case["scipy_speedup_over_native"]
+
+    hero = render_hero(data, tmp_path / "hero.png")
+    detail = render_detail(data, tmp_path / "detail.png")
+    assert hero.stat().st_size > 5000
+    assert detail.stat().st_size > 5000
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
