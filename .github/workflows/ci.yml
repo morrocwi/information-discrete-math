@@ -22,17 +22,12 @@ jobs:
         run: python3 benchmarks/rcp_energy_challenge.py && python3 benchmarks/direct_nd_work_tokens.py --dimension 9 --nodes-per-axis 5
       - name: validations
         run: for f in validation/*.py; do echo "== $f =="; python3 "$f" || exit 1; done
-      - name: pytest (suite)
-        run: pytest -q --ignore=tests/test_kernel_migration_snapshot.py
-      - name: pytest migration byte-identity gate (own clean process)
-        # The gate re-solves all 259 kinds byte-for-byte against a golden captured in a FRESH process.
-        # idm's special functions all compute at the SHARED global mpmath precision (mp.mp.dps), which
-        # different modules set at import and dps-sensitive readouts (e.g. E1) inherit — so a sibling
-        # test can shift one kind's last digit. Reducing the leak surface (kernel eval/numbers now
-        # restore dps) is not enough; full order-independence needs a per-module precision-context
-        # refactor. Until then the gate runs in its own process (259/259). PYTHONPATH=. so ``import
-        # idm`` resolves when a single file is named (pytest would otherwise prepend tests/).
-        run: PYTHONPATH=. pytest -q tests/test_kernel_migration_snapshot.py
+      - name: pytest
+        # Single-process run: the migration byte-identity gate is order-independent again now that
+        # idm.solve dispatches every kind under a fixed mp.workdps(_CANON_DPS) — a numeric readout no
+        # longer inherits whatever ambient mpmath precision a sibling module/test left, so a
+        # dps-sensitive kind (E1) cannot flake by test order.
+        run: pytest -q
   coq:
     runs-on: ubuntu-latest
     steps:

@@ -24,6 +24,13 @@ try:
 except Exception:  # pragma: no cover
     _HAVE = False
 
+# One canonical working precision for the whole solver. Every kind is dispatched under
+# ``mp.workdps(_CANON_DPS)`` so a numeric readout depends ONLY on its own method, never on the
+# ambient global mpmath precision a sibling module's import or a prior call happened to leave.
+# Without this the mpmath global (mp.mp.dps) is shared process-wide state that different modules set
+# to different values, making dps-sensitive readouts (e.g. E1) order-dependent across a test suite.
+_CANON_DPS = 40
+
 _REG = {}
 def kind(name, tier="finite_diagnostic"):
     def deco(fn): _REG[name] = (fn, tier); return fn
@@ -815,7 +822,11 @@ def solve(problem):
                 "known_kinds": sorted(_REG)}
     fn, tier = _REG[k]
     try:
-        res = fn(problem)
+        if _HAVE:
+            with mp.workdps(_CANON_DPS):   # deterministic, order-independent precision (see _CANON_DPS)
+                res = fn(problem)
+        else:  # pragma: no cover
+            res = fn(problem)
     except KeyError as ex:
         return {"kind": k, "status": "HOLD", "reason": f"missing required field {ex}"}
     except Exception as ex:
