@@ -3,12 +3,13 @@
 
 Dark-theme figures drawn only from measured numbers in the JSON record:
 
-* ``retained_spectral_hero.png`` — one clear comparison: throughput
-  (solves per second, higher is better) on one identical operator, native
-  Retained Multilevel Sturm against the standard ``scipy.linalg.eigh_tridiagonal``
-  and ``jax.numpy.linalg.eigvalsh`` calls; the native bar is highlighted.
-* ``retained_spectral_detail.png`` — per-case breakdown: same-operator speedup
-  and end-to-end wall-clock.
+* ``retained_spectral_hero.png`` — one clear comparison: median solve time
+  (milliseconds, log scale, lower is faster) on one identical operator, native
+  Retained Multilevel Sturm against every standard eigensolver in the audit
+  (SciPy ``eigh_tridiagonal``/``eigh``, NumPy ``eigvalsh``, SciPy ``eigsh``/ARPACK,
+  JAX ``eigvalsh``); the native bar is the shortest and is highlighted ★.
+* ``retained_spectral_detail.png`` — per-case breakdown: every solver's
+  times-slower-than-native and the end-to-end wall-clock.
 
 Usage::
 

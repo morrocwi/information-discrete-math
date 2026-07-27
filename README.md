@@ -39,7 +39,8 @@ so anyone can rerun it. **Lower is faster** — the native bar is the shortest:
 - vs **SciPy `eigh_tridiagonal`** (LAPACK tridiagonal, requested-only): **1.6× faster**.
 - vs the dense / iterative routes — **SciPy `eigh`**, **NumPy `eigvalsh`**, **SciPy `eigsh` (ARPACK)**,
   **JAX `eigvalsh`**: **144–2,796× faster** (they solve the whole spectrum / iterate; native reads only
-  the requested modes). **All six return the same eigenvalues — cross-checked identical.**
+  the requested modes). **Every solver that converges returns the same eigenvalues — cross-checked
+  identical** (a non-converging run, e.g. ARPACK on one case, is disclosed, never scored as agreement).
 - End-to-end from raw input, the native pipeline also beats an independent SciPy pipeline **7 / 7,
   3.56× geomean**.
 - **7 / 7** targets (harmonic, displaced, squeezed ω=16, Pöschl–Teller, Morse, factorized sextic, pure
