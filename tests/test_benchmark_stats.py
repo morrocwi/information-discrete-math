@@ -22,6 +22,13 @@ def test_summarize_reports_median_iqr_n():
     assert s["iqr_ms"][0] <= s["median_ms"] <= s["iqr_ms"][1]
 
 
+def test_summarize_keeps_raw_samples_in_ms():
+    # the chart scatters the actual per-call measurements, so summarize must retain them (in ms)
+    s = ST.summarize([0.001, 0.002, 0.003])
+    assert s["samples_ms"] == [1.0, 2.0, 3.0]
+    assert s["n_samples"] == len(s["samples_ms"])
+
+
 def test_speedup_ci_native_faster_when_ci_above_one():
     # native ~1ms, competitor ~3ms, tight -> CI entirely above 1
     native = [0.0010, 0.0011, 0.0010, 0.0009, 0.0010, 0.0011]

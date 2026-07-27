@@ -32,7 +32,10 @@ def summarize(seconds: Sequence[float]) -> dict:
     else:
         q1 = q3 = med
         mad = 0.0
-    return {"median_ms": med, "iqr_ms": [q1, q3], "mad_ms": mad, "n_samples": n}
+    # keep the raw per-call samples (ms) so a chart can scatter the actual measurements, not just a
+    # median — the sample count is tiny (a handful of repeats), so this does not bloat the record.
+    return {"median_ms": med, "iqr_ms": [q1, q3], "mad_ms": mad, "n_samples": n,
+            "samples_ms": [float(x) for x in s]}
 
 
 def speedup_ci(native_seconds: Sequence[float], other_seconds: Sequence[float], *,

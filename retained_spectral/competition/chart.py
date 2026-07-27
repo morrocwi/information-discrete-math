@@ -9,8 +9,10 @@ Dark-theme figures drawn only from measured numbers in the JSON record:
   (SciPy ``eigh_tridiagonal``/``eigh``, NumPy ``eigvalsh``, SciPy ``eigsh``/ARPACK,
   JAX ``eigvalsh``); the fastest measured bar is highlighted ★ — computed from the data, so it
   moves to whichever solver actually won on the host that produced the JSON.
-* ``retained_spectral_detail.png`` — per-case breakdown: every solver's
-  times-slower-than-native and the end-to-end wall-clock.
+* ``retained_spectral_detail.png`` — two credibility panels: a forest plot of the per-case
+  end-to-end speedup with its 95% bootstrap confidence interval (colour = the recorded
+  native_faster/tie/competitor_faster verdict, parity line at 1×), and the raw per-call samples
+  (every timed repeat, not just a median) for native vs the independent SciPy pipeline.
 
 Usage::
 
@@ -219,6 +221,19 @@ def render_hero(data: dict, output_path: Path) -> Path:
     x = np.arange(len(ranking))
     bars = ax.bar(x, values, width=0.66, color=colors, zorder=3)
 
+    # spread whisker on each bar: the 25th–75th percentile of that solver's per-case times, so the
+    # bar's consistency across the 7 problems is visible, not just the aggregate geomean point.
+    for xi, entry in zip(x, ranking):
+        key = entry[3]
+        per = per_case["native"] if key == "native" else per_case.get(key, {})
+        pts = sorted(per[n] * 1e3 for n in common if n in per)
+        if len(pts) >= 2:
+            q1, q3 = float(np.percentile(pts, 25)), float(np.percentile(pts, 75))
+            if q3 > q1:
+                ax.plot([xi, xi], [q1, q3], color=BG, lw=2.6, zorder=4, solid_capstyle="round")
+                ax.plot([xi, xi], [q1, q3], color=TEXT, lw=1.3, zorder=5, alpha=0.55,
+                        solid_capstyle="round")
+
     ax.set_yscale("log")
     ax.set_ylabel("median solve time, ms   (log — lower is faster ↓)", fontsize=11)
     ax.set_xticks(x)
@@ -286,77 +301,106 @@ def render_hero(data: dict, output_path: Path) -> Path:
 
 
 def render_detail(data: dict, output_path: Path) -> Path:
+    """Two credibility panels drawn only from the measured record:
+
+    * LEFT — a forest plot of the per-case end-to-end speedup (SciPy time / native time) with the
+      95% bootstrap confidence interval as a whisker, a dot at the bootstrap median, and a colour
+      set by the recorded verdict (native_faster / tie / competitor_faster). The parity line at 1×
+      is where the interval must clear to claim a win. The winner is read from the data, per case.
+    * RIGHT — the raw per-call samples (every timed repeat, not just a median) for native vs the
+      independent SciPy pipeline, so the actual measurement spread is visible behind each median.
+    """
+
     import matplotlib
 
     matplotlib.use("Agg")
     _apply_theme(matplotlib)
     import matplotlib.pyplot as plt
 
-    audit = data["executor_audit"]["cases"]
     e2e = data["end_to_end"]["cases"]
     names = list(e2e.keys())
     labels = [_SHORT.get(n, n) for n in names]
-    x = np.arange(len(names))
-
-    # every competitor's per-case ×slower-than-native factor
-    palette = {
-        "SciPy eigh_tridiagonal": "#58A6FF",
-        "SciPy eigsh (ARPACK)": "#3FB0AC",
-        "SciPy eigh (dense)": "#BC8CFF",
-        "NumPy eigvalsh (dense)": "#E3A857",
-        "JAX eigvalsh (dense)": "#F778BA",
-    }
-    solver_names = [s for s in audit[names[0]]["solvers"] if s in palette]
-    native_ms = [e2e[n]["native"]["hot_median_seconds"] * 1e3 for n in names]
-    scipy_ms = [e2e[n]["scipy"]["hot_median_seconds"] * 1e3 for n in names]
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14.4, 5.6))
-    fig.subplots_adjust(left=0.055, right=0.985, top=0.82, bottom=0.22, wspace=0.17)
     summ = data["end_to_end"]["summary"]
 
+    verdict_color = {"native_faster": NATIVE, "tie": GOLD, "competitor_faster": SCIPY}
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14.4, 5.8))
+    fig.subplots_adjust(left=0.13, right=0.975, top=0.80, bottom=0.16, wspace=0.32)
     fig.suptitle(
-        "Per-case detail",
+        "Per-case detail — confidence intervals and raw measurements",
         x=0.055, y=0.95, ha="left", fontsize=15, fontweight="bold", color=TEXT,
     )
 
-    m = len(solver_names)
-    bw = 0.8 / m
-    for j, s in enumerate(solver_names):
-        ratios = [audit[n]["solvers"][s].get("to_native_time_ratio", np.nan) for n in names]
-        ax1.bar(x + (j - (m - 1) / 2) * bw, ratios, bw, color=palette[s],
-                label=s, zorder=3)
-    ax1.axhline(1.0, color=NATIVE, lw=2.2, zorder=2)
-    ax1.text(len(names) - 0.5, 1.08, "native = 1×", va="bottom", ha="right",
-             color=NATIVE, fontsize=9.5, fontweight="bold")
-    ax1.set_yscale("log")
-    ax1.set_ylabel("times slower than native  (log)", fontsize=10)
-    ax1.set_title("Same-operator executor audit — all solvers", loc="left",
-                  fontsize=12, color=TEXT, fontweight="bold")
+    # ---- LEFT: forest plot of the per-case speedup with its 95% bootstrap CI ----
+    y = np.arange(len(names))[::-1]                     # top case at the top of the panel
+    any_ci = False
+    for yi, n in zip(y, names):
+        ci = e2e[n].get("scipy_speedup_over_native", {})
+        lo, hi = ci.get("ci95_low"), ci.get("ci95_high")
+        med = ci.get("ratio_median", e2e[n].get("scipy_to_native_time_ratio"))
+        col = verdict_color.get(ci.get("verdict"), MUTED)
+        if lo is not None and hi is not None and hi >= lo:
+            any_ci = True
+            ax1.plot([lo, hi], [yi, yi], color=col, lw=3.0, solid_capstyle="round", zorder=3)
+            ax1.plot([lo, lo], [yi - 0.16, yi + 0.16], color=col, lw=1.6, zorder=3)
+            ax1.plot([hi, hi], [yi - 0.16, yi + 0.16], color=col, lw=1.6, zorder=3)
+        if med is not None:
+            ax1.scatter([med], [yi], s=46, color=col, edgecolor=BG, linewidth=1.0, zorder=4)
+            ax1.text(med, yi + 0.30, f"{med:.1f}×", ha="center", va="bottom",
+                     fontsize=9, color=TEXT)
+    ax1.axvline(1.0, color=MUTED, lw=1.6, ls="--", zorder=2)
+    ax1.text(1.0, len(names) - 0.35, "parity 1×", ha="center", va="bottom",
+             color=MUTED, fontsize=9)
+    ax1.set_xscale("log")
+    ax1.set_yticks(y)
+    ax1.set_yticklabels(labels, fontsize=10, color=TEXT)
+    ax1.set_ylim(-0.6, len(names) - 0.2)
+    ax1.set_xlabel("end-to-end speedup  =  SciPy time / native time   (log, right is a native win)",
+                   fontsize=10)
+    ax1.set_title("Speedup with 95% bootstrap CI  ·  colour = recorded verdict",
+                  loc="left", fontsize=12, color=TEXT, fontweight="bold")
 
-    w2 = 0.4
-    ax2.bar(x - w2 / 2, native_ms, w2, color=NATIVE, label="native RMS", zorder=3)
-    ax2.bar(x + w2 / 2, scipy_ms, w2, color=SCIPY, label="independent SciPy pipeline (ours)", zorder=3)
-    ax2.set_yscale("log")
-    ax2.set_ylabel("wall-clock per solve, ms  (log)", fontsize=10)
-    ax2.set_title(
-        f"End-to-end from raw input  ·  native {summ['speedup_geomean']:.2f}× geomean",
-        loc="left", fontsize=12, color=TEXT, fontweight="bold",
-    )
+    # ---- RIGHT: raw per-call samples for native vs the independent SciPy pipeline ----
+    rng = np.random.default_rng(0)                     # deterministic horizontal jitter only
+    yb = np.arange(len(names))[::-1]
+    for yi, n in zip(yb, names):
+        for stats_key, colour, off in (("native_stats", NATIVE, -0.15),
+                                        ("scipy_stats", SCIPY, 0.15)):
+            samples = e2e[n].get(stats_key, {}).get("samples_ms", [])
+            if not samples:
+                continue
+            jit = (rng.random(len(samples)) - 0.5) * 0.18
+            ax2.scatter(samples, np.full(len(samples), yi + off) + jit,
+                        s=26, color=colour, alpha=0.75, edgecolor="none", zorder=3)
+            med = float(np.median(samples))
+            ax2.plot([med, med], [yi + off - 0.14, yi + off + 0.14],
+                     color=colour, lw=2.2, zorder=4)
+    ax2.set_xscale("log")
+    ax2.set_yticks(yb)
+    ax2.set_yticklabels(labels, fontsize=10, color=TEXT)
+    ax2.set_ylim(-0.6, len(names) - 0.2)
+    ax2.set_xlabel("per-call solve time, ms  (log — every timed repeat, not a median)", fontsize=10)
+    ax2.set_title("Raw per-call samples  ·  native vs SciPy",
+                  loc="left", fontsize=12, color=TEXT, fontweight="bold")
 
     for ax in (ax1, ax2):
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels, rotation=32, ha="right", fontsize=9.5)
-        ax.grid(axis="y", color=GRID, lw=0.8, zorder=0)
+        ax.grid(axis="x", color=GRID, lw=0.8, zorder=0)
         ax.set_axisbelow(True)
-        for s in ("top", "right"):
+        for s in ("top", "right", "left"):
             ax.spines[s].set_visible(False)
         ax.tick_params(length=0)
-        ax.legend(frameon=False, fontsize=9, loc="upper left", labelcolor=TEXT)
 
+    ci_note = "95% bootstrap CI, 4000 resamples, recorded seed" if any_ci \
+        else "CI unavailable (need ≥2 repeats)"
     fig.text(
-        0.06, 0.02,
-        "Left panel is the credible comparison (identical operator, standard library APIs). "
-        "Right panel's SciPy competitor is our own construction, shown for full disclosure.",
+        0.055, 0.03,
+        f"Left: {ci_note} — a native win needs the whole interval right of 1×.  "
+        f"Right: the SciPy pipeline is our own construction, shown in full for disclosure.",
+        ha="left", fontsize=8.5, color=MUTED,
+    )
+    fig.text(
+        0.055, 0.005,
+        f"Native {summ['speedup_geomean']:.2f}× geomean over {summ['cases']} end-to-end cases.",
         ha="left", fontsize=8.5, color=MUTED,
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
