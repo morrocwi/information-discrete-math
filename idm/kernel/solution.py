@@ -197,19 +197,30 @@ def solve(equation, var: str, *, domain: Domain = Domain.C) -> SolutionSet:
             return SolutionSet(SolutionKind.PARAMETRIC, var, exceptional=exc, completeness="complete")
 
         if deg == 2:
-            A, B, C = _as_const(a(2)), a(1), a(0)
-            if A is None:
-                return SolutionSet(SolutionKind.PARAMETRIC, var, status=HOLD,
-                                   reason="symbolic quadratic leading coefficient not yet handled")
-            Bc, Cc = _as_const(B), _as_const(C)
-            if Bc is None or Cc is None:
+            A, Bc, Cc = _as_const(a(2)), _as_const(a(1)), _as_const(a(0))
+            if A is None or Bc is None or Cc is None:
                 return SolutionSet(SolutionKind.POINTS, var, status=HOLD,
                                    reason="symbolic quadratic coefficients not yet handled")
             disc = Bc * Bc - 4 * A * Cc
-            r1 = SYM.tostr(SYM.simplify(_div(("add", [_neg(Bc), ("func", "sqrt", disc)]), Q(2) * A)))
-            r2 = SYM.tostr(SYM.simplify(_div(("add", [_neg(Bc), _neg(("func", "sqrt", disc))]), Q(2) * A)))
-            sols = [Solution({var: SYM.parse(r1)}), Solution({var: SYM.parse(r2)})]
-            return SolutionSet(SolutionKind.POINTS, var, solutions=sols, completeness="complete")
+            if disc < 0 and domain is Domain.R:
+                return SolutionSet(SolutionKind.EMPTY, var, completeness="complete",
+                                   reason="negative discriminant: no real roots")
+            root = _rational_sqrt(disc)
+            if root is not None:
+                # perfect-square discriminant -> exact rational roots (these verify)
+                r1 = (-Bc + root) / (2 * A)
+                r2 = (-Bc - root) / (2 * A)
+                vals = [r1] if r1 == r2 else [r1, r2]
+                return SolutionSet(SolutionKind.POINTS, var,
+                                   solutions=[Solution({var: v}) for v in vals], completeness="complete")
+            # irrational (or complex) roots: exact radical form. Complete (2 roots by the fundamental
+            # theorem) but exact algebraic-number verification is a Wave-5 rung, so verify stays None.
+            sq = ("func", "sqrt", disc)
+            r1 = SYM.simplify(_div(("add", [_neg(Bc), sq]), Q(2) * A))
+            r2 = SYM.simplify(_div(("add", [_neg(Bc), _neg(sq)]), Q(2) * A))
+            sols = [Solution({var: r1}), Solution({var: r2})]
+            return SolutionSet(SolutionKind.POINTS, var, solutions=sols, completeness="complete",
+                               reason="roots are exact radicals; algebraic-number verification is Wave-5")
 
         # degree >= 3: rational roots + a Vieta/residual completeness check
         consts = {k: _as_const(a(k)) for k in range(deg + 1)}
@@ -243,6 +254,16 @@ def solve(equation, var: str, *, domain: Domain = Domain.C) -> SolutionSet:
 
 def _neg_q(r):
     return Q(-r) if isinstance(r, (int, Q)) else r
+
+
+def _rational_sqrt(q: Q):
+    """Exact ℚ square root of a nonnegative rational if it is a perfect square, else None."""
+    from math import isqrt
+    if q < 0:
+        return None
+    n, d = q.numerator, q.denominator
+    sn, sd = isqrt(n), isqrt(d)
+    return Q(sn, sd) if sn * sn == n and sd * sd == d else None
 
 
 # ---------------------------------------------------------------- verify

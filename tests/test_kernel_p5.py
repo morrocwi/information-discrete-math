@@ -45,6 +45,27 @@ def test_non_polynomial_holds():
     assert s.status == SOL.HOLD
 
 
+# ------------------------------------------------------------------ quadratic + domain
+def test_quadratic_perfect_square_gives_exact_verifiable_roots():
+    s = SOL.solve("x**2 - 5*x + 6", "x")           # (x-2)(x-3)
+    roots = sorted(sol.values["x"] for sol in s.solutions)
+    assert roots == [Q(2), Q(3)]
+    assert s.completeness == "complete"
+    assert all(SOL.verify(sol, "x**2 - 5*x + 6", "x") for sol in s.solutions)
+
+
+def test_quadratic_no_real_roots_over_R_is_empty_not_false_complete():
+    s = SOL.solve("x**2 + 1", "x", domain=SOL.Domain.R)
+    assert s.kind is SOL.SolutionKind.EMPTY        # real solution set is EMPTY, not "2 complex roots complete"
+    assert s.completeness == "complete"
+
+
+def test_quadratic_irrational_roots_are_radical_form():
+    s = SOL.solve("x**2 - 2", "x")
+    assert len(s.solutions) == 2 and s.completeness == "complete"
+    assert "Wave-5" in (s.reason or "")            # honest: algebraic-number verification deferred
+
+
 # ------------------------------------------------------------------ verify (item 16)
 def test_verify_point_solution_by_exact_substitution():
     s = SOL.solve("2*x - 6", "x")
