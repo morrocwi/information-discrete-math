@@ -162,6 +162,9 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
     assert result["source_commit"] == "unit-test-sha"
     assert result["end_to_end"]["seed"] == 20260727
     assert "thread_environment" in result["environment"]
+    # the compiled-path disclosure must be recorded (so a numba-less run is self-disclosing)
+    from retained_spectral.engine import NATIVE_KERNEL_COMPILED
+    assert result["environment"]["native_kernel_compiled"] == bool(NATIVE_KERNEL_COMPILED)
 
 
 def test_three_layer_correctness_passes_declared_cases():

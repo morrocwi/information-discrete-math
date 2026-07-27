@@ -45,6 +45,7 @@ from pathlib import Path
 import numpy as np
 
 from retained_spectral.engine import (
+    NATIVE_KERNEL_COMPILED,
     RawBenchmarkTarget,
     raw_benchmark_targets,
     result_as_dict,
@@ -247,6 +248,11 @@ def run_competition(
             "processor": platform.processor() or "unknown",
             "numpy": np.__version__,
             "numba": _package_version("numba"),
+            # the native Sturm kernel is Numba/LLVM-JIT-compiled only when numba is importable; without
+            # it the SAME exact recurrence runs in pure Python, numerically identical but far slower, so
+            # a False here means the wall-clock speed numbers are NOT the compiled field and must not be
+            # read as the headline result.
+            "native_kernel_compiled": bool(NATIVE_KERNEL_COMPILED),
             "scipy": _package_version("scipy"),
             "jax": _package_version("jax"),
             "jaxlib": _package_version("jaxlib"),
