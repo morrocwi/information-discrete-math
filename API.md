@@ -48,9 +48,10 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**258 registered problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python) — the 230-kind
-A2/A3 branch map plus the 28-kind Hilbert-space core (Part XXI.5). One `solve(problem)` entry routes by
-`kind` through a registry, so related kinds share a computational core rather than being 258 disjoint
+**259 registered problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python) — the 230-kind
+A2/A3 branch map, the 28-kind Hilbert-space core (Part XXI.5), and the `polynomial_positivity`
+certificate solver. One `solve(problem)` entry routes by
+`kind` through a registry, so related kinds share a computational core rather than being 259 disjoint
 implementations. Grouped by area:
 
 **Symbolic (exact CAS)** — `symbolic_diff` (`expr`,`var`) · `simplify` · `expand` · `symbolic_integrate` (polynomial + elementary, HOLD when no elementary antiderivative) · `symbolic_solve` (linear/quadratic radicals, rational roots) · `symbolic_series` (exact Taylor)
@@ -84,6 +85,8 @@ implementations. Grouped by area:
 (`A`,`b`) · `char_poly` · `eigenvalues` (exact-ℚ char poly + Durand–Kerner)
 
 **Polynomials** — `poly_eval` · `rational_roots` (exact) · `poly_roots` (all complex)
+
+**Polynomial positivity certificate** — `polynomial_positivity` (`polynomial`, `variables`, `domain="R"`) decides the universal statement ∀x∈ℝⁿ `P(x) ≥ 0` and returns an **exact** circuit/weighted-AM–GM (SONC) certificate: `CERTIFIED` (with weights + circuit number, verified by an exact ℚ identity — e.g. the Motzkin polynomial `x⁴y²+x²y⁴+1−3x²y²`), `REFUTED` (with an exact rational witness `x` where `P(x)<0`), or `HOLD` (outside the supported single-circuit form). `exact` tier; not a sampled minimum.
 
 **Optimization / paths** (`shortest_path`/`widest_path`/`minimax_path` are `Th_coqc`-backed by the tropical-semiring laws in `IDM_Tropical.v`; the rest are `exact`) — `shortest_path` · `critical_path` ·
 `widest_path` · `minimax_path` · `reachability` · `path_count` (`matrix`, opt. `source`/`target`)
