@@ -1,0 +1,9 @@
+# Frozen CPU environment for the Retained Spectral reproducibility / credibility audit.
+# Python 3.11/3.12; pinned so a recorded audit run reproduces bit-for-bit on a clean machine.
+numpy==1.26.4
+scipy==1.13.1
+numba==0.60.0
+llvmlite==0.43.0
+matplotlib==3.9.2
+jax==0.4.35
+jaxlib==0.4.35
