@@ -113,9 +113,11 @@ def coerce_up(x, target_rung: type, *, prec_dps: int = 30) -> Certificate:
     if target_rung is RealBall and isinstance(x, (ExactInteger, ExactRational)):
         try:
             import mpmath as mp
-            mp.mp.dps = prec_dps
-            v = mp.mpf(x.value.numerator) / mp.mpf(x.value.denominator) if isinstance(x, ExactRational) \
-                else mp.mpf(x.value)
+            # compute AT prec_dps but restore the global precision on exit (mp.workdps), so this
+            # coercion never leaks its dps to unrelated later code (e.g. special-function readouts).
+            with mp.workdps(prec_dps):
+                v = mp.mpf(x.value.numerator) / mp.mpf(x.value.denominator) if isinstance(x, ExactRational) \
+                    else mp.mpf(x.value)
             return Certificate(RealBall(v, v, prec_dps), OK, Tier.FINITE_DIAGNOSTIC)
         except Exception as exc:  # pragma: no cover
             return Certificate(None, HOLD, Tier.FINITE_DIAGNOSTIC, reason=f"ball coercion failed: {exc}")

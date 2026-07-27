@@ -25,15 +25,13 @@ jobs:
       - name: pytest (suite)
         run: pytest -q --ignore=tests/test_kernel_migration_snapshot.py
       - name: pytest migration byte-identity gate (own clean process)
-        # The gate re-solves all 259 kinds and compares byte-for-byte against the golden snapshot,
-        # which was captured in a FRESH process. mpmath's global precision (mp.mp.dps) and some cached
-        # transcendental constants are not test-isolated across the wider suite, so a sibling test can
-        # shift one dps-sensitive kind's last digit. Running the gate in its own process reproduces the
-        # golden-capture condition exactly (passes 259/259). The underlying global-state leak is tracked
-        # separately as a real library fix (must regenerate the golden when it lands).
-        # PYTHONPATH=. so ``import idm`` resolves: naming a single file makes pytest prepend tests/
-        # (not the repo root) to sys.path, unlike the un-pathed suite run above. Matches the test's
-        # own documented invocation.
+        # The gate re-solves all 259 kinds byte-for-byte against a golden captured in a FRESH process.
+        # idm's special functions all compute at the SHARED global mpmath precision (mp.mp.dps), which
+        # different modules set at import and dps-sensitive readouts (e.g. E1) inherit — so a sibling
+        # test can shift one kind's last digit. Reducing the leak surface (kernel eval/numbers now
+        # restore dps) is not enough; full order-independence needs a per-module precision-context
+        # refactor. Until then the gate runs in its own process (259/259). PYTHONPATH=. so ``import
+        # idm`` resolves when a single file is named (pytest would otherwise prepend tests/).
         run: PYTHONPATH=. pytest -q tests/test_kernel_migration_snapshot.py
   coq:
     runs-on: ubuntu-latest
