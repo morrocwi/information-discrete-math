@@ -26,7 +26,7 @@ mesh, or reference value supplied — and reports a tier-honest `ACCEPT`/`HOLD` 
 
 <div align="center">
 
-<img src="assets/retained_spectral_hero.png" alt="Same operator, median solve time (lower is faster): on this host native Retained Multilevel Sturm was the fastest, about 1.5x faster than SciPy eigh_tridiagonal; dense/iterative routes ran 150-1900x slower" width="900">
+<img src="assets/retained_spectral_hero.png" alt="Same operator, median solve time (lower is faster): on this host native Retained Multilevel Sturm was the fastest, about 1.65x faster than SciPy eigh_tridiagonal (kernel-only field, prebuilt operator, solve-only timing); dense/iterative routes ran 150-1900x slower" width="900">
 
 **[▶ Reproduce it in one click (Google Colab)](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)** — installs, runs, and redraws the chart on a fresh machine.
 
@@ -40,7 +40,7 @@ verdicts so speed never covers for incorrectness. Numbers below are the **record
 **Primary same-work claim** — lowest _k_ eigenvalues of the *identical* symmetric tridiagonal matrix to
 the declared tolerance, native vs SciPy's requested-only LAPACK route:
 
-- vs **SciPy `eigh_tridiagonal`**: native **≈1.5× faster** (geomean, this host).
+- vs **SciPy `eigh_tridiagonal`**: native **≈1.65× faster** (geomean, this host) — **Field A / kernel-only**: every solver gets the *prebuilt* operator (tridiagonal/dense/CSC/device array built outside timing), only the eigenvalue solve is timed.
 - End-to-end from raw input vs an independent SciPy pipeline: native faster **7/7, ≈3.5× geomean**.
 - **7/7** targets hit **published/analytic eigenvalues** within the **declared** tolerance (no hidden floor).
 
