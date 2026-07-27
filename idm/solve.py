@@ -268,7 +268,9 @@ def _gb(p):
         if "member" in p:
             f = parse_poly(p["member"], variables)
             val["member_in_ideal"] = not normal_form(f, G, order)
-    except (KeyError, ValueError, TypeError, ZeroDivisionError) as e:
+    except (KeyError, ValueError, TypeError, ZeroDivisionError, RuntimeError, AttributeError) as e:
+        # RuntimeError covers GroebnerBudgetExceeded (refuse rather than hang); AttributeError covers a
+        # non-string entry in `polys`.
         return {"kind": "groebner_basis", "status": "HOLD", "reason": str(e),
                 "method": "Buchberger over ℚ"}
     return {"kind": "groebner_basis", "status": "ok", "value": val,

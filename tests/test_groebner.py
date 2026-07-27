@@ -83,6 +83,36 @@ def test_reduced_basis_is_monic_and_idempotent():
     assert {frozenset(g.items()) for g in G} == {frozenset(g.items()) for g in G2}
 
 
+def test_duplicate_leading_monomials_not_both_dropped():
+    # Regression (reviewer): two generators sharing a leading monomial must NOT both be filtered out
+    # of the minimal basis. <x*y, 6*x*y> = <x*y>, not the zero ideal.
+    G = reduced_groebner([_P("x*y"), _P("6*x*y")], "lex")
+    assert [poly_to_str(g, V) for g in G] == ["x*y"]
+    assert in_ideal(_P("x*y"), [_P("x*y"), _P("6*x*y")])          # was a false negative before the fix
+
+
+def test_scaled_duplicate_generators_membership():
+    # a whole family of scaled duplicates collapses to a single generator; membership stays exact
+    F = [_P("2*x^2-y"), _P("-3*x^2+3/2*y"), _P("x^2-1/2*y")]     # all proportional to 2x^2 - y
+    G = reduced_groebner(F, "grevlex")
+    assert [poly_to_str(g, V, "grevlex") for g in G] == ["x^2 - 1/2*y"]
+    assert in_ideal(_P("4*x^2-2*y"), F)
+
+
+def test_budget_guard_holds_not_hangs():
+    # the kind refuses (HOLD), never hangs, if a computation blows past the basis-growth cap
+    from idm.kernel.poly import groebner as gb
+    saved = gb.MAX_BASIS_GROWTH
+    gb.MAX_BASIS_GROWTH = 1
+    try:
+        r = idm.solve({"kind": "groebner_basis",
+                       "polys": ["x^3-2*x*y", "x^2*y-2*y^2+x", "x*y^2-1"],
+                       "variables": ["x", "y"], "order": "lex"})
+        assert r["status"] == "HOLD"
+    finally:
+        gb.MAX_BASIS_GROWTH = saved
+
+
 def test_ideal_membership():
     F = [_P("x^2+y^2-1"), _P("x-y")]
     assert in_ideal(_P("x^2+y^2-1"), F)          # a generator is in the ideal
