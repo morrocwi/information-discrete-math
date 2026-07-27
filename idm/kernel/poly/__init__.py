@@ -15,6 +15,7 @@ from .univariate import (
 )
 from .partial_fractions import PartialFraction, apart, together, extended_gcd
 from .summation import gosper_sum
+from .eigen import characteristic_polynomial, real_eigenvalues
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
@@ -22,4 +23,5 @@ __all__ = [
     "derivative", "cancel", "resultant", "discriminant",
     "sturm_chain", "count_real_roots", "isolate_real_roots", "square_free_factorization",
     "PartialFraction", "apart", "together", "extended_gcd", "gosper_sum",
+    "characteristic_polynomial", "real_eigenvalues",
 ]
