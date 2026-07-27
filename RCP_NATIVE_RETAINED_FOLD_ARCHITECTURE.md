@@ -8,6 +8,11 @@
 **External comparison methods:** variable elimination, junction tree, and
 tensor-network autodiff remain comparators only
 
+> **Count note.** "230 kinds" throughout this document is the A2/A3 **branch-map**
+> partition (`97+22+46+55+10`, see §4). The Hilbert-space core (Part XXI.5) adds a
+> further **28** kinds, so the **live registry total is 258** (`idm.kinds()`). This
+> document describes the fold architecture that generates the 230 branch kinds.
+
 ---
 
 ## 1. Non-contamination rule

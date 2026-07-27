@@ -202,7 +202,7 @@ energy), with a preservation certificate on every run.
 one‑distinction closure, retained boundary records, and terminal‑relevance unfolding, plus
 boundary‑neutral **Retained Closure Fusion (RCF)**. It builds no maximal cliques and runs no clique
 calibration; the FTCC fold is its engine and junction tree stays a comparator only. Architecture,
-equations, resource gates, the 230‑kind map, and the claim boundary:
+equations, resource gates, the 230‑kind branch map (plus the 28‑kind Hilbert core → **258** live), and the claim boundary:
 [`RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md`](RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md) (`finite_diagnostic`).
 
 **Native sensitivity, not an autodiff wrapper.** **Retained Readout Pullback (RRP)** does one upward

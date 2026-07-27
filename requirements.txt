@@ -1,2 +1,5 @@
+# Core solver dependencies (all of prove_it*.py, the `idm` package, and CI need only these).
 mpmath>=1.3.0
 sympy>=1.12
+# Native-executor prototypes and competitor benchmarks need extra numerics —
+# see requirements-bench.txt (numpy, numba, opt_einsum); not required for the core.

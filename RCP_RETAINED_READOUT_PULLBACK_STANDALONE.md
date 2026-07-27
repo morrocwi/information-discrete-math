@@ -22,10 +22,14 @@ environment for many sensitivity readouts—but rebuilds that principle from
 retained difference, declared readout, and finite closure.
 
 On the seven measured order-4 cases, native Retained Readout Pullback (RRP)
-agreed with external tensor autodiff to at most \(8.89\times10^{-16}\) and was
-the faster hot call in all seven. This is a bounded benchmark result, not a
-claim that RRP is faster for every graph, dimension, order, backend, or
-hardware.
+reproduced the partition, moments, and all gradients to
+\(\text{worst}\approx1.9\times10^{-10}\) against an independent
+finite-difference reference — this is the **committed self-check** (see §6). In
+a **separate** `opt_einsum` + Autograd comparison (requires the optional
+`autograd` package; not in the committed JSON or CI) it agreed to at most
+\(8.89\times10^{-16}\) and was the faster hot call in all seven. These are
+bounded benchmark results, not a claim that RRP is faster for every graph,
+dimension, order, backend, or hardware.
 
 ---
 
@@ -197,16 +201,27 @@ Observed maximum differences:
 - log-partition gradients: \(8.89\times10^{-16}\);
 - central finite-difference check: below \(10^{-9}\) in the test gate.
 
-Machine-readable evidence:
-[`benchmarks/retained_readout_pullback_results.json`](benchmarks/retained_readout_pullback_results.json).
+> **What the committed artifact proves — and what it does not.** The machine-readable file
+> [`benchmarks/retained_readout_pullback_results.json`](benchmarks/retained_readout_pullback_results.json)
+> records the **native self-check only**: `benchmark: native_retained_readout_pullback_self_check`,
+> agreement of the native executor against an *independent tilted-factor contraction + central finite
+> differences* reference (`worst_abs_difference ≈ 1.9×10⁻¹⁰`, `verdict: ACCEPT`, `tolerance 1e-9`) plus
+> the native hot timings. It does **not** contain the `opt_einsum` + Autograd column of the table above.
+> Those external figures come from a **separate run that requires `autograd`** (an optional dependency,
+> not in `requirements.txt`, not exercised in CI). Treat the external comparison as a disclosed manual
+> measurement, and the native correctness/timing as the reproducible, committed evidence.
 
-Reproduce:
+Reproduce the committed native self-check:
 
 ```bash
 python benchmarks/retained_readout_pullback_benchmark.py \
   --repeats 31 \
   --output benchmarks/retained_readout_pullback_results.json
 ```
+
+Reproduce the external comparison (separate run; needs `numpy` + `opt_einsum` from
+`requirements-bench.txt`, plus `pip install autograd`). The committed self-check command above needs
+no third-party package.
 
 ---
 
@@ -240,9 +255,11 @@ It returns:
 
 What is established:
 
-- the implemented finite identities agree with central finite difference and
-  external Autograd on the tested matrix;
-- the native executor was faster on all seven recorded cases;
+- the implemented finite identities agree with an independent central
+  finite-difference reference on the tested matrix (**committed self-check**,
+  `verdict: ACCEPT`);
+- in a **separate, uncommitted** `opt_einsum`+Autograd run they also agreed and
+  the native executor was faster on all seven recorded cases;
 - the code has no Junction Tree or autodiff dependency.
 
 What is not established:
