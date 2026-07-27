@@ -291,6 +291,13 @@ def _pig(p): return _ok("poly_integral", X.poly_integral(p["coeffs"]), "exact �
 @kind("poly_from_roots", "Th_coqc")
 def _pfr(p): return _ok("poly_from_roots", X.poly_from_roots(p["roots"]), "∏(x−rᵢ) exact ℚ")
 
+@kind("polynomial_positivity", "exact")
+def _ppos(p):
+    from . import positivity as POS
+    r = POS.positivity_certificate(str(p["polynomial"]), list(p["variables"]), p.get("domain", "R"))
+    r["kind"] = "polynomial_positivity"
+    return r
+
 # ================================================================ matrix (extended) ================
 @kind("matrix_transpose", "Th_coqc")
 def _mt(p): return _ok("matrix_transpose", X.transpose(p["matrix"]), "exact")
