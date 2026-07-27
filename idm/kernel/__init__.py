@@ -31,6 +31,11 @@ from .assumptions import (
     DomainVerdict, DomainContradiction,
     closure, query, entails, predicate, parse_assumptions, domain_of_expr,
 )
+from .engine import (
+    GuardVerdict, Strategy, LoopGuardConfig, Wildcard, Guard, Rule, RuleSet, RewriteResult,
+    match, substitute, apply_rule, domain_gate, rewrite, rewrite_safe,
+    pow_pow_collapse, RS_CORE_NORMALIZE, pow_pow_collapse_safe,
+)
 
 __all__ = [
     # tiers
@@ -51,4 +56,8 @@ __all__ = [
     "PredKind", "Verdict", "Interval", "Predicate", "SymbolDomain", "AssumptionSet",
     "DomainVerdict", "DomainContradiction",
     "closure", "query", "entails", "predicate", "parse_assumptions", "domain_of_expr",
+    # rewrite engine
+    "GuardVerdict", "Strategy", "LoopGuardConfig", "Wildcard", "Guard", "Rule", "RuleSet", "RewriteResult",
+    "match", "substitute", "apply_rule", "domain_gate", "rewrite", "rewrite_safe",
+    "pow_pow_collapse", "RS_CORE_NORMALIZE", "pow_pow_collapse_safe",
 ]

@@ -34,6 +34,7 @@ FIXTURES = {
     "polylog": {"s": 2, "x": "0.5"}, "dirichlet_eta": {"s": 2}, "dirichlet_beta": {"s": 2},
     "hurwitz_zeta": {"s": 2, "a": 1}, "zeta": {"s": 2},
     # number theory
+    "polynomial_positivity": {"polynomial": "x**4*y**2 + x**2*y**4 + 1 - 3*x**2*y**2", "variables": ["x", "y"]},
     "gcd": {"a": 48, "b": 36}, "lcm": {"a": 4, "b": 6}, "factorial": {"n": 10},
     "factorize": {"n": 360360}, "divisors": {"n": 28}, "num_divisors": {"n": 36},
     "sigma": {"n": 28, "k": 1}, "totient": {"n": 36}, "mobius": {"n": 30}, "mertens": {"N": 10},
