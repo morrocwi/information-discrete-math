@@ -89,8 +89,8 @@ python3 -m demos.spectroscopic_inverse_sweep                 # inverse problem w
 **Physics demos ([`demos/`](demos/)).** `demos/i2_morse_levels.py` solves the vibrational levels of
 molecular iodine (I2) in the Morse potential (standard textbook constants, atomic units) and checks
 them against the closed-form Morse formula *on the same operator* — a real, independent correctness
-witness: the discretisation error is ~0.14 cm⁻¹ at n=20k and ~0.006 cm⁻¹ at n=100k, shrinking as the
-grid is refined. `demos/spectroscopic_inverse_sweep.py` times many candidate `(D_e, a, r_e)` solves —
+witness: for the default 10 requested levels the discretisation error is ~0.22 cm⁻¹ at n=20k, ~0.009 cm⁻¹
+at n=100k and ~0.0005 cm⁻¹ at n=400k, shrinking as the grid is refined. `demos/spectroscopic_inverse_sweep.py` times many candidate `(D_e, a, r_e)` solves —
 the shape of a spectroscopic *inverse* problem — and projects the wall-clock of a 10k- or 1M-candidate
 fit from the measured per-candidate rate. Both are `finite_diagnostic`-tier discrete readouts, not
 continuum-limit proofs or measured claims about real iodine; both use the optional MRRR peer only when
