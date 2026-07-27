@@ -50,9 +50,11 @@ the declared tolerance, native vs SciPy's requested-only LAPACK route:
 > Numba is not installed it falls back to a **numerically identical but much slower pure-Python** path,
 > and the ≈1.65× headline would not hold. Install it via the pinned bench extras
 > (`pip install "information-discrete-math[spectral-bench]"`, or `requirements-spectral-lock.txt`). Every
-> results JSON records `environment.native_kernel_compiled` (true/false), so a run without the compiled
-> path is self-disclosing and is never presented as the headline field. Correctness (the tolerance and
-> the three credibility layers) does **not** depend on Numba — only the wall-clock claim does.
+> results JSON records `environment.native_kernel_compiled` / `kernel_field`, and a benchmark run
+> **fails closed**: `run_competition` raises `HOLD` without the compiled kernel rather than emitting the
+> ~70× slower interpreted numbers as if they were the headline field (`require_compiled_kernel`).
+> Correctness (the tolerance and the three credibility layers) does **not** depend on Numba — only the
+> wall-clock claim does, so correctness paths never trip the guard.
 
 **Supplementary — alternative standard routes on the same finite operator** (they compute the *whole*
 spectrum / iterate, i.e. **not the same work**): SciPy `eigh`, NumPy `eigvalsh`, SciPy `eigsh` (ARPACK),

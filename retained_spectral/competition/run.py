@@ -45,9 +45,11 @@ from pathlib import Path
 import numpy as np
 
 from retained_spectral.engine import (
+    KERNEL_FIELD,
     NATIVE_KERNEL_COMPILED,
     RawBenchmarkTarget,
     raw_benchmark_targets,
+    require_compiled_kernel,
     result_as_dict,
     retained_raw_input_readout,
     warm_native_kernel,
@@ -161,6 +163,10 @@ def run_competition(
     include_jax: bool = True,
     seed: int = 20260727,
 ) -> dict[str, object]:
+    # fail CLOSED: a competition run is a SPEED measurement, so refuse to produce timing numbers at all
+    # when the compiled kernel is absent (the interpreted fallback is ~70x slower — reporting it would be
+    # a silent 100x swing). Correctness-only paths never call this.
+    require_compiled_kernel("retained_spectral.competition.run")
     targets = raw_benchmark_targets()
     warm_native_kernel()
 
@@ -253,6 +259,7 @@ def run_competition(
             # a False here means the wall-clock speed numbers are NOT the compiled field and must not be
             # read as the headline result.
             "native_kernel_compiled": bool(NATIVE_KERNEL_COMPILED),
+            "kernel_field": KERNEL_FIELD,   # 'compiled' | 'interpreted_fallback'
             "scipy": _package_version("scipy"),
             "jax": _package_version("jax"),
             "jaxlib": _package_version("jaxlib"),

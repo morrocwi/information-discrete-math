@@ -154,6 +154,8 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
     monkeypatch.setenv("GITHUB_SHA", "unit-test-sha")
     from retained_spectral.competition.run import run_competition
 
+    if not engine.NATIVE_KERNEL_COMPILED:
+        pytest.skip("run_competition fails closed without the compiled kernel (no numba)")
     result = run_competition(repeats=2, audit_repeats=1, include_jax=False)
     gates = result["verdict_gates"]
     for key in ("native_correct_all", "scipy_correct_all", "native_accept_all",
@@ -165,6 +167,19 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
     # the compiled-path disclosure must be recorded (so a numba-less run is self-disclosing)
     from retained_spectral.engine import NATIVE_KERNEL_COMPILED
     assert result["environment"]["native_kernel_compiled"] == bool(NATIVE_KERNEL_COMPILED)
+    assert result["environment"]["kernel_field"] == "compiled"   # guarded above
+
+
+def test_require_compiled_kernel_fails_closed(monkeypatch):
+    """A timing-bearing path must HOLD (raise), not silently run ~70x slower, without the compiled kernel."""
+    require_compiled_kernel = engine.require_compiled_kernel
+    # available path: no raise
+    monkeypatch.setattr(engine, "NATIVE_KERNEL_COMPILED", True)
+    require_compiled_kernel("ok-path")
+    # absent path: fail closed with a HOLD message pointing at the [spectral-bench] install
+    monkeypatch.setattr(engine, "NATIVE_KERNEL_COMPILED", False)
+    with pytest.raises(RuntimeError, match="HOLD"):
+        require_compiled_kernel("speed test")
 
 
 def test_three_layer_correctness_passes_declared_cases():
