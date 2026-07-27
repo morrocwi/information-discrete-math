@@ -79,6 +79,29 @@ def test_limit_at_infinity_diverges_sign_and_parity():
     assert rational_limit([0, 0, 0, 1], [0, 1], "-inf").sign == 1
 
 
+def test_pole_with_a_nearby_second_root_gets_the_sign_right():
+    # Regression for the fixed-step probe bug: den = x*(x - 1/1000) has a SECOND root at 1/1000, very
+    # close to the pole at 0. The one-sided sign must come from the true infinitesimal neighborhood of
+    # 0 (where x - 1/1000 < 0), not from a probe point that overshoots past 1/1000.
+    den = [0, Q(-1, 1000), 1]                      # x^2 - x/1000 = x*(x - 1/1000)
+    assert rational_limit_oneside([1], den, 0, "+").sign == -1   # x->0+ : (+)(-) -> -inf
+    assert rational_limit_oneside([1], den, 0, "-").sign == 1    # x->0- : (-)(-) -> +inf
+    assert rational_limit([1], den, 0).status == "dne"           # opposite sides -> DNE
+
+
+def test_two_distinct_poles_pick_the_right_one():
+    # 1/((x-2)(x-5)) at x=2: just right of 2 the factors are (+)(-) -> -inf; just left (-)(-) -> +inf
+    den = [10, -7, 1]                              # (x-2)(x-5) = x^2 - 7x + 10
+    assert rational_limit_oneside([1], den, 2, "+").sign == -1
+    assert rational_limit_oneside([1], den, 2, "-").sign == 1
+    assert rational_limit([1], den, 2).status == "dne"
+
+
+def test_high_order_poles_parity():
+    assert rational_limit([1], [0, 0, 0, 1], 0).status == "dne"          # 1/x^3, odd -> DNE
+    assert rational_limit([1], [0, 0, 0, 0, 1], 0).sign == 1            # 1/x^4, even -> +inf both
+
+
 def test_zero_denominator_polynomial_raises():
     with pytest.raises(ValueError):
         rational_limit([1, 2], [0], 0)
