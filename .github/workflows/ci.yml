@@ -22,8 +22,16 @@ jobs:
         run: python3 benchmarks/rcp_energy_challenge.py && python3 benchmarks/direct_nd_work_tokens.py --dimension 9 --nodes-per-axis 5
       - name: validations
         run: for f in validation/*.py; do echo "== $f =="; python3 "$f" || exit 1; done
-      - name: pytest
-        run: pytest -q
+      - name: pytest (suite)
+        run: pytest -q --ignore=tests/test_kernel_migration_snapshot.py
+      - name: pytest migration byte-identity gate (own clean process)
+        # The gate re-solves all 259 kinds and compares byte-for-byte against the golden snapshot,
+        # which was captured in a FRESH process. mpmath's global precision (mp.mp.dps) and some cached
+        # transcendental constants are not test-isolated across the wider suite, so a sibling test can
+        # shift one dps-sensitive kind's last digit. Running the gate in its own process reproduces the
+        # golden-capture condition exactly (passes 259/259). The underlying global-state leak is tracked
+        # separately as a real library fix (must regenerate the golden when it lands).
+        run: pytest -q tests/test_kernel_migration_snapshot.py
   coq:
     runs-on: ubuntu-latest
     steps:
