@@ -46,7 +46,9 @@ def monomials(expr: str, variables: list[str]) -> dict[tuple[int, ...], Q]:
     tree = ast.parse(expr.replace("^", "**"), mode="eval").body
 
     def const(c) -> dict:
-        return {zero_key: Q(c)}
+        # Parse a decimal literal by its written value (0.1 → 1/10), never the binary
+        # float artifact — keeps the polynomial an exact rational readout, no float.
+        return {zero_key: Q(str(c)) if isinstance(c, float) else Q(c)}
 
     def add(a: dict, b: dict) -> dict:
         r = dict(a)

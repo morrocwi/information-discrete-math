@@ -79,6 +79,14 @@ def test_over_threshold_motzkin_refuted():
 
 
 # ------------------------------------------------------------------ HOLD
+def test_decimal_literal_is_exact_not_binary_artifact():
+    """A decimal coefficient parses by its written value (0.1 → 1/10), never the float artifact."""
+    mons = POS.monomials("x**2 - 0.1*x + 1", ["x"])
+    assert mons[(1,)] == Q(-1, 10)
+    # and it agrees with the rational-division spelling
+    assert POS.monomials("x**2 - (1/10)*x + 1", ["x"]) == mons
+
+
 def test_two_negative_terms_hold():
     r = _solve("x**4 + y**4 - x**2 - y**2", ["x", "y"])
     assert r["status"] == "HOLD"
