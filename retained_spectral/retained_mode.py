@@ -28,7 +28,8 @@ STABILIZE (step 4)
 
 TIER-TAG (step 5)
     finite_diagnostic. ACCEPT when residual <= rho * max|lambda|, else HOLD.
-    A HOLD returns no vector rather than a fabricated one.
+    A HOLD flags the vector as UNTRUSTED via the status field (callers gate on status, not on the
+    array); only a non-finite or zero-norm readout yields no vector at all.
 
 FENCE (step 6)
     +R-Open: this certifies the residual of the readout, not distance to a
