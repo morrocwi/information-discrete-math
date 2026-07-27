@@ -11,10 +11,12 @@ from __future__ import annotations
 from .coeffring import DomainMismatch, QRing, ZRing, GFRing
 from .univariate import (
     UPoly, add, mul, divmod_, gcd, factor, derivative, cancel, resultant, discriminant,
+    sturm_chain, count_real_roots, isolate_real_roots,
 )
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
     "UPoly", "add", "mul", "divmod_", "gcd", "factor",
     "derivative", "cancel", "resultant", "discriminant",
+    "sturm_chain", "count_real_roots", "isolate_real_roots",
 ]
