@@ -1,0 +1,88 @@
+name: Retained Spectral credibility audit
+
+on:
+  pull_request:
+    paths:
+      - "retained_spectral/**"
+      - "requirements-spectral-lock.txt"
+      - ".github/workflows/retained-spectral-credibility.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  strict-audit:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-py311-jax
+            os: ubuntu-latest
+            python: "3.11"
+            run_jax: "true"
+          - name: ubuntu-py312
+            os: ubuntu-latest
+            python: "3.12"
+            run_jax: "false"
+          - name: macos-py311
+            os: macos-14
+            python: "3.11"
+            run_jax: "false"
+
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      PYTHONHASHSEED: "0"
+      JAX_PLATFORMS: "cpu"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: requirements-spectral-lock.txt
+
+      - name: Install frozen audit environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-spectral-lock.txt
+          python -m pip install -e .
+
+      - name: Compile strict audit modules
+        run: |
+          python -m compileall -q retained_spectral
+
+      - name: Run strict credibility audit
+        shell: bash
+        run: |
+          if [[ "${{ matrix.run_jax }}" == "true" ]]; then
+            python -m retained_spectral.competition.credibility_audit \
+              --baseline-repeats 9 \
+              --executor-repeats 5 \
+              --scaling-repeats 7 \
+              --json "credibility-${{ matrix.name }}.json"
+          else
+            python -m retained_spectral.competition.credibility_audit \
+              --no-jax \
+              --baseline-repeats 9 \
+              --executor-repeats 5 \
+              --scaling-repeats 7 \
+              --json "credibility-${{ matrix.name }}.json"
+          fi
+
+      - name: Upload measured audit record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: credibility-${{ matrix.name }}
+          path: credibility-${{ matrix.name }}.json
+          if-no-files-found: warn
