@@ -36,6 +36,10 @@ from .engine import (
     match, substitute, apply_rule, domain_gate, rewrite, rewrite_safe,
     pow_pow_collapse, RS_CORE_NORMALIZE, pow_pow_collapse_safe,
 )
+from .eval import (
+    real_ball, ball_add, ball_mul, ball_div, ball_apply,
+    evaluate_exact, evaluate_certified, evaluate,
+)
 
 __all__ = [
     # tiers
@@ -60,4 +64,7 @@ __all__ = [
     "GuardVerdict", "Strategy", "LoopGuardConfig", "Wildcard", "Guard", "Rule", "RuleSet", "RewriteResult",
     "match", "substitute", "apply_rule", "domain_gate", "rewrite", "rewrite_safe",
     "pow_pow_collapse", "RS_CORE_NORMALIZE", "pow_pow_collapse_safe",
+    # numeric bridge
+    "real_ball", "ball_add", "ball_mul", "ball_div", "ball_apply",
+    "evaluate_exact", "evaluate_certified", "evaluate",
 ]
