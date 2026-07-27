@@ -1,14 +1,15 @@
 # Benchmark / native-executor extras — NOT needed for the core `idm` solver.
 #
 # The core (prove_it*.py, idm, the CI `verify` job) needs only requirements.txt
-# (mpmath, sympy). These packages are required only to run the native
-# Retained-Contraction/Readout-Pullback prototypes and the competitor benchmarks:
+# (mpmath, sympy). The committed native self-check
+# (benchmarks/retained_readout_pullback_benchmark.py) and retained_fold_tree.py
+# are ALSO pure Python and need nothing here. These packages are required only
+# for the compiled native prototype and the external competitor comparison:
 #
-#   benchmarks/retained_fold_tree.py                 -> numpy
 #   benchmarks/compiled_retained_readout_pullback.py -> numpy, numba
-#   benchmarks/retained_readout_pullback_benchmark.py-> numpy
+#   benchmarks/coupled_nd_retained_compiler.py (external opt_einsum path) -> numpy, opt_einsum
 #   external comparison column in RCP_RETAINED_READOUT_PULLBACK_STANDALONE.md
-#                                                    -> opt_einsum (+ optional `autograd`)
+#                                                    -> numpy, opt_einsum (+ optional `autograd`)
 #
 # These benchmarks are prototype-tier (`finite_diagnostic`) and are NOT run in CI;
 # CI exercises the pure-finite core plus the RCP energy / N-D work-token benchmarks

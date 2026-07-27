@@ -219,8 +219,9 @@ python benchmarks/retained_readout_pullback_benchmark.py \
   --output benchmarks/retained_readout_pullback_results.json
 ```
 
-Reproduce the external comparison (separate; needs `pip install -r requirements-bench.txt` — numpy,
-numba, opt_einsum — plus `pip install autograd`).
+Reproduce the external comparison (separate run; needs `numpy` + `opt_einsum` from
+`requirements-bench.txt`, plus `pip install autograd`). The committed self-check command above needs
+no third-party package.
 
 ---
 
