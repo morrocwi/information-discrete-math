@@ -367,6 +367,46 @@ def isolate_real_roots(p: UPoly, *, max_depth: int = 400, width=None) -> List[Tu
     return intervals
 
 
+# ---------------------------------------------------------------- square-free factorization ----
+def square_free_factorization(p: UPoly):
+    """Yun's algorithm: decompose ``p = lead(p) · ∏ gᵢ^i`` with each ``gᵢ`` monic, **square-free**, and
+    the ``gᵢ`` pairwise coprime — over a field of characteristic 0 (``QRing``). Returns
+    ``(lead, [(g_i, i), …])`` (multiplicity ``i`` ascending). The square-free part (radical) of ``p`` is
+    ``∏ gᵢ``; a repeated factor is exposed with its exact multiplicity, exactly and without factoring
+    the ``gᵢ`` further.
+    """
+    from .coeffring import QRing
+    D = p.domain
+    if not isinstance(D, QRing):
+        raise ValueError(f"square-free factorization needs the characteristic-0 field QRing; got {D!r}")
+    if p.is_zero():
+        raise ValueError("the zero polynomial has no square-free factorization")
+    lead = p.lead()
+    f = p.monic()
+    fp = derivative(f)
+    if fp.is_zero():                                     # f is a nonzero constant
+        return lead, []
+
+    def _sub(a: UPoly, b: UPoly) -> UPoly:
+        return add(a, UPoly([D.neg(c) for c in b.coeffs], D))
+
+    u = gcd(f, fp)                                       # ∏ pₖ^(k-1)
+    v, _ = divmod_(f, u)                                 # ∏ pₖ  (the radical)
+    w, _ = divmod_(fp, u)
+    factors: List[Tuple[UPoly, int]] = []
+    i = 1
+    while v.degree() > 0:
+        h = _sub(w, derivative(v))                       # h = w - v'
+        g = gcd(v, h)                                    # gᵢ = the square-free factor of multiplicity i
+        if g.degree() > 0:
+            factors.append((g, i))
+        v, _ = divmod_(v, g)                             # peel gᵢ off the running radical
+        w, _ = divmod_(h, g)
+        i += 1
+    return lead, factors
+
+
 __all__ = ["UPoly", "add", "mul", "divmod_", "gcd", "factor",
            "derivative", "cancel", "resultant", "discriminant",
-           "sturm_chain", "count_real_roots", "isolate_real_roots"]
+           "sturm_chain", "count_real_roots", "isolate_real_roots",
+           "square_free_factorization"]
