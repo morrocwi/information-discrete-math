@@ -55,16 +55,11 @@ def _package_version(name: str) -> str:
 
 
 def _max_reference_error(values, reference) -> float:
-    length = min(len(values), len(reference))
-    if length == 0:
+    # A solver that returned the WRONG NUMBER of eigenvalues fails outright — never compare on the
+    # shorter prefix (that would let a partial result pass correctness).
+    if len(values) != len(reference) or len(reference) == 0:
         return float("inf")
-    return float(
-        np.max(
-            np.abs(
-                np.asarray(values[:length]) - np.asarray(reference[:length])
-            )
-        )
-    )
+    return float(np.max(np.abs(np.asarray(values) - np.asarray(reference))))
 
 
 def _timed(solver, problem, *, repeats: int) -> tuple[float, object]:
@@ -106,14 +101,18 @@ def end_to_end_case(target: RawBenchmarkTarget, *, repeats: int) -> dict[str, ob
         "native": {
             **result_as_dict(native_result),
             "hot_median_seconds": native_seconds,
+            "expected_modes": len(target.reference),
+            "returned_modes": len(native_result.values),
             "max_reference_abs_error": native_error,
-            "correct": native_error <= max(problem.tolerance, 1e-6),
+            "correct": native_error <= problem.tolerance,   # the DECLARED tolerance, no hidden floor
         },
         "scipy": {
             **result_as_dict(scipy_result),
             "hot_median_seconds": scipy_seconds,
+            "expected_modes": len(target.reference),
+            "returned_modes": len(scipy_result.values),
             "max_reference_abs_error": scipy_error,
-            "correct": scipy_error <= max(problem.tolerance, 1e-6),
+            "correct": scipy_error <= problem.tolerance,
         },
         "scipy_to_native_time_ratio": scipy_seconds / native_seconds,
     }
@@ -151,15 +150,34 @@ def run_competition(
         include_jax=include_jax,
     )
 
-    verdict = (
-        "ACCEPT"
-        if (
-            native_correct == len(targets)
-            and native_accept == len(targets)
-            and native_wins == len(targets)
-        )
-        else "HOLD"
+    n = len(targets)
+    audit_cases = audit.get("cases", {})
+    executor_cross_check_all = bool(audit_cases) and all(
+        c.get("cross_check_ok") for c in audit_cases.values()
     )
+    executor_complete_all = all(
+        c.get("comparison_complete", True) for c in audit_cases.values()
+    )
+
+    # THREE independent verdicts — speed never compensates for incorrectness, correctness never
+    # compensates for an unequal/incomplete comparison.
+    correctness_verdict = "ACCEPT" if (native_correct == n and scipy_correct == n) else "HOLD"
+    fairness_verdict = "ACCEPT" if (executor_cross_check_all and executor_complete_all) else "HOLD"
+    # median-based (confidence intervals are B3): ACCEPT only if native is faster in EVERY case;
+    # if any case has a competitor faster it is HOLD (never silently an overall ACCEPT).
+    if native_wins == n:
+        speed_verdict = "ACCEPT"
+    elif any(r < 1.0 for r in ratios):
+        speed_verdict = "HOLD"
+    else:
+        speed_verdict = "TIE"
+    strict_accept = (
+        correctness_verdict == "ACCEPT"
+        and fairness_verdict == "ACCEPT"
+        and speed_verdict == "ACCEPT"
+        and native_accept == n
+    )
+    verdict = "ACCEPT" if strict_accept else "HOLD"
 
     return {
         "schema": "idm.retained-spectral-competition.v1",
@@ -201,6 +219,13 @@ def run_competition(
         },
         "executor_audit": audit,
         "verdict": verdict,
+        "verdicts": {
+            "correctness": correctness_verdict,   # native AND scipy hit references within DECLARED tol
+            "fairness": fairness_verdict,          # executor audit cross-checked AND complete (no solver errors)
+            "speed": speed_verdict,                # median-based; TIE/HOLD if a competitor is ever faster
+            "note": "speed is median-based; 95% confidence intervals are future work (B3). "
+                    "verdict=ACCEPT requires correctness AND fairness AND speed all ACCEPT.",
+        },
         "tier": "finite_diagnostic",
     }
 

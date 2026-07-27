@@ -155,21 +155,27 @@ def executor_audit_case(
 
     solvers: dict[str, object] = {}
     all_ok = True
+    all_complete = True
     for name, kind, fn in competitors:
         try:
             seconds, values = _hot_median(fn, repeats=repeats)
             values = np.asarray(values)
             diff = float(np.max(np.abs(values - native_values)))
-        except Exception as error:  # a competitor that cannot run is disclosed
+        except Exception as error:  # a competitor that cannot run makes the comparison INCOMPLETE
             solvers[name] = {"kind": kind, "error": f"{type(error).__name__}: {error}"}
+            all_ok = False          # a missing solver means the cross-check is not established
+            all_complete = False
             continue
-        ok = diff <= cross_check_tol
+        # a wrong length (partial eigenvalues) is a cross-check failure, not silently truncated
+        length_ok = len(values) == len(native_values)
+        ok = length_ok and diff <= cross_check_tol
         all_ok = all_ok and ok
         solvers[name] = {
             "kind": kind,
             "hot_median_seconds": seconds,
             "to_native_time_ratio": seconds / native_seconds,
             "max_abs_difference": diff,
+            "returned_modes": int(values.size),
             "cross_check_ok": ok,
         }
 
@@ -183,6 +189,7 @@ def executor_audit_case(
         "native_working_bytes": int(native_readout.working_bytes),
         "solvers": solvers,
         "cross_check_ok": bool(all_ok),
+        "comparison_complete": bool(all_complete),   # False if any solver errored on this case
     }
 
 
