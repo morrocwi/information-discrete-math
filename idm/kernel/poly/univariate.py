@@ -261,5 +261,112 @@ def discriminant(a: UPoly):
     return D.neg(q) if (m * (m - 1) // 2) % 2 else q
 
 
+# ---------------------------------------------------------------- real-root isolation (Sturm) ----
+def sturm_chain(p: UPoly) -> List[UPoly]:
+    """The Sturm sequence of ``p`` over the ordered field ℚ: ``s0=p``, ``s1=p'``,
+    ``s_{k+1} = -(s_{k-1} rem s_k)``. Its sign-variation count decides the number of DISTINCT real roots
+    in an interval (Sturm's theorem) — the exact, readout-first way to locate real roots without ever
+    forming a continuum limit or a floating eigenproblem.
+    """
+    from .coeffring import QRing
+    D = p.domain
+    if not isinstance(D, QRing):
+        raise ValueError(f"Sturm sequences need the ordered field QRing; got {D!r}")
+    if p.is_zero():
+        raise ValueError("the Sturm sequence of the zero polynomial is undefined")
+    chain = [p, derivative(p)]
+    while not chain[-1].is_zero():
+        _, r = divmod_(chain[-2], chain[-1])
+        chain.append(UPoly([D.neg(c) for c in r.coeffs], D))
+    return chain[:-1]                        # drop the trailing zero remainder
+
+
+def _sturm_variations(chain: List[UPoly], x) -> int:
+    """Sign changes in the Sturm chain evaluated at the rational point ``x`` (zero terms skipped)."""
+    D = chain[0].domain
+    last = 0
+    changes = 0
+    for s in chain:
+        v = _eval_at(s, x)
+        if D.is_zero(v):
+            continue
+        sign = 1 if v > 0 else -1
+        if last and sign != last:
+            changes += 1
+        last = sign
+    return changes
+
+
+def count_real_roots(p: UPoly, low, high) -> int:
+    """The number of DISTINCT real roots of ``p`` in the half-open interval ``(low, high]`` (Sturm)."""
+    from fractions import Fraction as _Q
+    D = p.domain
+    lo, hi = D.normalize(_Q(low)), D.normalize(_Q(high))
+    if not lo < hi:
+        raise ValueError("require low < high")
+    chain = sturm_chain(p)
+    return _sturm_variations(chain, lo) - _sturm_variations(chain, hi)
+
+
+def _root_bound(p: UPoly):
+    """A Cauchy bound: a positive rational ``M`` with every real root of ``p`` strictly inside ``(-M, M)``."""
+    from fractions import Fraction as _Q
+    lc = abs(_Q(p.lead()))
+    m = max((abs(_Q(c)) for c in p.coeffs[:-1]), default=_Q(0))
+    return 1 + m / lc
+
+
+def isolate_real_roots(p: UPoly, *, max_depth: int = 400, width=None) -> List[Tuple]:
+    """Isolate every DISTINCT real root of ``p`` into a rational half-open interval ``(lo, hi]`` holding
+    exactly one, by Sturm-count bisection. Returns them sorted as ``(Fraction, Fraction)`` pairs — exact
+    rational arithmetic throughout, no float. Roots of multiplicity > 1 appear once (distinct roots).
+
+    If ``width`` (a positive rational) is given, each isolating interval is bisected further until it is
+    no wider than ``width`` — so the root is located to any requested rational precision, still exactly.
+    """
+    if p.is_zero():
+        raise ValueError("cannot isolate the roots of the zero polynomial")
+    chain = sturm_chain(p)
+    D = p.domain
+
+    def V(x):
+        return _sturm_variations(chain, D.normalize(x))
+
+    bound = _root_bound(p)
+    intervals: List[Tuple] = []
+    stack = [(-bound, bound, V(-bound) - V(bound), 0)]
+    while stack:
+        lo, hi, cnt, depth = stack.pop()
+        if cnt <= 0:
+            continue
+        if cnt == 1 or depth >= max_depth:     # isolated (or safety valve — distinct roots never hit it)
+            intervals.append((lo, hi))
+            continue
+        mid = (lo + hi) / 2
+        vmid = V(mid)
+        stack.append((lo, mid, V(lo) - vmid, depth + 1))
+        stack.append((mid, hi, vmid - V(hi), depth + 1))
+    intervals.sort()
+
+    if width is not None:
+        from fractions import Fraction as _Q
+        w = _Q(width)
+        if w <= 0:
+            raise ValueError("width must be positive")
+        refined = []
+        for lo, hi in intervals:
+            vhi = V(hi)                        # the interval holds exactly one root: V(lo) - V(hi) == 1
+            while hi - lo > w:
+                mid = (lo + hi) / 2
+                if V(lo) - V(mid) == 1:        # root is in (lo, mid]
+                    hi = mid
+                else:                          # root is in (mid, hi]
+                    lo = mid
+            refined.append((lo, hi))
+        intervals = refined
+    return intervals
+
+
 __all__ = ["UPoly", "add", "mul", "divmod_", "gcd", "factor",
-           "derivative", "cancel", "resultant", "discriminant"]
+           "derivative", "cancel", "resultant", "discriminant",
+           "sturm_chain", "count_real_roots", "isolate_real_roots"]

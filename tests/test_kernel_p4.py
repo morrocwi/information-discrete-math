@@ -202,5 +202,49 @@ def test_resultant_needs_field_and_positive_degree():
         P.resultant(P.UPoly([5], Qr), P.UPoly([1, 1], Qr))     # degree 0
 
 
+# ------------------------------------------------------------------ Sturm real-root isolation (P2)
+def _poly(cs):
+    return P.UPoly([Q(c) for c in cs], P.QRing())
+
+
+def test_count_real_roots_counts_distinct_roots_in_interval():
+    cubic = _poly([-6, 11, -6, 1])                     # (x-1)(x-2)(x-3)
+    assert P.count_real_roots(cubic, -10, 10) == 3
+    assert P.count_real_roots(cubic, 0, 2) == 2        # (0,2] holds roots 1 and 2
+    assert P.count_real_roots(cubic, Q(3, 2), 10) == 2 # (3/2,10] holds roots 2 and 3
+    assert P.count_real_roots(_poly([1, 0, 1]), -9, 9) == 0        # x^2+1: no real roots
+    # Sturm counts DISTINCT roots — a double root is counted once
+    assert P.count_real_roots(_poly([2, -3, 0, 1]), -10, 10) == 2  # (x-1)^2 (x+2): {1, -2}
+
+
+def test_isolate_real_roots_separates_each_root():
+    cubic = _poly([-6, 11, -6, 1])                     # roots 1, 2, 3
+    iso = P.isolate_real_roots(cubic)
+    assert len(iso) == 3
+    for lo, hi in iso:                                 # each interval holds exactly one root
+        assert P.count_real_roots(cubic, lo, hi) == 1
+    # the three known roots each fall in exactly one interval
+    for root in (1, 2, 3):
+        assert sum(lo < root <= hi for lo, hi in iso) == 1
+
+
+def test_isolate_real_roots_refines_to_width_exactly():
+    p = _poly([-2, 0, 1])                              # x^2 - 2 -> ±sqrt(2), irrational
+    iso = P.isolate_real_roots(p, width=Q(1, 10**6))
+    assert len(iso) == 2
+    for lo, hi in iso:
+        assert isinstance(lo, Q) and isinstance(hi, Q)  # exact rational endpoints, no float
+        assert hi - lo <= Q(1, 10**6)
+        assert P.count_real_roots(p, lo, hi) == 1
+    # the two intervals bracket -sqrt(2) and +sqrt(2): lo^2 and hi^2 straddle 2
+    lo_pos, hi_pos = next((lo, hi) for lo, hi in iso if lo > 0)
+    assert lo_pos * lo_pos < 2 < hi_pos * hi_pos
+
+
+def test_sturm_needs_ordered_field():
+    with pytest.raises(ValueError):
+        P.sturm_chain(P.UPoly([1, 1], P.GFRing(5)))   # GF(p) is not ordered
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
