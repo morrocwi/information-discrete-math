@@ -6,7 +6,7 @@
 
 **The continuum, computed as a readout of the discrete.** _by Yaoharee Lahtee_
 
-[![solver](https://img.shields.io/badge/solver-258%20kinds%20·%20call%20it-brightgreen)](API.md)
+[![solver](https://img.shields.io/badge/unified%20solver-258%20registered%20kinds-brightgreen)](API.md)
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
 [![Coq](https://img.shields.io/badge/Coq-8.20%20·%20120%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
@@ -64,11 +64,18 @@ python3 -m retained_spectral.competition.chart    # redraw the charts above from
 ---
 
 > [!TIP]
-> **It's a ready-to-use math solver, not just a manifesto.** The `idm` package computes across **258
-> problem kinds** — integrals, ODE/PDE, limits & series, special functions, transforms, optimization,
-> an exact symbolic CAS, number theory, linear algebra, graphs/DP, exact‑ℚ LP & SAT, **rigorous
-> interval certification**, statistics, exact‑ℚ geometry, and cryptographic number theory — each a
-> tier‑honest finite readout that returns `CERTIFIED` / `ok` / `HOLD` (it refuses rather than guess).
+> **A unified, general-purpose mathematical solver — not just a manifesto, and not a calculator with a
+> long menu.** One `idm.solve(problem)` call reads `problem["kind"]` and dispatches through a registry
+> supporting **258 registered problem kinds** — integrals, ODE/PDE, limits & series, special functions,
+> transforms, optimization, an exact symbolic CAS, number theory, linear algebra, graphs/DP, exact‑ℚ LP
+> & SAT, **rigorous interval certification**, statistics, exact‑ℚ geometry, cryptographic number theory,
+> and a Hilbert‑space core — each a tier‑honest finite readout that returns `CERTIFIED` / `ok` / `HOLD`
+> (it refuses rather than guess).
+>
+> _The 258 are **registered problem kinds** under one `solve()`, not 258 separate programs — related
+> kinds share a computational core (e.g. one double‑exponential quadrature family serves many integrals),
+> and each returns a `CERTIFIED` / `ok` / `HOLD` verdict carrying its evidence tier._
+>
 > Call it three ways:
 >
 > ```bash
@@ -298,13 +305,17 @@ curl -s -X POST localhost:8737/solve -d '{"kind":"constant","name":"pi"}'
 curl -s -X POST localhost:8737/solve -d '{"text":"is 97 prime?"}'   # natural language
 ```
 
-The `idm` package solves **258 problem kinds** — the entire continuum frontier (integration, ODE/PDE,
-limits/series, special functions, transforms, continuous optimization) plus an exact symbolic CAS, a deep
-exact/discrete backbone (number theory, normal forms, DP, graphs, exact‑ℚ LP, SAT), a **rigorous
-certification layer** (interval‑arithmetic enclosures, IVT‑proven roots, Gershgorin discs), and
-**statistics · exact‑ℚ computational geometry · cryptographic number theory** — each a certified finite
-readout, tier‑tagged, with an `ACCEPT`/`HOLD` verdict where a bound is proven. A natural‑language front‑end
-translates world‑language requests into structured kinds, and an OpenAPI 3 / Swagger UI serves it all.
+A unified `solve(problem)` interface supports **258 registered problem kinds** — the entire continuum
+frontier (integration, ODE/PDE, limits/series, special functions, transforms, continuous optimization)
+plus an exact symbolic CAS, a deep exact/discrete backbone (number theory, normal forms, DP, graphs,
+exact‑ℚ LP, SAT), a **rigorous certification layer** (interval‑arithmetic enclosures, IVT‑proven roots,
+Gershgorin discs), **statistics · exact‑ℚ computational geometry · cryptographic number theory**, and a
+**Hilbert‑space core** — each a certified finite readout, tier‑tagged, with an `ACCEPT`/`HOLD` verdict
+where a bound is proven. One entry point routes by `kind` through a registry (so related kinds reuse a
+shared core rather than 258 disjoint implementations); a natural‑language front‑end translates
+world‑language requests into structured kinds, and an OpenAPI 3 / Swagger UI serves it all. It is a
+**broad general-purpose mathematical solver API**: 258 registered kinds under one verdict-bearing
+interface, each result tier‑tagged.
 Full reference: [`API.md`](API.md) · roadmap: [`SOLVER_ROADMAP.md`](SOLVER_ROADMAP.md).
 
 ## Install as a Claude Code skill
