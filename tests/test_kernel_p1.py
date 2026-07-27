@@ -103,6 +103,18 @@ def test_from_python_rejects_float():
     assert K.from_python(Q(1, 2)) == K.ExactRational(Q(1, 2))
 
 
+def test_const_rejects_non_readout_values():
+    # A Const must never launder a finite-precision ball or a Certificate into an "exact" leaf.
+    with pytest.raises(TypeError):
+        K.Const(0.1)
+    with pytest.raises(TypeError):
+        K.Const(K.RealBall("lo", "hi", 30))
+    with pytest.raises(TypeError):
+        K.Const(K.Certificate(None, "ok", K.Tier.EXACT))
+    # exact rungs are accepted
+    assert K.Const(K.ExactRational(Q(1, 3))).value == K.ExactRational(Q(1, 3))
+
+
 # ------------------------------------------------------------------ legacy bridge (item 5)
 _FIXTURES = ["x", "x + 1", "x*y + 3", "sin(x)", "x**2 + 2*x + 1", "1/3", "exp(x) + log(x)"]
 

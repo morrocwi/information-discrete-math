@@ -17,7 +17,7 @@ from fractions import Fraction as Q
 from typing import Optional, Tuple
 
 from .hashcons import canonical_order_key, struct_hash
-from .numbers import Number, from_python
+from .numbers import Number, from_python, _EXACT_RUNGS
 
 
 class Expr:
@@ -47,9 +47,19 @@ class Const(Expr):
     __slots__ = ("value", "_hash", "_order")
 
     def __init__(self, value):
-        if not isinstance(value, (int, Q)) and not hasattr(value, "__dataclass_fields__"):
-            raise TypeError("Const value must be a kernel Number (or int/Fraction)")
-        self.value: Number = from_python(value) if isinstance(value, (int, Q)) else value
+        # A Const holds ONLY an exact readout rung (or a plain int/Fraction, coerced to one).
+        # A finite-precision ball or a Certificate is NOT an exact readout and is rejected here,
+        # so a non-readout value can never be laundered into a leaf labeled exact (readout-first).
+        if isinstance(value, (int, Q)):
+            self.value: Number = from_python(value)
+        elif isinstance(value, _EXACT_RUNGS):
+            self.value = value
+        else:
+            raise TypeError(
+                "Const value must be an exact Number rung "
+                "(ExactInteger/ExactRational/AlgebraicNumber/ComplexExact) or int/Fraction; "
+                f"got {type(value).__name__}"
+            )
         self._hash = struct_hash("Const", (), self.value)
         self._order = canonical_order_key(self)
 
