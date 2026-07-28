@@ -281,6 +281,7 @@ Implemented with proven-on-paper bounds in `tools/certified_readout.py`:
 | `simpson_certified` | `f ∈ C⁴`, bound `M₄ ≥ max|f⁗|` given | `(b−a)⁵ M₄ / (180 N⁴)` | no `M₄` supplied |
 | `integral_stable_certified` | refinement gaps contract (ρ<1) | `g_last/(1−ρ)` (see §7, Coq-backed) | gaps don't contract (pole / non-integrable / oscillatory) |
 | `richardson_certified` | sequence has a `1/n` asymptotic expansion | a-posteriori: the contracted diagonal gap | diagonal fails to contract (e.g. `1/log n`, oscillatory, divergent) |
+| `richardson_apriori_certified` | method **order** `p` known | a-priori: `g/(1−2⁻ᵖ)` from one gap (§8, Coq-backed) | `order < 1` (no contraction guaranteed) |
 
 `simpson_certified`/`richardson_certified` are `finite_diagnostic`/`Dr`; `integral_stable_certified` is
 backed by the Coq theorem in §7. **A note on the integral, on principle:** the classic Simpson bound is
@@ -352,10 +353,28 @@ So when the refinement gaps contract, the readout has a certified stable plateau
 never claim a distance to `∫f`; we certify that *our own* finite readout has stopped moving. Both
 theorems `Closed under the global context`.
 
+### 8. Richardson **a-priori** stability certificate — machine-checked, axiom-free (`Th_coqc`)
+
+`refine_stable` (§7) is *a-posteriori*: it assumes the contraction hypothesis `|s_{k+1}| ≤ ρ·|s_k|`,
+which `richardson_certified` / `integral_stable_certified` establish by watching the actual gaps. The
+*a-priori* certificate (`formal/IDM_Apriori.v`) discharges that hypothesis from the **form** of the
+sequence instead, once, by structure: if the gaps are a multiplier form `s_{k+1} = m_k·s_k` with every
+`|m_k| ≤ ρ` (`apriori_multiplicative_contracts`), or the geometric leading-term form `s_k = a·qᵏ` with
+`|q| ≤ ρ` (`apriori_geometric_contracts`), the contraction holds for **all** `k` and feeds
+`refine_stable` directly (`apriori_stable`). The Richardson specialisation reads the ratio off the
+method **order**: an order-`p` method under step halving has column-gap ratio `ρ = 2⁻ᵖ`, a constant
+known before any refinement is run — so order `p ⇒ ρ = 2⁻ᵖ ≤ 1 ⇒ certified-stable`, up front
+(`richardson_ratio`, `richardson_apriori_contracts`, `richardson_apriori_stable`; all `Closed under the
+global context`). Shipped in `tools/certified_readout.py` as `richardson_apriori_ratio` /
+`richardson_apriori_bound` / `richardson_apriori_certified`, with `tests/test_richardson_apriori.py`
+confirming the a-priori `ρ` genuinely **envelopes** a real order-2 (trapezoid) method — the observed
+asymptotic gap ratio never exceeds `2⁻ᵖ`, and the single-gap a-priori bound contains the true remaining
+disagreement. *Honest fence:* a real Richardson tableau's gaps are geometric-**dominated** by this
+envelope (higher-order terms only contract faster); the mapping "method order `p ⇒ ρ = 2⁻ᵖ`" is the
+standard Richardson fact — the machine-checked content is the ℚ-algebra `form ⇒ contraction ⇒ bound`.
+
 ## What is still open (`+ℝ-Open` / next work)
 
-- A general Richardson **a-priori** certificate (deciding contraction from the sequence's form up front,
-  not only the a-posteriori contraction test already implemented).
 - Extend the finite-stability certificate to more refinement families (multi-dimensional quadrature,
   adaptive grids) — same ℚ-only `refine_stable` mechanism, more instances.
 

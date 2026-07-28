@@ -131,6 +131,49 @@ def richardson_certified(seq, eps, M=2, K=12):
                    f"Richardson depth {K}, diagonal contracted to gap≤ε (a-posteriori certificate)")
 
 # ---------------------------------------------------------------------------------------------------
+# 4b) RICHARDSON A-PRIORI certificate — decide the contraction from the method ORDER, up front.
+#     richardson_certified above is a-posteriori: it watches the actual diagonal gaps and checks they
+#     contract.  The a-priori certificate instead reads the contraction ratio off the method order p:
+#     an order-p method under step halving has column-gap ratio ρ = 2^(−p), a CONSTANT known before any
+#     refinement is computed.  Then refine_stable (formal/IDM_Certified.v) bounds all further
+#     refinement disagreement by g/(1−ρ) from a SINGLE observed gap g — no gap-by-gap monitoring.
+#     Machine-checked in formal/IDM_Apriori.v (richardson_ratio / richardson_apriori_stable).
+# ---------------------------------------------------------------------------------------------------
+def richardson_apriori_ratio(order):
+    """The a-priori contraction ratio of an order-`order` method under step halving: ρ = 2^(−order),
+    an exact rational known from the ORDER alone, before any refinement is run.  Mirrors
+    formal/IDM_Apriori.v: richardson_ratio.  Raises on order < 1 (no contraction guaranteed)."""
+    if order < 1:
+        raise ValueError("method order must be ≥ 1 for an a-priori contraction guarantee")
+    return Q(1, 2 ** order)
+
+
+def richardson_apriori_bound(gap, order):
+    """From ONE refinement gap `g = |s_N|` and the method order, the a-priori stability bound on all
+    further refinement disagreement: g / (1 − ρ), ρ = 2^(−order).  This is the refine_stable bound
+    (formal/IDM_Apriori.v: richardson_apriori_stable) decided up front — not observed.  Exact when
+    `gap` is rational."""
+    rho = richardson_apriori_ratio(order)
+    return gap / (1 - rho)
+
+
+def richardson_apriori_certified(gap, order, eps):
+    """A-PRIORI certified readout: given a single observed refinement gap and the method order p, the
+    tail disagreement is provably ≤ g/(1−2^(−p)) (no further gaps observed).  CERTIFIED when that
+    bound ≤ ε, else HOLD (refine once more).  The dual of richardson_certified: the contraction is
+    justified by structure (order p), not by watching the data."""
+    if order < 1:
+        return Readout(None, None, HOLD, "method order < 1 — no a-priori contraction guarantee")
+    if gap < 0:
+        return Readout(None, None, HOLD, "gap magnitude must be ≥ 0")
+    rho = richardson_apriori_ratio(order)
+    bound = gap / (1 - rho)
+    if bound <= eps:
+        return Readout(None, bound, CERTIFIED,
+                       f"a-priori: order {order} ⇒ ρ=2^(−{order}); tail ≤ gap/(1−ρ) ≤ ε (no gap monitoring)")
+    return Readout(None, bound, HOLD, f"a-priori bound {bound} > ε — refine once more (ρ=2^(−{order}) fixed)")
+
+# ---------------------------------------------------------------------------------------------------
 # 5) INTEGRAL by FINITE STABILITY — the readout-first way: NO true continuum integral is referenced.
 #    We refine the panel count (N, 2N, 4N, …), watch the successive readouts' gaps, and CERTIFY only if
 #    the gaps CONTRACT (ratio ρ<1). Then refine_stable (formal/IDM_Certified.v) bounds every further
@@ -184,6 +227,12 @@ if __name__ == "__main__":
     checks.append(("integral x² stabilizes → CERTIFIED", (not _HAVE_MP) or (it.certified and abs(it.q - mp.mpf(1) / 3) < mp.mpf(10) ** -4)))
     ih = integral_stable_certified((lambda t: 1 / (t - mp.mpf("0.5"))), 0, 1, mp.mpf(10) ** -6) if _HAVE_MP else Readout(None, None, HOLD, "")
     checks.append(("integral with a pole → HOLD", ih.status == HOLD))
+    checks.append(("richardson a-priori ρ(order 2)=1/4", richardson_apriori_ratio(2) == Q(1, 4)))
+    checks.append(("richardson a-priori bound = g/(1−ρ)", richardson_apriori_bound(Q(1, 100), 2) == Q(1, 100) / (1 - Q(1, 4))))
+    ra = richardson_apriori_certified(Q(1, 10 ** 8), 2, Q(1, 10 ** 6))
+    checks.append(("richardson a-priori tiny gap → CERTIFIED", ra.status == CERTIFIED))
+    rah = richardson_apriori_certified(Q(1, 2), 2, Q(1, 10 ** 6))
+    checks.append(("richardson a-priori large gap → HOLD", rah.status == HOLD))
     for name, ok in checks:
         print(f"  {'ok ' if ok else 'FAIL'} {name}")
     ok = all(o for _, o in checks)
