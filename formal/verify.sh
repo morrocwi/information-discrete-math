@@ -140,6 +140,8 @@ declare -a THMS=(
   "deferred_record_bits:IDM_DeclarationBound"
   "declared_forgets_tail:IDM_DeclarationBound"
   "declaration_separation:IDM_DeclarationBound"
+  "qary_symbol_injective:IDM_DeclarationBound"
+  "qcube_length:IDM_DeclarationBound"
 )
 
 fail=0

@@ -1,27 +1,34 @@
 #!/usr/bin/env python3
-"""Verify the Declaration Bound's irreducible fooling family — the numerical half.
+"""Verify the Declaration Bound's irreducible q-ary fooling family — the numerical half.
 
-The Declaration Bound (Sturm readout on symmetric tridiagonal operators): a threshold query
-answered with Theta(1) retained state when *declared in advance*, but Theta(n) retained state when
-*deferred* until after the record has streamed past. The finite, combinatorial core of that
-separation is machine-checked axiom-free in `formal/IDM_DeclarationBound.v` (Coq 8.20). This script
-verifies the one ingredient that lives in eigenvalue arithmetic rather than pure combinatorics, and
-so is checked numerically here instead of in Coq:
+The Declaration Bound is a **bit-accurate** retained-state separation for a deferred spectral query
+on symmetric tridiagonal operators. Retained state is measured in bits / machine words, never in an
+undefined "number of scalars" (a running counter already costs Theta(log n) bits):
 
-    the irreducible fooling family's Sturm count at threshold sigma_i is exactly  i + b_i,
+    declared query  (the threshold is known BEFORE the diagonal streams past) : Theta(1) retained bits
+    deferred query  (the threshold is asked only AFTER the record has passed)  : Theta(n log q) bits
 
-i.e. the count of eigenvalues below sigma_i reads off bit b_i of the input string. Together with the
-Coq file's `profile_injective` (distinct strings -> distinct profiles) and `deferred_record_bits`
-(2^n distinct records force some record of length >= n), this closes the argument.
+For an alphabet of size q and q = n this is a sharp Theta(1) vs Theta(n) separation in machine words.
+The finite, combinatorial core (distinct strings force a long record) is machine-checked axiom-free in
+`formal/IDM_DeclarationBound.v` (Coq 8.20). This script verifies the one ingredient that lives in
+eigenvalue arithmetic rather than pure combinatorics — the **q-ary extraction identity**:
 
-Family (all off-diagonals nonzero -> irreducible): for an n-bit string b,
-    diagonal_i     = 2*i + (1 - b_i),      off-diagonal = delta = 1/8  (rational, nonzero),
-    threshold_i    = 2*i + 1/2,
-Gershgorin separation guarantees |lambda - sigma_i| >= 1/2 - 2*delta = 1/4, so the sign-count is
+    #{eigenvalues below sigma(i, r)}  =  i + [a_i <= r]      (Sturm/inertia sign-count),
+
+so the q-1 threshold queries at position i read off the symbol a_i of the input string a in {0..q-1}^n.
+
+Family (all off-diagonals nonzero -> irreducible): for an n-symbol q-ary string a, with M = q + 2,
+    diagonal_i   = M*i + a_i,      off-diagonal = delta = 1/16  (rational, nonzero),
+    threshold    = sigma(i, r) = M*i + r + 0.5   for r in {0, ..., q-2}.
+Gershgorin separation guarantees |lambda - sigma| >= 1/2 - 2*delta = 7/16, so the sign-count is
 unambiguous.
 
-Tier: finite_diagnostic — a discrete rational-arithmetic verification on finite operators. It
-confirms the model the Coq file assumes; it is not itself a continuum claim.
+The classical constant-*register* Sturm property (two running scalars suffice for a *declared* query)
+is real and is stated as such — it is NOT identified with constant *bits*; that conflation is exactly
+the correction this revised q-ary family makes precise.
+
+Tier: finite_diagnostic — a discrete rational-arithmetic verification on finite operators. It confirms
+the model the Coq file assumes; it is not itself a continuum claim.
 
 Run:  PYTHONPATH=. python3 demos/verify_declaration_bound.py
 """
@@ -29,98 +36,101 @@ Run:  PYTHONPATH=. python3 demos/verify_declaration_bound.py
 from __future__ import annotations
 
 import itertools
+import math
+import random
 
 import numpy as np
 from numpy.linalg import eigvalsh
 
-DELTA = 0.125  # rational, nonzero: the family is irreducible (every off-diagonal entry present)
+DELTA = 1.0 / 16.0  # rational, nonzero: the family is irreducible (every off-diagonal entry present)
 
 
-def operator(bits, delta: float = DELTA):
-    """The symmetric-tridiagonal fooling operator for a bit string ``bits``."""
-    n = len(bits)
-    diagonal = np.array([2 * i + (1 - bits[i]) for i in range(n)], dtype=float)
-    off = np.full(n - 1, delta)
-    return diagonal, off
+def build_operator(a, q: int, delta: float = DELTA):
+    """The symmetric-tridiagonal fooling operator for a q-ary string ``a`` (entries in ``0..q-1``)."""
+    n = len(a)
+    spacing = q + 2
+    diagonal = np.array([spacing * i + a[i] for i in range(n)], dtype=float)
+    matrix = np.diag(diagonal)
+    if n > 1:
+        off = np.full(n - 1, delta)
+        matrix += np.diag(off, 1) + np.diag(off, -1)
+    return matrix
 
 
-def sturm_count(diagonal, off, sigma: float) -> int:
-    """#eigenvalues strictly below ``sigma``, from the signs of the LDL^T pivots — the same
-    top-down Sturm recurrence the retained solver forms and (in the deferred regime) discards."""
-    n = len(diagonal)
-    count = 0
-    s = diagonal[0] - sigma
-    if s < 0:
-        count += 1
-    for i in range(n - 1):
-        if s == 0.0:
-            s = 1e-300
-        s = (diagonal[i + 1] - sigma) - off[i] * off[i] / s
-        if s < 0:
-            count += 1
-    return count
+def sigma(i: int, r: int, q: int) -> float:
+    return (q + 2) * i + r + 0.5
 
 
-def dense_eigenvalues(diagonal, off):
-    n = len(diagonal)
-    matrix = np.diag(diagonal) + np.diag(off, 1) + np.diag(off, -1)
-    return eigvalsh(matrix)
+def predicted_count(a, i: int, r: int) -> int:
+    """The extraction identity: #eigenvalues below sigma(i,r) is exactly ``i + [a_i <= r]``."""
+    return i + int(a[i] <= r)
 
 
-def check_bit_extraction(n: int = 12, trials: int = 300) -> dict:
-    """Every bit is recovered by the Sturm count: nu(sigma_i) - i == b_i, over random strings."""
-    ok = True
-    worst_margin = float("inf")
-    guaranteed = 0.5 - 2 * DELTA
-    for t in range(trials):
-        bits = np.random.default_rng(t).integers(0, 2, n)
-        diagonal, off = operator(bits)
-        lam = dense_eigenvalues(diagonal, off)
-        for i in range(n):
-            sigma = 2 * i + 0.5
-            if sturm_count(diagonal, off, sigma) - i != bits[i]:
-                ok = False
-                break
-            worst_margin = min(worst_margin, float(np.min(np.abs(lam - sigma))))
-        if not ok:
-            break
-    return {"ok": ok, "trials": trials, "n": n,
-            "worst_margin": worst_margin, "guaranteed_margin": guaranteed}
+def check_extraction(vectors, q: int):
+    """Confirm the extraction identity against a dense symmetric eigensolve, over ``vectors``."""
+    cases = queries = 0
+    min_margin = math.inf
+    for a in vectors:
+        a = list(a)
+        eig = eigvalsh(build_operator(a, q))
+        for i in range(len(a)):
+            for r in range(q - 1):
+                s = sigma(i, r, q)
+                observed = int(np.count_nonzero(eig < s))
+                if observed != predicted_count(a, i, r):
+                    raise AssertionError(f"extraction failed: a={tuple(a)}, i={i}, r={r}, "
+                                         f"observed={observed}, expected={predicted_count(a, i, r)}")
+                min_margin = min(min_margin, float(np.min(np.abs(eig - s))))
+                queries += 1
+        cases += 1
+    return {"cases": cases, "queries": queries, "min_margin": min_margin}
 
 
-def check_distinct_profiles(m: int = 8) -> dict:
-    """All 2^m strings give distinct query-response profiles (zero collisions) — the fooling
-    family is irreducible, so >= 2^m terminal states are required => S >= m bits = Omega(n)."""
-    seen = set()
-    for bits in itertools.product([0, 1], repeat=m):
-        diagonal, off = operator(list(bits))
-        profile = tuple(sturm_count(diagonal, off, 2 * i + 0.5) for i in range(m))
-        seen.add(profile)
-    return {"m": m, "strings": 2 ** m, "distinct": len(seen), "collisions": 2 ** m - len(seen)}
+def response_profile(a, q: int):
+    eig = eigvalsh(build_operator(list(a), q))
+    return tuple(int(np.count_nonzero(eig < sigma(i, r, q)))
+                 for i in range(len(a)) for r in range(q - 1))
+
+
+def check_distinct_profiles(n: int, q: int):
+    """All q^n strings give distinct query-response profiles (zero collisions) — the family is
+    irreducible, so >= q^n terminal states are required => S >= n*log2(q) bits = Omega(n log q)."""
+    seen = {}
+    for a in itertools.product(range(q), repeat=n):
+        p = response_profile(a, q)
+        if p in seen:
+            raise AssertionError(f"profile collision: {seen[p]} and {a}")
+        seen[p] = a
+    return {"strings": q ** n, "distinct": len(seen), "collisions": 0}
 
 
 def main() -> int:
-    print("Declaration Bound — irreducible fooling family verification (finite_diagnostic)")
-    print(f"  delta = {DELTA} (rational, nonzero; all off-diagonals present)\n")
+    print("Declaration Bound — q-ary irreducible fooling family (finite_diagnostic, bit-accurate)")
+    print(f"  delta = {DELTA} (rational, nonzero); margin >= 1/2 - 2*delta = {0.5 - 2 * DELTA}\n")
 
-    r1 = check_bit_extraction()
-    status1 = "PASS" if r1["ok"] else "FAIL"
-    print(f"check 1: nu(sigma_i) - i == b_i for every bit")
-    print(f"  {status1}: {r1['trials']} random strings, n={r1['n']}, every bit recovered")
-    print(f"  smallest |lambda - sigma| margin observed: {r1['worst_margin']:.4f}"
-          f"   (theory guarantees >= 1/2 - 2*delta = {r1['guaranteed_margin']})\n")
+    ex = check_extraction(itertools.product(range(4), repeat=5), q=4)
+    print("check 1 — extraction  #below sigma(i,r) = i + [a_i <= r]  (exhaustive n=5, q=4)")
+    print(f"  PASS: {ex['cases']} strings, {ex['queries']} queries, every symbol recovered\n")
 
-    r2 = check_distinct_profiles()
-    status2 = "PASS" if r2["collisions"] == 0 else "FAIL"
-    print(f"check 2: all 2^{r2['m']} strings give distinct query-response profiles")
-    print(f"  {status2}: {r2['strings']} strings -> {r2['distinct']} distinct profiles, "
-          f"{r2['collisions']} collisions")
-    print(f"  => at least 2^{r2['m']} terminal states required => S >= {r2['m']} bits = Omega(n)\n")
+    pr = check_distinct_profiles(n=4, q=4)
+    print("check 2 — distinct profiles (exhaustive n=4, q=4)")
+    print(f"  PASS: {pr['strings']} strings -> {pr['distinct']} distinct profiles, {pr['collisions']} collisions")
+    print("  => >= q^n terminal states => deferred S >= n*log2(q) = Omega(n log q) bits\n")
 
-    print("The combinatorial consequences (profile injectivity; 2^n distinct records force a")
-    print("record of length >= n; declared regime forgets the tail) are machine-checked axiom-free")
-    print("in formal/IDM_DeclarationBound.v.")
-    return 0 if (r1["ok"] and r2["collisions"] == 0) else 1
+    rng = random.Random(20260728)
+    n = qv = 32
+    vectors = [[rng.randrange(qv) for _ in range(n)] for _ in range(200)]
+    rn = check_extraction(vectors, q=qv)
+    print(f"check 3 — extraction on random large cases (n={n}, q={qv})")
+    print(f"  PASS: {rn['cases']} cases, {rn['queries']} queries; min |lambda - sigma| "
+          f"= {min(ex['min_margin'], rn['min_margin']):.4f} (>= 7/16 guaranteed)\n")
+
+    print("Resource model (bit-accurate): declared query = Theta(1) retained bits; deferred query =")
+    print("Theta(n log q) bits; q = n => Theta(1) vs Theta(n) machine words. The classical constant-")
+    print("REGISTER Sturm property (declared query) is separate and is NOT a constant-BIT claim.")
+    print("The combinatorial core (distinct strings force a length->=n record) is machine-checked")
+    print("axiom-free in formal/IDM_DeclarationBound.v.")
+    return 0
 
 
 if __name__ == "__main__":
