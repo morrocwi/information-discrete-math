@@ -30,7 +30,18 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["idm", "idm.kernel", "idm.kernel.poly", "retained_spectral", "retained_spectral.competition"]
+packages = [
+    "idm", "idm.kernel", "idm.kernel.poly",
+    "retained_spectral", "retained_spectral.competition",
+    # audited helper modules idm re-exports, shipped INSIDE the wheel so `import idm` works from an
+    # installed package (not only a source checkout). Reached by bare name via idm/_bridge.py.
+    "idm._vendor_tools", "idm._vendor_provefull",
+]
+
+[tool.setuptools.package-dir]
+# map the vendored subpackages to their source directories without moving the source tree
+"idm._vendor_tools" = "tools"
+"idm._vendor_provefull" = "provefull"
 
 [tool.setuptools.package-data]
 retained_spectral = ["results/*.json"]
