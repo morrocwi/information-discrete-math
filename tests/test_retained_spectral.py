@@ -148,6 +148,56 @@ def test_credibility_audit_exposes_adversarial_suite():
     assert "audit_factorized_double_well" in names
 
 
+def test_negative_controls_winner_instrument_is_falsifiable():
+    """The B6 falsifiability control: the SAME bootstrap-CI verdict function that certifies native's
+    wins must report a COMPETITOR win when the data shows one — proving the winner is read from data,
+    not hardcoded to native. Checked in all three directions on small, fast stress sizes."""
+    from retained_spectral.competition import credibility_audit as ca
+
+    # small stress sizes keep the test fast; the winner-selection instrument (part 1) is the real check
+    result = ca.run_negative_controls(repeats=5, stress_specs=(("floor", 16, 1), ("small", 128, 127)))
+    instrument = result["winner_selection_instrument"]
+    assert instrument["competitor_faster_case"] == "competitor_faster"   # not rigged to native
+    assert instrument["native_faster_case"] == "native_faster"
+    assert instrument["tie_case"] == "tie"
+    assert result["winner_logic_honest"] is True
+    # part 2: the stress cases ran, agreed with scipy, and each carries a MEASURED (not asserted) verdict
+    assert result["all_cross_checks"] is True
+    for case in result["stress_cases"].values():
+        assert case["cross_check_ok"] is True
+        assert case["measured_verdict"] in ("native_faster", "competitor_faster", "tie")
+
+
+def test_negative_controls_are_a_credibility_gate():
+    """The winner-logic honesty + stress cross-checks must be wired into credibility_gates, so a rig
+    that always reported native as winner would flip the audit to HOLD, not pass silently."""
+    from retained_spectral.competition import credibility_audit as ca
+
+    # the gate keys must exist in the function body (cheap structural check without the slow full run)
+    import inspect
+    body = inspect.getsource(ca.run_credibility_audit)
+    assert "negative_controls_winner_logic_honest" in body
+    assert "negative_controls_cross_checks_all" in body
+    assert "run_negative_controls(" in body
+
+
+def test_rigged_winner_instrument_is_caught(monkeypatch):
+    """Behavioral proof (not just string-match): if the winner-selection instrument were rigged to
+    always report native as winner, the negative-control gate input must flip to False — which, being
+    ANDed into credibility_gates, would turn the whole audit's verdict to HOLD."""
+    from retained_spectral.competition import credibility_audit as ca
+
+    monkeypatch.setattr(
+        ca, "speedup_ci",
+        lambda native, other, **kw: {"verdict": "native_faster", "ratio_median": 2.0,
+                                     "ci95_low": 2.0, "ci95_high": 2.0, "resamples": 0, "seed": 0},
+    )
+    rigged = ca.run_negative_controls(repeats=3, stress_specs=(("small", 128, 127),))
+    # the competitor-faster synthetic case is now mislabelled native_faster -> honesty gate fails
+    assert rigged["winner_logic_honest"] is False
+    assert rigged["winner_selection_instrument"]["competitor_faster_case"] == "native_faster"
+
+
 def test_run_competition_reports_gates_and_provenance(monkeypatch):
     """run_competition records the strict gates (both pipelines must ACCEPT), the source commit,
     the frozen thread environment, and the seeded ordering — the provenance the audit gates on."""
