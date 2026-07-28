@@ -1,0 +1,15 @@
+# P2 · computational geometry (EXACT rational predicates)
+from idm._solve_core import *  # noqa: F401,F403
+
+@kind("orient", "Th_coqc")
+def _ori(p): return _ok("orient", GEO.orient(p["a"], p["b"], p["c"]), "exact sign of the orientation determinant")
+@kind("convex_hull", "Th_coqc")
+def _hull(p): return _ok("convex_hull", GEO.convex_hull(p["points"]), "exact monotone-chain hull (rational orientation)")
+@kind("point_in_polygon", "Th_coqc")
+def _pip(p): return _ok("point_in_polygon", GEO.point_in_polygon(p["point"], p["polygon"]), "exact ray-crossing with boundary test")
+@kind("segments_intersect", "Th_coqc")
+def _segx(p): return _ok("segments_intersect", GEO.segments_intersect(p["p1"], p["p2"], p["p3"], p["p4"]), "exact orientation-sign intersection test")
+@kind("closest_pair", "Th_coqc")
+def _cpair(p): return _ok("closest_pair", GEO.closest_pair(p["points"]), "exact squared-distance closest pair")
+@kind("in_circle", "Th_coqc")
+def _incir(p): return _ok("in_circle", GEO.in_circle(p["a"], p["b"], p["c"], p["d"]), "exact in-circle (Delaunay) determinant sign")

@@ -1,0 +1,15 @@
+# P1 — graph (advanced)
+from idm._solve_core import *  # noqa: F401,F403
+
+@kind("dijkstra", "Th_coqc")
+def _dij(p): return _ok("dijkstra", CO.dijkstra(int(p["n"]), p["edges"], int(p["source"])), "Dijkstra (nonneg weights)")
+@kind("bellman_ford", "Th_coqc")
+def _bf(p): return _ok("bellman_ford", CO.bellman_ford(int(p["n"]), p["edges"], int(p["source"])), "Bellman–Ford (neg-cycle aware)")
+@kind("bipartite_matching", "Th_coqc")
+def _bm(p): return _ok("bipartite_matching", CO.bipartite_matching(int(p["nL"]), int(p["nR"]), p["edges"]), "augmenting-path matching")
+@kind("assignment", "Th_coqc")
+def _asg(p): return _ok("assignment", CO.hungarian(p["cost"]), "Hungarian algorithm (exact ℚ)")
+@kind("spanning_tree_count", "Th_coqc")
+def _stc(p): return _ok("spanning_tree_count", CO.spanning_tree_count(int(p["n"]), p["edges"]), "Kirchhoff (Laplacian cofactor det)")
+@kind("chromatic_number", "Th_coqc")
+def _chr(p): return _ok("chromatic_number", CO.chromatic_number(int(p["n"]), p["edges"]), "backtracking colouring")
