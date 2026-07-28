@@ -30,10 +30,13 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             python3-numpy python3-scipy python3-venv python3-pip \
-            python3-petsc4py-real3.19 python3-slepc4py-real3.19
+            python3-petsc4py-real python3-slepc4py-real
           /usr/bin/python3 -m venv --system-site-packages .venv
           .venv/bin/python -m pip install --upgrade pip
           .venv/bin/python -m pip install "numba==0.60.0"
+          echo "PETSC_DIR=${PETSC_DIR:-unset}"
+          echo "SLEPC_DIR=${SLEPC_DIR:-unset}"
+          find /usr/lib -path '*slepc4py*' -o -path '*petsc4py*' | head -40
       - name: Disclose versions
         run: |
           .venv/bin/python - <<'PY'
