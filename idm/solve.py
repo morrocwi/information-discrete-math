@@ -460,7 +460,10 @@ def _expr_fn(s, *names):
 @kind("ode_system")
 def _osys(p):
     vs = p["vars"]
-    fs = [(lambda s: (lambda x, *y: F.evaluate(s, x=x, **dict(zip(vs, y)))))(s) for s in p["f"]]
+    # bind each state variable from vs; bind the independent variable as `t` unless a state is named
+    # `t` (avoids the collision when a state variable is itself named `x`, the old independent name).
+    fs = [(lambda s: (lambda t, *y: F.evaluate(
+        s, **{**dict(zip(vs, y)), **({"t": t} if "t" not in vs else {})})))(s) for s in p["f"]]
     y = DEQ.ode_system(fs, _val(p["x0"]), [_val(v) for v in p["y0"]], _val(p["xT"]), int(p.get("N", 2000)))
     return _ok("ode_system", y, "vector RK4 (= I_ε of the field)")
 
@@ -492,7 +495,7 @@ def _wave(p):
     return _ok("pde_wave", u, "explicit leapfrog (CFL-stable)")
 
 @kind("pde_poisson")
-def _pois(p):
+def _pde_poisson(p):
     f = _expr_fn(p.get("f", "0"), "x", "y")
     bc = _expr_fn(p["bc"], "x", "y") if isinstance(p.get("bc"), str) else p.get("bc", 0)
     u = DEQ.pde_poisson(f, p["box"], bc, int(p.get("Nx", 40)), int(p.get("Ny", 40)))
@@ -504,7 +507,7 @@ def _pois(p):
     return _ok("pde_poisson", u, "Gauss–Seidel relaxation")
 
 @kind("pde_laplace")
-def _lap(p): p = {**p, "f": "0"}; return _pois(p) | {"kind": "pde_laplace"}
+def _lap(p): p = {**p, "f": "0"}; return _pde_poisson(p) | {"kind": "pde_laplace"}
 
 @kind("sturm_liouville")
 def _sl(p):
