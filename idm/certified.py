@@ -12,7 +12,11 @@ from certified_readout import (
     exp_certified as exp,
     simpson_certified as simpson,
     richardson_certified as richardson,
+    richardson_apriori_ratio,
+    richardson_apriori_bound,
+    richardson_apriori_certified,
     integral_stable_certified as integral,
 )
 
-__all__ = ["Readout", "CERTIFIED", "HOLD", "geom_series", "exp", "simpson", "richardson", "integral"]
+__all__ = ["Readout", "CERTIFIED", "HOLD", "geom_series", "exp", "simpson", "richardson", "integral",
+           "richardson_apriori_ratio", "richardson_apriori_bound", "richardson_apriori_certified"]
