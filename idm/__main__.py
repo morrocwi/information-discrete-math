@@ -20,7 +20,18 @@ import sys
 from pathlib import Path
 
 import idm
-from idm.solve import _REG
+from idm.solve import _REG, _COQ_BACKED
+
+
+def _effective_tier(name: str) -> str:
+    """The HONEST tier the solver would actually return for this kind — mirrors idm.solve()'s
+    tier-honesty pass: a registry `Th_coqc` tag is kept only for kinds with a named machine-checked
+    theorem (`_COQ_BACKED`); every other `Th_coqc`-tagged handler downgrades to `exact`. So the CLI
+    reports what `idm.solve` really emits, not the raw decorator tag."""
+    tier = _REG[name][1] if name in _REG else "?"
+    if tier == "Th_coqc" and name not in _COQ_BACKED:
+        return "exact"
+    return tier
 
 # The four tiers actually assigned in idm/solve.py's registry (grep-verified, not assumed):
 # Th_coqc / exact / +ℝ-Open explicit; finite_diagnostic is the @kind() default.
@@ -40,13 +51,12 @@ def _repo_root() -> Path:
 def _cmd_list(args: argparse.Namespace) -> int:
     names = idm.kinds()
     if args.tier:
-        names = [n for n in names if n in _REG and _REG[n][1] == args.tier]
+        names = [n for n in names if n in _REG and _effective_tier(n) == args.tier]
     if args.domain:
         needle = args.domain.lower()
         names = [n for n in names if needle in n.lower()]
     for n in names:
-        tier = _REG[n][1] if n in _REG else "?"
-        print(f"{n}\t{tier}")
+        print(f"{n}\t{_effective_tier(n)}")
     return 0
 
 
@@ -60,9 +70,14 @@ def _cmd_describe(args: argparse.Namespace) -> int:
     if name not in _REG:
         print(f"unknown kind: {name!r} (not in idm.solve._REG; see 'idm list')", file=sys.stderr)
         return 1
-    fn, tier = _REG[name]
+    fn, reg_tier = _REG[name]
+    tier = _effective_tier(name)
     print(f"kind: {name}")
-    print(f"tier: {tier}")
+    print(f"tier: {tier}")                       # the tier idm.solve actually returns for this kind
+    if reg_tier == "Th_coqc" and name in _COQ_BACKED:
+        print(f"coq_theorem: {_COQ_BACKED[name]}")
+    elif reg_tier != tier:
+        print(f"note: registry default '{reg_tier}' downgrades to '{tier}' (no per-kind Coq witness)")
     try:
         sig = str(inspect.signature(fn))
     except (TypeError, ValueError):

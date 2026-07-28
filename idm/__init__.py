@@ -14,7 +14,9 @@ Submodules: functions · certified · algebra · readouts · exact · analysis �
 diffeq · series · special · transforms · optimize · symbolic · combopt · interval · stats · geometry ·
 crypto · parse · rcp · solve · server.
 """
-__version__ = "1.3.0"
+# Single source of truth is pyproject.toml; kept in sync by tests/test_version_consistency.py
+# (a CI gate that fails if this string, pyproject, and capabilities.json ever diverge).
+__version__ = "1.4.0"
 
 from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, hilbert, hilbert_open, parse as _parse, rcp, solve as _solve
 

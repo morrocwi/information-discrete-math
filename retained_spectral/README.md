@@ -5,6 +5,11 @@
 **A ready-to-use, readout-first solver for 1-D Schrödinger spectra.** _Part of
 [Information Discrete Mathematics](../README.md) by Yaoharee Lahtee._
 
+> **This is ONE product of a larger platform — do not infer the project's scope from this folder.**
+> The parent project is a **263-kind unified solver** (`idm.solve`) + exact CAS + certified readouts +
+> 184 machine-checked Coq theorems. Retained Spectral is its eigenvalue/eigenvector/inertia surface.
+> Start at [`../AI_START_HERE.md`](../AI_START_HERE.md) · machine-readable [`../capabilities.json`](../capabilities.json) · API map [`../API_INDEX.md`](../API_INDEX.md).
+
 **[▶ Reproduce the competition in one click (Google Colab)](https://colab.research.google.com/github/morrocwi/information-discrete-math/blob/main/retained_spectral/reproduce.ipynb)**
 
 </div>
