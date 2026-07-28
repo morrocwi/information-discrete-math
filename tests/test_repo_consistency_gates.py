@@ -51,7 +51,8 @@ def test_documented_theorem_count_matches_verify_sh():
     verify.sh count — the '127 theorems' staleness (actual 184) the review caught, now gated so a new
     witness added to verify.sh without updating the docs fails CI."""
     actual = _verify_sh_theorem_count()
-    for rel in ("README.md", "formal/README.md"):
+    for rel in ("README.md", "formal/README.md",
+                "plugins/information-discrete-math/skills/information-discrete-math/SKILL.md"):
         text = (ROOT / rel).read_text(encoding="utf-8")
         # numbers appearing right before the word "theorem(s)" (badge uses %20 as the space)
         claimed = [int(n) for n in re.findall(r"(\d{2,4})(?:%20| )theorems?\b", text)]
