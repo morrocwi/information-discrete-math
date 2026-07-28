@@ -185,12 +185,16 @@ inertia. And inertia over a graph is read off the very operator of the KEYSTONE 
 separators are that graph's structure.
 
 **Tier, stated honestly.** Sylvester's and Haynsworth's identities are classical (cited as such, not
-claimed here). The measured speedups of the transform-free and boundary-recursive methods — 28–69× on
-narrow-band / slender-mesh problems, *with* their honest limits (crossover to sparse shift-invert near
-bandwidth `b ≈ 12`; 2-D square domains `O(n²)`, 3-D solids `O(n^{7/3})`, not competitive; single host;
-no eigenvectors) — are `finite_diagnostic` observations of an absorbed method, **not** a machine-checked
-theorem of this repository and **not** a universal-superiority claim. What is ours is the reading:
-inertia is the spectral readout, and the retained object is the boundary/count, never the volume/modes.
+claimed here). The transform-free and boundary-recursive methods *report* large speedups on
+narrow-band / slender-mesh problems — order 10¹–10² in the source packages — *together with* their own
+honest limits (a crossover to sparse shift-invert once the bandwidth is no longer narrow; 2-D and 3-D
+solid domains not competitive; single host; no eigenvectors). Those figures are **absorbed observations
+from the source packages, not reproduced in this repository** (this repo's own machine-checked and
+`finite_diagnostic` numbers are elsewhere and are for different problem classes), so they are cited as
+the sources' measurements, **not** a machine-checked theorem here and **not** a universal-superiority
+claim. What is ours — and what a reader can verify in-repo — is the reading: inertia is the spectral
+readout, and the retained object is the boundary/count, never the volume/modes; the Declaration Bound
+above (its q-ary core machine-checked in `formal/IDM_DeclarationBound.v`) is its exact lower twin.
 
 ## What is proved today
 

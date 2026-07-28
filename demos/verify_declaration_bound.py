@@ -5,10 +5,13 @@ The Declaration Bound is a **bit-accurate** retained-state separation for a defe
 on symmetric tridiagonal operators. Retained state is measured in bits / machine words, never in an
 undefined "number of scalars" (a running counter already costs Theta(log n) bits):
 
-    declared query  (the threshold is known BEFORE the diagonal streams past) : Theta(1) retained bits
-    deferred query  (the threshold is asked only AFTER the record has passed)  : Theta(n log q) bits
+    declared query  (the threshold is known BEFORE the diagonal streams past) : Theta(1) retained WORDS
+                                                                                 (constant registers)
+    deferred query  (the threshold is asked only AFTER the record has passed)  : Theta(n log q) BITS
 
-For an alphabet of size q and q = n this is a sharp Theta(1) vs Theta(n) separation in machine words.
+For an alphabet of size q and q = n this is a sharp Theta(1) vs Theta(n) separation in machine WORDS.
+Units are not conflated: the declared side is constant REGISTERS (= Theta(log n) bits for the running
+count) — a constant-register claim, never a constant-bit one; the deferred lower bound is in bits.
 The finite, combinatorial core (distinct strings force a long record) is machine-checked axiom-free in
 `formal/IDM_DeclarationBound.v` (Coq 8.20). This script verifies the one ingredient that lives in
 eigenvalue arithmetic rather than pure combinatorics — the **q-ary extraction identity**:
@@ -23,9 +26,10 @@ Family (all off-diagonals nonzero -> irreducible): for an n-symbol q-ary string 
 Gershgorin separation guarantees |lambda - sigma| >= 1/2 - 2*delta = 7/16, so the sign-count is
 unambiguous.
 
-The classical constant-*register* Sturm property (two running scalars suffice for a *declared* query)
-is real and is stated as such — it is NOT identified with constant *bits*; that conflation is exactly
-the correction this revised q-ary family makes precise.
+The classical constant-*register* Sturm property (a constant number of running registers suffice for a
+*declared* query) is real and stated as such — a constant number of registers is Theta(log n) bits, so
+it is NOT a constant-*bit* claim; that conflation is exactly the correction this revised q-ary family
+makes precise.
 
 Tier: finite_diagnostic — a discrete rational-arithmetic verification on finite operators. It confirms
 the model the Coq file assumes; it is not itself a continuum claim.
@@ -125,9 +129,9 @@ def main() -> int:
     print(f"  PASS: {rn['cases']} cases, {rn['queries']} queries; min |lambda - sigma| "
           f"= {min(ex['min_margin'], rn['min_margin']):.4f} (>= 7/16 guaranteed)\n")
 
-    print("Resource model (bit-accurate): declared query = Theta(1) retained bits; deferred query =")
-    print("Theta(n log q) bits; q = n => Theta(1) vs Theta(n) machine words. The classical constant-")
-    print("REGISTER Sturm property (declared query) is separate and is NOT a constant-BIT claim.")
+    print("Resource model (units explicit): declared query = Theta(1) retained WORDS/registers")
+    print("(= Theta(log n) bits for the running count); deferred query = Theta(n log q) BITS; q = n =>")
+    print("Theta(1) vs Theta(n) machine WORDS. Constant-REGISTER (declared) is NOT a constant-BIT claim.")
     print("The combinatorial core (distinct strings force a length->=n record) is machine-checked")
     print("axiom-free in formal/IDM_DeclarationBound.v.")
     return 0
