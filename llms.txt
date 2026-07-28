@@ -1,0 +1,44 @@
+# Information Discrete Mathematics (idm)
+
+> The continuum, computed as a readout of the discrete. A 263-kind unified solver
+> (`idm.solve` / `idm.kinds()`) with five solving surfaces — unified solver, exact CAS
+> (`idm.kernel.poly`), Retained Spectral (`retained_spectral/`), certified computation
+> (`idm.certified`), and a Coq-checked formal proof arc (`formal/`) — where every returned value
+> is a finite, discrete, rational readout, tier-tagged by warrant, never a bare continuum
+> assumption.
+
+Do not infer the capability of this repository from a single module. Start at
+`AI_START_HERE.md` and follow its discovery order before making any capability, coverage,
+correctness, or speed claim.
+
+## Docs
+
+- [AI_START_HERE.md](/AI_START_HERE.md): Start here — what this project is, the 5 solver
+  surfaces, the discovery order, and how to verify correctness and speed yourself.
+- [API_INDEX.md](/API_INDEX.md): Searchable capability table — Capability | Python API | Input |
+  Output | Tier | Verification file.
+- [README.md](/README.md): Full framing, the Retained Spectral benchmark headline, and
+  reproduction instructions.
+- [API.md](/API.md): Library usage patterns and `idm.solve` kind groups.
+- [INDEX.md](/INDEX.md): Repo map.
+- [THEOREM.md](/THEOREM.md): The tier system (`Th_coqc` / `exact` / `finite_diagnostic` / `Dr`)
+  defined precisely.
+- [METHOD.md](/METHOD.md): The translate-first discipline behind structured `solve(problem)` calls.
+
+## Verification (run these yourself — do not take claims on trust)
+
+- [formal/verify.sh](/formal/verify.sh): Compiles and axiom-checks the Coq 8.20 arc backing the
+  `Th_coqc` tier (`bash formal/verify.sh`).
+- [prove_it_full.py](/prove_it_full.py): Recomputes ~1278 continuum-frontier problems as
+  finite-discrete readouts against an independent `mpmath` reference (`python prove_it_full.py`).
+- `pytest -q`: full test suite — unit, differential (oracle-checked), and adversarial harnesses
+  (`tests/`).
+
+## Optional
+
+- [capabilities.json](/capabilities.json): Machine-readable capability manifest, if present in
+  your checkout — otherwise use `python -c "import idm; print(idm.kinds())"` as the live source
+  of truth.
+- [BENCHMARK_CLAIMS.md](/BENCHMARK_CLAIMS.md): Read before repeating any speed/performance number,
+  if present in your checkout — otherwise reproduce from `retained_spectral/competition/` and
+  `retained_spectral/reproduce.ipynb` yourself.

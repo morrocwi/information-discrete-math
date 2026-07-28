@@ -27,6 +27,28 @@ Every returned object is a finite rational-arithmetic readout; the verdict tier 
 `finite_diagnostic` — a discrete diagnostic agreement, **not** a continuum-limit proof and **not** an
 empirical-physics claim.
 
+## Folder guide
+
+**What this folder does.** Everything above (`solve`/`make_problem`/`examples`) is the top-level
+product surface. Under the hood: `engine.py` holds the native Retained Multilevel Sturm (RMS) kernel
+plus a reference-blind SciPy comparison path, including
+`native_eigvals_from_tridiagonal(diagonal, off_diagonal, k, energy_tolerance)` for kernel-only timing
+on a PREBUILT tridiagonal operator; `inertia.py` provides the standalone Sylvester inertia counter
+(`count_below_banded`, `resolved_count_below`, plus dense variants) — exact eigenvalue counts below a
+shift with no eigenvector ever formed; `retained_mode.py` provides Retained Mode Readout (RMR) —
+`modes(d, e, lams, rho=1e-10, ...)` recovers eigenvectors from the retained pivot record the Sturm
+bisection already computed, no separate inverse iteration; `competition/` holds the benchmark runner,
+chart generator, and `credibility_audit`; `results/` holds the recorded `competition_results.json`.
+
+**What NOT to import directly.** `retained_mode.py`'s `_pivots_py`/`_generate_py`/`_ldl_solve_py` are
+internal per-step helpers, not a stable contract. `competition/mrrr.py` / `bench_mrrr.py` are an
+optional comparator (skipped cleanly with no resolvable BLAS `dstemr`), not a required dependency.
+
+**Limits (beyond the honesty boundary above).** `inertia.py`'s pivot count is an exact eigenvalue
+count for `M` positive definite (and empirically for positive semidefinite `M`); for indefinite `M`
+it is the inertia of `K − σM`, **not** the pencil eigenvalue count, and must not be read as one. The
+inertia method's competitive regime is narrow-banded operators, not dense/3-D-solid ones.
+
 ## Install
 
 ```bash

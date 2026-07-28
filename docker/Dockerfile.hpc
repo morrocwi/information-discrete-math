@@ -1,0 +1,49 @@
+# idm-hpc — core solver + PETSc/SLEPc/petsc4py/slepc4py, for the HPC-scale competitor benchmark
+# (the external-comparison column referenced by requirements-bench.txt / benchmarks/COMPETITOR_RESULTS.md).
+#
+# HONESTY NOTE (read before trusting this image): this Dockerfile is AUTHORED, NOT BUILD-VERIFIED.
+# PETSc/SLEPc are large native numerical libraries (Fortran/C/MPI, hours-scale from-source builds,
+# multi-GB image) — building and smoke-testing this image was out of scope for this change and was
+# not attempted here. Treat every line below as a standard-pattern best guess, not a tested claim:
+#   - the `petsc`/`slepc`/`petsc4py`/`slepc4py` conda-forge packages are the common way to avoid an
+#     hours-long from-source PETSc/SLEPc compile, but exact channel/version pins have not been
+#     resolved or solved against this project's own numpy/scipy pins.
+#   - MPI runtime flags (e.g. running as non-root inside a container, `--oversubscribe` for
+#     single-node dev use) are NOT configured here and will likely need host-specific tuning.
+# Before relying on this image: `docker build -f docker/Dockerfile.hpc -t idm-hpc .`, watch it
+# actually complete, then run a real PETSc/SLEPc smoke test (`python -c "import petsc4py,
+# slepc4py"`) and only then trust it. Nothing below should be read as "this works."
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Use conda-forge (via miniforge) rather than pip for PETSc/SLEPc + their Python bindings — building
+# them from source under `pip install petsc petsc4py` is a multi-hour, toolchain-heavy path; the
+# conda-forge binaries are the standard shortcut. Not verified here (see header note).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL -o /tmp/miniforge.sh \
+        https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
+    && bash /tmp/miniforge.sh -b -p /opt/conda \
+    && rm /tmp/miniforge.sh
+ENV PATH="/opt/conda/bin:${PATH}"
+
+RUN conda install -y -c conda-forge \
+        python=3.11 petsc petsc4py slepc slepc4py numpy scipy \
+    && conda clean -afy
+
+COPY pyproject.toml README.md ./
+COPY idm ./idm
+COPY tools ./tools
+COPY provefull ./provefull
+COPY retained_spectral ./retained_spectral
+COPY benchmarks ./benchmarks
+
+# --no-deps: numpy/scipy already came from conda-forge above, resolved against petsc4py/slepc4py;
+# letting pip re-resolve them risks pulling a second, incompatible numpy/scipy via wheels.
+RUN pip install --no-cache-dir --no-deps .
+
+# The external-competitor benchmark this image exists for; see benchmarks/COMPETITOR_RESULTS.md
+# for what it measures and its own tier-honest disclosures. Not run or checked here.
+CMD ["python3", "benchmarks/competitor_benchmark.py"]
