@@ -1,0 +1,53 @@
+name: slepc-head-to-head
+
+on:
+  pull_request:
+    paths:
+      - "benchmarks/slepc_vs_retained.py"
+      - ".github/workflows/slepc-benchmark.yml"
+      - "retained_spectral/**"
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      IDM_SLEPC_REPEATS: "5"
+      IDM_SLEPC_BOOTSTRAPS: "5000"
+      IDM_SLEPC_RESULT: "slepc_vs_retained.json"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the independent SLEPc/PETSc peer and native benchmark field
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            python3-numpy python3-scipy python3-numba \
+            python3-petsc4py-real python3-slepc4py-real
+      - name: Disclose versions
+        run: |
+          /usr/bin/python3 - <<'PY'
+          import numpy, scipy, numba
+          import slepc4py
+          slepc4py.init([])
+          from petsc4py import PETSc
+          from slepc4py import SLEPc
+          print("numpy", numpy.__version__)
+          print("scipy", scipy.__version__)
+          print("numba", numba.__version__)
+          print("PETSc", PETSc.Sys.getVersion())
+          print("SLEPc", SLEPc.Sys.getVersion())
+          PY
+      - name: Run same-operator correctness-gated benchmark
+        run: /usr/bin/python3 benchmarks/slepc_vs_retained.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: slepc-vs-retained-results
+          path: slepc_vs_retained.json
+          if-no-files-found: warn
