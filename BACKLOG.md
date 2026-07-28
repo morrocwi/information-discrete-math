@@ -81,7 +81,7 @@ closure — they need the completed continuum, which the philosophy treats as a 
       paradox dissolution (Banach–Tarski, discrete Gauss–Bonnet), computed 16/16.
 - [x] **PDE** — DONE (v1.11): Part XXI, Navier–Stokes/blow-up dissolved, finite-ε heat/wave well-posed.
 - [ ] **Named open problems** chapter: Hauptvermutung, strong LLN, topos completeness, exact `π`/`φ`
-      objects (all listed in §10.9) — each stated, predicted, fenced.
+      objects (all listed in §10.13) — each stated, predicted, fenced.
 
 ## Tier 4 — discipline hardening (extracted-but-not-yet-ported from cpg_math MathSolver)
 
@@ -105,5 +105,7 @@ closure — they need the completed continuum, which the philosophy treats as a 
 
 ## Housekeeping (tracked, low priority — consistency not math)
 
-- [ ] Part X: `§10.9` sits physically after §10.10–10.12; renumber to `§10.13` (or move) and update the
-      ~5 internal `(§10.9)` pointers (flagged by the consistency review).
+- [x] Part X: `§10.9` sat physically after §10.10–10.12; renumbered to `§10.13` and updated all 18
+      internal `(§10.9)` pointers to `(§10.13)` (consistency review item — DONE). Also corrected a
+      pre-existing stale "machine-checked" citation in §10.7 (`formal/InfoCausalPartialOrder_attempt.v`,
+      not in-tree → downgraded to `Th_coqc`-eligible with an honesty note).
