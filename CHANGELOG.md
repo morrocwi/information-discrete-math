@@ -5,6 +5,34 @@ axiom-free (Coq 8.20, `Print Assumptions` = *Closed under the global context*); 
 finite procedure cross-checked numerically; `exact` = exact over ℚ; `Open`/`+ℝ-Open` = declared open,
 never dressed as a theorem.
 
+## [1.4.1]
+
+Quality + integrity release: acts on a world-class multi-discipline review, pays down architectural
+debt, and adds the algebraic atom of the inertia boundary-readout — all backward-compatible.
+
+### Formal core → 184 machine-checked axiom-free theorems (from 177)
+- **`IDM_Schur.v`** — the exact Schur/boundary congruence over ℚ (`A = Mᵀ·diag(a, c−b²/a)·M` for a 2×2
+  block, the `b²/a` cancellation), the algebraic atom of Haynsworth inertia-additivity — machine-checks,
+  in this framework's own semantics, that eliminating a boundary node produces exactly the Schur
+  complement. Fenced: Sylvester's sign-count invariance stays `+ℝ-Open`.
+
+### P5 (inertia lower bound) — recast in the information language
+- `docs/P46_P5_lower_bound_analysis.md` rewritten **purely readout-first** (removing a borrowed
+  classical-complexity frame): P5 = "does a BOUNDARY readout require producing the VOLUME?"; the READOUT
+  rule predicts against `Ω(fill*)`; info-P5 is a boundary-retention (Declaration-Bound-on-the-separator)
+  question, still `+ℝ-Open`. No conjecture formalized.
+
+### World-class review — acted on
+- Fixed 4 verified defects: package `__version__` drift (was 1.3.0), stale "127 theorems" docs
+  (→ live count), CLI `describe`/`list` now report the **honest runtime tier** (mirroring solve()'s
+  downgrade), and `retained_spectral/README` now points to the discovery layer ("do not infer scope").
+- New **CI drift gates**: version single-sourced (idm == pyproject == manifest) and documented theorem
+  counts (README / formal-README / **SKILL.md**) gated against `formal/verify.sh`.
+
+### Debt paid down
+- `idm/solve.py` split from a 924-line monolith into `idm/_solve_core.py` + **30 per-domain modules** +
+  a 44-line dispatch facade — verified **byte-identical** for all 263 kinds (golden snapshot).
+
 ## [1.4.0]
 
 ### Discovery layer — the repository now describes itself (humans + AI)
