@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -142,6 +142,17 @@ declare -a THMS=(
   "declaration_separation:IDM_DeclarationBound"
   "qary_symbol_injective:IDM_DeclarationBound"
   "qcube_length:IDM_DeclarationBound"
+  "neg_involution:IDM_ReadoutMinimality"
+  "neg_fixed_iff:IDM_ReadoutMinimality"
+  "neg_moves_iff:IDM_ReadoutMinimality"
+  "minimal_three_values:IDM_ReadoutMinimality"
+  "third_value_is_neutral:IDM_ReadoutMinimality"
+  "neutral_distinct_from_bottom:IDM_ReadoutMinimality"
+  "two_distinct_neutrals:IDM_ReadoutMinimality"
+  "bottom_is_least:IDM_ReadoutMinimality"
+  "bottom_unique:IDM_ReadoutMinimality"
+  "neutral_is_not_below_sign:IDM_ReadoutMinimality"
+  "neutral_is_not_bottom:IDM_ReadoutMinimality"
 )
 
 fail=0

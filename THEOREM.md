@@ -196,6 +196,31 @@ claim. What is ours — and what a reader can verify in-repo — is the reading:
 readout, and the retained object is the boundary/count, never the volume/modes; the Declaration Bound
 above (its q-ary core machine-checked in `formal/IDM_DeclarationBound.v`) is its exact lower twin.
 
+### The value-set the sign readout is forced to have — machine-checked (`Th_coqc`)
+
+The inertia readout reports *signs*, and there is a lower bound on how many symbols that takes. A
+readout that is **total** (defined on every object), **equivariant** under the sign-involution
+`x ↦ −x` (`r(−x) = ¬ r(x)`), and **non-degenerate** (separates some object from its negative) **cannot
+be two-valued**: the self-negative object `x₀ = −x₀` forces `r(x₀) = ¬ r(x₀)`, a fixed point of the
+involution, distinct from both members of the `+ / −` two-cycle. So **three values are forced, and the
+third is a neutral** — a two-valued signed readout would have to report a genuinely balanced (or a null)
+direction as strictly positive or strictly negative, and either report is false. This is
+`minimal_three_values` / `third_value_is_neutral` in `formal/IDM_ReadoutMinimality.v`, proved over an
+abstract source involution (no reals, no continuum — just the counting an equivariant map must satisfy),
+axiom-free.
+
+The fourth value is not decoration. The neutral splits into **two distinct fixed points on two
+different axes**: `0` — *determinately balanced*, a fact about the **object**, incomparable in the
+information order — and `⊥` — *unresolved*, a fact about the **instrument's** declared resolution, the
+least element of that order. `formal/IDM_ReadoutMinimality.v` machine-checks that these are distinct
+(`neutral_distinct_from_bottom`), that `⊥` is the unique order-bottom (`bottom_unique`), and that `0` is
+**not** a bottom (`neutral_is_not_bottom`) — it carries information, it is not "no information." The
+practical stake is concrete: our inertia kernel already uses the norm-scaled pivot floor that keeps the
+count monotone in `σ` (`retained_spectral/inertia.py`), but it currently folds a *floored* (`⊥`,
+unresolved) pivot into the same `n₀` bucket as a *determinate* null (`0`). Collapsing `0` and `⊥` to one
+symbol is the silent-failure mode the four-valued algebra exists to forbid; surfacing them separately is
+a tracked API refinement, not yet shipped.
+
 ## What is proved today
 
 ### 1. Geometric series — machine-checked, axiom-free (`Th_coqc`)
