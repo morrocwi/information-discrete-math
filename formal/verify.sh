@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -153,6 +153,16 @@ declare -a THMS=(
   "bottom_unique:IDM_ReadoutMinimality"
   "neutral_is_not_below_sign:IDM_ReadoutMinimality"
   "neutral_is_not_bottom:IDM_ReadoutMinimality"
+  "classify_bot_iff:IDM_ResolvedCount"
+  "bot_needs_positive_resolution:IDM_ResolvedCount"
+  "classify_zero_iff:IDM_ResolvedCount"
+  "classify_plus_sound:IDM_ResolvedCount"
+  "classify_minus_sound:IDM_ResolvedCount"
+  "classify_not_bot_is_determinate:IDM_ResolvedCount"
+  "bot_monotone_in_floor:IDM_ResolvedCount"
+  "count_if_split:IDM_ResolvedCount"
+  "signedfloor_is_certain_plus_unresolved:IDM_ResolvedCount"
+  "certain_le_signedfloor:IDM_ResolvedCount"
 )
 
 fail=0
