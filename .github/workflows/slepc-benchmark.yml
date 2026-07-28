@@ -34,9 +34,13 @@ jobs:
           /usr/bin/python3 -m venv --system-site-packages .venv
           .venv/bin/python -m pip install --upgrade pip
           .venv/bin/python -m pip install "numba==0.60.0"
-          echo "PETSC_DIR=${PETSC_DIR:-unset}"
-          echo "SLEPC_DIR=${SLEPC_DIR:-unset}"
-          find /usr/lib -path '*slepc4py*' -o -path '*petsc4py*' | head -40
+
+          PETSC_PYTHON="$(find /usr/lib/petscdir -type d -path '*/lib/python3/dist-packages' | head -1)"
+          SLEPC_PYTHON="$(find /usr/lib/slepcdir -type d -path '*/lib/python3/dist-packages' | head -1)"
+          test -n "$PETSC_PYTHON" && test -n "$SLEPC_PYTHON"
+          echo "PETSC Python: $PETSC_PYTHON"
+          echo "SLEPC Python: $SLEPC_PYTHON"
+          echo "PYTHONPATH=$PETSC_PYTHON:$SLEPC_PYTHON:${PYTHONPATH:-}" >> "$GITHUB_ENV"
       - name: Disclose versions
         run: |
           .venv/bin/python - <<'PY'
