@@ -28,6 +28,26 @@ jobs:
         # longer inherits whatever ambient mpmath precision a sibling module/test left, so a
         # dps-sensitive kind (E1) cannot flake by test order.
         run: pytest -q
+  install:
+    # The other jobs run from the source checkout; this one proves the built WHEEL is self-contained —
+    # that `pip install` + `import idm` works with NO source tree present (the vendored helper modules
+    # ship inside the package), and that uninstall removes it cleanly.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: install the package (build a wheel and install it)
+        run: pip install .
+      - name: import + solve from OUTSIDE the source tree (self-contained wheel)
+        run: |
+          cd "$RUNNER_TEMP"
+          python3 -c "import idm; r = idm.solve({'kind': 'factorize', 'n': 360360}); assert r['status'] == 'ok', r; print('installed import + solve OK,', len(idm.kinds()), 'kinds')"
+      - name: uninstall removes it cleanly (no leftover)
+        run: |
+          pip uninstall -y information-discrete-math
+          cd "$RUNNER_TEMP"
+          python3 -c "import importlib.util, sys; sys.exit(0 if importlib.util.find_spec('idm') is None else 1)"
   coq:
     runs-on: ubuntu-latest
     steps:
