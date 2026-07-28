@@ -209,6 +209,20 @@ direction as strictly positive or strictly negative, and either report is false.
 abstract source involution (no reals, no continuum — just the counting an equivariant map must satisfy),
 axiom-free.
 
+**The general group (P1) — the necessary condition, machine-checked.** The same mechanism holds for any
+group `G` of admissible re-descriptions, not only `Z₂`. `formal/IDM_EquivariantReadout.v` proves,
+axiom-free and for an abstract action (no finiteness assumed), that **every symmetry fixing an object
+fixes its readout**: `Stab_X(x) ⊆ Stab_V(r x)` (`equivariant_stabilizer_containment`), and that when the
+readout is **faithful** on `x`'s orbit (it separates the re-descriptions of `x`) the containment is an
+**equality** `Stab_V(r x) = Stab_X(x)` (`faithful_stabilizer_equality`) — so a faithful readout copies
+each orbit type exactly, its image orbit being `G/Stab_X(x)` of size `[G : Stab_X(x)]`. This is the
+per-type input to the minimal-cardinality question, and it recovers Theorem 1's mechanism (a moved
+object cannot be read as a fixed/neutral value: `nondegenerate_value_moves`). The full **cardinality
+formula** `|V|_min = Σ_{[H]} [G:H]` (one orbit per realised stabiliser type; Theorem 1 is the case
+`2 + 1 = 3`) is the brief's **Conjecture P1** — it additionally needs disjointness of types plus an
+orbit-stabiliser/Lagrange count, orbit combinatorics not formalised here — and is stated as a fenced
+**conjecture (`Open`)**, never as a theorem.
+
 The fourth value is not decoration. The neutral splits into **two distinct fixed points on two
 different axes**: `0` — *determinately balanced*, a fact about the **object**, incomparable in the
 information order — and `⊥` — *unresolved*, a fact about the **instrument's** declared resolution, the
