@@ -63,8 +63,13 @@ operators, tier-tagged, with an executed `validation/*.py` block before prose.
       theorems total, all axiom-free (`bash formal/verify.sh`). RECLASSIFIED (frontier, not warrant
       work): real spectral theorem + DPI entropic-form + general Cauchy-Binet matrix-tree = `+ℝ-Open`
       / need heavy machinery — honestly declared, not left as false 'elig'. Nothing tractable remains. *Turns "elig" into `Th_coqc`.*
-- [ ] **v-proofs edition.** Convert the §10.1–10.6 results-first sketches (flagged `[results-first]`) to
-      checked proofs; this is the edition-note promise ("proofs next").
+- [~] **v-proofs edition.** Convert the §10.1–10.6 results-first sketches to checked proofs (the
+      edition-note promise). DONE so far: **Th 10.2** (function ≅ functional-relation coincidence, the
+      "biggest not-standalone blocker") now has a real witness `formal/IDM_SetsFunctions.v` (`graph_total`
+      / `graph_single_valued` / `graph_faithful` / `functional_relation_has_map`, axiom-free) — upgraded
+      `Th_coqc`-elig → `Th_coqc`. Remaining tractable: the finite first-order `⊨_λ` quantifier recursion
+      (§10.3, decidable via `forallb`/`existsb`). Genuinely `+ℝ-Open` (NOT convertible): §10.5 `ε→0`
+      real-analysis quantifier, §10.6 completed-measure limit — fenced, not dressed as `Th_coqc`.
 
 ## Tier 3 — frontier chapters (write as *declared* `+ℝ-Open`; honesty, not new closure)
 

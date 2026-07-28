@@ -767,10 +767,14 @@ Bernoulli numbers are finite rational data; the divergent $m\to\infty$ tail is u
 # Part X — Integrated extensions (sets & functions, cardinality, analysis, probability, reconciliations)
 
 This Part closes the foundation's remaining gaps and reconciles it with the external record. **Honest
-global status:** the `create` results below (§10.1–10.6) are **Th_coqc-ELIGIBLE proof SKETCHES** — the
-tier tag is the *target*; each needs an actual `coqc` + `Print Assumptions` single-file check before it
-is cited as verified. The mined items (§10.8) and the cotransitivity/setoid results are the currently
-machine-checked core. No external validation is invoked (horizontal-knowledge policy).
+global status:** the tractable finite/decidable results in §10.1–10.4 now carry **actual `formal/*.v`
+witnesses** (Th 10.1 `kuratowski_pair_inj`; **Th 10.2 `formal/IDM_SetsFunctions.v` — the function ≅
+functional-relation coincidence, converted from a sketch in the v-proofs edition**; Th 10.3–10.5
+`IDM_FiniteWitnesses2.v`; Th 10.6/10.7 `IDM_Logic.v`), each confirmed `Closed under the global context`
+by `bash formal/verify.sh`. What remains a *declared* frontier is §10.5's `ε→0` real-analysis
+quantifier and §10.6's completed-measure limit — genuinely **`+ℝ-Open`** (they quantify over a completed
+continuum), honestly fenced, not dressed as `Th_coqc`. No external validation is invoked
+(horizontal-knowledge policy).
 
 ## 10.1 The pair–product–relation–function layer, from `δ_R` (closes the biggest "not-standalone" blocker)
 
@@ -789,10 +793,14 @@ is `formal/RD.v` (`RD3_succ_ne_zero`, `RD4_succ_inj`, `add_assoc`, `add_comm`, `
   product; `λ→0` deferred `+ℝ-Open`); `|X×Y| = |X|·|Y|`.
 - **Relation** = an admissible sub-fiber of the product — literally `E=Ẽ∘G_λ` applied to `X×Y`.
 - **Function** = a relation `R` with `IsFunction(R) :≡ ∀a∈X ∃!_λ b∈Y, (a,b)∈R` (`∃!_λ` a finite
-  decidable search). **Th 10.2 (coincidence — closes the blocker, `Th_coqc`-elig):**
-  `AdmissibleMap(X,Y) ≅ {R : IsFunction(R)}` via the graph `G(E)`; the `∼_λ`-respecting construction
-  forces representative-independence. **Axiom-free eligibility:** all objects are finite lists over
-  decidable-equal `ℚ`; only `List` + decidable equality, no LEM / choice / funext.
+  decidable search). **Th 10.2 (coincidence — closes the blocker, `Th_coqc`, witness
+  `formal/IDM_SetsFunctions.v`):** `AdmissibleMap(X,Y) ≅ {R : IsFunction(R)}` via the graph `G(E)`.
+  Machine-checked: the graph of a map on a finite domain is **total** (`graph_total`) and
+  **single-valued** (`graph_single_valued`) — i.e. a function; the correspondence is **faithful**, maps
+  agree on the domain iff their graphs coincide (`graph_faithful` / `graph_faithful_converse`); and the
+  converse construction recovers a map from any functional relation (`functional_relation_has_map`).
+  **Axiom-free** (confirmed `Closed under the global context`): all objects are finite lists over a
+  decidable equality; only `List` + decidable equality is used — no LEM / choice / funext.
 
 ## 10.2 Cardinality and the potential-vs-actual infinite
 
@@ -1952,7 +1960,7 @@ solver brings the live registry to **259**).
 
 # Appendix B — Machine-checked theorem index (tier · witness)
 
-**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_Logic.v`: `finite_satisfaction_dec` (§10.3 Th 10.6, finite model-checking decidable) + `rdl_non_explosion` (§10.4/Part I, paraconsistent countermodel). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). `formal/IDM_Geometry.v`: `orient_swap_bc/ab`, `orient_cyclic`, `orient_coincident_*`, `orient_translation`, `orient_scale`, `orient_collinear_mid/aff` (Part IV / §22.4, the exact orientation predicate the geometry solver branches on, 10 theorems). `formal/IDM_Reduction.v` (Part XXII, the root-design reductions, 42 theorems): `ftcc_Z`, `foldmin_le_init/elem`, `foldmax_ge_init/elem`, `sum_is_fold`, `path_is_fold`, `fold_ext`, `fold_linear`, `fold_add_split`, `dot_is_fold`, `dot_scale`, `pivot_preserves` (A2); `witness_sound/complete`, `decide_reflect`, `decide_dec`, `witness_composite_sound`, `composite_has_factor`, `witness_power_sound` (A3). One-command audit: `bash formal/verify.sh` (**107 theorems, all `Closed under the global context`**). Reproduce a single one: `cd formal && coqc -q IDM_Reduction.v` then `Print Assumptions ftcc_Z`.
+**Local witnesses (this repo, `formal/*.v` — Coq 8.20, all axiom-free / *Closed under the global context*):** `formal/IDM_Keystone.v`: `keystone_B_eq_I` (Th 5.1, `B(Φ,Φ)=I(Φ)`) + `keystone_nonneg` (`L_R` PSD) + `relaxation_dissipation` (§21.3 no-blow-up). `formal/IDM_Logic.v`: `finite_satisfaction_dec` (§10.3 Th 10.6, finite model-checking decidable) + `rdl_non_explosion` (§10.4/Part I, paraconsistent countermodel). `formal/IDM_FiniteWitnesses2.v`: `same_set_same_size` (Th 10.3), `tape_count_succ` (Th 10.4), `no_infinite_readout` (Th 10.5), `lagrange_order_div` (§12.3). `formal/IDM_FiniteWitnesses.v`: `kuratowski_pair_inj` (Th 10.1, §10.1) · `handshake_lemma` (§15.2) · `pigeonhole` (§15.3) · `finite_yoneda` (§17.2) · `semiring_distrib` (§12.2). `formal/IDM_Geometry.v`: `orient_swap_bc/ab`, `orient_cyclic`, `orient_coincident_*`, `orient_translation`, `orient_scale`, `orient_collinear_mid/aff` (Part IV / §22.4, the exact orientation predicate the geometry solver branches on, 10 theorems). `formal/IDM_Reduction.v` (Part XXII, the root-design reductions, 42 theorems): `ftcc_Z`, `foldmin_le_init/elem`, `foldmax_ge_init/elem`, `sum_is_fold`, `path_is_fold`, `fold_ext`, `fold_linear`, `fold_add_split`, `dot_is_fold`, `dot_scale`, `pivot_preserves` (A2); `witness_sound/complete`, `decide_reflect`, `decide_dec`, `witness_composite_sound`, `composite_has_factor`, `witness_power_sound` (A3). `formal/IDM_ReadoutMinimality.v` + `IDM_ResolvedCount.v` (the signed-readout value-set + the resolved 0/⊥ inertia count), `formal/IDM_EquivariantReadout.v` (P1 necessary condition), `formal/IDM_Apriori.v` (the Richardson a-priori stability certificate), `formal/IDM_SetsFunctions.v` (Th 10.2, the function ≅ functional-relation coincidence). One-command audit: `bash formal/verify.sh` (**171 theorems, all `Closed under the global context`**). Reproduce a single one: `cd formal && coqc -q IDM_Reduction.v` then `Print Assumptions ftcc_Z`.
 
 `RDL.v` (RDL logic, 8 thm, `Th_coqc`) · `RD.v` + `RDL_Distinguishability.v` (D semiring/order/PA/
 discrete-floor, `Th_coqc`; `Con_PA_classical` `+classic`) · number ladder `ℤ/ℚ/ℝ`
