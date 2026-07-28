@@ -16,7 +16,9 @@ from certified_readout import (
     richardson_apriori_bound,
     richardson_apriori_certified,
     integral_stable_certified as integral,
+    integral_nd_stable_certified as integral_nd,
 )
 
 __all__ = ["Readout", "CERTIFIED", "HOLD", "geom_series", "exp", "simpson", "richardson", "integral",
-           "richardson_apriori_ratio", "richardson_apriori_bound", "richardson_apriori_certified"]
+           "integral_nd", "richardson_apriori_ratio", "richardson_apriori_bound",
+           "richardson_apriori_certified"]

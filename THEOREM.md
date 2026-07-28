@@ -280,6 +280,7 @@ Implemented with proven-on-paper bounds in `tools/certified_readout.py`:
 | `exp_certified` | `|x| ≤ ½` | `|x|^{N+1} / ((N+1)! (1−|x|))` | `|x| > ½` (range-reduction cert. not yet formalized) |
 | `simpson_certified` | `f ∈ C⁴`, bound `M₄ ≥ max|f⁗|` given | `(b−a)⁵ M₄ / (180 N⁴)` | no `M₄` supplied |
 | `integral_stable_certified` | refinement gaps contract (ρ<1) | `g_last/(1−ρ)` (see §7, Coq-backed) | gaps don't contract (pole / non-integrable / oscillatory) |
+| `integral_nd_stable_certified` | tensor-grid gaps contract (ρ<1), any dimension | `g_last/(1−ρ)` (§7, same Coq theorem) | gaps don't contract, or a singular integrand |
 | `richardson_certified` | sequence has a `1/n` asymptotic expansion | a-posteriori: the contracted diagonal gap | diagonal fails to contract (e.g. `1/log n`, oscillatory, divergent) |
 | `richardson_apriori_certified` | method **order** `p` known | a-priori: `g/(1−2⁻ᵖ)` from one gap (§8, Coq-backed) | `order < 1` (no contraction guaranteed) |
 
@@ -353,6 +354,20 @@ So when the refinement gaps contract, the readout has a certified stable plateau
 never claim a distance to `∫f`; we certify that *our own* finite readout has stopped moving. Both
 theorems `Closed under the global context`.
 
+**Dimension-agnostic — multi-D quadrature reuses the same theorem, no new one needed.** `refine_stable`
+is a statement about a *scalar* gap sequence `s : ℕ → ℚ`; nothing in it mentions dimension. So a
+tensor-product trapezoid on a box `[a₁,b₁]×⋯×[a_d,b_d]`, refined `n → 2n` on every axis, produces
+exactly such a sequence and inherits the identical certificate — shipped as `integral_nd_stable_certified`
+(`tools/certified_readout.py`, re-exported `idm.certified.integral_nd`). For a smooth integrand the
+tensor trapezoid is order-2 per axis, so halving all axes contracts the gaps by `ρ → 1/4` — the very
+a-priori ratio of §8 (order 2) — confirmed numerically in `tests/test_multidim_quadrature.py` (2-D/3-D
+readouts certify to the exact value; a form whose observed refinement gaps vanish certifies with bound
+`0` — the `ρ=0` case of the same a-posteriori stability reading, exact in fact for a per-axis-affine
+integrand; a singular integrand `HOLD`s; the observed ratio sits at the `1/4` envelope). The remaining open
+refinement family is genuinely *adaptive* grids (non-uniform refinement), where the gap sequence is no
+longer produced by uniform halving — the same scalar-stability theorem still applies whenever the global
+gaps contract, but choosing *where* to refine is the open engineering.
+
 ### 8. Richardson **a-priori** stability certificate — machine-checked, axiom-free (`Th_coqc`)
 
 `refine_stable` (§7) is *a-posteriori*: it assumes the contraction hypothesis `|s_{k+1}| ≤ ρ·|s_k|`,
@@ -375,8 +390,10 @@ standard Richardson fact — the machine-checked content is the ℚ-algebra `for
 
 ## What is still open (`+ℝ-Open` / next work)
 
-- Extend the finite-stability certificate to more refinement families (multi-dimensional quadrature,
-  adaptive grids) — same ℚ-only `refine_stable` mechanism, more instances.
+- Extend the finite-stability certificate to genuinely **adaptive** grids (non-uniform refinement) —
+  the scalar `refine_stable` theorem still applies whenever the global gaps contract; the open part is
+  the refinement *strategy* (where to subdivide). Multi-dimensional (uniform tensor) quadrature is now
+  shipped (§7, `integral_nd_stable_certified`).
 
 *(Note: we do **not** list "prove the Simpson/Euler–Maclaurin bound against the true `∫f`" as open work.
 That is a continuum-first obligation the framework does not accept: the certified object is the stability

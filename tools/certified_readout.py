@@ -211,6 +211,80 @@ def integral_stable_certified(f, a, b, eps, n0=8, refines=14):
         return Readout(vals[-1], bound, CERTIFIED, f"trapezoid refinement stabilized, ρ≈{mp.nstr(rho,3)}, gap≤ε")
     return Readout(None, None, HOLD, f"not yet within ε (stable bound {mp.nstr(bound,3)} > ε); refine further")
 
+# ---------------------------------------------------------------------------------------------------
+# 5b) MULTI-DIMENSIONAL QUADRATURE by the SAME finite-stability certificate.
+#     refine_stable (formal/IDM_Certified.v) is a statement about a SCALAR gap sequence s : ℕ→ℚ — it is
+#     DIMENSION-AGNOSTIC.  So multi-D quadrature needs no new theorem: a tensor-product trapezoid on a
+#     box, refined n→2n on every axis, produces exactly such a scalar sequence, and the identical
+#     gap-contraction certificate applies.  For a smooth integrand the tensor trapezoid is order-2 per
+#     axis, so halving all axes contracts the gaps by ρ→(1/2)²=1/4 — the very a-priori ratio of §4b
+#     (richardson_apriori_ratio(2)).  We never target a completed ∫∫f; we certify OUR readout stabilized.
+# ---------------------------------------------------------------------------------------------------
+def _tensor_trapezoid(f, box, n):
+    """Tensor-product trapezoid of f over the box [(a₁,b₁),…,(a_d,b_d)] with n panels per axis.
+    f takes a d-tuple of coordinates.  (n+1)^d nodes — keep n small in high dimension.)"""
+    import itertools
+    d = len(box)
+    hs = [(mp.mpf(b) - mp.mpf(a)) / n for (a, b) in box]
+    lows = [mp.mpf(a) for (a, _) in box]
+    total = mp.mpf(0)
+    for idx in itertools.product(range(n + 1), repeat=d):
+        w = mp.mpf(1)
+        pt = []
+        for k, i in enumerate(idx):
+            pt.append(lows[k] + i * hs[k])
+            if i == 0 or i == n:
+                w /= 2                                 # trapezoid endpoint weight, once per boundary axis
+        total += w * f(tuple(pt))
+    vol_factor = mp.mpf(1)
+    for h in hs:
+        vol_factor *= h
+    return total * vol_factor
+
+def integral_nd_stable_certified(f, box, eps, n0=4, refines=6):
+    """Certified multi-dimensional quadrature by finite stability — the n-D twin of
+    integral_stable_certified.  Refines a tensor trapezoid n→2n on every axis, watches the successive
+    readouts' gaps, and CERTIFIES (via refine_stable, formal/IDM_Certified.v) only when they contract:
+    the further-refinement disagreement is then ≤ g_last/(1−ρ).  HOLD if the gaps do not contract
+    (singularity / non-integrable / oscillatory) — no value is invented.  `box` is a list of
+    (a,b) per axis; `f` takes a d-tuple.  Cost is (n+1)^d per refinement, so keep the dimension modest."""
+    if not _HAVE_MP:
+        return Readout(None, None, HOLD, "integral_nd_stable_certified needs mpmath")
+    eps = mp.mpf(eps)
+    if eps <= 0:
+        return Readout(None, None, HOLD, "tolerance ε must be > 0")
+    if not box:
+        return Readout(None, None, HOLD, "empty box — nothing to integrate")
+    vals, n = [], n0
+    for _ in range(refines):
+        try:
+            vals.append(_tensor_trapezoid(f, box, n))
+        except (ZeroDivisionError, ValueError, OverflowError):
+            return Readout(None, None, HOLD, "integrand not finitely samplable on the grid (pole/singularity) — refusing")
+        n *= 2
+    gaps = [abs(vals[i + 1] - vals[i]) for i in range(len(vals) - 1)]
+    tail = gaps[len(gaps) // 2:]
+    if not tail:
+        return Readout(None, None, HOLD, "too few refinements to judge stability")
+    if max(tail) == 0:
+        # the OBSERVED refinement gaps have vanished — the ρ=0 case of the same a-posteriori inference
+        # as the ρ<1 branch below (refine_stable at ρ=0 gives bound g_last/(1−0)=0). For a genuinely
+        # per-axis-affine integrand this reflects a real exactness (the tensor trapezoid integrates it
+        # exactly for any n); in general it is the observed-stability reading, not a proof of exactness.
+        return Readout(vals[-1], mp.mpf(0), CERTIFIED,
+                       f"{len(box)}-D tensor trapezoid: observed gaps vanished (ρ=0), stable bound 0")
+    ratios = [tail[i + 1] / tail[i] for i in range(len(tail) - 1) if tail[i] > 0]
+    if not ratios or max(ratios) >= 1:
+        return Readout(None, None, HOLD,
+                       "refinement gaps do not contract (ρ≥1) — no stable plateau "
+                       "(singular / non-integrable / oscillatory); refusing to emit a value")
+    rho = max(ratios)
+    bound = gaps[-1] / (1 - rho)                        # refine_stable: further refinements agree within this
+    if bound <= eps:
+        return Readout(vals[-1], bound, CERTIFIED,
+                       f"{len(box)}-D tensor trapezoid stabilized, ρ≈{mp.nstr(rho,3)}, gap≤ε")
+    return Readout(None, None, HOLD, f"not yet within ε (stable bound {mp.nstr(bound,3)} > ε); refine further")
+
 if __name__ == "__main__":
     checks = []
     g = geom_series_certified(Q(1, 3), Q(1, 10 ** 12))
@@ -233,6 +307,15 @@ if __name__ == "__main__":
     checks.append(("richardson a-priori tiny gap → CERTIFIED", ra.status == CERTIFIED))
     rah = richardson_apriori_certified(Q(1, 2), 2, Q(1, 10 ** 6))
     checks.append(("richardson a-priori large gap → HOLD", rah.status == HOLD))
+    if _HAVE_MP:
+        i2 = integral_nd_stable_certified(lambda p: p[0] * p[1], [(0, 1), (0, 2)], mp.mpf(10) ** -4)
+        checks.append(("2-D ∫∫xy over [0,1]×[0,2] = 1 → CERTIFIED (exact)", i2.certified and abs(i2.q - 1) <= max(i2.bound, mp.mpf(10) ** -3)))
+        i3 = integral_nd_stable_certified(lambda p: p[0] ** 2 + p[1] ** 2 + p[2] ** 2, [(0, 1)] * 3, mp.mpf(10) ** -3, n0=4, refines=5)
+        checks.append(("3-D ∫∫∫(x²+y²+z²) over unit cube = 1 → CERTIFIED (contracting)", i3.certified and abs(i3.q - 1) <= max(i3.bound, mp.mpf(10) ** -2)))
+        i2h = integral_nd_stable_certified(lambda p: 1 / (p[0] - mp.mpf("0.5")), [(0, 1), (0, 1)], mp.mpf(10) ** -4)
+        checks.append(("2-D with a pole → HOLD", i2h.status == HOLD))
+    else:
+        checks += [("2-D quadrature (skipped, no mpmath)", True), ("3-D quadrature (skipped)", True), ("2-D pole (skipped)", True)]
     for name, ok in checks:
         print(f"  {'ok ' if ok else 'FAIL'} {name}")
     ok = all(o for _, o in checks)
