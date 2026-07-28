@@ -1,0 +1,15 @@
+# matrix (extended)
+from idm._solve_core import *  # noqa: F401,F403
+
+@kind("matrix_transpose", "Th_coqc")
+def _mt(p): return _ok("matrix_transpose", X.transpose(p["matrix"]), "exact")
+@kind("matrix_trace", "Th_coqc")
+def _mtr(p): return _ok("matrix_trace", X.trace(p["matrix"]), "Σ diagonal")
+@kind("matrix_add", "Th_coqc")
+def _ma(p): return _ok("matrix_add", X.mat_add(p["A"], p["B"]), "exact ℚ")
+@kind("matrix_power", "Th_coqc")
+def _mpw(p): return _ok("matrix_power", X.mat_power(p["matrix"], int(p["k"])), "exact ℚ binary exponentiation")
+@kind("matrix_rank", "Th_coqc")
+def _mr(p): return _ok("matrix_rank", X.matrix_rank(p["matrix"]), "rank via RREF over ℚ")
+@kind("rref", "Th_coqc")
+def _rref(p): M, r = X.rref(p["matrix"]); return _ok("rref", {"rref": M, "rank": r}, "reduced row-echelon over ℚ")
