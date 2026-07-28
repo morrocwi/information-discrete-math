@@ -21,6 +21,9 @@ from .interpolate import lagrange, newton
 from .matrix_minpoly import minimal_polynomial, eval_poly_at_matrix
 from .factorize import factor_over_Q
 from .linsolve import LinearSolution, rref, linear_solve, matvec
+from .limits import LimitResult, rational_limit, rational_limit_oneside
+from .ode_linear import ODESolution, solve_linear_ode
+from .groebner import reduced_groebner, normal_form, in_ideal, buchberger, parse_poly, poly_to_str
 
 __all__ = [
     "DomainMismatch", "QRing", "ZRing", "GFRing",
@@ -32,4 +35,7 @@ __all__ = [
     "subresultant_prs", "resultant_prs", "gcd_prs", "lagrange", "newton",
     "minimal_polynomial", "eval_poly_at_matrix", "factor_over_Q",
     "LinearSolution", "rref", "linear_solve", "matvec",
+    "LimitResult", "rational_limit", "rational_limit_oneside",
+    "ODESolution", "solve_linear_ode",
+    "reduced_groebner", "normal_form", "in_ideal", "buchberger", "parse_poly", "poly_to_str",
 ]

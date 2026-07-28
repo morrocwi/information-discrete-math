@@ -1425,6 +1425,24 @@
    ]
   }
  },
+ "groebner_basis": {
+  "kind": "groebner_basis",
+  "method": "Buchberger's algorithm \u2192 reduced Gr\u00f6bner basis, exact \u211a",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "basis": [
+    "y^2 - 1/2",
+    "x - y"
+   ],
+   "order": "grevlex",
+   "size": 2,
+   "variables": [
+    "x",
+    "y"
+   ]
+  }
+ },
  "hermite_H": {
   "kind": "hermite_H",
   "method": "finite series/recurrence \u2014 hermite_H",
@@ -2011,6 +2029,32 @@
   "value": {
    "digits": "1.0",
    "float": 1.0
+  }
+ },
+ "linear_ode": {
+  "kind": "linear_ode",
+  "method": "exact \u211a characteristic polynomial (factor over \u211a \u2192 root-type basis)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "basis": [
+    {
+     "poly_power": 0,
+     "root": "1",
+     "term": "e^x",
+     "type": "real"
+    },
+    {
+     "poly_power": 0,
+     "root": "2",
+     "term": "e^(2*x)",
+     "type": "real"
+    }
+   ],
+   "general": "C1*e^x + C2*e^(2*x)",
+   "order": 2,
+   "solution_status": "solved",
+   "unresolved": []
   }
  },
  "linear_program": {
@@ -3195,6 +3239,21 @@
     }
    ]
   ]
+ },
+ "rational_limit": {
+  "kind": "rational_limit",
+  "method": "exact \u211a rational-function limit (cancel + degree/pole analysis)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "limit": {
+    "exact": "2/1",
+    "float": 2.0
+   },
+   "limit_type": "finite",
+   "removable": true,
+   "sign": null
+  }
  },
  "rational_roots": {
   "kind": "rational_roots",
