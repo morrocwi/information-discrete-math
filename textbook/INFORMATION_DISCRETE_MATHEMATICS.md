@@ -394,7 +394,7 @@ synthesis; tiers below are exactly its claim-gate ledger.)*
   `formal/IDM_Harvest.v: odd_from_cyclic_closure`/`least_nontrivial_odd_is_three` — the same `k`-odd witness that forces
   `k=3` → SU(3), §II); (ii) a continuous compact transport closes on a **topological circle** `θ∈ℝ/Tℤ` and an **isotropic
   Euclidean metric calibration** gives `C/R=2π`. **This second route uses the completed real circle, so it
-  is `+ℝ-Open`, not `Th_coqc`** — it is stated and predicted, not proved axiom-free (§10.9). The native,
+  is `+ℝ-Open`, not `Th_coqc`** — it is stated and predicted, not proved axiom-free (§10.13). The native,
   contamination-free content of `π` is route (i), the finite order-reversal phase; `π` is *not* inserted at
   the root — route (i) is what compact closure reads out, and route (ii) is its continuum readout.
 - **`φ` = the Perron invariant of minimal closure-continuation transfer (`Th_coqc`).** The least
@@ -419,7 +419,7 @@ synthesis; tiers below are exactly its claim-gate ledger.)*
   `φ` is growth" made precise: `π` = calibrated invariant of compact closure, `φ` = Perron invariant
   of minimal closure-continuation transfer.
 
-**Geometry closes here, uncontaminated** (its *finite* content; the completed-manifold/topology frontier stays `+ℝ-Open`, §10.9): distance is retained resistance (§4.1); betweenness is
+**Geometry closes here, uncontaminated** (its *finite* content; the completed-manifold/topology frontier stays `+ℝ-Open`, §10.13): distance is retained resistance (§4.1); betweenness is
 Tarski over the discrete metric (§4.2); angle is the overlap fraction, never a continuum degree
 (§4.2); curvature is the second retained difference with a discrete Gauss–Bonnet/Bianchi (§10.10); and
 its constants (`π,φ,θ_G`) are readout-invariants of quotient grammars — each derived, tier-fenced, and
@@ -858,7 +858,7 @@ primitive. This closes the panel-flagged stub with all five sub-rungs stated, no
   exhibited — the Bishop "Cauchy-with-modulus" move (§10.7), re-derived here as the A8 stability
   declaration. **Per-witnessed-instance: `finite_diagnostic`. The unrestricted "`∀` sequence `∃`
   modulus" existence claim (classical Cauchy completeness with no witness supplied) stays `+ℝ-Open`** —
-  ties to §10.9.
+  ties to §10.13.
 
 ### 10.5.2 Series convergence (partial sums + Euler–Maclaurin tail)
 
@@ -889,7 +889,7 @@ primitive. This closes the panel-flagged stub with all five sub-rungs stated, no
   classical axiom.
 - **Continuum rung.** "`∀ε>0 ∃η>0`" continuity is licensed exactly as 10.5a: `Th_coqc`-eligible **once**
   `η(ε)` is an admissible modulus map (available in closed form for the `D_ε`-algebra-closed primitives
-  of Th 10.8); **`+ℝ-Open` in general** — unwitnessed `ε–δ` existence is the named Open item (§10.9).
+  of Th 10.8); **`+ℝ-Open` in general** — unwitnessed `ε–δ` existence is the named Open item (§10.13).
 
 ### 10.5.4 Derivative (`D_ε` exact algebra ⊢ declared-stability rung)
 
@@ -943,7 +943,7 @@ primitive. This closes the panel-flagged stub with all five sub-rungs stated, no
 | 10.5.4 derivative | `D_ε f` exact algebra (Th 10.8) | Def 10.5c Cauchy-stability of the `D_ε` family | `finite_diagnostic`/`Th_coqc`-elig (closed-form `f`) / `+ℝ-Open` (general) |
 | 10.5.5 integral | `I_ε f` exact FTCC (Th 10.8) | Def 10.5d Euler–Maclaurin remainder bound | `finite_diagnostic`/`Th_coqc`-elig (poly/rational `f`) / `+ℝ-Open` (general) |
 
-*Open (named, tied to §10.9):* general `ε–δ` / Cauchy-modulus existence with **no** exhibited witness,
+*Open (named, tied to §10.13):* general `ε–δ` / Cauchy-modulus existence with **no** exhibited witness,
 for an unrestricted admissible `f` — the frontier this skeleton fences rather than hides.
 
 ## 10.6 Probability and measure as retained frequency (a discrete measure theory)
@@ -960,15 +960,18 @@ for an unrestricted admissible `f` — the frontier this skeleton fences rather 
 - **Causal set theory** (Bombelli–Lee–Meyer–Sorkin 1987, *PRL* 59, 521; Sorkin 2003, gr-qc/0309009),
   `finite_diagnostic`. **ADOPT re-adapted:** an admissible causal order `≺_λ` over `∼_λ`-fibers plus
   `δ_R` counting fixes the readout geometry — `Vol_λ(interval(x,y)) := #{z : x≺_λ z≺_λ y}` restates
-  "order + number = geometry"; `I_ε` over the chain recovers the finite-`ε` line-element. **This is
-  already machine-checked IN-HOUSE (`Th_coqc`, economize — do not re-derive): `formal/InfoCausalPartialOrder_attempt.v`**
-  proves `rank` (= minimal-step), `prec_irrefl` / `prec_trans_thm` / `prec_asymm` (a strict partial
-  order), and `in_diamond` (the interval `0≺z≺3`) with its members counted — the diamond-volume-by-
-  counting identity as an internal theorem, not merely an external citation. **Local
+  "order + number = geometry"; `I_ε` over the chain recovers the finite-`ε` line-element. **This is a
+  finite volume-by-counting kernel and is `Th_coqc`-ELIGIBLE** — `rank` (= minimal-step), the
+  strict-partial-order facts (irreflexivity / transitivity / asymmetry of `≺_λ`), and the interval
+  `#{z : 0≺z≺3}` counted are all finite, decidable statements over `∼_λ`-fibers, no continuum invoked.
+  **Honesty note (tier correction):** a standalone witness `.v` for this kernel — referenced in earlier
+  drafts as `formal/InfoCausalPartialOrder_attempt.v` — is **not present** in this repository's `formal/`
+  and is **not** in `formal/verify.sh`, so it is tiered `Th_coqc`-**eligible** here, NOT cited as a
+  shipped machine-checked witness (writing that witness is a named backlog item). **Local
   finiteness** re-adapted: a `G_λ`-fiber between any causal pair is finite — a *structural* reason
   sub-`λ` resolution is unreachable, strengthening A8. **CONFLICT (do not blend):** causets take
   discreteness as ontological substrate; we do not (discreteness is a readout fact at declared `λ`;
-  the continuum is a non-readout). **Sorkin's Hauptvermutung stays `+ℝ-Open`** (§10.9); sprinkling is
+  the continuum is a non-readout). **Sorkin's Hauptvermutung stays `+ℝ-Open`** (§10.13); sprinkling is
   cited as a `Dr` template for the stability step, not adopted as mechanism.
 - **Constructive / Bishop analysis** (Bishop 1967; Bishop–Bridges 1985; Bridges–Richman 1987; Simpson
   2009). **Th 10.9 (`Th_coqc`):** **cotransitivity** is the constructive substitute for trichotomy,
@@ -1065,7 +1068,7 @@ Each is an existing `Th_coqc` witness that grounds a textbook claim:
   readout" as `√`/`log`, now on programs. Randomness = a record with no shorter generator (a
   non-compressible retained distinction).
 
-## 10.9 The honest Open frontier (`+ℝ-Open` / `Dr` — named, not hidden)
+## 10.13 The honest Open frontier (`+ℝ-Open` / `Dr` — named, not hidden)
 
 Continuum limit `L_R → □` (d'Alembertian) · a full **topos** completeness of the substrate ·
 **Hauptvermutung** (uniqueness of a faithful causet embedding) · the **strong** law of large numbers ·
@@ -1140,7 +1143,7 @@ acceleration. *(Validated: 23/23 special-function values, Appendix E.E.)*
 > A8-declared acceleration. The continuum enters *nowhere* as a primitive; it is recovered *everywhere*
 > as a readout. Witness: **100/100**, `validation/hundred_continuum_problems.py` (Appendix E).
 
-This does **not** claim the classical `ε→0` existence theorems (they stay `+ℝ-Open`, §10.9); it claims
+This does **not** claim the classical `ε→0` existence theorems (they stay `+ℝ-Open`, §10.13); it claims
 the strictly stronger operational fact that *the answers those theorems name are obtained without the
 limit being taken as real*. The honest fence: the readout is reproduced; the completed continuum is
 still declared Open and predicted, per Part 0.
@@ -1245,7 +1248,7 @@ Part: matrix algebra `(A·B)ᵀ=Bᵀ·Aᵀ`, `I·A=A`, and the Laplacian facts o
 `laplacian_ones_in_kernel`), all axiom-free. Eigenvalue/eigenvector computation for the finite `L_R` is
 a finite readout; the completion to **real spectra** of an infinite operator (the real spectral theorem,
 the continuum limit `L_R→□`) is `+ℝ-Open` **by our own philosophy** — real eigenvalues need ℝ-completeness
-(§10.9), so it was never finite "warrant" work but a declared frontier.
+(§10.13), so it was never finite "warrant" work but a declared frontier.
 
 ## 13.4 The averaging projector — parameter reduction by symmetry (`Th_coqc`)
 
@@ -1352,7 +1355,7 @@ graph-theoretic invariant is an `L_R` readout:
 algebra, linear algebra, complex analysis, and combinatorics/graph theory — each derived from `δ_R`,
 `L_R`, and the Part VII operators, none importing a continuum primitive. The remaining declared frontier
 (topology/topos, Hauptvermutung, completed continuum limits, exact `π`/`φ` objects) stays `+ℝ-Open`
-(§10.9), stated and predicted, never smuggled in.
+(§10.13), stated and predicted, never smuggled in.
 
 ---
 
@@ -1494,7 +1497,7 @@ sorites BLOCK, convexity, obstruction-solve, exact-`ℚ` LP, gradient descent, L
 category theory, statistics/inference, and optimization — each derived from `δ_R`, `L_R`, `I_ε`/`D_ε`,
 and the verdict discipline, none importing a continuum primitive. The completed-continuum pieces
 (σ-algebra limits, infinite Hilbert spaces, topos structure, continuous convex analysis) are named
-`+ℝ-Open` (§10.9), and the **continuum-maya bridge** (Part XX, backlog) is the capstone that will
+`+ℝ-Open` (§10.13), and the **continuum-maya bridge** (Part XX, backlog) is the capstone that will
 construct the continuum layer *as a readout* and prove it computes identically.
 
 ---
@@ -1527,7 +1530,7 @@ completed non-readout.
   **witnessed at 100/100** (Appendix E) and 34/34 (Appendix, Parts XVI–XIX).
 - **Faithfulness statement (`Dr`, computationally witnessed).** *`Λ(discrete op) = classical continuum
   op` wherever the classical operation exists*, and the set where `Λ` refuses (`HOLD`) is **exactly**
-  the `+ℝ-Open` non-readouts (§10.9). This upgrades the empirical 100/100 into a stated bridge
+  the `+ℝ-Open` non-readouts (§10.13). This upgrades the empirical 100/100 into a stated bridge
   property; the exact rung is machine-checked, the numeric rung is validated, and no completed
   continuum is ever formed.
 
@@ -1606,13 +1609,13 @@ value from a finite discrete readout — `100/100` (1-D toolkit) + `6/6` multi-D
 non-integer `d`) + the exact machine-checked core. **Anything the continuum computes, the maya computes
 finitely; the completed continuum is dispensable for computation.** *(Honest fence, unchanged: this is
 computational replacement, not a claim to decide the continuum's *existence/uniqueness* questions — those
-stay `+ℝ-Open`; declining to form the completed object is the whole point, §0.3, §10.9.)*
+stay `+ℝ-Open`; declining to form the completed object is the whole point, §0.3, §10.13.)*
 
 ---
 
 # Part XXI — The frontier without the continuum: paradox dissolution (a decisive stance)
 
-Topology, differential geometry (manifolds), and PDE were listed `+ℝ-Open` (§10.9). This Part states
+Topology, differential geometry (manifolds), and PDE were listed `+ℝ-Open` (§10.13). This Part states
 the **decisive position**: that mark is **not a computational gap** — it is the *deliberate refusal to
 reify a non-readout*. **The actual continuum is not needed for *computing* any of these** — the
 continuum-maya (Part XX, finite-ε) **computes them all, robustly**; for *stating and deciding* the
@@ -1634,7 +1637,7 @@ refused — the classical question about the *object* is not thereby answered, o
 - **PDE** — every PDE is *actually computed* by discretization (not "solved" in the classical
   existence/uniqueness sense); the finite-ε schemes of Part XI (`D_ε`,
   `I_ε`, the difference-equation ODE, §11.4) **are** the computation. The "continuum limit `L_R→□`"
-  (§10.9) is the *appearance*; the computation lives at finite `ε`.
+  (§10.13) is the *appearance*; the computation lives at finite `ε`.
 
 **So the stance is decisive:** we do not need the actual continuum to compute topology, geometry, or
 PDE — the maya suffices, robustly, at every case that has an answer. What stays `+ℝ-Open` is only the
@@ -1666,7 +1669,7 @@ framework *declines to inject*. The paradox is the symptom of the injection; ref
 the cure. The continuum-maya (Part XX) then supplies every value the working mathematician actually
 needs — so the continuum is, for computation, **optional**. *(Honesty fence: this dissolves the
 paradoxes and computes the readouts; it does not claim to have decided the classical questions in their
-own completed-continuum terms — declining to form that object is the whole point, §0.3, §10.9.)*
+own completed-continuum terms — declining to form that object is the whole point, §0.3, §10.13.)*
 
 ## 21.3 The three frontier areas, made explicit — the paradox, and the computation that never hits it
 
@@ -1745,7 +1748,7 @@ Lahtee; tiers as marked)*:
 *(Honesty fence, inherited from the source packs: these are bounds on the **retained-information
 structural model** — finite-dimensional, over our `L_R` — and a theorem-facing scaffold; they are **not**
 a Navier–Stokes continuum closure. The completed-continuum existence/regularity theorem stays `+ℝ-Open`,
-its own declared target — §10.9.)*
+its own declared target — §10.13.)*
 
 **Summary of the stance for the three areas:** the paradox is always in the *completed-continuum object*
 (non-measurable set · smooth-limit curvature · reached `+∞`), never in the *computation*. Refuse the
@@ -2029,7 +2032,7 @@ against the world benchmark. Suite: `validation/hundred_continuum_problems.py` (
 **Honest reading (tier-aware).** The exact-`ℚ` rungs (FTCC, `D_ε` rules) carry `Th_coqc`; the numeric
 rungs are `finite_diagnostic` — the *readout* is reproduced to the declared tolerance (`1e-6`–`1e-10`
 typical; `1e-3`–`1e-4` disclosed per-line for genuinely singular integrands), while the completed `ε→0`
-existence stays `+ℝ-Open` (§10.9). Two harness pitfalls were caught and fixed for the long term: (1) an
+existence stays `+ℝ-Open` (§10.13). Two harness pitfalls were caught and fixed for the long term: (1) an
 endpoint Euler–Maclaurin correction that stepped **outside** `[a,b]` and returned a complex value —
 fixed to a one-sided *inward* difference; (2) a benchmark with a **sign error** in a Taylor coefficient
 (`n⁴(cos(1/n)−1+1/2n²)→+1/24`, not `−1/24`) — the framework had the correct sign; the reference was
