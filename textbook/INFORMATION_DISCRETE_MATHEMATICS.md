@@ -1078,6 +1078,155 @@ Part 0.
 
 ---
 
+## 10.14 The named-Open-problems frontier, in depth (`+ℝ-Open` — declared, not dissolved)
+
+§10.13 named four items as the declared boundary in one line each. This section expands each to the
+depth the rest of the book uses elsewhere: the mainstream statement, our readout-first stance, and an
+explicit honesty fence. **None of the four is closed here.** Where earlier parts (§4.4, §10.6, §10.7,
+Part XXI) already carved a genuinely finite kernel out of a classical question, that kernel is cited as
+what it is — `Th_coqc` or `finite_diagnostic` — and the remaining classical question is still named
+`+ℝ-Open`. Two of the four (topos completeness, the strong LLN) are declared Open outright, with no
+partial dissolution claimed; the other two (Hauptvermutung, exact `π`/`φ`) split into a closed finite
+kernel plus a genuinely `+ℝ-Open` remainder — that split is stated plainly, not blurred into a single
+verdict. *(Diagnoses `Dr`; no new `Th_coqc` theorem is introduced in this section.)*
+
+### 10.14.1 Hauptvermutung — the "Main Conjecture" of triangulation uniqueness
+
+- **Mainstream statement(s).** Two distinct questions travel under this name and must not be conflated:
+  (a) the classical PL Hauptvermutung (Steinitz/Tietze, early 1900s): are any two triangulations of the
+  same topological space always related by a common subdivision (PL-equivalent)? **Answered — and
+  refuted** — by Milnor (1961, Reidemeister-torsion counterexample) for general polyhedra/manifolds of
+  dimension ≥ 5; it holds in dimensions ≤ 3 and is subtle in dimension 4 (Kirby–Siebenmann obstruction).
+  This part of the question is *closed by the external record*, not open — and closed in the negative in
+  general. (b) **Sorkin's causal-set Hauptvermutung** (Bombelli–Lee–Meyer–Sorkin 1987; Sorkin 2003,
+  gr-qc/0309009), the sense this book actually inherits (§10.7): does a causal set that is "faithfully
+  embeddable" (via Poisson sprinkling) into a Lorentzian manifold have that manifold **uniquely**, up to
+  approximation at the sprinkling density — or could two macroscopically different continuum manifolds
+  both faithfully embed the same causet? This is a genuinely **open conjecture** in the causal-set
+  literature, not resolved either way.
+- **Our readout-first stance.** We inherit only sense (b), and only partially reframe it. §10.7 already
+  states the reconciliation: an admissible causal order `≺_λ` plus `δ_R` counting **fixes the readout
+  geometry** at declared `λ` — `Vol_λ(interval(x,y)) := #{z : x≺_λ z≺_λ y}` is a finite, `Th_coqc`
+  identity — a finite volume-by-counting kernel, `Th_coqc`-**eligible** (§10.7; no standalone witness `.v`
+  is in this repo's `formal/` — see the §10.7 honesty note). That is the finite kernel, and it is closed. **What stays open is the *converse*
+  uniqueness claim about the completed continuum manifold** — that a faithful embedding, if one exists,
+  is essentially the *only* one. This is not a question our framework can dissolve by refusing an
+  injected non-readout, the way Part XXI dissolves Banach–Tarski or Zeno: the question is not "does an
+  `I1–I4` infinity get reached," it is a genuine **combinatorial-uniqueness** question about whether the
+  finite readout data (the causet) underdetermines the continuum object it is sprinkled into. Declining
+  to reify the completed manifold (§10.13) does not settle *how many* completed manifolds would be
+  compatible with a given finite causet if one *were* formed — that is exactly the un-asked question our
+  stance declines to answer, in either direction.
+- **Honest fence.** `Dr` (finite volume-by-counting kernel, `Th_coqc`-eligible per §10.7, no standalone
+  witness `.v` in-tree) + `+ℝ-Open` (uniqueness of the embedding is a named, un-dissolved conjecture — §10.7,
+  §10.13). We claim **no** theorem, in either direction, about faithful-embedding uniqueness. Sense (a)
+  above (classical PL Hauptvermutung) is outside this book's scope entirely — it is a fact about the
+  external mathematical record (refuted in general), not a claim this framework makes or needs.
+
+### 10.14.2 The strong Law of Large Numbers
+
+- **Mainstream statement.** For i.i.d. `X_1,X_2,…` with finite mean `μ`, the **strong** LLN (Kolmogorov)
+  asserts almost-sure convergence: `P(lim_{n→∞} (1/n)Σ_{k≤n}X_k = μ) = 1` — a statement about the
+  behavior of a **completed infinite sequence**, quantified over an uncountable sample space, with
+  convergence holding outside a measure-zero exceptional set that is itself not finitely exhibited.
+- **Our readout-first stance.** §10.6 already gives the finite kernel: `measure := I_ε(indicator)`,
+  `probability` the normalized case, and **the law of large numbers = A8 stability of the empirical
+  mean** — the plateau of `C_N = (1/N)·I_ε(s)[N]` as `N` grows through an admissible declared sequence,
+  with a computable stabilization witness. That is the **weak-LLN-shaped, finite-`ε` content**, and per
+  §10.6 it is `Th_coqc`-eligible: a genuinely finite, checkable stability certificate, not a limit taken
+  as real. The **strong** form is a strictly different claim — it is not "the empirical mean stabilizes
+  to declared tolerance as you extend the run," it is "convergence holds for *every* infinite
+  continuation, with probability exactly `1` over the completed infinite product space." That
+  quantifies over the **completed infinite sequence** (`I2`, Part 0) and an **uncountable sample space**
+  (§10.2's potential-vs-actual-infinite boundary) simultaneously — two separate non-readouts stacked. We
+  do not have, and do not claim, a finite-`ε` substitute for "holds for all infinite continuations
+  simultaneously": any finite run only ever exhibits *one* prefix of *one* continuation. This is not a
+  case where refusing the injection dissolves the paradox and the maya still computes the *same* claim
+  (contrast Part XXI) — the strong form's content is specifically the almost-everywhere behavior of the
+  full infinite ensemble, which has no finite-readout restatement we have found. **We state this
+  plainly as declared Open, not dissolved.**
+- **Honest fence.** `Th_coqc`-eligible (the finite A8-stability/weak-shaped kernel, §10.6) `+` `+ℝ-Open`
+  (the strong, almost-sure-over-the-completed-infinite-ensemble form, §10.13). No claim is made that the
+  strong LLN is false, dissolved, or unnecessary for classical probability — only that this framework
+  does not currently possess, and does not manufacture, a readout-first substitute for it.
+
+### 10.14.3 A full topos completeness of the substrate
+
+- **Mainstream statement.** An **elementary topos** is a category with finite limits, exponentials, and
+  a subobject classifier `Ω` — internal logic (typically intuitionistic, classical under extra axioms),
+  internal set theory, and a genuine internal notion of "truth value" object. Claiming the admissible-
+  description substrate `(G_λ, \tilde E)` (§0.5) *is* a topos would license the **full internal-logic and
+  power-object machinery** of topos theory on top of it.
+- **Our readout-first stance.** §10.7 already states, precisely, how much structure we have earned and
+  where we stop: `G_λ` is an idempotent endofunctor / reflector (`finite_diagnostic`); the admissible
+  factorization `E = Ẽ∘G_λ` is a comma-category / Kan-extension pattern (`Th_coqc`-elig); sets-as-`G_λ`-
+  fibers form a Grothendieck fibration (indexed-set semantics); admissible descriptions are Setoids —
+  the direct Coq formalization vehicle (`Th_coqc`). These are genuine, checkable pieces of categorical
+  structure. **What is explicitly not claimed, and is not being claimed here either, is the subobject
+  classifier and the full topos axioms** — we have not exhibited an `Ω`-object for the admissible-
+  description category, nor verified the topos axioms (pullback-stable classification of all
+  subobjects, cartesian closure with exponentials for arbitrary admissible objects) against `G_λ`-fibers
+  at every declared `λ` simultaneously. Constructing that classifier would very likely itself require
+  forming a completed object across all `λ` (or an internal notion of "all admissible subsets," which is
+  exactly the §10.2 potential-vs-actual-infinite boundary) — so this is not a case of "we haven't gotten
+  to it yet," it plausibly sits on the same non-readout boundary as the rest of §10.13, though we do not
+  claim to have proven that connection either — the honest state is simply: **not attempted, not
+  claimed.**
+- **Honest fence.** `finite_diagnostic`/`Th_coqc`-elig for the partial categorical structure actually
+  exhibited (reflector, fibration, Setoid formalization, §10.7) `+` `+ℝ-Open`, declared outright, for
+  full topos completeness (subobject classifier, internal logic). This is the most straightforwardly
+  Open of the four items here: no partial dissolution is claimed for the classifier itself, only for the
+  structure around it.
+
+### 10.14.4 Exact `π`/`φ` objects
+
+- **Mainstream statement.** Classically, `π` and `φ` are specific real numbers — elements of the
+  Dedekind-complete ordered field `ℝ` — each with a unique, fully determined (if uncomputable-in-full)
+  infinite decimal expansion. "Exact" here means: a single, completed point of the continuum, not merely
+  an algorithm that approximates it to any finite precision.
+- **Our readout-first stance — this is the sharpest split of the four, and §4.4 already draws it.**
+  **`φ` is *not* an open item for us at all in its algebraic form.** It is the Perron–Frobenius
+  eigenvalue of the rational matrix `K_F=[[1,1],[1,0]]`, the positive root of `λ²−λ−1=0` — an algebraic
+  number given exactly by its minimal polynomial over `ℚ`, with exact rational arithmetic on the
+  quadratic-extension representation `a+b√5` (`a,b∈ℚ`). Every operation and comparison on `φ` in this
+  form is decidable over `ℚ` (Th 4.5, `Th_coqc`, algebraically exact) — no continuum, no infinite decimal,
+  no non-readout is required to pin `φ` down exactly. **`π` splits into the two routes §4.4 already
+  names:** route (i), the finite order-reversal phase (`r=−1=e^{iπ}` as the exchange factor of an
+  involutive adjacent order-reversal, with the odd-`k` witness `formal/IDM_Harvest.v`), is
+  `Th_coqc`-eligible and continuum-free — it is a finite, algebraic fact about admissible order-reversal,
+  not `π`-the-real-number. Route (ii), the metric-calibration circumference/diameter ratio on the
+  topological circle `θ∈ℝ/Tℤ`, **uses the completed real circle** and is therefore `+ℝ-Open`, not
+  `Th_coqc` (§4.4, §10.13). **So the genuinely Open content is narrower than "is `π`/`φ` exact":** for
+  `φ` there is no Open remainder in the algebraic reading; for `π` the Open remainder is specifically
+  route (ii), the continuum-metric embedding, not the order-reversal root. What is Open for *both*,
+  strictly, is treating either constant as a **completed point of `ℝ`-as-Dedekind-cut** rather than as a
+  readout-invariant of a quotient grammar (§4.4) or a Bishop-style regular-Cauchy-sequence readout
+  (§3.4) — that completed-continuum-point reading is exactly the non-readout §0.2/§10.13 declines to
+  form, for `π` and `φ` alike, and for every other real number on the same footing.
+- **Honest fence.** `φ`: `Th_coqc` (algebraically exact, no Open remainder in the quadratic-extension
+  reading). `π`: `Th_coqc`-elig (route (i), order-reversal) `+` `+ℝ-Open` (route (ii), metric-circle
+  calibration — §4.4, §10.13). Both: `+ℝ-Open` if the question is reread as "is this a completed point of
+  the Dedekind-complete continuum," since forming that completed continuum is declined by choice (§0.2,
+  §10.13, Part XXI), not achieved and then hidden.
+
+### 10.14.5 Summary table
+
+| item | mainstream question | finite kernel we hold (`Th_coqc`/`finite_diagnostic`) | what stays `+ℝ-Open` |
+|---|---|---|---|
+| Hauptvermutung (causet sense) | is a faithful causet→manifold embedding unique? | causal-order volume-by-counting, `Vol_λ` (§10.7, `Th_coqc`-eligible) | uniqueness of the embedding itself — un-dissolved conjecture |
+| strong LLN | a.s. convergence over the completed infinite ensemble | A8-stability plateau of the empirical mean, finite-`N` (§10.6) | the completed-infinite-sequence, almost-everywhere claim — no finite-readout restatement found |
+| topos completeness | does the substrate form an elementary topos (`Ω`, full internal logic)? | reflector / Kan-extension / fibration / Setoid structure (§10.7) | the subobject classifier and full topos axioms — not attempted |
+| exact `π`/`φ` | are they completed points of `ℝ`? | `φ` fully (`Th_coqc`, algebraic); `π` route (i) only (order-reversal, `Th_coqc`-elig) | `π` route (ii) (metric-circle calibration); both, reread as Dedekind-complete-continuum points |
+
+**The discipline this section exists to model:** naming an item in §10.13's one-line list is not license
+to leave it unexamined. Each of the four, examined, either stays flatly Open (strong LLN, topos
+completeness — no partial dissolution claimed) or splits cleanly into a closed finite kernel and a
+named Open remainder (Hauptvermutung, `π`/`φ`) — and the split is stated, not smoothed into either "we
+solved it" or "it's all open." Nothing here is claimed as a new `Th_coqc` theorem; §10.14.1–10.14.4 are
+`Dr`-tier analysis over already-cited results, sharpening the fence, not moving it.
+
+---
+
 # Part XI — Closing the continuum: nothing computed by "infinity" is left standing
 
 Parts VI and VIII established *that* the continuum is a readout; this Part discharges the promise
