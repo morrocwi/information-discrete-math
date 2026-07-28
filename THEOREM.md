@@ -214,12 +214,31 @@ different axes**: `0` — *determinately balanced*, a fact about the **object**,
 information order — and `⊥` — *unresolved*, a fact about the **instrument's** declared resolution, the
 least element of that order. `formal/IDM_ReadoutMinimality.v` machine-checks that these are distinct
 (`neutral_distinct_from_bottom`), that `⊥` is the unique order-bottom (`bottom_unique`), and that `0` is
-**not** a bottom (`neutral_is_not_bottom`) — it carries information, it is not "no information." The
-practical stake is concrete: our inertia kernel already uses the norm-scaled pivot floor that keeps the
-count monotone in `σ` (`retained_spectral/inertia.py`), but it currently folds a *floored* (`⊥`,
-unresolved) pivot into the same `n₀` bucket as a *determinate* null (`0`). Collapsing `0` and `⊥` to one
-symbol is the silent-failure mode the four-valued algebra exists to forbid; surfacing them separately is
-a tracked API refinement, not yet shipped.
+**not** a bottom (`neutral_is_not_bottom`) — it carries information, it is not "no information."
+
+**What `0` means here, precisely (information semantics).** In this framework every reading is a readout
+of a retained difference `δ_R` (information = retained distinction). The neutral `0` is **not** nothing,
+**not** the void, and **not** the continuum's point of zero extent (a non-readout). It is a *positive,
+determinate* reading — a `δ_R` that is genuinely present and whose signed content cancels **exactly** (a
+null direction; the invariant rank-deficiency `n₀` of Sylvester's law). That is why `0` is
+order-incomparable to `±`, never the bottom. `⊥` is the opposite kind of thing entirely: it is the
+**instrument** reporting that its declared resolution cannot decide the sign — never a property of the
+object. `formal/IDM_ResolvedCount.v` makes the asymmetry exact and axiom-free over `ℚ`:
+`bot_needs_positive_resolution` — a `⊥` reading can arise **only** from a strictly positive declared
+resolution (it is always instrumental); `classify_zero_iff` — a `0` reading is emitted **only** at exact
+resolution and **exactly** when the value is a true balance (it is always intrinsic).
+
+**Shipped (P4).** `retained_spectral/inertia.py` now exposes `resolved_count_below` /
+`ResolvedInertia`: the same one-pass banded `LDLᵀ`, but classifying each pivot as a certain `+` /
+certain `−` / unresolved `⊥` instead of folding the floor band into the count. The true count is
+returned as an honest interval `[certain_below, certain_below + unresolved]`, and the classic single
+integer `count_below_banded` is exactly its **upper** end — proved for the discrete model in
+`IDM_ResolvedCount.v` (`signedfloor_is_certain_plus_unresolved`, `certain_le_signedfloor`) and checked
+numerically in `tests/test_resolved_inertia.py` (a diagonal-annihilating shift is now reported as
+`0 certain, n unresolved`, honestly bracketing the truth, instead of a silently-wrong point count). The
+full analytic statements P4 also raises — monotonicity in `σ`, and `ν_ε` = the exact count of some `Ã`
+within `ε‖A‖` — are real-matrix backward-error results kept at their honest tier (measured + classical
+Sturm backward-stability), **not** claimed as machine-checked here.
 
 ## What is proved today
 
