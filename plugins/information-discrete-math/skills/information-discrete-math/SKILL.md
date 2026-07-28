@@ -85,8 +85,11 @@ Before you use any concept in the LEFT column, stop — it injects the continuum
 → **ℝ** (Bishop regular Cauchy sequences of ℚ — an ordered field up to `Req`, Cauchy-complete,
 cotransitive, a lattice, with ε–δ continuity as *derived rungs*). The continuum point is literally
 **read off the discrete rational approximants**. Discrete calculus (`Δ`, `Σ`, discrete FTC, Leibniz)
-needs no reals. This ladder is ~123 constructive theorems, all `Th_coqc` axiom-free; the only
-classical axiom in the whole corpus is `classic` (excluded middle), isolated to the classical layer.
+needs no reals. This repo's formal core is **184 machine-checked theorems, all axiom-free over ℚ**
+(`Print Assumptions` = *Closed under the global context* on every one — run `bash formal/verify.sh`;
+nothing in the arc uses `classic`/excluded middle). *(The heavier `D⊨PA` / second-order apparatus,
+which does isolate a `classic` axiom to its classical layer, lives in the sister repo
+`research_universal_solver`, not here.)*
 
 ## Operator-first: information is the central axis
 
