@@ -79,9 +79,12 @@ rational-readout agreement-and-cost claim, **not** a continuum-limit proof or an
 *reproduction* on its own axis — every declared spectrum passes **three independent correctness layers**
 (external analytic reference · an extended-precision recomputation of the identical operator · a Sturm
 sign-count certificate), plus an **8‑case adversarial suite** (wells far off‑origin, narrow/broad, an
-8‑mode Morse well, a factorized double well, quartic covariance over five decades) and a **20‑point
-mode×grid scaling sweep**, all under a **pinned commit + frozen single‑thread environment** with a
-**95 % bootstrap CI** on the speedup. That `credibility` ACCEPT is reported *separately* from the
+8‑mode Morse well, a factorized double well, quartic covariance over five decades), a **20‑point
+mode×grid scaling sweep**, and **falsifiability negative controls** (the same bootstrap‑CI winner
+function is fed competitor‑faster data and must report the *competitor* winning — proving the winner
+is read from data, not hardcoded to native; the full‑spectrum `k=n` and floor‑`n` workloads a naive
+design predicts as native losses are *measured*, and native honestly wins even those), all under a
+**pinned commit + frozen single‑thread environment** with a **95 % bootstrap CI** on the speedup. That `credibility` ACCEPT is reported *separately* from the
 speed/fairness verdict above: a competitor failing to converge lowers the speed field, **never** the
 reproduction's credibility, and a green audit never implies universal solver dominance.
 

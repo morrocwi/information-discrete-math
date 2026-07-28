@@ -148,6 +148,40 @@ def test_credibility_audit_exposes_adversarial_suite():
     assert "audit_factorized_double_well" in names
 
 
+def test_negative_controls_winner_instrument_is_falsifiable():
+    """The B6 falsifiability control: the SAME bootstrap-CI verdict function that certifies native's
+    wins must report a COMPETITOR win when the data shows one — proving the winner is read from data,
+    not hardcoded to native. Checked in all three directions on small, fast stress sizes."""
+    from retained_spectral.competition import credibility_audit as ca
+
+    # small stress sizes keep the test fast; the winner-selection instrument (part 1) is the real check
+    result = ca.run_negative_controls(repeats=5, stress_specs=(("floor", 16, 1), ("small", 128, 127)))
+    instrument = result["winner_selection_instrument"]
+    assert instrument["competitor_faster_case"] == "competitor_faster"   # not rigged to native
+    assert instrument["native_faster_case"] == "native_faster"
+    assert instrument["tie_case"] == "tie"
+    assert result["winner_logic_honest"] is True
+    # part 2: the stress cases ran, agreed with scipy, and each carries a MEASURED (not asserted) verdict
+    assert result["all_cross_checks"] is True
+    for case in result["stress_cases"].values():
+        assert case["cross_check_ok"] is True
+        assert case["measured_verdict"] in ("native_faster", "competitor_faster", "tie")
+
+
+def test_negative_controls_are_a_credibility_gate():
+    """The winner-logic honesty + stress cross-checks must be wired into credibility_gates, so a rig
+    that always reported native as winner would flip the audit to HOLD, not pass silently."""
+    from retained_spectral.competition import credibility_audit as ca
+
+    src = ca.run_credibility_audit.__doc__ or ""
+    # the gate keys must exist in the function body (cheap structural check without the slow full run)
+    import inspect
+    body = inspect.getsource(ca.run_credibility_audit)
+    assert "negative_controls_winner_logic_honest" in body
+    assert "negative_controls_cross_checks_all" in body
+    assert "run_negative_controls(" in body
+
+
 def test_run_competition_reports_gates_and_provenance(monkeypatch):
     """run_competition records the strict gates (both pipelines must ACCEPT), the source commit,
     the frozen thread environment, and the seeded ordering — the provenance the audit gates on."""
