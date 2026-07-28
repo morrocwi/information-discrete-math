@@ -230,3 +230,61 @@ the *universal* form is false (§5.1), a verified reduction map with one false f
 explicit note that the pigeonhole bit-bound is a Declaration-Bound corollary and not P5-relevant (§5.3),
 and the single hardest missing step pinned down (§5.4). **No theorem was formalized; no conjecture was
 dressed as a result.**
+
+---
+
+## 6. P5 in the **information language** — re-read under the locked semantics (the right frame)
+
+§1–§5 attacked P5 in *classical* complexity vocabulary (fill, arithmetic circuits, communication
+complexity). That is a borrowed frame. This project's own solve-law is: **translate the problem into our
+readout-first semantics first, then use the mathematics locked to those semantics** — not general
+complexity theory relabeled. Doing that changes what P5 even asks.
+
+### 6.1 The translation
+| classical | information-discrete reading |
+|---|---|
+| `fill` (the `L` entries an `LDLᵀ` factorization creates) | the **VOLUME** of retained state a full factorization produces — every `L` entry is a retained distinction the process holds |
+| `In(A)` (inertia / sign-count) | a **BOUNDARY readout**: Sylvester makes it the complete congruence invariant, and **Haynsworth additivity** makes it *additive across a separator* — "the object that must be retained is the **boundary, not the volume**" (THEOREM.md, §"inertia is the spectral readout") |
+| **P5:** does `In(A)` require `Ω(fill*)`? | **does a BOUNDARY readout require producing the VOLUME?** |
+
+### 6.2 What the locked semantics predict
+The READOUT rule is literally *"do not construct an object the readout does not require,"* and §A already
+names fill as *"volume the readout never asked for."* So the framework **predicts P5 (`Ω(fill*)`) is the
+wrong invariant**: inertia is a boundary readout and should owe only the **boundary**, i.e. `Ω(separator
+cost)`, not the volume `fill*`. Haynsworth boundary-recursion computes inertia paying only the separator
+inertias; for good separators that total is generally **`< fill*`** — consistent with §5.1's finding that
+diagonally-dominant instances read inertia in `O(nnz) = o(fill*)`. `fill*` is a *volume* cost imposed from
+outside; it is not the invariant a boundary readout is bound to.
+
+### 6.3 The re-framed statement (info-P5) and the right tool
+The right question is not "`Ω(fill*)`" but **"how much BOUNDARY must be RETAINED to decide the sign-count?"**
+The locked tool is the **Declaration Bound** (`formal/IDM_DeclarationBound.v`): a *declared* query (the
+shift `σ` known before the object is read) needs `Θ(1)` retained state; a *deferred* query (`σ` revealed
+after) needs `Θ(boundary)`. So info-P5 reads: **a deferred inertia reading must retain `Ω(separator width)`
+information.**
+
+### 6.4 Why §5's own restricted bound (angle A) was the wrong family
+The §5.3 one-pass `Ω(n)`-bit bound used a **tridiagonal ladder**, whose separator between consecutive
+blocks has width **`O(1)`**. Its total retention `Ω(n)` is not fill-relevant precisely because tridiagonal
+`fill* = O(n)` already equals the (unit) boundary sum. The information lens says the correct family is one
+with **wide separators** — e.g. a 2-D grid, separator width `Θ(√n)` — where the deferred boundary-retention
+is `Ω(√n)` *per cut*. That is the fill-relevant regime the classical framing obscured and the ladder missed.
+
+### 6.5 Consequence — a sharper, honest position
+- The honest lower bound on inertia in this framework is **boundary-retention** (`Ω(max separator width)`),
+  provable in the shape of the Declaration Bound on the separator — **not** `Ω(fill*)`.
+- The honest *upper* bound is the **boundary-recursion** cost (`Σ` separator inertias), generally `< fill*`.
+- Therefore, in the locked semantics, **P5 as `Ω(fill*)` is very likely false as stated**; the defensible
+  statement is *"inertia costs `Ω(max-separator)` and `O(boundary-recursion)`,"* both **boundary** quantities.
+
+### 6.6 The genuinely new Coq targets this lens reveals (future, NOT rushed)
+1. **Formalize discrete inertia-additivity (Haynsworth)** — `In(A) = In(A₁₁) + In(A/A₁₁)` for a symmetric
+   `A` with invertible `A₁₁`, over `ℚ`, axiom-free. This is currently cited as classical, *not* in
+   `formal/` — machine-checking it would **lock the "inertia is a boundary readout" claim** the whole
+   translation rests on. This is a real new theorem, not a relabeling.
+2. **The wide-separator deferred bound** — the Declaration-Bound pigeonhole on a `w`-wide separator's
+   count-below profile, giving `Ω(w)` retained bits, on a family where `w = Θ(√n)` (fill-relevant, unlike
+   the ladder).
+
+Both are honest partial results toward **info-P5**, which remains **`[Open]`** — but now stated in the
+invariant (boundary retention) the framework is actually locked to, rather than the borrowed `fill*`.
