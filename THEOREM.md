@@ -361,8 +361,9 @@ exactly such a sequence and inherits the identical certificate — shipped as `i
 (`tools/certified_readout.py`, re-exported `idm.certified.integral_nd`). For a smooth integrand the
 tensor trapezoid is order-2 per axis, so halving all axes contracts the gaps by `ρ → 1/4` — the very
 a-priori ratio of §8 (order 2) — confirmed numerically in `tests/test_multidim_quadrature.py` (2-D/3-D
-readouts certify to the exact value; a form the trapezoid integrates exactly certifies with bound `0`;
-a singular integrand `HOLD`s; the observed ratio sits at the `1/4` envelope). The remaining open
+readouts certify to the exact value; a form whose observed refinement gaps vanish certifies with bound
+`0` — the `ρ=0` case of the same a-posteriori stability reading, exact in fact for a per-axis-affine
+integrand; a singular integrand `HOLD`s; the observed ratio sits at the `1/4` envelope). The remaining open
 refinement family is genuinely *adaptive* grids (non-uniform refinement), where the gap sequence is no
 longer produced by uniform halving — the same scalar-stability theorem still applies whenever the global
 gaps contract, but choosing *where* to refine is the open engineering.

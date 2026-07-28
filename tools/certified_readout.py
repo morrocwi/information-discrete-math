@@ -267,10 +267,12 @@ def integral_nd_stable_certified(f, box, eps, n0=4, refines=6):
     if not tail:
         return Readout(None, None, HOLD, "too few refinements to judge stability")
     if max(tail) == 0:
-        # the readout is EXACT under refinement (e.g. a tensor trapezoid integrates a polynomial
-        # exactly) — the gap sequence has reached a fixed point, so the stable bound is 0.
+        # the OBSERVED refinement gaps have vanished — the ρ=0 case of the same a-posteriori inference
+        # as the ρ<1 branch below (refine_stable at ρ=0 gives bound g_last/(1−0)=0). For a genuinely
+        # per-axis-affine integrand this reflects a real exactness (the tensor trapezoid integrates it
+        # exactly for any n); in general it is the observed-stability reading, not a proof of exactness.
         return Readout(vals[-1], mp.mpf(0), CERTIFIED,
-                       f"{len(box)}-D tensor trapezoid exact under refinement (gap=0)")
+                       f"{len(box)}-D tensor trapezoid: observed gaps vanished (ρ=0), stable bound 0")
     ratios = [tail[i + 1] / tail[i] for i in range(len(tail) - 1) if tail[i] > 0]
     if not ratios or max(ratios) >= 1:
         return Readout(None, None, HOLD,
