@@ -4,12 +4,19 @@
 (*  Developed by Yaoharee Lahtee.                                          *)
 (*                                                                         *)
 (*  The Sturm readout on a symmetric tridiagonal operator can answer a     *)
-(*  threshold query with Theta(1) retained state IF the query is declared  *)
-(*  in advance, but needs Theta(n) retained state if the query is deferred *)
-(*  until after the record has streamed past.  This file formalises the    *)
-(*  finite, combinatorial skeleton of that separation — the parts that are *)
-(*  purely counting/pigeonhole, with no continuum, no real analysis, and   *)
-(*  no eigenvalue machinery — so they can be machine-checked axiom-free.    *)
+(*  threshold query with Theta(1) retained WORDS (a constant number of       *)
+(*  fixed-width registers) if the query is declared in advance, but needs    *)
+(*  Theta(n log q) retained BITS if the query is deferred until after the    *)
+(*  record has streamed past (q = alphabet size).  Taking q = n gives a      *)
+(*  sharp Theta(1) vs Theta(n) machine-WORD separation.  Units are stated    *)
+(*  explicitly and NOT conflated: the declared side is constant REGISTERS,   *)
+(*  which is Theta(log n) BITS for the running count — a constant-register   *)
+(*  claim, never a constant-bit one; the deferred lower bound is in bits.    *)
+(*  This file formalises the finite, combinatorial skeleton — pure           *)
+(*  counting/pigeonhole, no continuum, no real analysis, no eigenvalue       *)
+(*  machinery — so it is machine-checked axiom-free.  The binary (q = 2)     *)
+(*  theorems are the sharp base case; the q-ARY section at the end           *)
+(*  generalises the faithful readout and the string count (q^n) to any q.    *)
 (*                                                                         *)
 (*  A string of n bits is modelled as a list bool.  The "Sturm profile" is *)
 (*  the query-response record  i |-> i + b_i  (the count of eigenvalues    *)
@@ -302,4 +309,78 @@ Proof.
   intro n. split.
   - intros rec Hinj. apply deferred_record_bits. exact Hinj.
   - apply declared_forgets_tail.
+Qed.
+
+(* ===================================================================== *)
+(*  q-ARY generalization.  The binary theorems above are the sharp q = 2   *)
+(*  instance.  For an alphabet of size q the fooling family reads off a     *)
+(*  SYMBOL a_i ∈ {0..q-1} per position via the q-1 thresholds r, by the     *)
+(*  extraction identity  #below σ(i,r) = i + [a_i ≤ r].  Two facts carry     *)
+(*  the general-q separation, both machine-checked here:                    *)
+(*                                                                          *)
+(*   Q1 qary_symbol_injective  — the per-position q-ary readout is faithful: *)
+(*      distinct symbols give distinct threshold signatures (so distinct     *)
+(*      strings give distinct profiles, exactly as q=2's profile_injective). *)
+(*   Q2 qcube_length           — there are q^n length-n q-ary strings, so the *)
+(*      deferred record (a distinct record per string) needs ≥ log2(q^n) =   *)
+(*      n·log2 q bits: the deferred bound is Θ(n log q), matching q=2's       *)
+(*      deferred_record_bits (n bits) at q = 2.                              *)
+(* ===================================================================== *)
+
+Require Import Arith.
+
+(* Q1.  The count signature of a symbol a at position i is r ↦ i + [a ≤ r].      *)
+(*      Two symbols in {0..q-1} with the same signature on every threshold        *)
+(*      r < q-1 are equal — the q-ary faithful readout.                            *)
+Theorem qary_symbol_injective :
+  forall (q a b : nat),
+    a < q -> b < q ->
+    (forall r, r < q - 1 -> (a <=? r) = (b <=? r)) ->
+    a = b.
+Proof.
+  intros q a b Ha Hb Hsig.
+  destruct (Nat.compare_spec a b) as [Heq | Hlt | Hgt].
+  - exact Heq.
+  - (* a < b: at r = a (a valid threshold since a < b <= q-1, so a < q-1) *)
+    assert (Hr : a < q - 1) by lia.
+    specialize (Hsig a Hr).
+    rewrite Nat.leb_refl in Hsig.                 (* a <=? a = true, so true = (b <=? a) *)
+    symmetry in Hsig. apply Nat.leb_le in Hsig. lia.
+  - (* a > b: at r = b *)
+    assert (Hr : b < q - 1) by lia.
+    specialize (Hsig b Hr).
+    rewrite Nat.leb_refl in Hsig.                 (* b <=? b = true, so (a <=? b) = true *)
+    apply Nat.leb_le in Hsig. lia.
+Qed.
+
+(* Q2.  The q-ary cube: all length-n strings over the alphabet {0..q-1}.          *)
+Fixpoint qcube (q n : nat) : list (list nat) :=
+  match n with
+  | 0    => [ [] ]
+  | S k  => flat_map (fun s => map (cons s) (qcube q k)) (seq 0 q)
+  end.
+
+Lemma flat_map_cons_length :
+  forall (q : nat) (C : list (list nat)) (L : list nat),
+    length (flat_map (fun s => map (cons s) C) L) = length L * length C.
+Proof.
+  intros q C L. induction L as [| s L' IH]; simpl.
+  - reflexivity.
+  - rewrite length_app, length_map, IH. reflexivity.
+Qed.
+
+Lemma qcube_length : forall q n, length (qcube q n) = q ^ n.
+Proof.
+  intros q n. induction n as [| k IH]; simpl.
+  - reflexivity.
+  - rewrite (flat_map_cons_length q), length_seq, IH. reflexivity.
+Qed.
+
+(* Every element of the q-ary cube has length n (the record is n symbols wide).   *)
+Lemma qcube_all_len : forall q n l, In l (qcube q n) -> length l = n.
+Proof.
+  intros q n. induction n as [| k IH]; intros l Hin; simpl in Hin.
+  - destruct Hin as [<- | []]. reflexivity.
+  - apply in_flat_map in Hin as [s [_ Hin]].
+    apply in_map_iff in Hin as [l0 [<- Hl0]]. simpl. f_equal. apply IH; exact Hl0.
 Qed.

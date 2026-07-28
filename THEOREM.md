@@ -151,6 +151,51 @@ whose interpretive reading makes *information* the central invariant, and one ex
 (V) that — bridged by (IV) — generates the solver. The solver surface and the certified-readout
 contract above are built as instances and corollaries of these five.
 
+## The readout rule in practice: inertia is the spectral readout
+
+The five theorems have an operational face in numerical linear algebra, stated as one rule:
+
+> **Do not construct an object the requested readout does not require.**
+
+This is the READOUT axiom (§III) turned into an algorithm-design law, and it has a canonical
+instance — **spectral counting by inertia**. For a symmetric pencil `(K, M)` with `M` positive
+definite and a shift `σ`, the *position of a level in the spectrum* is a readout obtained without ever
+forming an eigenvector or the spectrum:
+
+  `#{eigenvalues of (K, M) below σ}  =  #{negative pivots of an LDLᵀ factorization of K − σM}`
+  — Sylvester's law of inertia; the count costs one factorization, **independent of the answer**.
+
+Two classical identities carry it, and both are read as retained-information statements:
+
+- **Sylvester inertia** — the sign-count of the `LDLᵀ` pivots *is* the count; the object retained is a
+  running inertia, not the modes. This is exactly the Sturm sign-count the repository already uses (the
+  native Retained Multilevel Sturm kernel in `retained_spectral/`, the three-layer correctness
+  certificate, and the fooling family of the Declaration Bound above).
+- **Haynsworth inertia additivity** — inertia is additive across a Schur complement, so *inertia is
+  additive across a graph separator*: **the object that must be retained is the boundary, not the
+  volume.** Recursive separator counting (nested dissection) replaces the band; the fill a poor
+  elimination order creates is "volume the readout never asked for."
+
+This unifies four things under one operator. Reading a level's position (`retained_spectral`), reading
+it for a *banded generalized pencil* (transform-free inertia bisection — dropping the split-Cholesky /
+congruence / tridiagonalization that only amplify `κ(M)`), reading a *count over an unstructured mesh*
+(boundary-recursive Schur counting), and the Declaration Bound's **lower** twin (when the query is
+deferred you *cannot* avoid retaining the whole object — `Θ(n log q)` bits) are all the same readout:
+inertia. And inertia over a graph is read off the very operator of the KEYSTONE (§IV) — `L_R` and its
+separators are that graph's structure.
+
+**Tier, stated honestly.** Sylvester's and Haynsworth's identities are classical (cited as such, not
+claimed here). The transform-free and boundary-recursive methods *report* large speedups on
+narrow-band / slender-mesh problems — order 10¹–10² in the source packages — *together with* their own
+honest limits (a crossover to sparse shift-invert once the bandwidth is no longer narrow; 2-D and 3-D
+solid domains not competitive; single host; no eigenvectors). Those figures are **absorbed observations
+from the source packages, not reproduced in this repository** (this repo's own machine-checked and
+`finite_diagnostic` numbers are elsewhere and are for different problem classes), so they are cited as
+the sources' measurements, **not** a machine-checked theorem here and **not** a universal-superiority
+claim. What is ours — and what a reader can verify in-repo — is the reading: inertia is the spectral
+readout, and the retained object is the boundary/count, never the volume/modes; the Declaration Bound
+above (its q-ary core machine-checked in `formal/IDM_DeclarationBound.v`) is its exact lower twin.
+
 ## What is proved today
 
 ### 1. Geometric series — machine-checked, axiom-free (`Th_coqc`)
