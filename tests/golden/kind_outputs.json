@@ -2212,6 +2212,28 @@
   "tier": "exact",
   "value": 1
  },
+ "matrix_solve": {
+  "kind": "matrix_solve",
+  "method": "exact \u211a RREF (complete solution set: unique / infinite / inconsistent)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "nullspace": [],
+   "num_vars": 2,
+   "particular": [
+    {
+     "exact": "4/5",
+     "float": 0.8
+    },
+    {
+     "exact": "7/5",
+     "float": 1.4
+    }
+   ],
+   "rank": 2,
+   "solution_type": "unique"
+  }
+ },
  "matrix_trace": {
   "kind": "matrix_trace",
   "method": "\u03a3 diagonal",

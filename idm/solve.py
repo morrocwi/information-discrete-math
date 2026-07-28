@@ -200,6 +200,23 @@ def _inv(p):
 @kind("solve_linear", "Th_coqc")
 def _sl(p):
     x = X.solve_linear(p["A"], p["b"]); return {"kind": "solve_linear", "status": "ok" if x else "HOLD", "value": _norm(x), "method": "exact ℚ Gauss–Jordan", **({} if x else {"reason": "singular / no unique solution"})}
+@kind("matrix_solve", "exact")
+def _msolve(p):
+    # CAS-grade linear solve: the COMPLETE solution set over ℚ for ANY shape/rank — unique, an
+    # infinite family (particular + nullspace basis), or a reported inconsistency — where the older
+    # solve_linear only handled the square, unique case and HOLDs on everything else.
+    from idm.kernel.poly.linsolve import linear_solve
+    try:
+        sol = linear_solve(p["A"], p["b"])
+    except (KeyError, ValueError, TypeError) as e:
+        return {"kind": "matrix_solve", "status": "HOLD", "reason": str(e), "method": "exact ℚ RREF"}
+    d = {"kind": "matrix_solve", "status": "ok" if sol.is_solvable else "HOLD",
+         "value": {"solution_type": sol.status, "particular": _norm(sol.particular),
+                   "nullspace": _norm(sol.nullspace), "rank": sol.rank, "num_vars": sol.num_vars},
+         "method": "exact ℚ RREF (complete solution set: unique / infinite / inconsistent)"}
+    if not sol.is_solvable:
+        d["reason"] = "no solution (inconsistent system)"
+    return d
 @kind("char_poly", "Th_coqc")
 def _cp(p): return _ok("char_poly", AN.char_poly(p["matrix"]), "Faddeev–LeVerrier (exact ℚ)")
 @kind("eigenvalues")
