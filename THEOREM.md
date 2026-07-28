@@ -21,6 +21,136 @@ refuses**" — and records what is proved today versus what is still open.
 The contract is realized in code by `tools/certified_readout.py` (`Readout(q, bound, status, reason)`)
 and probed adversarially by `validation/negative_controls.py`.
 
+## The Five Core Theorems (the spine)
+
+Everything downstream — the 263-kind solver, the certified-readout contract above, the
+retained-spectral physics — rests on five statements. Each is given at the precision a referee
+checks: an exact statement, its machine-checked witness (run `bash formal/verify.sh`;
+`Print Assumptions` = *Closed under the global context* on every `Th_coqc` line), and an honest tier.
+**Every finite claim in the spine has a witness in THIS repository's `formal/`** — the section proves
+itself from the repository's own formal system; the one external pointer (the heavier *optional*
+apparatus of §I) is explicitly marked optional and is not what the spine rests on.
+
+The stance, stated once so nothing is overclaimed: **every quantity a reader ever obtains is a finite
+rational *readout* of a retained difference; the continuum (`ℝ`, `+∞`, the point of zero extent) is a
+*non-readout* — admissible as a boundary/limit object under an explicit hypothesis, never as a root
+primitive.** The five theorems make that stance precise and, where the content is finite,
+machine-check it.
+
+### I · The primitive `δ_R` exists — and the discrete floor
+
+**Statement.** A first distinction exists: `∃ a b, a ≠ b`, realized by `succ 0 ≠ 0`. The engine `D`
+(ground `0`, successor `succ` = "retain one more distinction") carries a **discrete floor**
+`¬∃z, 0 ≺ z ≺ succ 0`. Hence density is provably absent at the root: a continuum can enter only as a
+later readout, never as a primitive.
+
+**Witnesses (all local, this repository).** The existence of `δ_R` and the discrete floor are
+*exhibited*, not postulated, in `formal/IDM_Genesis.v`: `primordial_difference_exists`
+(`∃ a b : ℕ, a ≠ b`), `succ_ground_distinct` (`succ 0 ≠ 0`), and `discrete_floor`
+(`¬∃z, 0 < z < succ 0`) — all `Th_coqc`, `Print Assumptions` = *Closed under the global context*.
+`D` is modelled as `ℕ` (`0`/`succ` = `0`/`S`), so `D ≅ ℕ` is definitional; `D`-semiring
+distributivity is `formal/IDM_FiniteWitnesses.v: semiring_distrib` and the finiteness of every readout
+is `formal/IDM_FiniteWitnesses2.v: no_infinite_readout`. **Tier `Th_coqc`.**
+*(Optional, not load-bearing: the heavier `D⊨PA` / second-order categoricity apparatus is developed
+in the sister repo `research_universal_solver`; the spine's claim needs only the four local genesis
+theorems above.)*
+
+**Why it cannot be disputed.** Nothing below `δ_R` is assumed; the object claimed to exist is
+*exhibited* (`succ 0`) and machine-checked here, the discrete floor is a one-line `lia` fact over `ℕ`,
+and every structural property is an ordinary theorem of a free commutative semiring — not a postulate
+about the continuum.
+
+### II · The number tower is a chain of readouts: `D → ℤ → ℚ → ℝ`
+
+**Statement.** `ℤ := (D×D)/∼` with `(a,b)∼(c,d) ⟺ a⊕d = c⊕b` is a commutative ring; `ℚ` is its
+field of fractions; each rung is *defined from* and maps homomorphically onto the previous one. `ℝ`
+is the **readout rung** — a completion introduced only where a stability (A8) hypothesis licenses it,
+and honestly tagged `+ℝ-axioms` (it imports `Coq.Reals`), never `axiom-free`.
+
+**Witnesses.** `ℤ`-ring distributivity is local (`formal/IDM_FiniteWitnesses3.v: ring_distrib_Z`,
+`Th_coqc`, axiom-free). The Grothendieck `(D×D)/∼` and the fraction field are the standard elementary
+quotient/localization constructions over the local semiring of §I. The `ℝ` rung is the *only* place
+axioms enter — imported `Coq.Reals`, tiered `+ℝ-axioms` by construction, never `axiom-free`.
+
+**Why it cannot be disputed.** The ring/field constructions are the standard Grothendieck and
+fraction-field completions; the only place axioms enter (`Coq.Reals`) is *named and tiered*, so no
+real-analysis assumption is ever passed off as finite.
+
+### III · READOUT (A1): every appearance is `r = O_ε(X) ∈ ℚ` at a declared resolution `ε ≻ 0`
+
+**Statement (definitional substrate, `Dr`).** A reading is a map `O_ε` from an object `X` and a
+rational resolution `ε ≻ 0` to a rational `r ∈ ℚ`. `ℝ`, `+∞`, and the point of zero extent are *not*
+in the range of any `O_ε`. Realized in code as `Readout(q, bound, status, reason)`
+(`tools/certified_readout.py`); its behavioural contract is the Certified-Finite-Readout theorem at
+the head of this document — return `CERTIFIED (q,B)` with `|q − T| ≤ B ≤ ε`, or `HOLD`.
+
+**Tier `Dr`.** This is a *definition*, not a theorem — it is what the `Th_coqc` results are theorems
+*about*. Declared as such: no proof is claimed for a definition, and it does no illicit work beyond
+fixing the type of "a reading".
+
+### IV · The KEYSTONE (A4 · Th 5.1): `B(Φ,Φ) = I(Φ)` — Dirichlet energy **is** retained information
+
+**Statement (`Th_coqc`, axiom-free).** For a weighted graph `g` (edges `(i,j,w)`) and any field
+`Φ : ℕ → ℚ`, the assembled Laplacian quadratic form equals the retained-information functional, edge
+by edge and in total:
+
+  `Φᵀ L_R Φ  =  Σ_{(i,j,w) ∈ g} w · (Φ_i − Φ_j)²`,   with   `L_R = D_W − W`.
+
+**Proof.** Per edge the identity is `w·Φ_i² + w·Φ_j² − 2w·Φ_iΦ_j = w·(Φ_i − Φ_j)²`, an elementary ring
+identity (closed by `ring`); assembly over the edge list is a one-line induction. Positivity: with
+`w ≥ 0` on each edge, `Φᵀ L_R Φ ≥ 0` (`keystone_nonneg`) — `L_R` is PSD and the retained metric is a
+genuine seminorm.
+
+**Witness.** `formal/IDM_Keystone.v: keystone_B_eq_I`, `keystone_nonneg` — `Th_coqc`,
+`Print Assumptions` = *Closed under the global context* over `ℚ` (no `Reals`, no `classic`).
+
+**Why it cannot be disputed.** It is a one-line elementary algebraic fact over an ordered field,
+checked by a proof assistant with no axioms; the only definitional input is `L_R = D_W − W`, the
+standard graph Laplacian. The interpretive reading — *information*, not length or energy, is the
+central invariant, with distances/spectra/mass-ratios read out of `L_R` — is stated *separately* from
+the theorem and labelled as interpretation.
+
+### V · FOLD + DECISION (A2/A3) and the exact FTCC: `I_ε(D_ε f)[N] = f[N] − f[0]`
+
+**Statement (`Th_coqc`, axiom-free).** With the causal difference `D_ε f[n] := (f[n] ⊖ f[n−1]) / ε`
+and its accumulation `I_ε`, accumulation inverts differencing **exactly**, with no limit taken:
+
+  `I_ε(D_ε f)[N] = f[N] − f[0]`  (FTCC),   and   `Σ_{n<N} (f(n+1)·Δg(n) + g(n)·Δf(n)) = f_N g_N − f_0 g_0`.
+
+**Proof.** Telescoping induction on `N` (`ring` at each step).
+
+**Role.** FOLD (A2) is accumulation over a monoid; DECISION (A3) is search-and-certify; the KEYSTONE
+(IV) is exactly what lifts FOLD's difference operator `D_W` into `L_R`. The structural claim "*each
+solver branch's kernel is an instance of FOLD or DECISION*" is itself machine-checked
+(`formal/IDM_Reduction.v`: `ftcc_Z`, `sum_is_fold`, `dot_is_fold`, `foldmin_le_*`, `foldmax_ge_*`, …),
+so the 263-kind surface is not a menu of programs but instances of two certified schemata bridged by
+one identity.
+
+**Witnesses.** `formal/IDM_Calculus.v: FTCC_telescope, summation_by_parts`; `formal/IDM_Bridge.v:
+FTCC_exact`; the reductions in `formal/IDM_Reduction.v` — all `Th_coqc`, *Closed under the global
+context*.
+
+**Why it cannot be disputed.** FTCC is the discrete fundamental theorem of calculus — a telescoping
+sum, exact by construction, with no `h → 0`. A referee can only agree that
+`Σ_{n<N}(f(n+1) − f(n)) = f(N) − f(0)`.
+
+### What these five do NOT claim (the fence)
+
+- They do **not** dissolve real analysis, topology, or the continuum. `ℝ` remains available as a
+  tiered readout (`+ℝ-axioms`); the manifold/PDE frontier is explicitly `+ℝ-Open` (Part XXI). No
+  completed-limit theorem is asserted without its stability hypothesis and its tier.
+- They do **not** claim physical truth. `L_R`-spectra reproduce physical numbers as `finite_diagnostic`
+  readouts to a declared tolerance; the standing law is *correct output ≠ true theory*.
+- They make **no** appeal to external authority. Every finite claim is checkable by
+  `bash formal/verify.sh` on the reader's own machine (`Print Assumptions` = *Closed under the global
+  context*) — the only warrant offered, and the only one needed.
+
+The whole spine: a primitive (I) that forbids the continuum at the root, a number tower (II) that
+recovers it only as a tiered readout, a reading contract (III), one exact operator identity (IV)
+whose interpretive reading makes *information* the central invariant, and one exact accumulation law
+(V) that — bridged by (IV) — generates the solver. The solver surface and the certified-readout
+contract above are built as instances and corollaries of these five.
+
 ## What is proved today
 
 ### 1. Geometric series — machine-checked, axiom-free (`Th_coqc`)
