@@ -32,7 +32,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = [
-    "idm", "idm.kernel", "idm.kernel.poly",
+    "idm", "idm._solve_domains", "idm.kernel", "idm.kernel.poly",
     "retained_spectral", "retained_spectral.competition",
     # audited helper modules idm re-exports, shipped INSIDE the wheel so `import idm` works from an
     # installed package (not only a source checkout). Reached by bare name via idm/_bridge.py.
