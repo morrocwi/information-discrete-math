@@ -27,7 +27,8 @@ Everything downstream — the 263-kind solver, the certified-readout contract ab
 retained-spectral physics — rests on five statements. Each is given at the precision a referee
 checks: an exact statement, its machine-checked witness (run `bash formal/verify.sh`;
 `Print Assumptions` = *Closed under the global context* on every `Th_coqc` line), and an honest tier.
-Where a witness lives in a sister repository (`readout_genesis`) it is named as such, not smuggled in.
+Where a witness lives in a sister repository (`research_universal_solver`) it is named as such, with
+its file path, not smuggled in.
 
 The stance, stated once so nothing is overclaimed: **every quantity a reader ever obtains is a finite
 rational *readout* of a retained difference; the continuum (`ℝ`, `+∞`, the point of zero extent) is a
@@ -45,8 +46,9 @@ root: a continuum can enter only as a later readout, never as a primitive (Pr 2.
 **Witnesses.** `D`-semiring distributivity `a·(b+c)=a·b+a·c` is local (`formal/IDM_FiniteWitnesses.v:
 semiring_distrib`, `Th_coqc`); the finiteness of every readout is local
 (`formal/IDM_FiniteWitnesses2.v: no_infinite_readout`, `Th_coqc`). The `D≅ℕ` isomorphism, `D⊨PA`, and
-the discrete-floor theorem are machine-checked axiom-free in the sister repo `readout_genesis`
-(`RD.v`, `RDL_Distinguishability.v`). **Tier `Th_coqc`.**
+the discrete-floor theorem are machine-checked axiom-free in the sister repo
+`research_universal_solver` (`formal/RD.v`, `formal/RDL_Distinguishability.v` — the latter carries
+`primordial_difference_exists`). **Tier `Th_coqc`.**
 
 **Why it cannot be disputed.** Nothing below `δ_R` is assumed; the object claimed to exist is
 *exhibited* (`succ 0`), and every structural property is an ordinary theorem of a free commutative
@@ -61,7 +63,7 @@ and honestly tagged `+ℝ-axioms` (it imports `Coq.Reals`), never `axiom-free`.
 
 **Witnesses.** `ℤ`-ring distributivity is local (`formal/IDM_FiniteWitnesses3.v: ring_distrib_Z`,
 `Th_coqc`); the Grothendieck completion `(D×D)/∼`, the fraction field, and the `ℝ` rung are in
-`readout_genesis`, the `ℝ` rung tiered `+ℝ-axioms` by construction.
+`research_universal_solver`, the `ℝ` rung tiered `+ℝ-axioms` by construction.
 
 **Why it cannot be disputed.** The ring/field constructions are the standard Grothendieck and
 fraction-field completions; the only place axioms enter (`Coq.Reals`) is *named and tiered*, so no
@@ -137,9 +139,10 @@ sum, exact by construction, with no `h → 0`. A referee can only agree that
   context*) — the only warrant offered, and the only one needed.
 
 The whole spine: a primitive (I) that forbids the continuum at the root, a number tower (II) that
-recovers it only as a tiered readout, a reading contract (III), one exact operator identity (IV) that
-makes *information* the central invariant, and one exact accumulation law (V) that — bridged by (IV) —
-generates the solver. Everything else in this repository is a corollary or an instance.
+recovers it only as a tiered readout, a reading contract (III), one exact operator identity (IV)
+whose interpretive reading makes *information* the central invariant, and one exact accumulation law
+(V) that — bridged by (IV) — generates the solver. The solver surface and the certified-readout
+contract above are built as instances and corollaries of these five.
 
 ## What is proved today
 
