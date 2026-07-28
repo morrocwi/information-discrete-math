@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -142,6 +142,10 @@ declare -a THMS=(
   "declaration_separation:IDM_DeclarationBound"
   "qary_symbol_injective:IDM_DeclarationBound"
   "qcube_length:IDM_DeclarationBound"
+  "pigeonhole_bits_needed:IDM_ApproxCount"
+  "r_correct_far_apart_False:IDM_ApproxCount"
+  "fam_nodup:IDM_ApproxCount"
+  "approx_count_deferred_lower_bound:IDM_ApproxCount"
   "neg_involution:IDM_ReadoutMinimality"
   "neg_fixed_iff:IDM_ReadoutMinimality"
   "neg_moves_iff:IDM_ReadoutMinimality"
