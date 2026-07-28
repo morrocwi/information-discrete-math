@@ -12,8 +12,9 @@ This is the operational payoff of the four-valued value algebra (``formal/IDM_Re
 instrument's resolution).  The tests below run the real numerics and check exactly that.
 """
 
-import numpy as np
 import pytest
+
+np = pytest.importorskip("numpy")             # bench-only dep (retained_spectral extra)
 
 from retained_spectral.inertia import (
     count_below_banded,
