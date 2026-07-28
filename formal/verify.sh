@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -129,6 +129,13 @@ declare -a THMS=(
   "hermitian_2x2_gap_is_discriminant:IDM_Hilbert"
   "projection_idempotent:IDM_Hilbert"
   "projection_self_adjoint:IDM_Hilbert"
+  "bit_extraction_exact:IDM_DeclarationBound"
+  "profile_injective:IDM_DeclarationBound"
+  "bcube_length:IDM_DeclarationBound"
+  "bcube_nodup:IDM_DeclarationBound"
+  "deferred_record_bits:IDM_DeclarationBound"
+  "declared_forgets_tail:IDM_DeclarationBound"
+  "declaration_separation:IDM_DeclarationBound"
 )
 
 fail=0
