@@ -1159,8 +1159,19 @@
  },
  "fourier_transform": {
   "kind": "fourier_transform",
-  "reason": "NameError: name 'x' is not defined",
-  "status": "HOLD"
+  "method": "\u222b f e^{\u2212i\u03c9t} dt (finite window DE)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "im": {
+    "digits": "-3.49696467764687383885137441175e-42",
+    "float": -3.496964677646874e-42
+   },
+   "re": {
+    "digits": "1.38038844704314297477341524673",
+    "float": 1.380388447043143
+   }
+  }
  },
  "fresnel_C": {
   "kind": "fresnel_C",
@@ -1922,8 +1933,31 @@
  },
  "laurent_series": {
   "kind": "laurent_series",
-  "reason": "NameError: name 'z' is not defined",
-  "status": "HOLD"
+  "method": "Cauchy coefficient FFT on a circle (complex-evaluable f)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "-1": {
+    "digits": "1.0",
+    "float": 1.0
+   },
+   "-2": {
+    "digits": "0.0",
+    "float": 0.0
+   },
+   "0": {
+    "digits": "0.0",
+    "float": 0.0
+   },
+   "1": {
+    "digits": "0.0",
+    "float": 0.0
+   },
+   "2": {
+    "digits": "0.0",
+    "float": 0.0
+   }
+  }
  },
  "lcm": {
   "kind": "lcm",
@@ -2018,8 +2052,13 @@
  },
  "limit_infinity": {
   "kind": "limit_infinity",
-  "reason": "NameError: name 'n' is not defined",
-  "status": "HOLD"
+  "method": "Richardson on 1/n of f(n)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "1.99999999999999999999999861191",
+   "float": 2.0
+  }
  },
  "limit_oneside": {
   "kind": "limit_oneside",
@@ -2317,8 +2356,13 @@
  },
  "mellin_transform": {
   "kind": "mellin_transform",
-  "reason": "NameError: name 'x' is not defined",
-  "status": "HOLD"
+  "method": "\u222b_0^\u221e t^{s\u22121} f dt (exp\u2013sinh DE)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.999999999999999999999999999992",
+   "float": 1.0
+  }
  },
  "mertens": {
   "kind": "mertens",
@@ -2595,8 +2639,19 @@
  },
  "ode_system": {
   "kind": "ode_system",
-  "reason": "TypeError: idm.functions.evaluate() got multiple values for keyword argument 'x'",
-  "status": "HOLD"
+  "method": "vector RK4 (= I_\u03b5 of the field)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": [
+   {
+    "digits": "0.54030230586814015554978229641",
+    "float": 0.5403023058681402
+   },
+   {
+    "digits": "-0.841470984807896225062465589212",
+    "float": -0.8414709848078962
+   }
+  ]
  },
  "operator_norm": {
   "error_bound": {
@@ -2664,8 +2719,39 @@
  },
  "pade": {
   "kind": "pade",
-  "reason": "IndexError: list index out of range",
-  "status": "HOLD"
+  "method": "Pad\u00e9 [m/n] from Taylor coefficients (exact \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "den": [
+    {
+     "exact": "1/1",
+     "float": 1.0
+    },
+    {
+     "exact": "-1/2",
+     "float": -0.5
+    },
+    {
+     "exact": "1/12",
+     "float": 0.08333333333333333
+    }
+   ],
+   "num": [
+    {
+     "exact": "1/1",
+     "float": 1.0
+    },
+    {
+     "exact": "1/2",
+     "float": 0.5
+    },
+    {
+     "exact": "1/12",
+     "float": 0.08333333333333333
+    }
+   ]
+  }
  },
  "partial_trace": {
   "kind": "partial_trace",
@@ -2711,24 +2797,54 @@
   "value": 1
  },
  "pde_heat": {
+  "at": 0.5,
   "kind": "pde_heat",
-  "reason": "ValueError: could not convert string to float: 'left'",
-  "status": "HOLD"
+  "method": "Crank\u2013Nicolson",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.612968982669816068105825699825",
+   "float": 0.612968982669816
+  }
  },
  "pde_laplace": {
+  "at": [
+   0.5,
+   0.5
+  ],
   "kind": "pde_laplace",
-  "reason": "missing required field 'lam'",
-  "status": "HOLD"
+  "method": "Gauss\u2013Seidel",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.999999999448846110349101496473",
+   "float": 0.9999999994488461
+  }
  },
  "pde_poisson": {
+  "at": [
+   0.5,
+   0.5
+  ],
   "kind": "pde_poisson",
-  "reason": "ValueError: not enough values to unpack (expected 4, got 2)",
-  "status": "HOLD"
+  "method": "Gauss\u2013Seidel",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.999999999448846110349101496473",
+   "float": 0.9999999994488461
+  }
  },
  "pde_wave": {
+  "at": 0.5,
   "kind": "pde_wave",
-  "reason": "ValueError: could not convert string to float: 'left'",
-  "status": "HOLD"
+  "method": "explicit leapfrog",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "digits": "0.951056516295153572116439333379",
+   "float": 0.9510565162951535
+  }
  },
  "pell": {
   "kind": "pell",
@@ -3383,8 +3499,19 @@
  },
  "residue_integral": {
   "kind": "residue_integral",
-  "reason": "ValueError: Invalid literal for Fraction: 'z'",
-  "status": "HOLD"
+  "method": "2\u03c0i\u00b7\u03a3 residues in the upper half-plane (\u222b_{-\u221e}^\u221e of a rational function)",
+  "status": "ok",
+  "tier": "finite_diagnostic",
+  "value": {
+   "im": {
+    "digits": "0.0",
+    "float": 0.0
+   },
+   "re": {
+    "digits": "3.14159265358979323846264338328",
+    "float": 3.141592653589793
+   }
+  }
  },
  "root_find": {
   "kind": "root_find",
@@ -3709,8 +3836,10 @@
  },
  "summation": {
   "kind": "summation",
-  "reason": "NameError: name 'k' is not defined",
-  "status": "HOLD"
+  "method": "finite \u03a3",
+  "status": "ok",
+  "tier": "exact",
+  "value": 385
  },
  "symbolic_diff": {
   "kind": "symbolic_diff",
