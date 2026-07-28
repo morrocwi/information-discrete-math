@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -174,6 +174,12 @@ declare -a THMS=(
   "richardson_ratio_le_one:IDM_Apriori"
   "richardson_apriori_contracts:IDM_Apriori"
   "richardson_apriori_stable:IDM_Apriori"
+  "lookup_graph_in:IDM_SetsFunctions"
+  "graph_total:IDM_SetsFunctions"
+  "graph_single_valued:IDM_SetsFunctions"
+  "graph_faithful:IDM_SetsFunctions"
+  "graph_faithful_converse:IDM_SetsFunctions"
+  "functional_relation_has_map:IDM_SetsFunctions"
 )
 
 fail=0
