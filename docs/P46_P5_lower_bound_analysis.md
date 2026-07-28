@@ -5,6 +5,12 @@ itself — this is a research memo, not a formal artifact.** Tier discipline: an
 "solid" is a classical/elementary fact restated in this repo's own vocabulary, not a new theorem; any
 claim labelled "conjectural" or "stuck" is exactly that, fenced, and left `[Open]`.
 
+> **Frame note (read first).** §1–§5 analyse P5 in the **external / classical complexity** vocabulary
+> (fill, arithmetic circuits, communication complexity) — a *reconciliation with the external record*
+> (the §10.7 / §10.12 pattern), **not** this framework's floor. §6 re-reads P5 in the **locked,
+> readout-first semantics** (boundary readout vs volume) — that is the frame this framework is actually
+> bound to. Where the two diverge, §6 governs; §1–§5 are kept as the borrowed-lens cross-check.
+
 ## 1. Precise statement of P5
 
 Fix a symmetric sparse matrix `A ∈ ℝ^{n×n}` given by its nonzero pattern (a graph `G(A)` on `n`
@@ -274,7 +280,9 @@ is `Ω(√n)` *per cut*. That is the fill-relevant regime the classical framing 
 - The honest lower bound on inertia in this framework is **boundary-retention** (`Ω(max separator width)`),
   provable in the shape of the Declaration Bound on the separator — **not** `Ω(fill*)`.
 - The honest *upper* bound is the **boundary-recursion** cost (`Σ` separator inertias), generally `< fill*`.
-- Therefore, in the locked semantics, **P5 as `Ω(fill*)` is very likely false as stated**; the defensible
+- Therefore, in the locked semantics, the framework **predicts against `Ω(fill*)` as the governing
+  invariant** (the boundary, not the volume, is what the readout owes) — a stance, hedged, not a proof;
+  the defensible
   statement is *"inertia costs `Ω(max-separator)` and `O(boundary-recursion)`,"* both **boundary** quantities.
 
 ### 6.6 The genuinely new Coq targets this lens reveals (future, NOT rushed)
