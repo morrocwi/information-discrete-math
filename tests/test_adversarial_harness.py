@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Adversarial testing (pillar P3): every registered kind, hit with hostile whole-problem inputs, must
-uphold the solver contract — never an uncaught exception, always a well-formed result whose tier is
-honest (no CERTIFIED / Th_coqc conjured from garbage).
+uphold the STRUCTURAL solver contract — never an uncaught exception, always a well-formed result, and
+the fence never inverts (a HOLD must not still advertise a machine-checked Th_coqc value). Judging
+whether a *positive* result on adversarial input is CORRECT needs a ground-truth oracle and is the
+differential harness's job (a degenerate-but-valid input can yield a correct high-tier answer — e.g.
+the empty-set convex hull), so this sweep does not treat "non-HOLD on garbage" as a violation.
 
 Complements test_properties.py's per-fixture missing/garbage checks with a systematic, data-driven
 sweep driven by tests/harness.py (adversarial_inputs / ADVERSARIAL_FILLS). Bounded to

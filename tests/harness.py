@@ -9,9 +9,15 @@ adding one registry entry:
   and require agreement.  A disagreement is a real correctness bug — the exact discipline that caught
   the ``rational_limit`` pole-sign and ``groebner_basis`` duplicate-leading-monomial defects.
 
-* **Adversarial** (:func:`adversarial_inputs`): throw hostile / malformed / boundary inputs at EVERY
-  registered kind and require the contract to hold — never an uncaught exception, always a
-  well-formed result whose tier is honest (no ``CERTIFIED`` / ``Th_coqc`` conjured from garbage).
+* **Adversarial** (:func:`adversarial_inputs`): throw hostile / malformed inputs at EVERY registered
+  kind and require the STRUCTURAL contract to hold — never an uncaught exception, always a well-formed
+  result, and the fence never inverts (a ``HOLD`` must not advertise a machine-checked ``Th_coqc``
+  value).  Note the scope: whether a *positive* result on adversarial input is itself CORRECT needs a
+  ground-truth oracle — that is the differential harness's job (for its registered kinds), not this
+  structural sweep's, which has no oracle for arbitrary hostile inputs.  (A degenerate-but-valid input
+  can legitimately yield a correct high-tier answer — e.g. the convex hull of the empty point set is
+  the empty hull, an exact ``Th_coqc`` result — so "non-HOLD on adversarial input" is NOT by itself a
+  dishonesty signal.)
 
 The harness itself carries no assertions; the test modules ``test_differential_harness.py`` and
 ``test_adversarial_harness.py`` drive it and assert on the collected reports.
@@ -56,10 +62,16 @@ def result_well_formed(r: Any) -> Optional[str]:
 
 
 def tier_is_honest(r: Dict[str, Any]) -> Optional[str]:
-    """A HOLD result must never advertise a certified/Th_coqc tier as if it had a trustworthy value —
-    the fence must not invert under adversarial input.  Returns a reason if the tier is dishonest."""
+    """Check the one tier-honesty violation that needs NO ground truth: a ``HOLD`` result must never
+    still advertise a machine-checked ``Th_coqc`` tier with a value — the fence must not invert under
+    adversarial input.  Returns a reason string if it does, else ``None``.
+
+    This deliberately does NOT flag a *non-HOLD* result on adversarial input: without an oracle we
+    cannot know whether that positive answer is wrong (a degenerate-but-valid input can produce a
+    correct high-tier result — the empty-set convex hull is a genuine ``Th_coqc`` answer).  Judging the
+    correctness of positive results is the differential harness's job, not this structural check's."""
     if r.get("status") == "HOLD" and r.get("tier") == "Th_coqc" and "value" in r:
-        return "HOLD result carries a Th_coqc-tier value (tier inflation under adversarial input)"
+        return "HOLD result carries a Th_coqc-tier value (tier inversion under adversarial input)"
     return None
 
 
