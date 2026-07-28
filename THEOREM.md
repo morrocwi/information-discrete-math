@@ -196,6 +196,19 @@ claim. What is ours — and what a reader can verify in-repo — is the reading:
 readout, and the retained object is the boundary/count, never the volume/modes; the Declaration Bound
 above (its q-ary core machine-checked in `formal/IDM_DeclarationBound.v`) is its exact lower twin.
 
+**Approximate deferred counting — an honest `Ω(log(n/r))`, not the conjectured `Θ(n/r)`.** The brief's
+P7 asks the retained-bit cost of a deferred count correct to within `±r`, conjecturing `Θ(n/r)`.
+`formal/IDM_ApproxCount.v` machine-checks (axiom-free) the tractable *kernel* that a full P7 argument
+would need — a pigeonhole bit-bound (`pigeonhole_bits_needed`, generalizing `deferred_record_bits` to
+any `NoDup` list of size `≥ 2^L`), a concrete weight-ladder family spaced `(2r+1)` apart (`fam_nodup`),
+the interval-separation fact that an `r`-correct answer cannot collapse two far-apart weights
+(`r_correct_far_apart_False`), and their composition `approx_count_deferred_lower_bound`: any
+deterministic deferred record that fixes an `r`-correct count must retain `≥ L` bits for some string
+whenever `2^L ≤ S(n/(2r+1))` — an `Ω(log(n/r))` bound. This is **strictly weaker** than P7's linear
+`Θ(n/r)` (which needs an exponential `r`-tolerant fooling family, an adversary/communication-complexity
+argument not constructed here); **P7 and P8 (the randomized two-sided-error survival) stay `Open`**, not
+dressed as theorems.
+
 ### The value-set the sign readout is forced to have — machine-checked (`Th_coqc`)
 
 The inertia readout reports *signs*, and there is a lower bound on how many symbols that takes. A
