@@ -70,14 +70,21 @@ ladder missed.
 - **info-P5 is `[Open]`**, stated in the boundary-retention invariant the framework is actually bound to —
   not the borrowed volume invariant.
 
-## 6. The Coq targets this reading names (future — not done here, none formalized)
+## 6. The Coq targets this reading names
 
-1. **Discrete Haynsworth inertia-additivity over `ℚ`** — `In(A) = In(A₁₁) + In(A / A₁₁)` for symmetric `A`
-   with invertible `A₁₁`, axiom-free. Currently cited classical, not in `formal/`. Machine-checking it
-   **locks the "inertia is a boundary readout" claim** the whole reading rests on — a genuinely new
-   theorem, not a relabeling of an existing one.
+1. **Discrete Haynsworth inertia-additivity over `ℚ`** — its **algebraic atom is now machine-checked**:
+   `formal/IDM_Schur.v` proves the exact Schur *congruence* for a one-node boundary,
+   `A = Mᵀ · diag(a, c − b²/a) · M` over `ℚ` (`schur_congruence_00/01/10/11`, axiom-free — the content is
+   the `b²/a` cancellation), and that the readout inertia (LDLᵀ pivot-sign count, §A) of the resulting
+   diagonal is additive across the boundary (`diag_inertia_additive`). This exhibits, over `ℚ`, that
+   **eliminating the boundary node produces exactly the Schur complement** — the algebra the
+   boundary-readout claim rests on. **Still `+ℝ-Open`:** that this congruence *preserves* the sign-count
+   (Sylvester's law, so `In(A) = In(D)` independent of elimination order) is a real-spectral statement,
+   cited not proved; and the general `n`-block boundary is the next step. Within this framework's own
+   semantics inertia **is** the pivot-count readout (§A), so the atom is Haynsworth-across-one-node in
+   that readout.
 2. **The wide-separator deferred bound** — the Declaration-Bound pigeonhole on a `w`-wide separator's
-   count-below profile, on a family with `w = Θ(√n)`.
+   count-below profile, on a family with `w = Θ(√n)`. (Not done.)
 
-Both are honest partial results toward info-P5, which remains `+ℝ-Open`. Nothing above is a theorem; no
-conjecture is dressed as a result.
+info-P5 remains `+ℝ-Open`. The Schur atom (item 1) is a real machine-checked partial; no conjecture is
+dressed as a result.

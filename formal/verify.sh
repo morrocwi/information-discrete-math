@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder IDM_Schur)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -187,6 +187,12 @@ declare -a THMS=(
   "eval_correct:IDM_FirstOrder"
   "sat_fo_decidable:IDM_FirstOrder"
   "models_decidable:IDM_FirstOrder"
+  "schur_congruence_00:IDM_Schur"
+  "schur_congruence_01:IDM_Schur"
+  "schur_congruence_10:IDM_Schur"
+  "schur_congruence_11:IDM_Schur"
+  "diag_inertia_additive:IDM_Schur"
+  "schur_pivots_are_boundary_and_complement:IDM_Schur"
 )
 
 fail=0
