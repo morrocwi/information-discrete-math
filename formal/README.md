@@ -3,6 +3,43 @@
 Axiom-free Coq proofs of the finite (`Th_coqc`) claims that live natively in this repository (the rest
 of the `Th_coqc` corpus is external: `research_universal_solver`, `readout_genesis`, `readout_universe`).
 
+## Folder guide
+
+**What this folder does.** `formal/` is the local Coq 8.20 arc: one `.v` file per proof cluster
+(`IDM_Keystone`, `IDM_Bridge`, `IDM_FiniteWitnesses{,2,3}`, `IDM_Logic`, `IDM_Matrix`, `IDM_Harvest`,
+`IDM_Calculus`, `IDM_Certified`, `IDM_Tropical`, `IDM_Hilbert`, `IDM_Geometry`,
+`IDM_DeclarationBound`, `IDM_ResolvedCount`, `IDM_ApproxCount`, `IDM_Apriori`,
+`IDM_EquivariantReadout`, `IDM_FirstOrder`, `IDM_Reduction`, `IDM_SetsFunctions`,
+`IDM_ReadoutMinimality`, `IDM_Genesis`), plus `verify.sh` which drives the whole arc.
+
+**The PUBLIC api.** There is no Python import here — the "API" is `bash formal/verify.sh` (compiles
+every witness, prints `Print Assumptions` = *Closed under the global context* for the named lemmas,
+exits 0 iff all pass) and the named Coq lemmas themselves, each cited from `idm.solve()`'s
+`coq_theorem` field when a kind is tagged `Th_coqc`. The table below maps lemma → textbook section →
+statement; that mapping is the contract other code relies on (don't rename a lemma without updating
+both this table and any `coq_theorem` string that cites it).
+
+**What NOT to do.** Don't hand-edit a `.vo`/`.vos`/`.vok`/`.glob` build artifact — regenerate via
+`coqc`. Don't add a new `Th_coqc` tag in Python (`idm/solve.py`) without a corresponding lemma proved
+here; the tier is only honest if the pointer resolves. Per the workspace-wide rule on repeated
+full-arc audits: while iterating on ONE proof file, compile just that file (`coqc -q <file>.v`) and
+`Print Assumptions` its theorem via a small scratch `Require`, rather than re-running
+`formal/verify.sh` (which recompiles the whole arc) after every edit — save the full run for once,
+before commit.
+
+**How to test it.** `bash formal/verify.sh` (the one command below) for the full arc; for a single
+file during iteration, `cd formal && coqc -q <file>.v` plus a scratch `Print Assumptions` check (see
+above).
+
+**The module's LIMITS.** This is the *local* `Th_coqc` corpus only — the rest of the framework's
+`Th_coqc` claims live in sibling repositories (`research_universal_solver`, `readout_genesis`,
+`readout_universe`), not here. Coverage inside this repo is partial by design: `Th_coqc` is "reserved
+for the handful of kinds with a real proof mapping" (root README) — most of `idm`'s 263 registered
+kinds are `exact` or `finite_diagnostic`, not machine-checked. The one spectral ingredient behind the
+Declaration Bound rows (the fooling family's Sturm count) is verified *numerically* in
+`demos/verify_declaration_bound.py`, not re-derived in Coq — stated here as an explicit fence, not
+silently absorbed into the axiom-free claim.
+
 ## Reproduce
 
 **One command:** `bash formal/verify.sh` — compiles every witness and confirms all 127 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.

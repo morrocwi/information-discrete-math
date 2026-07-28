@@ -1,0 +1,32 @@
+# idm-spectral — core solver + the Retained Spectral product (numpy/scipy/numba native Sturm kernel).
+# Builds on the same install as the core image, adding the `spectral` extra so
+# retained_spectral.engine / retained_mode / inertia get their JIT-compiled native path
+# (see requirements-spectral-lock.txt for the pinned, reproducibility-audited version set this
+# mirrors approximately — this Dockerfile uses floating `>=` extras, not the exact lock file,
+# so pin requirements-spectral-lock.txt yourself if you need bit-for-bit audit reproduction).
+#
+# STATUS: authored from the same pattern as the verified core Dockerfile (../Dockerfile) — pip
+# installing `.[spectral]` from an sdist-style checkout is a standard operation, but this specific
+# image has NOT been build-verified here (no docker daemon budget spent beyond the core image in
+# this change). Build and smoke-test it yourself before relying on it:
+#   docker build -f docker/Dockerfile.spectral -t idm-spectral .
+#   docker run --rm idm-spectral python -c "from retained_spectral import engine; print('ok')"
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY pyproject.toml README.md ./
+COPY idm ./idm
+COPY tools ./tools
+COPY provefull ./provefull
+COPY retained_spectral ./retained_spectral
+
+RUN pip install --no-cache-dir ".[spectral]"
+
+# Default action: run the reproducible Retained Spectral competition (native RMS vs SciPy vs the
+# same-operator executor audit) and write its JSON record — see
+# retained_spectral/competition/run.py's own docstring for the two measurements it performs.
+# Override the command (e.g. `docker run ... python -m idm.server --host 0.0.0.0`) to serve the
+# API with spectral extras loaded instead.
+ENTRYPOINT ["python3", "-m", "retained_spectral.competition.run"]
+CMD ["--repeats", "9"]

@@ -1,0 +1,20 @@
+# idm-formal — the Coq arc (formal/*.v, 177 theorems across 23 files) + formal/verify.sh, which
+# compiles every witness and checks axiom-freedom via `Print Assumptions`.
+#
+# STATUS: authored, NOT build-verified here — this task did not build a Coq-toolchain image (no
+# docker-daemon budget spent on this beyond the core solver image; a coqorg/coq:8.20 base + `bash`
+# is standard practice, but the actual `formal/` compile has not been run inside this image).
+# Before relying on it: `docker build -f docker/Dockerfile.formal -t idm-formal .` and watch
+# `formal/verify.sh` actually print "ALL WITNESSES OK (compiled + axiom-free)" with exit 0.
+FROM coqorg/coq:8.20
+
+# coqorg images run as a non-root `coq` user with sudo — verify.sh only needs coqc on PATH and a
+# writable formal/ dir for its temp .v/.vo/.glob scratch files, both already true under this base.
+WORKDIR /home/coq/idm
+
+COPY --chown=coq:coq formal ./formal
+
+WORKDIR /home/coq/idm/formal
+RUN chmod +x verify.sh
+
+CMD ["bash", "verify.sh"]

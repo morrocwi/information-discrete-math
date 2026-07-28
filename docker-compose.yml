@@ -1,0 +1,48 @@
+# Docker profiles for information-discrete-math.
+#
+# VERIFICATION STATUS (read before trusting any service here):
+#   - `api`       -> Dockerfile (repo root)          — BUILD-VERIFIED: image builds, container
+#                     runs, and GET /health responds correctly through the mapped port (checked
+#                     in this change; see the task's verify_notes for the exact commands/output).
+#   - `spectral`  -> docker/Dockerfile.spectral       — authored, NOT build-verified here.
+#   - `hpc-benchmark` -> docker/Dockerfile.hpc        — authored, NOT build-verified here; heavy
+#                     PETSc/SLEPc native build, likely hours on first build. See the header comment
+#                     in docker/Dockerfile.hpc for the specific unverified assumptions.
+#   - `formal`    -> docker/Dockerfile.formal         — authored, NOT build-verified here.
+#
+# Usage:
+#   docker compose up api                 # solver REST API on :8737
+#   docker compose run --rm spectral       # Retained Spectral competition, writes results JSON
+#   docker compose run --rm hpc-benchmark  # PETSc/SLEPc competitor benchmark (heavy, unverified)
+#   docker compose run --rm formal         # Coq arc: formal/verify.sh (177 theorems)
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: idm-core
+    ports:
+      - "8737:8737"
+
+  spectral:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.spectral
+    image: idm-spectral
+    volumes:
+      - ./retained_spectral/results:/app/retained_spectral/results
+
+  hpc-benchmark:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.hpc
+    image: idm-hpc
+    volumes:
+      - ./benchmarks:/app/benchmarks
+
+  formal:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.formal
+    image: idm-formal

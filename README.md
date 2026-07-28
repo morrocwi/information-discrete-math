@@ -15,6 +15,42 @@
 
 </div>
 
+## Capability map
+
+```
+Information Discrete Mathematics
+├── Unified solver        idm.solve({"kind": ..., ...})            — one registry, 263 registered problem kinds
+│                          idm.parse / idm.parse_and_solve         — plain-language front end
+├── Exact mathematics      idm.exact · idm.algebra · idm.symbolic  — ℤ/ℚ, no float in the result
+│                          idm.kernel.poly.*                       — exact rational polynomial tower
+├── Numerical              idm.integrate · idm.diffeq · idm.series
+│                          idm.special · idm.transforms · idm.optimize   — declared-tolerance finite readouts
+├── Certified readouts     idm.certified.*                         — (value, proven bound, ACCEPT/HOLD)
+├── Retained Spectral      retained_spectral                       — eigenvalues (engine.py)
+│                                                                     eigenvectors (retained_mode.py)
+│                                                                     inertia / eigenvalue counts (inertia.py)
+├── REST / OpenAPI         python3 -m idm.server                   — Swagger UI at 127.0.0.1:8737/docs
+├── Formal proofs          formal/*.v + formal/verify.sh           — 127 Coq theorems, axiom-free
+└── Benchmarks             benchmarks/ · retained_spectral/competition/  — RCP savings, spectral speed
+```
+
+Every branch returns a tier-tagged verdict (`Th_coqc` / `exact` / `finite_diagnostic` / `Dr` /
+`+ℝ-Open`, see [Evidence ladder + honesty tiers](#evidence-ladder--honesty-tiers) below) — pick the
+branch you need, then read its own tier before trusting the number.
+
+## 5-level platform
+
+The repository is layered from "one call, broadest coverage" down to "machine-checked proof of the
+finite laws". Each level below is independently usable; the minimal import is the whole entry point.
+
+| level | what it's for | minimal import |
+|---|---|---|
+| **1. Unified solver** | one entry point across all 263 registered kinds | `import idm`<br>`idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-inf", "b": "inf"})` |
+| **2. Retained Spectral** | the ready-to-use Schrödinger spectrum product — eigenvalues, eigenvectors, inertia | `from retained_spectral import solve, examples`<br>`from retained_spectral.retained_mode import modes`<br>`from retained_spectral.inertia import count_below_banded` |
+| **3. Certified readouts** | a value plus a proven error bound, or an honest `HOLD` | `from idm.certified import integral_nd` |
+| **4. Exact kernel** | ℤ/ℚ-only computation with no floating point in the result | `from idm.kernel.poly import eigen, factorize, groebner` |
+| **5. Verification** | run the evidence yourself — tests, the 1278-problem suite, the Coq arc | `pytest -q`<br>`python3 prove_it_full.py`<br>`bash formal/verify.sh` |
+
 ---
 
 > [!IMPORTANT]
