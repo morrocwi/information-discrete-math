@@ -162,3 +162,71 @@ handles — that would be the natural next machine-checked increment, and it wou
 **partial** result (a pigeonhole floor on *one* obstruction, not a full arithmetic-circuit lower bound),
 not a proof of P5.
 
+
+---
+
+## 5. Update — multi-angle attack (adversarially verified). P5 still `[Open]`.
+
+A four-angle attack (restricted lower bound · reductions · refutation · barrier), each candidate then
+adversarially re-checked by an independent skeptic. **P5 was not closed** — the expected outcome for a
+problem the brief itself rates hardest. What the attack *did* produce is a sharper, verified map, and one
+genuine clarification of what P5 can even mean. Nothing below is formalized as a theorem; P5 stays Open.
+
+### 5.1 The **universal** reading of P5 is false — so P5 must be the **existential** statement (the sharpening)
+Consider the promise class `D(G)`: symmetric `A` with pattern `G`, `A_ii > 0`, strictly diagonally
+dominant (`A_ii > Σ_{j≠i}|A_ij|`). By Gershgorin every eigenvalue is strictly positive, so
+`In(A) = (n, 0, 0)` is read off in **`O(nnz(A))`** arithmetic (one pass summing `|A_ij|` per row, compare
+to `A_ii`) — no elimination, no fill. A diagonally-dominant instance exists for **every** sparsity pattern
+(e.g. `A_ii = deg(i)+1`, off-diagonals `−1`), including 2-D grid families with `fill*(G_n) = Ω(n log n)`
+while `nnz = Θ(n)`. So on `D(G_n)` inertia costs `O(n) = o(fill*)`, and `fill*/nnz → ∞`.
+
+Consequence: the **universal** reading — *"every* sparse symmetric `A` needs `Ω(fill*(A))`" — is
+**refuted** (diagonally-dominant instances are an easy corner). P5 is only defensible as the
+**existential / worst-case-instance** statement: *there is a family of sparse symmetric matrices with
+`fill* = ω(nnz)` on which computing inertia needs `Ω(fill*)` arithmetic.* The hard content lives in
+**indefinite** matrices near a degenerate spectrum, where the sign-count is not read off a definiteness
+certificate. This is a real clarification of the conjecture, not progress on proving it. *(Verified: the
+Gershgorin argument is mathematically correct; it does **not** refute the existential P5 — flagged
+honestly as a sharpening, not a refutation.)*
+
+### 5.2 Reductions — one solid, one false friend, one content-free (verified)
+- **`SIGN-DET ≤ INERTIA`** (Sylvester, `O(1)` overhead) is the one unconditionally solid reduction: a
+  lower bound on the sign-of-determinant transfers to inertia. Its converse is not claimed. A
+  SIGN-DET lower bound is not itself established here or in the cited literature, so this yields no
+  unconditional inertia bound.
+- **Communication-complexity route — a false friend.** Unbounded-error 2-party communication complexity
+  `= ⌈log₂ rank_±⌉` (Paturi–Simon) bounds the cost of a *Boolean matrix's sign pattern*, **not** the
+  arithmetic-circuit cost of the inertia of a *numeric sparse matrix*. Circuit→protocol simulations exist
+  only for *restricted* models (branching programs, streaming, cell-probe), which is exactly the barrier;
+  there is no such simulation for **unrestricted** arithmetic circuits.
+- The "transfer lemma" `cost(SIGN-DET) ≤ cost(INERTIA)+c ⇒ (SIGN-DET ≥ L ⇒ INERTIA ≥ L−c)` is a one-line
+  arithmetic consequence of the above — **content-free** (subtraction on naturals), not worth a witness.
+
+### 5.3 The Declaration-Bound pigeonhole instantiates to a one-pass inertia bit-bound — a corollary, not a new bound
+The `formal/IDM_DeclarationBound.v` / `formal/IDM_ApproxCount.v` pigeonhole relabels cleanly to a
+one-pass, deferred-threshold *inertia-count-below reader* on a diagonal-perturbation tridiagonal ladder,
+giving `Ω(n)` **retained bits**. It is genuinely true and axiom-free — but the independent check found it
+is **not a new lower bound**: it is the existing Declaration Bound with a spectral relabeling, and it does
+**not** bear on P5, for four load-bearing reasons: (i) a single tridiagonal family, not all patterns;
+(ii) a bounded one-pass-compress-then-decode model, not arbitrary arithmetic algorithms; (iii) **bits of
+state**, an incommensurable cost model with **arithmetic operations** — no reduction between them is given;
+(iv) tridiagonal matrices have **small** `fill* = O(n)`, so this family is deliberately *not* an
+`Ω(fill*)` separation candidate. It is therefore left as a documented corollary, **not** added as a
+standalone "inertia lower bound" witness (that would overclaim novelty).
+
+### 5.4 The single hardest missing step (barrier)
+The classical `fill*` lower bound is a **combinatorial floor on the elimination graph** — it counts what a
+*factorization* (all `L` entries) must produce. Inertia needs only the **signs** of the pivots, not their
+values; nothing in the fill argument references what an algorithm must *retain* to determine the three
+signed counts `(n₊, n₀, n₋)`. A full existential-P5 proof needs an argument bounding the *information
+content of a single arithmetic gate relative to a fooling family of indefinite matrices* — connecting the
+bit-streaming separation (`IDM_DeclarationBound` DB4: deferred needs `Θ(n)`, declared needs `Θ(1)`) to an
+**unrestricted arithmetic-circuit** cost. No current technique supplies that circuit↔information bridge;
+naming that missing bridge precisely is the deliverable of this round, and it remains **`[Open]`**.
+
+### 5.5 Verdict
+P5 (existential form) is **`[Open]`** — neither proved nor refuted. Delivered, all honest: a proof that
+the *universal* form is false (§5.1), a verified reduction map with one false friend named (§5.2), an
+explicit note that the pigeonhole bit-bound is a Declaration-Bound corollary and not P5-relevant (§5.3),
+and the single hardest missing step pinned down (§5.4). **No theorem was formalized; no conjecture was
+dressed as a result.**
