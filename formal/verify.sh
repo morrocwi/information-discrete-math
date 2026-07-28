@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -163,6 +163,10 @@ declare -a THMS=(
   "count_if_split:IDM_ResolvedCount"
   "signedfloor_is_certain_plus_unresolved:IDM_ResolvedCount"
   "certain_le_signedfloor:IDM_ResolvedCount"
+  "equivariant_stabilizer_containment:IDM_EquivariantReadout"
+  "faithful_stabilizer_equality:IDM_EquivariantReadout"
+  "fixed_value_reads_equal:IDM_EquivariantReadout"
+  "nondegenerate_value_moves:IDM_EquivariantReadout"
 )
 
 fail=0
