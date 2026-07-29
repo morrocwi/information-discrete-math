@@ -3,7 +3,7 @@
     "name": "information-discrete-math",
     "version": "1.4.1",
     "primary_api": "idm.solve",
-    "total_problem_kinds": 266
+    "total_problem_kinds": 267
   },
   "interfaces": {
     "python": "idm.solve",
@@ -305,6 +305,7 @@
         "dijkstra",
         "edit_distance",
         "evaluate",
+        "exact_eigenvalues",
         "function",
         "is_bipartite",
         "knapsack",
@@ -330,7 +331,7 @@
         "widest_path",
         "z_test"
       ],
-      "count": 37
+      "count": 38
     }
   },
   "verification": {

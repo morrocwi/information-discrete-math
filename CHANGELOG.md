@@ -7,6 +7,17 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### WP13 (Increment 1) — exact eigenvalues as algebraic objects
+New kind **`exact_eigenvalues`** (`exact`, → **267** kinds): the real eigenvalues of a rational matrix as
+**exact algebraic objects with multiplicity** — no Durand–Kerner. The characteristic polynomial is exact
+(Faddeev–LeVerrier over ℚ, existing `eigen.characteristic_polynomial`); its real roots are isolated as
+`AlgReal` (WP2/WP3). Reports `num_complex` and `completeness` (`complete` iff all eigenvalues real, else
+`real_complete`). E.g. `[[2,1],[1,2]]` → 1, 3 exact; `[[0,1],[1,1]]` → the golden pair `(1±√5)/2` (min-poly
+`x²−x−1`); a rotation `[[0,-1],[1,0]]` → 0 real, 2 complex; `diag(2,2,3)` → eigenvalue 2 (mult 2), 3.
+Hard char-poly factorization fails closed (HOLD), never hangs. The existing numeric `eigenvalues` kind is
+unchanged. Exact complex eigenvalues are a later increment.
+
+
 ### WP3 (Increment 1) — exact real root objects, no Durand–Kerner
 Builds on WP2's `AlgReal`. New kind **`all_real_roots`** (`exact`, → **266** kinds): given a ℚ-polynomial,
 it returns **every real root as an exact algebraic object with its multiplicity** (irreducible

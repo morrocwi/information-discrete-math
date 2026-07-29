@@ -90,3 +90,34 @@ def _gb(p):
 def _cp(p): return _ok("char_poly", AN.char_poly(p["matrix"]), "Faddeev–LeVerrier (exact ℚ)")
 @kind("eigenvalues")
 def _eig(p): return _ok("eigenvalues", AN.eigenvalues(p["matrix"]), "exact ℚ char-poly + Durand–Kerner roots")
+@kind("exact_eigenvalues", "exact")
+def _exact_eig(p):
+    """EXACT real eigenvalues of a rational matrix as algebraic objects with multiplicity — no
+    Durand–Kerner. Characteristic polynomial via Faddeev–LeVerrier (exact ℚ), its real roots isolated as
+    AlgReal (Sturm over ℚ). Reports num_complex (deg − Σ real mult) and completeness (complete iff all
+    eigenvalues real, else real_complete); exact complex eigenvalues are a later increment. HOLDs (never
+    hangs) if the char-poly factorization exceeds the budget."""
+    from idm.kernel.poly.eigen import characteristic_polynomial
+    from idm.kernel.poly.algebraic import AlgReal, AlgebraicHOLD
+    try:
+        cp = characteristic_polynomial(p["matrix"])
+        rm = AlgReal.real_roots_with_multiplicity(list(cp.coeffs))
+    except AlgebraicHOLD as ex:
+        return {"kind": "exact_eigenvalues", "status": "HOLD", "reason": str(ex)}
+    except Exception as ex:
+        return {"kind": "exact_eigenvalues", "status": "HOLD", "reason": f"{type(ex).__name__}: {ex}"}
+    n = cp.degree()
+    real_count = sum(m for _r, m in rm)
+    eigs = [{"min_poly": [str(c) for c in r.min_poly_coeffs()],
+             "isolating_interval": [str(r.lo), str(r.hi)],
+             "approx": float(r.to_float(20)),
+             "is_rational": r.is_rational,
+             "rational_value": (str(r.as_rational()) if r.is_rational else None),
+             "multiplicity": m,
+             "verified": r.verify()} for r, m in rm]
+    return _ok("exact_eigenvalues",
+               {"size": n, "char_poly": [str(c) for c in cp.coeffs],
+                "real_eigenvalues": eigs, "num_real_with_multiplicity": real_count,
+                "num_complex": n - real_count,
+                "completeness": "complete" if n - real_count == 0 else "real_complete"},
+               "exact real eigenvalues + multiplicity (Faddeev–LeVerrier char-poly + Sturm isolation over ℚ)")

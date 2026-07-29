@@ -167,3 +167,24 @@ def test_all_real_roots_high_degree_holds_not_hangs():
         AlgReal.real_roots_with_multiplicity([3,-5,7,-11,13,-17,19,-23,29,-31,37])   # degree 10, generic
     with pytest.raises(AlgebraicHOLD):
         AlgReal.real_roots([3,-5,7,-11,13,-17,19,-23,29,-31,37])
+
+
+def test_wp13_exact_eigenvalues_are_algebraic_objects():
+    """WP13: exact real eigenvalues as algebraic objects + multiplicity, no Durand–Kerner."""
+    import idm
+    # symmetric integer matrix with rational eigenvalues 1, 3
+    r = idm.solve({"kind": "exact_eigenvalues", "matrix": [[2, 1], [1, 2]]})["value"]
+    assert r["completeness"] == "complete" and r["num_complex"] == 0
+    assert [e["rational_value"] for e in r["real_eigenvalues"]] == ["1", "3"]
+    # companion of x^2-x-1: golden-ratio eigenvalues, irrational, exact min-poly, both real
+    g = idm.solve({"kind": "exact_eigenvalues", "matrix": [[0, 1], [1, 1]]})["value"]
+    assert g["num_complex"] == 0 and len(g["real_eigenvalues"]) == 2
+    assert all(e["min_poly"] == ["-1", "-1", "1"] and not e["is_rational"] for e in g["real_eigenvalues"])
+    # rotation matrix: 0 real eigenvalues, 2 complex — none faked
+    c = idm.solve({"kind": "exact_eigenvalues", "matrix": [[0, -1], [1, 0]]})["value"]
+    assert c["real_eigenvalues"] == [] and c["num_complex"] == 2 and c["completeness"] == "real_complete"
+    # multiplicity: diag(2,2,3) → eigenvalue 2 mult 2, 3 mult 1
+    d = idm.solve({"kind": "exact_eigenvalues", "matrix": [[2,0,0],[0,2,0],[0,0,3]]})["value"]
+    assert {e["rational_value"]: e["multiplicity"] for e in d["real_eigenvalues"]} == {"2": 2, "3": 1}
+    # never lose an eigenvalue
+    assert d["num_real_with_multiplicity"] + d["num_complex"] == d["size"]
