@@ -15,7 +15,7 @@ the textbook for the theory.
 | **II** | The primitive & genesis of number | `δ_R`, RD1–9, the semiring `D` | `Th_coqc` |
 | **III** | The number tower | `D→ℤ→ℚ→ℝ`, ℝ as readout, cotransitivity | `Th_coqc` |
 | **IV** | Geometry from retained difference | distance, angle=overlap, curvature; **§4.4 π,φ,golden = readout-invariants** | mixed |
-| **V** | The retained-information operator | `L_R=D_W−W`, keystone `B(Φ,Φ)=I(Φ)` | `Th_coqc` |
+| **V** | The retained-information operator | `L_R=D_W−W`, keystone `B(Φ,Φ)=I(Φ)`; zero fibre + HOLD floor → [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md) | `Th_coqc` |
 | **VI** | The continuum as a readout | diagnosis of "open/hard" problems | `Dr` |
 | **VII** | Complete operator reference | `⊕ ⊗ ÷ ^ √ log =` in the information language | `Th_coqc` |
 | **VIII** | Information Discrete Calculus | `D_ε`, `I_ε`, FTCC, causal product rule (exact) | `Th_coqc` |

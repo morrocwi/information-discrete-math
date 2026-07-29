@@ -7,6 +7,20 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Wired the published formal companion `zero-readout-certifies` into the ecosystem
+Added [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md) — the single map of the machine-checked
+sibling repos this repo cites, and, for `zero-readout-certifies` (Coq 8.20 / Rocq 9.2, 38 audited results,
+all *Closed under the global context*, DOI [`10.5281/zenodo.21665100`](https://doi.org/10.5281/zenodo.21665100)),
+the exact code-to-proof mapping. That companion machine-checks two extensions of this repo's keystone
+(`formal/IDM_Keystone.v`): (1) the keystone operator's **zero fibre** — `I(Φ)=0 ⟺ Φ constant on every
+connected component` (positive weights) — and (2) the typed **reader-state** separation that is the
+soundness floor under this repo's **HOLD discipline** (a resolved `0` is a provably distinct object from
+an unresolved HOLD; a HOLD is fail-closed). Cross-referenced from `THEOREM.md §IV`, `INDEX.md` row V,
+`formal/README.md`, `README.md`, and `docs/knowledge_graph.json`. Cite, don't copy: the companion is a
+frozen, separately-published artifact — no `.v` files are duplicated here. Verified locally
+(`make verify` → *verified 38 audited results with no additional global assumptions*). No new kind, no
+count change (269). Horizontal-knowledge: a witness we cite, not an external authority.
+
 ### `all_roots` — root multiplicity (repeated-root polynomials no longer HOLD)
 `all_roots` previously HELD on any polynomial with a repeated root (`(x−1)³`). It now finds the DISTINCT
 roots of each **square-free factor** and tags them with that factor's multiplicity, so it returns every
