@@ -7,6 +7,27 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### WP2 — exact real algebraic-number arithmetic (the #1 CAS gap, now open)
+The `AlgebraicNumber` type was a data-shell with no arithmetic. **`idm/kernel/poly/algebraic.py`** makes a
+root of a ℚ-polynomial a genuinely computable exact object — `AlgReal(min_poly, isolating_interval)`:
+- construct from a ℚ-polynomial + real-root index (Sturm isolation); `+ − × ÷`, integer powers; exact
+  ordering / equality / sign — **all exact over ℚ, never a float**. The minimal polynomial of `α∘β` comes
+  from a power-basis dependency in ℚ(α,β) (linear algebra over ℚ), then the correct root is re-isolated by
+  Sturm bisection. Division by zero and out-of-range roots **HOLD**, never guess.
+- **WP2 closure criterion met:** every result **substitutes back** to satisfy its own minimal polynomial
+  exactly (e.g. `(2^{1/3})³ = 2`, `√2+√3` → `x⁴−10x²+1`, `√2·√3` → `x²−6`, `1/√2` → `x²−½`). Verified in
+  `tests/test_algebraic.py`, including a **differential cross-check against SymPy's `minimal_polynomial`**
+  (comparator only).
+- New solver kinds (**265** total): `real_root` (k-th exact real root of a ℚ-polynomial) and
+  `algebraic_arith` (exact `add/sub/mul/div` of two algebraic reals) — both `exact`, returning the
+  minimal polynomial + isolating interval + substitute-back certificate.
+- This is the root of Track A that unblocks WP3 (`RootOf`), WP6 (complete univariate solving), WP11
+  (degree-≥3 ODE roots), WP13 (exact eigenvalues). *Increment 1 is **real** algebraic numbers; complex,
+  number fields ℚ(α), towers, and ℚ(x) are declared later WP2 increments.*
+- Registry count 263 → **265**; all kind-count references synced across README / SOLVER.md / API.md /
+  capabilities.json / the manifest gate (the founder's "one continuous system" — a stale 259 in a few
+  docs was corrected in the same pass).
+
 ### The continuum as a first-class ℚ PRIMITIVE — `idm.continuum.Continuum`
 Founder question (2026-07-29): *can we build a ℚ-primitive function that behaves like the ℝ-rung
 continuum?* Yes — the operational form of "the continuum is a readout of the discrete" (Part XX /

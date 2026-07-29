@@ -119,7 +119,13 @@ def _eval_int(F: UPoly, x: int) -> int:
     return acc
 
 
-def _kronecker_split(f: UPoly) -> Optional[Tuple[UPoly, UPoly]]:
+class FactorizationBudgetExceeded(Exception):
+    """Raised when a bounded ``factor_over_Q(..., budget=N)`` exhausts its candidate budget — so a caller
+    (e.g. algebraic-number arithmetic) can fail closed (HOLD) instead of running Kronecker's
+    combinatorial divisor search unbounded. Default factorization (``budget=None``) never raises this."""
+
+
+def _kronecker_split(f: UPoly, budget=None) -> Optional[Tuple[UPoly, UPoly]]:
     """``f``: monic ``UPoly`` over QRing, square-free, degree ``d ≥ 2``, with no rational root.
 
     Returns ``(h, q)`` — both MONIC, ``divmod_(f, h) == (q, 0)`` exactly, ``1 ≤ deg(h) ≤ d - 1`` — the
@@ -151,7 +157,12 @@ def _kronecker_split(f: UPoly) -> Optional[Tuple[UPoly, UPoly]]:
 
         divisor_lists = [_signed_divisors(v) for v in vals]
         tried = set()
+        seen = 0
         for combo in _product(*divisor_lists):
+            seen += 1
+            if budget is not None and seen > budget:
+                raise FactorizationBudgetExceeded(
+                    f"Kronecker candidate budget {budget} exceeded at trial degree {e}")
             h_cand = lagrange(list(zip(nodes, combo)))
             if h_cand.degree() != e:
                 continue
@@ -166,7 +177,7 @@ def _kronecker_split(f: UPoly) -> Optional[Tuple[UPoly, UPoly]]:
     return None
 
 
-def _factor_monic(f: UPoly) -> List[UPoly]:
+def _factor_monic(f: UPoly, budget=None) -> List[UPoly]:
     """``f``: monic ``UPoly`` over QRing, SQUARE-FREE (a divisor of a square-free radical — so this
     recursion never itself needs to worry about repeated factors: any divisor of a square-free
     polynomial is square-free). Returns the list of its monic irreducible factors over ℚ, each once
@@ -187,16 +198,20 @@ def _factor_monic(f: UPoly) -> List[UPoly]:
     if remaining.degree() == 1:
         return linear + [remaining]
 
-    split = _kronecker_split(remaining)
+    split = _kronecker_split(remaining, budget)
     if split is None:
         return linear + [remaining]             # remaining is irreducible over ℚ
     h, q = split
-    return linear + _factor_monic(h) + _factor_monic(q)
+    return linear + _factor_monic(h, budget) + _factor_monic(q, budget)
 
 
 # =============================================================================================== public API
-def factor_over_Q(p: UPoly) -> Tuple:
+def factor_over_Q(p: UPoly, budget=None) -> Tuple:
     """Factor ``p`` (a ``UPoly`` over ``QRing`` = ℚ) into IRREDUCIBLE factors, EXACTLY.
+
+    ``budget`` (optional): cap on Kronecker candidate tuples per trial degree; exceeding it raises
+    :class:`FactorizationBudgetExceeded` so a caller can fail closed. Default ``None`` = unbounded
+    (the exact behavior every existing caller relies on — this path never raises the budget exception).
 
     Returns ``(lead, [(g_1, m_1), ..., (g_k, m_k)])`` — every ``g_i`` MONIC and IRREDUCIBLE over ℚ,
     the ``g_i`` pairwise DISTINCT, every ``m_i >= 1``, and, exactly (via :func:`~idm.kernel.poly.
@@ -221,9 +236,9 @@ def factor_over_Q(p: UPoly) -> Tuple:
     lead, sqfree = square_free_factorization(p)
     out: List[Tuple[UPoly, int]] = []
     for g, mult in sqfree:
-        for irr in _factor_monic(g):
+        for irr in _factor_monic(g, budget):
             out.append((irr, mult))
     return lead, out
 
 
-__all__ = ["factor_over_Q"]
+__all__ = ["factor_over_Q", "FactorizationBudgetExceeded"]

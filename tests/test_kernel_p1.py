@@ -140,7 +140,7 @@ def test_to_legacy_rejects_nonlegacy_node():
 
 # ------------------------------------------------------------------ non-regression
 def test_kernel_import_does_not_disturb_registry():
-    assert len(idm.kinds()) == 263
+    assert len(idm.kinds()) == 265
     assert idm.solve({"kind": "constant", "name": "pi"})["status"] in ("ok", "CERTIFIED")
 
 

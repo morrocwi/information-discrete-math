@@ -141,6 +141,7 @@ DOMAIN_MEMBERS: dict[str, set[str]] = {
         "poly_from_roots", "poly_gcd", "poly_integral", "poly_mul",
         "poly_roots", "rational_roots", "integer_root", "groebner_basis",
         "continued_fraction", "pade", "bezout",
+        "real_root", "algebraic_arith",
     },
     # Analysis: integration, series, transforms, root/optimum finding,
     # special functions.
