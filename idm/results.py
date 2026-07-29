@@ -69,13 +69,27 @@ class Result(dict):
 
     @property
     def is_hold(self) -> bool:
-        """``True`` iff the solver returned HOLD (no readout was made)."""
+        """``True`` iff the solver returned HOLD — no readout was made (the honest "could not read")."""
         return self.get("status") == "HOLD"
 
     @property
+    def is_open(self) -> bool:
+        """``True`` iff the result is an **open-tail readout** (``status == "+R_OPEN"``): a finite
+        ℚ-approximant plus a certified tail/contraction bound, with *no* plain ``value`` (the
+        anti-overclaim fence — see :mod:`idm.hilbert_open`). Read ``r["approximant"]`` and the bound,
+        not ``r.value``. Distinct from both ``is_ok`` and ``is_hold``."""
+        return self.get("status") == "+R_OPEN"
+
+    @property
     def is_ok(self) -> bool:
-        """``True`` iff the solver produced a result (``"ok"`` or a certified ``"CERTIFIED"``)."""
-        return self.get("status") in ("ok", "CERTIFIED")
+        """``True`` iff the solver produced a **definitive resolved result carrying a ``value``** — this
+        covers ``"ok"``, a certified ``"CERTIFIED"``, and a definitive ``"REFUTED"`` (a proven
+        counterexample with ``value: False`` + witness). It is defined by the presence of a ``value``
+        rather than an enumerated status list, so it stays correct as new resolved statuses are added,
+        and it deliberately excludes ``+R_OPEN`` (open-tail, no plain value — use :attr:`is_open`) and
+        HOLD. Note: ``is_ok`` means "the solve resolved", not "the answer is yes" — the yes/no lives in
+        ``value`` (e.g. a REFUTED positivity query is ``is_ok`` with ``value == False``)."""
+        return self.get("status") != "HOLD" and "value" in self
 
     def raise_for_hold(self) -> "Result":
         """Return ``self`` if a readout was made; raise :class:`SolveHold` (with the solver's reason)

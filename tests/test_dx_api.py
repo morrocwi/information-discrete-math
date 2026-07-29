@@ -52,6 +52,30 @@ def test_typed_convenience_wrappers_dispatch_correctly():
         assert isinstance(r, Result)
 
 
+def test_result_classifies_the_full_status_space():
+    """is_ok / is_hold / is_open cover every status the solver actually emits — not just ok/HOLD.
+    Regression for reviewer #93: a REFUTED counterexample (definitive, has a value) is is_ok; an
+    open-tail +R_OPEN readout (no plain value) is is_open, NOT is_ok."""
+    import tests.test_properties as tp
+
+    # REFUTED — a definitive counterexample (value=False + witness): resolved, so is_ok, NOT hold/open
+    ref = idm.solve({"kind": "polynomial_positivity",
+                     "polynomial": "x**4*y**2 + x**2*y**4 + 1 - 4*x**2*y**2", "variables": ["x", "y"]})
+    assert ref.status == "REFUTED" and ref.value is False
+    assert ref.is_ok and not ref.is_hold and not ref.is_open
+
+    # +R_OPEN — an open-tail readout with no plain value: is_open, NOT is_ok/is_hold
+    opn = idm.solve(dict(kind="l2_readout", **tp.FIXTURES["l2_readout"]))
+    assert opn.status == "+R_OPEN" and opn.value is None
+    assert opn.is_open and not opn.is_ok and not opn.is_hold
+
+    # the three predicates are mutually exclusive for these, and ok/HOLD stay correct
+    ok = idm.solve({"kind": "factorize", "n": 12})
+    hold = idm.solve({"kind": "not_a_kind"})
+    assert ok.is_ok and not ok.is_hold and not ok.is_open
+    assert hold.is_hold and not hold.is_ok and not hold.is_open
+
+
 def test_public_exports_present():
     for name in ("Result", "SolveHold", "factorize", "gcd", "solve_integral", "integrate_rational",
                  "solve_matrix", "eigenvalues", "solve_roots", "solve_ode", "kinds"):

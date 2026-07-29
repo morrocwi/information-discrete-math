@@ -14,8 +14,11 @@ Two of the five DX gaps (roadmap #51, gaps 3 & 4), pure additions, no behaviour 
   `json.dumps(r)`, `isinstance(r, dict)`, dict-equality, the REST server, and the golden snapshots all
   behave identically — verified: `json.dumps(Result) == json.dumps(dict)`, full golden suite passes). It
   adds typed accessors on top: `.kind .status .value .bound .tier .reason .method .coq_theorem`,
-  `.is_ok`, `.is_hold`, `.raise_for_hold()` (raises `idm.SolveHold` with the solver's own reason, and
-  returns `self` on success so it chains), and `.to_dict()`.
+  `.is_hold`, `.is_open`, `.is_ok`, `.raise_for_hold()` (raises `idm.SolveHold` with the solver's own
+  reason, and returns `self` on success so it chains), and `.to_dict()`. The predicates cover the full
+  status space the solver actually emits: `is_ok` is defined by the presence of a `value` (so it
+  correctly includes a definitive `REFUTED` counterexample and excludes the value-less open-tail
+  `+R_OPEN`), `is_open` flags the `+R_OPEN` open-tail readout, `is_hold` the no-readout HOLD.
 - **Typed convenience** (`idm/convenience.py`) — one-call wrappers so a programmer need not hand-assemble
   the problem dict: `idm.factorize(n)`, `idm.gcd(a, b)`, `idm.solve_integral(f, a, b, eps=…)`,
   `idm.integrate_rational(num, den)`, `idm.solve_matrix(A, b)`, `idm.eigenvalues(matrix)`,
