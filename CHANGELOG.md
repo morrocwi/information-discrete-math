@@ -7,6 +7,19 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Documented a third machine-checked arrival at the same indistinguishability kernel
+`docs/FORMAL_COMPANIONS.md` now records that `readout_genesis`'s `InfoTrueRecordUnreadable`
+(`Th_coqc`, axiom-free — verified locally: 3 lemmas, all *Closed under the global context*;
+`no_decoder_recovers_state`: no decoder recovers two distinct states a readout maps to one record) is
+the abstract twin of the companion's zero-fibre indistinguishability equivalence (`indist` refl/sym/trans
++ `keystone_zero_iff_component`) — `O := Φ ↦ [Φ]_indist` makes the two compose directly. **Tier-honest
+fence:** the shared core is the *generic* equivalence-kernel of any non-injective map (the abstract
+lemma is a one-line consequence of non-injectivity), so the multiple arrivals are program coherence, not
+independent deep evidence — the value is that a foundation's central move is elementary and universal.
+Corrects a provenance mix-up: `minimal_three_values` / `discrete_floor` live in THIS repo
+(`formal/IDM_ReadoutMinimality.v`, `formal/IDM_Genesis.v`), not `readout_genesis`. Docs-only; no code,
+no new kind, no count change (269).
+
 ### `all_roots` — deterministic performance fence (HOLD, never hang, on large-coefficient high-degree inputs)
 `all_roots` could run for **minutes** on a high-degree or large-coefficient square-free factor (its
 degree-`n²` resultants + Sturm isolation). Profiling found **two independent cliffs** — a degree cliff
