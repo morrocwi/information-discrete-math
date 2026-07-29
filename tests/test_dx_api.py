@@ -76,7 +76,40 @@ def test_result_classifies_the_full_status_space():
     assert hold.is_hold and not hold.is_ok and not hold.is_open
 
 
+def test_schema_discovery():
+    """idm.describe/schema/example return structured, honest data over the registry (gap 2)."""
+    d = idm.describe("factorize")
+    assert d["kind"] == "factorize" and d["tier"] == "exact"
+    assert "signature" in d and d["verify"] == "pytest tests/ -k factorize"
+
+    s = idm.schema("matrix_solve")
+    assert s["kind"] == "matrix_solve" and set(s["fields"]) >= {"A", "b"}    # fields the handler reads
+    assert s["example"] is None or "matrix_solve" in s["example"]
+
+    ex = idm.example("linear_ode")
+    assert ex is not None and '"kind": "linear_ode"' in ex                   # a real on-file example
+
+    # unknown kind → KeyError (mirrors a dict lookup), for all three
+    for fn in (idm.describe, idm.schema, idm.example):
+        with pytest.raises(KeyError):
+            fn("definitely_not_a_kind")
+
+    # every registered kind is describable without raising (the registry is the source of truth)
+    for k in idm.kinds():
+        assert idm.describe(k)["kind"] == k
+
+
+def test_discovery_backs_the_cli():
+    """The `python -m idm` CLI and the Python API share one source of truth (idm.discovery), so the
+    CLI's effective-tier matches idm.describe's tier for every kind."""
+    from idm import discovery
+    from idm.__main__ import _effective_tier
+    for k in idm.kinds():
+        assert _effective_tier(k) == discovery.describe(k)["tier"] == discovery.schema(k)["tier"]
+
+
 def test_public_exports_present():
     for name in ("Result", "SolveHold", "factorize", "gcd", "solve_integral", "integrate_rational",
-                 "solve_matrix", "eigenvalues", "solve_roots", "solve_ode", "kinds"):
+                 "solve_matrix", "eigenvalues", "solve_roots", "solve_ode", "kinds",
+                 "describe", "schema", "example"):
         assert name in idm.__all__ and hasattr(idm, name), name
