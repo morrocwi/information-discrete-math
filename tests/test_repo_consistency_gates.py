@@ -29,6 +29,49 @@ def _manifest_version() -> str:
     return json.loads((ROOT / "capabilities.json").read_text(encoding="utf-8"))["project"]["version"]
 
 
+# Docs that state the total registered-kind count in prose/badges. A stale number here is the "one
+# continuous system" drift (adding a kind used to require hand-editing ~8 places + 2 CI round-trips to
+# find them). This gate makes any stale TOTAL-count fail CI with the exact file — single-sourced against
+# the live registry len(idm.kinds()).
+_KIND_COUNT_DOCS = [
+    "README.md", "SOLVER.md", "API.md", "AI_START_HERE.md", "idm/README.md",
+    "formal/README.md", "retained_spectral/README.md", "docs/CAS_CLOSURE_CHECKLIST.md",
+    "docs/roadmap/README.md",
+]
+# Patterns that unambiguously state the TOTAL registry size (each captures the number as group 1).
+# Deliberately NOT matching sub-counts like "230-kind branch map" / "28-kind Hilbert core".
+_TOTAL_COUNT_PATTERNS = [
+    r"(\d{2,4})\s+registered\s+(?:problem\s+)?kinds?",
+    r"(\d{2,4})\s+kind names",
+    r"(\d{2,4})-kind unified solver",
+    r"all\s+(\d{2,4})\s+registered",
+    r"over\s+\*{0,2}(\d{2,4})\*{0,2}\s+registered",
+    r"unified%20solver-(\d{2,4})%20registered",
+    r"this returned\s+\*{0,2}(\d{2,4})\*{0,2}\s+kinds",
+    r"→\s+\*{0,2}(\d{2,4})\*{0,2}\s+live",
+    r"(\d{2,4})\s+solver kinds",
+]
+
+
+def test_kind_count_is_single_sourced_across_docs():
+    """Every documented TOTAL registered-kind count must equal the live registry — adding a kind that
+    forgets a doc fails here with the exact file:line, instead of shipping a stale number."""
+    live = len(idm.kinds())
+    stale = []
+    for rel in _KIND_COUNT_DOCS:
+        p = ROOT / rel
+        if not p.exists():
+            continue
+        text = p.read_text(encoding="utf-8")
+        for pat in _TOTAL_COUNT_PATTERNS:
+            for m in re.finditer(pat, text):
+                n = int(m.group(1))
+                if n != live:
+                    line = text[:m.start()].count("\n") + 1
+                    stale.append(f"{rel}:{line} says {n}, live registry is {live}")
+    assert not stale, "stale kind-count references (update them, or the gate fails):\n" + "\n".join(stale)
+
+
 def test_version_is_single_sourced():
     """idm.__version__, pyproject.toml, and capabilities.json must all agree — the exact drift
     (idm.__version__ frozen at 1.3.0 while the release was 1.4.0) the review caught."""
