@@ -5,6 +5,26 @@ axiom-free (Coq 8.20, `Print Assumptions` = *Closed under the global context*); 
 finite procedure cross-checked numerically; `exact` = exact over ℚ; `Open`/`+ℝ-Open` = declared open,
 never dressed as a theorem.
 
+## [Unreleased]
+
+### The ℚ-computability law — the +ℝ-Open Hilbert frontier now splits its two truths
+Founder principle (2026-07-29): *if an ℝ-rung quantity is actually COMPUTED, it is computed on ℚ — so
+it must carry a ℚ tier, not a blanket `+ℝ-Open`.* Audit of the 5 frontier kinds found 4 of them do
+compute an exact ℚ readout (partial energy `Σ|xₖ|²`, the Cauchy tail `x_N`, the finite ONB) that was
+buried under one uniform `+ℝ-Open` tag — an under-claim. Fixed with a **two-tier readout** (the
+continuum-maya split, Part XX), without weakening the anti-overclaim fence:
+- `idm/hilbert_open.py` now returns `computed_core` (the exact ℚ quantity, with its OWN honest tier:
+  `Th_coqc` for the ℓ²/L² partial energy, `exact` for the Cauchy/ONB readouts) **and** `open_tail` (the
+  completed limit / whole-space object, staying `+ℝ-Open`). The fence is unchanged: still
+  `status:+R_OPEN`, still no top-level `value`, kind-level tier never `Th_coqc`. `infinite_spectral`
+  honestly reports `computed_core: None` — it is the one kind that computes nothing on ℚ.
+- **Formal core → 187** (from 184): **`IDM_HilbertReadout.v`** machine-checks the ℚ core the
+  `Th_coqc` claim rests on — `partial_energy` is `nonneg` · exact-`app`-additive · `monotone` in N, all
+  axiom-free over ℚ. This *is* "computable on ℚ" made a machine-checked theorem.
+- Guard test `tests/test_hilbert.py::test_two_tier_readout_gives_the_q_core_its_honest_tier` — every
+  computing kind's `computed_core` carries an `exact`/`Th_coqc` tier, any `Th_coqc` cites a real in-tree
+  witness, and `open_tail` stays `+ℝ-Open`. Golden snapshot regenerated (additive; 5 kinds).
+
 ## [1.4.1]
 
 Quality + integrity release: acts on a world-class multi-discipline review, pays down architectural

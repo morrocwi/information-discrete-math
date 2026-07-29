@@ -76,3 +76,33 @@ def test_plus_r_open_never_certified():
     assert r["status"] == "+R_OPEN" and r["tier"] == "+ℝ-Open" and "value" not in r
     r2 = idm.solve({"kind": "L2_readout", "values_on_mesh": [1, 1, 1], "weights": ["1/3", "1/3", "1/3"]})
     assert r2["status"] == "+R_OPEN" and "approximant" in r2 and "value" not in r2
+
+
+def test_two_tier_readout_gives_the_q_core_its_honest_tier():
+    """The founder's ℚ-computability law (2026-07-29): whatever hilbert_open actually COMPUTES is a finite
+    ℚ readout and must carry its own ℚ tier (not a blanket +ℝ-Open); only the completed tail stays open.
+    Guards that split: computed_core carries a concrete ℚ tier, open_tail stays +ℝ-Open, and the one kind
+    that computes nothing (infinite_spectral) honestly reports computed_core=None."""
+    _Q_TIERS = {"exact", "Th_coqc"}
+    computing = {
+        "l2_readout": {"seq": ["1", "1/2", "1/4", "1/8", "1/16"], "N": 5},
+        "L2_readout": {"values_on_mesh": [1, 1, 1], "weights": ["1/3", "1/3", "1/3"]},
+        "completeness_readout": {"cauchy_seq": ["1", "3/2", "7/5", "17/12"], "N": 3},
+        "infinite_orthonormal_basis_readout": {"vectors": [[1, 0], [0, 1], [1, 1]], "N": 2},
+    }
+    for kind, args in computing.items():
+        r = idm.solve({"kind": kind, **args})
+        core = r["computed_core"]
+        assert core is not None and core.get("tier") in _Q_TIERS, \
+            f"{kind}: computed ℚ core must carry an exact/Th_coqc tier, got {core!r}"
+        assert r["open_tail"]["tier"] == "+ℝ-Open", f"{kind}: the completed tail must stay +ℝ-Open"
+        # a Th_coqc claim on the core MUST cite a real in-tree witness
+        if core["tier"] == "Th_coqc":
+            w = core.get("witness", "")
+            repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            assert w and os.path.isfile(os.path.join(repo_root, w)), \
+                f"{kind}: Th_coqc core cites missing witness {w!r}"
+
+    # the sole non-computing kind is honest about producing no ℚ core at all
+    rs = idm.solve({"kind": "infinite_spectral_readout", "operator_description": "d/dx"})
+    assert rs["computed_core"] is None and rs["open_tail"]["tier"] == "+ℝ-Open"
