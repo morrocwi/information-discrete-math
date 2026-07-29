@@ -41,7 +41,7 @@ branch you need, then read its own tier before trusting the number.
 > **Scope at a glance (humans + AI):** [`SOLVER.md`](SOLVER.md) — what the solver solves across its
 > 11 domains / 266 kinds, the EXACT / CONDITIONAL / HOLD verdict discipline, and the honest boundary of
 > the exact symbolic (CAS) layer (audited: [`docs/CAS_CLOSURE_CHECKLIST.md`](docs/CAS_CLOSURE_CHECKLIST.md),
-> 40 closed / 67 partial / 150 open), all traceable through the knowledge graph.
+> 40 closed / 67 partial / 150 open), all traceable through the knowledge graph. What's coming next: [`docs/roadmap/`](docs/roadmap/).
 
 ## 5-level platform
 

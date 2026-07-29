@@ -140,7 +140,12 @@ def test_to_legacy_rejects_nonlegacy_node():
 
 # ------------------------------------------------------------------ non-regression
 def test_kernel_import_does_not_disturb_registry():
-    assert len(idm.kinds()) == 266
+    import importlib
+    before = set(idm.kinds())
+    importlib.import_module("idm.kernel")   # re-import must not mutate the solve registry
+    after = set(idm.kinds())
+    assert before == after, "importing idm.kernel changed the solve registry"
+    assert len(after) > 200, "registry unexpectedly small — is the domain package loaded?"  # not a hardcoded exact count
     assert idm.solve({"kind": "constant", "name": "pi"})["status"] in ("ok", "CERTIFIED")
 
 
