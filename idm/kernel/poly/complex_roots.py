@@ -83,6 +83,55 @@ class ComplexRootsHOLD(Exception):
     """Raised when the roots cannot be certified complete (e.g. factorization budget, count mismatch)."""
 
 
+# ── performance fence (deterministic, no wall-clock — golden/tests stay reproducible) ──────────────
+# The cost of resolving one SQUARE-FREE factor of degree n is driven by its degree-n² resultants (which
+# are Sturm-isolated). Two things push it into minutes: (1) a DEGREE cliff — a degree-7 factor resolves
+# in seconds, a degree-8 one in minutes even for tiny coefficients, because its resultant is degree 64;
+# (2) COEFFICIENT growth, but only *through* that degree-n² resultant — so coefficient bit-length costs
+# in proportion to the resultant degree, NOT on its own (a degree-2 factor with even 40-bit coefficients
+# resolves in well under a second — its resultant is only degree 4). The fence therefore caps the DEGREE
+# directly and caps the interaction ``n²·bits`` (which already scales bit-length by the resultant
+# degree); there is deliberately NO standalone bit-length cap, because that wrongly rejects fast
+# low-degree/large-coefficient factors. The defaults keep every capability that currently returns in
+# ≲15s and HOLD (never hang) on the "large-coefficient high-degree" inputs; widen the caps via
+# ``all_roots(..., fence=<dict>)`` or disable with ``fence=None``.
+#
+# HONEST LIMIT (not overclaimed): this is a cheap *static* pre-check on (degree, coefficient
+# bit-length). It catches the two named cliffs, but it does NOT fully bound runtime — a mid-degree
+# factor whose degree-n² resultant happens to be expensive (e.g. a quartic with well-separated but
+# large-magnitude roots and 4-digit coefficients) can still run long while sitting inside the caps,
+# because that cost is not visible from (degree, input-bits) alone. Fully bounding every input needs a
+# *computed* work budget threaded through the resultant/Sturm path — a declared later increment (#65).
+_ROOTS_FENCE = {
+    "max_factor_degree": 7,   # resultant degree n² ≤ 49; degree-8+ factors run for minutes
+    "max_mix": 350,           # cap on n²·bits: allows fast cases (deg-4 13-bit ≈ 2.1s → 208) and HOLDs the
+                              # slow ones (deg-5 ~20-bit ≈ 500 → minutes). bits cost only via the n²-resultant.
+}
+
+
+def _coeff_bits(qcoeffs) -> int:
+    """Max bit-length of a rational-coefficient list (numerator + denominator), ≥ 1."""
+    return max((abs(c.numerator).bit_length() + abs(c.denominator).bit_length()) for c in qcoeffs) if qcoeffs else 1
+
+
+def _fence_factor(n: int, qcoeffs, fence) -> None:
+    """Raise :class:`ComplexRootsHOLD` BEFORE the expensive resultant/Sturm work when a square-free
+    factor of degree ``n`` is projected to run for minutes. Deterministic; ``fence=None`` disables it."""
+    if not fence:
+        return
+    b = _coeff_bits(qcoeffs)
+    if n > fence["max_factor_degree"]:
+        raise ComplexRootsHOLD(
+            f"square-free factor of degree {n} exceeds the performance fence (max_factor_degree="
+            f"{fence['max_factor_degree']}): its degree-{n * n} resultants would run for minutes. "
+            f"Pass all_roots(..., fence=None) to force, or widen 'max_factor_degree'.")
+    if n * n * b > fence["max_mix"]:
+        raise ComplexRootsHOLD(
+            f"square-free factor (degree {n}, {b}-bit coefficients) has n²·bits={n * n * b} over the "
+            f"performance fence (max_mix={fence['max_mix']}) — projected to run for tens of seconds to "
+            f"minutes. Pass fence=None to force, or widen 'max_mix'.")
+
+
 def _bivar_PQ(coeffs):
     """p(x+iy) = P(x,y) + i·Q(x,y); return {(i,j): coeff} dicts for xⁱyʲ (P = real part, Q = imag part)."""
     P, Qd = {}, {}
@@ -171,14 +220,18 @@ def _box_eval(biv, alo, ahi, blo, bhi):
     return lo, hi
 
 
-def _roots_of_squarefree(coeffs) -> list:
+def _roots_of_squarefree(coeffs, fence=_ROOTS_FENCE) -> list:
     """All DISTINCT roots (real + complex) of a SQUARE-FREE ℚ-polynomial as exact rectangle enclosures.
-    Requires the isolated count to equal the degree, else HOLDs — callers pass square-free factors."""
+    Requires the isolated count to equal the degree, else HOLDs — callers pass square-free factors.
+    HOLDs deterministically (never hangs) BEFORE the degree-n² resultant work on inputs the performance
+    fence projects to run for minutes; ``fence=None`` disables the fence."""
+    qcoeffs = [Q(c) for c in coeffs]
     p = _P(coeffs)
     n = p.degree()
     if n < 1:
         return []
-    P, Qd = _bivar_PQ([Q(c) for c in coeffs])
+    _fence_factor(n, qcoeffs, fence)                  # deterministic perf fence — HOLD, don't hang
+    P, Qd = _bivar_PQ(qcoeffs)
     try:
         Rx = _resultant_poly(P, Qd, n, in_x=True)
         Ry = _resultant_poly(P, Qd, n, in_x=False)
@@ -220,12 +273,16 @@ def _roots_of_squarefree(coeffs) -> list:
     return out
 
 
-def all_roots(coeffs) -> dict:
+def all_roots(coeffs, fence=_ROOTS_FENCE) -> dict:
     """Every root of the ℚ-polynomial ``coeffs`` (low→high), real and complex, as exact rational-rectangle
     enclosures WITH MULTIPLICITY. Each root: ``re``/``im`` = {min_poly, interval, approx, is_rational},
     ``is_real``, ``multiplicity``, ``verified``. Certified complete: Σ multiplicity == degree (else HOLD).
     Works by finding the DISTINCT roots of each square-free factor and tagging them with its multiplicity —
-    so it handles repeated roots too, and each factor is lower-degree (also faster)."""
+    so it handles repeated roots too, and each factor is lower-degree (also faster).
+
+    ``fence`` (default :data:`_ROOTS_FENCE`) is the deterministic performance fence applied per square-free
+    factor: it HOLDs (never hangs) BEFORE the degree-n² resultant work on a "large-coefficient high-degree"
+    factor projected to run for minutes. Pass ``fence=None`` to disable it, or a dict with wider caps."""
     from .univariate import square_free_factorization
     p = _P(coeffs)
     n = p.degree()
@@ -236,7 +293,7 @@ def all_roots(coeffs) -> dict:
     for g, i in sqf:
         if g.degree() < 1:
             continue
-        for r in _roots_of_squarefree([str(c) for c in g.coeffs]):
+        for r in _roots_of_squarefree([str(c) for c in g.coeffs], fence=fence):
             r["multiplicity"] = i
             out.append(r)
     out.sort(key=lambda d: (d["re"]["approx"], d["im"]["approx"]))

@@ -309,3 +309,44 @@ def test_wp8_rational_integration_differentiates_back():
         assert diff_back_ok(num, den, mp.mpf("0.6")), (num, den)
     # only a degree-3 irreducible denominator HOLDs now (algebraic/Risch — later increment)
     assert idm.solve({"kind": "integrate_rational", "num": [1], "den": [-2, 0, 0, 1]})["status"] == "HOLD"
+
+
+def test_all_roots_performance_fence():
+    """all_roots HOLDs deterministically (never hangs) BEFORE the degree-n² resultant work on a
+    'large-coefficient high-degree' square-free factor, and preserves every capability under the fence.
+    The fence is a pure pre-check on (degree, coefficient bit-length) — O(1), no wall-clock — so it is
+    reproducible. Regression for #59."""
+    import idm, pytest
+    from idm.kernel.poly.complex_roots import _fence_factor, _ROOTS_FENCE, ComplexRootsHOLD, all_roots
+    from fractions import Fraction as Q
+
+    # (1) the two fence axes raise, with an actionable reason. There is deliberately NO standalone
+    #     bit-length cap: coefficient size costs only *through* the degree-n² resultant, so a low-degree
+    #     factor with large coefficients is fast and must NOT be fenced (regression — reviewer #90).
+    with pytest.raises(ComplexRootsHOLD, match="max_factor_degree"):          # degree cliff
+        _fence_factor(8, [Q(1)] * 9, _ROOTS_FENCE)
+    with pytest.raises(ComplexRootsHOLD, match="max_mix"):                    # n²·bits interaction (degree-5, ~20-bit)
+        _fence_factor(5, [Q(999983), Q(1), Q(1), Q(1), Q(1), Q(1)], _ROOTS_FENCE)
+    _fence_factor(2, [Q(999983), Q(1), Q(1)], _ROOTS_FENCE)                   # deg-2 big-coeff: NOT fenced (must not raise)
+
+    # (2) the kind HOLDs fast on the pathological inputs (status HOLD, reason mentions the fence)
+    for coeffs in ([-2, 0, 0, 0, 0, 0, 0, 0, 1],                              # x^8-2 (degree cliff)
+                   [999983, -424242, 131313, -707, 13, 1]):                   # deg-5, ~20-bit coeffs (mix)
+        r = idm.solve({"kind": "all_roots", "coeffs": coeffs})
+        assert r["status"] == "HOLD" and "fence" in r["reason"], coeffs
+
+    # (3) capability preserved — fast cases still resolve, INCLUDING low-degree large-coefficient factors
+    #     that the earlier standalone bit cap wrongly HELD (deg-2 with 12–20-bit coeffs resolve in ~0.03s)
+    for coeffs in ([1, 0, 1], [-1, 0, 0, 0, 1], [-1, 0, 0, 0, 0, 0, 1],       # x^2+1, x^4-1, x^6-1
+                   [-1, 3, -3, 1], [1, 0, 2, 0, 1],                           # (x-1)^3, (x^2+1)^2
+                   [3001, 500, 1], [999983, 1, 1]):                           # deg-2 large-coeff (was false-HOLD)
+        assert idm.solve({"kind": "all_roots", "coeffs": coeffs})["status"] == "ok", coeffs
+
+    # (4) fence=None disables it — same result as default on a small (allowed) input, so no corruption
+    small = [1, 0, 1]
+    assert all_roots(small, fence=None)["num_distinct"] == all_roots(small)["num_distinct"] == 2
+
+    # (5) the kind accepts "force": true and it does not corrupt a normal (allowed) case — the actual
+    #     long-run bypass (grinding a fenced input) is validated manually, not in the fast suite.
+    forced = idm.solve({"kind": "all_roots", "coeffs": [1, 0, 1], "force": True})
+    assert forced["status"] == "ok" and forced["value"]["num_distinct"] == 2, forced
