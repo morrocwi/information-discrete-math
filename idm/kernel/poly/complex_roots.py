@@ -16,8 +16,15 @@ Method (all over ℚ):
     exact rational **interval arithmetic** over the shrinking box (scales to any degree — no algebraic
     multiplication) — a non-root pair's P- or Q-enclosure eventually excludes 0.
 
-The result is certified complete: the number of isolated roots (real + complex, complex in conjugate
-pairs) must equal the degree, else it HOLDs. Exact complex *arithmetic* on these roots is a later increment.
+The resultants' real roots are isolated by **Sturm bisection of their square-free part** — polynomial-time,
+NO irreducible factorization (the resultants have degree n², where factoring blows any budget). So an
+irrational real/imaginary part carries a *defining* polynomial (the square-free radical, possibly
+reducible) + an isolating interval — exact and refinable, though not the minimal polynomial.
+
+The result is certified complete: the number of isolated (distinct) roots must equal the degree, else it
+HOLDs. So this handles **square-free (distinct-root) ℚ-polynomials at any degree**; a polynomial with a
+REPEATED root fails closed (count < degree). Exact complex *arithmetic* on these roots, the true minimal
+polynomial of each part, and repeated-root multiplicity are declared later increments.
 """
 from __future__ import annotations
 
@@ -25,9 +32,49 @@ from fractions import Fraction as Q
 from math import comb
 
 from .algebraic import AlgReal, AlgebraicHOLD, _P
-from .univariate import UPoly, resultant
+from .univariate import UPoly, resultant, isolate_real_roots, square_free_factorization, mul
 from .factorize import lagrange
 from .coeffring import QRing
+
+
+def _isolate_reals(coeffs):
+    """Every real root of the ℚ-polynomial ``coeffs`` as an ``AlgReal``, by Sturm isolation of the
+    SQUARE-FREE part — polynomial-time, NO irreducible factorization (the resultants here have degree n²,
+    where full factoring blows any budget). A rational root is returned exactly; an irrational one carries
+    the square-free polynomial as its (possibly reducible) DEFINING polynomial + an isolating interval —
+    enough for an exact rectangle enclosure and Sturm refinement, which is all this module needs."""
+    from idm.exact import rational_roots
+    p = _P(coeffs)
+    if p.degree() < 1:
+        return []
+    _lead, sqf = square_free_factorization(p)                     # radical = ∏ gᵢ (square-free)
+    D = p.domain
+    radical = UPoly([Q(1)], D)
+    for g, _i in sqf:
+        radical = mul(radical, g)
+    from .univariate import count_real_roots
+    from .algebraic import _peval
+    rats = set(rational_roots([Q(c) for c in coeffs]))
+    if radical.coeffs[0] == 0:                                    # rational_roots misses 0 (constant term 0)
+        rats.add(Q(0))
+    out = []
+    for lo, hi in isolate_real_roots(radical):
+        lo, hi = Q(lo), Q(hi)
+        r = next((q for q in rats if lo < q <= hi), None)
+        if r is not None:
+            out.append(AlgReal.from_rational(r))
+            continue
+        # the resultant can carry SPURIOUS extra roots (e.g. an eval point where P or Q degenerated),
+        # so the reducible radical may vanish at this interval's excluded endpoint lo. Nudge lo off it so
+        # the interval strictly brackets its one (irrational) root — else AlgReal._refine mis-collapses.
+        while _peval(radical, lo) == 0:
+            mid = (lo + hi) / 2
+            lo = mid if count_real_roots(radical, mid, hi) == 1 else lo   # keep the root in (lo, hi]
+            if count_real_roots(radical, mid, hi) != 1:
+                hi = mid
+        out.append(AlgReal(radical, lo, hi))
+    out.sort(key=lambda a: (a.lo + a.hi))
+    return out
 
 _QR = QRing()
 
@@ -137,8 +184,10 @@ def all_roots(coeffs) -> dict:
     try:
         Rx = _resultant_poly(P, Qd, n, in_x=True)
         Ry = _resultant_poly(P, Qd, n, in_x=False)
-        A = AlgReal.real_roots([str(c) for c in Rx.coeffs])       # candidate real parts (exact)
-        B = AlgReal.real_roots([str(c) for c in Ry.coeffs])       # candidate imaginary parts (exact)
+        # isolate the resultants' real roots by Sturm on their square-free part — NO factoring: these
+        # resultants have degree n², where irreducible factorization blows any budget.
+        A = _isolate_reals([str(c) for c in Rx.coeffs])           # candidate real parts (exact enclosures)
+        B = _isolate_reals([str(c) for c in Ry.coeffs])           # candidate imaginary parts
     except AlgebraicHOLD as ex:
         raise ComplexRootsHOLD(f"resultant real-root isolation exceeded the budget ({ex})")
 
@@ -165,7 +214,8 @@ def all_roots(coeffs) -> dict:
                 "interval": [str(r.lo), str(r.hi)], "approx": float(r.to_float(20)),
                 "is_rational": r.is_rational}
 
-    out = [{"re": _part(a), "im": _part(b), "is_real": b.sign() == 0,
+    # a root is real iff its imaginary part is exactly 0 (which is the rational 0)
+    out = [{"re": _part(a), "im": _part(b), "is_real": b.is_rational and b.as_rational() == 0,
             "verified": a.verify() and b.verify()} for a, b in roots]
     out.sort(key=lambda d: (d["re"]["approx"], d["im"]["approx"]))
     num_real = sum(1 for r in out if r["is_real"])

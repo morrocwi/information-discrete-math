@@ -14,8 +14,12 @@ root, with the real and imaginary parts each an exact real algebraic number (`Al
 Durand–Kerner**. Method (all over ℚ): split `p(x+iy) = P + iQ`; the real/imaginary parts are the real roots
 of `Res_y(P,Q)` / `Res_x(P,Q)` (recovered exactly by evaluation + Lagrange interpolation of the univariate
 resultant), isolated as `AlgReal`; a candidate pair `(a,b)` is a root iff `P(a,b)=Q(a,b)=0`, decided by
-exact rational **interval arithmetic** (scales to any degree — sidesteps algebraic-product blow-up). The
-result is certified complete (isolated count == degree, complex in conjugate pairs) or HOLDs. E.g. `x²+1`→
+exact rational **interval arithmetic** (sidesteps the algebraic-product blow-up). The resultants' real
+roots are isolated by **Sturm on their square-free part** (no factoring — the resultants have degree n²),
+so it handles **distinct-root (square-free) ℚ-polynomials at any degree**; the result is certified complete
+(isolated count == degree, complex in conjugate pairs) or HOLDs. A repeated-root input fails closed (an
+irrational part carries a defining polynomial, not the minimal one; repeated-root multiplicity + exact
+complex arithmetic are declared later increments). E.g. `x²+1`→
 `±i`; `x³−2`→ `∛2` + a complex pair; `x⁴+1`→ the four `±√2/2 ± i√2/2`; `x⁴−1`→ `±1, ±i`. Exact complex
 *arithmetic* on these roots is a later increment. `idm/kernel/poly/complex_roots.py` + test.
 

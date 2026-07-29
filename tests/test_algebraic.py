@@ -264,7 +264,15 @@ def test_all_roots_real_and_complex_complete():
     assert r2["num_real"] == 1 and r2["num_complex"] == 2
     r3 = rr([-1, 0, 0, 0, 1])                          # x^4-1 -> ±1, ±i
     assert r3["num_real"] == 2 and r3["num_complex"] == 2
-    for coeffs in ([1,0,1],[-2,0,0,1],[5,-2,1],[1,0,0,0,1],[-6,11,-6,1]):
+    # generic distinct-root polynomials at higher degree (NOT just lucky roots-of-unity structure)
+    generic = [[1,0,1],[-2,0,0,1],[5,-2,1],[1,0,0,0,1],[-6,11,-6,1],
+               [10,-14,10,-4,1],   # (x^2-2x+2)(x^2-2x+5): 1±i, 1±2i
+               [-1,0,0,0,0,1],     # x^5-1: 1 real + 4 complex
+               [-1,0,0,0,0,0,1],   # x^6-1: 2 real + 4 complex
+               [1,1,0,1]]          # x^3+x+1: 1 real + 2 complex
+    for coeffs in generic:
         v = rr(coeffs)
         assert v["num_real"] + v["num_complex"] == v["degree"]    # complete: no root lost
         assert all(x["verified"] for x in v["roots"])             # each Re/Im part substitutes back exactly
+    # a repeated-root polynomial fails closed (HOLD) — multiplicity is a declared later increment
+    assert idm.solve({"kind": "all_roots", "coeffs": [-1, 3, -3, 1]})["status"] == "HOLD"   # (x-1)^3
