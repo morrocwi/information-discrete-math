@@ -23,7 +23,12 @@ never an ℝ object:
   axiom-free over ℚ — pointwise homomorphism (`radd_at`/`rmul_at`), commutativity, a constant's zero gap,
   and the key **`gap_subadditive`** (|Δ(g+h)| ≤ |Δg|+|Δh|, so summing two plateauing continua still
   plateaus — the algebra can't silently break `.readout`'s honesty).
-- `idm/continuum.py` + `tests/test_continuum.py` (9 tests) + discovery pointer in `idm/README.md`.
+- `idm/continuum.py` + `tests/test_continuum.py` (11 tests) + discovery pointer in `idm/README.md`.
+- **Anti-ℝ-slide guard** `tests/test_continuum_no_R_slide.py` — enforces (in CI, not just intent) that no
+  doc/code surface positively claims ℝ was constructed / is a primitive / that the completed limit is
+  emitted as a value. Negation-aware, so the honest fenced phrasings pass ("ℝ is never a primitive", "the
+  completed real stays +ℝ-Open"); it also pins the module's fence markers and asserts every non-HOLD
+  readout keeps the `+ℝ-Open` fence and returns only exact ℚ. Closes the "language drift" vigilance point.
 
 ### The ℚ-computability law — the +ℝ-Open Hilbert frontier now splits its two truths
 Founder principle (2026-07-29): *if an ℝ-rung quantity is actually COMPUTED, it is computed on ℚ — so
