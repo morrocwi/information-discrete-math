@@ -22,3 +22,15 @@ def _ssol(p):
 @kind("symbolic_series", "Th_coqc")
 def _sser(p): return _ok("symbolic_series", [SYM.tostr(c) for c in SYM.taylor(SYM.parse(p["expr"]), p["var"], p.get("x0", 0), int(p.get("n", 6)))],
                          "exact symbolic Taylor by repeated differentiation")
+
+@kind("integrate_rational", "exact")
+def _irat(p):
+    """EXACT symbolic integral of a rational function P(x)/Q(x) (coeffs low→high) — partial fractions over
+    ℚ → logs + arctans + a rational part. HOLDs on a degree-≥3 irreducible or repeated-quadratic denominator
+    (needs Hermite/Risch, a later increment)."""
+    from idm.kernel.poly.rational_integration import integrate_rational, RationalIntegralHOLD
+    try:
+        r = integrate_rational(p["num"], p["den"], p.get("var", "x"))
+    except (RationalIntegralHOLD, ValueError, KeyError, ZeroDivisionError) as ex:
+        return {"kind": "integrate_rational", "status": "HOLD", "reason": str(ex)}
+    return _ok("integrate_rational", r, "exact rational-function integration (partial fractions over ℚ)")

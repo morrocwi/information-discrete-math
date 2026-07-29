@@ -1971,6 +1971,26 @@
    "float": 1.7724538509055159
   }
  },
+ "integrate_rational": {
+  "kind": "integrate_rational",
+  "method": "exact rational-function integration (partial fractions over \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "arctan_terms": [
+    {
+     "coeff_over_w": "1",
+     "shift": "0",
+     "var": "x",
+     "w_squared": "1"
+    }
+   ],
+   "constant": "C",
+   "integral": "(1/sqrt(1))*arctan((x + 0)/sqrt(1)) + C",
+   "log_terms": [],
+   "polynomial_part": "0"
+  }
+ },
  "interpolate": {
   "kind": "interpolate",
   "method": "Lagrange interpolation (exact \u211a when rational)",

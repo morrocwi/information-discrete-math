@@ -7,6 +7,18 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### WP8 (Increment 1) — exact rational-function integration
+New kind **`integrate_rational`** (`exact`, → **269** kinds): the exact symbolic integral of a rational
+function `P(x)/Q(x)` over ℚ, where the elementary integrator only handled polynomials + a few linear-argument
+patterns. Method (all exact ℚ): polynomial part by division; factor `Q` over ℚ into irreducibles; partial
+fractions by **undetermined coefficients** (an exact ℚ linear solve, since `apart` only splits square-free
+blocks); integrate each term → `c·ln(x−a)`, `−c/((k−1)(x−a)^{k−1})`, and `(b/2)·ln(x²+px+q) +
+K·arctan((x+p/2)/√(q−p²/4))`. E.g. `∫1/(x²+1)=arctan x`, `∫1/(x²−1)=½ln|x−1|−½ln|x+1|`, `∫x²/(x²+1)=x−arctan x`,
+`∫1/(x−1)²=−1/(x−1)`. Verified by differentiating the result back. Scope: linear factors any multiplicity,
+irreducible quadratics multiplicity 1; a degree-≥3 irreducible or a repeated quadratic HOLDs (Hermite/Risch
+are later increments). `idm/kernel/poly/rational_integration.py` + test.
+
+
 ### Complex-root isolation — `all_roots`: every root, real AND complex, as exact enclosures (→268)
 Completes the "degree-n polynomial → all n roots" story (the complex half of WP3/WP6/WP11/WP13). New kind
 **`all_roots`** (`exact`): every root is an **exact rational-rectangle enclosure** `[re]×[im]` isolating one
