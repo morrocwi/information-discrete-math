@@ -38,8 +38,23 @@
     "float": 1.0
    }
   },
+  "computed_core": {
+   "nodes": 3,
+   "tier": "Th_coqc",
+   "value": {
+    "exact": "1",
+    "float": 1.0
+   },
+   "what": "finite quadrature \u03a3 w\u1d62|f(x\u1d62)|\u00b2 on the declared mesh (exact, over \u211a)",
+   "witness": "formal/IDM_HilbertReadout.v"
+  },
   "kind": "L2_readout",
   "note": "the completed L\u00b2 space / the exact integral is +\u211d-Open; only a finite mesh sum is shown",
+  "open_tail": {
+   "note": "the true integral is the readout of the mesh sum, never formed",
+   "tier": "+\u211d-Open",
+   "what": "the completed L\u00b2(X,\u03bc) space / the exact integral \u222b|f|\u00b2 d\u03bc"
+  },
   "status": "+R_OPEN",
   "target": "\u2016f\u2016\u00b2_{L\u00b2(X,\u03bc)} = \u222b|f|\u00b2 d\u03bc",
   "tier": "+\u211d-Open"
@@ -571,11 +586,28 @@
     "float": 1.4166666666666667
    }
   },
+  "computed_core": {
+   "observed_tail_spacing": {
+    "exact": "1/10",
+    "float": 0.1
+   },
+   "tier": "exact",
+   "what": "the finite Cauchy readout x_N and its observed tail spacing",
+   "x_N": {
+    "exact": "17/12",
+    "float": 1.4166666666666667
+   }
+  },
   "kind": "completeness_readout",
   "note": "the completed limit is a non-readout (I1); only the finite rational tail is shown",
   "observed_tail_spacing": {
    "exact": "1/10",
    "float": 0.1
+  },
+  "open_tail": {
+   "note": "forming the limit is a non-readout (I1)",
+   "tier": "+\u211d-Open",
+   "what": "lim_{n\u2192\u221e} x\u2099 \u2208 H (the completed real)"
   },
   "status": "+R_OPEN",
   "target": "lim_{n\u2192\u221e} x\u2099 \u2208 H (a completed real)",
@@ -1641,8 +1673,43 @@
     ]
    }
   },
+  "computed_core": {
+   "orthonormal_first_N": {
+    "count": 2,
+    "exact_normalization": true,
+    "orthonormal": [
+     [
+      {
+       "exact": "1",
+       "float": 1.0
+      },
+      {
+       "exact": "0",
+       "float": 0.0
+      }
+     ],
+     [
+      {
+       "exact": "0",
+       "float": 0.0
+      },
+      {
+       "exact": "1",
+       "float": 1.0
+      }
+     ]
+    ]
+   },
+   "tier": "exact",
+   "what": "the orthonormal set of the first N vectors (exact, over \u211a)"
+  },
   "kind": "infinite_orthonormal_basis_readout",
   "note": "completeness of the span (that {e\u2096} is a basis of the whole H) is +\u211d-Open \u2014 only the finite orthonormal set is computed",
+  "open_tail": {
+   "note": "completeness needs the whole (non-readout) space",
+   "tier": "+\u211d-Open",
+   "what": "completeness of the span \u2014 that {e\u2096} is a basis of the whole infinite-dim H"
+  },
   "status": "+R_OPEN",
   "target": "a complete orthonormal basis of an infinite-dim H",
   "tier": "+\u211d-Open"
@@ -1650,9 +1717,15 @@
  "infinite_spectral_readout": {
   "N": null,
   "approximant": null,
+  "computed_core": null,
   "finite_dim_alternative": "spectral_decomposition",
   "kind": "infinite_spectral_readout",
   "note": "not computed: needs completeness + algebraic closure of \u2102 (FTA) \u2014 +\u211d-Open. Use idm.solve({'kind':'spectral_decomposition', ...}) for the finite-dim exact/certified case",
+  "open_tail": {
+   "note": "nothing is computed here; the \u211a-computable case is the finite-dim kind 'spectral_decomposition' (exact/certified), which this points to",
+   "tier": "+\u211d-Open",
+   "what": "spectral decomposition of an operator on an infinite-dim H"
+  },
   "status": "+R_OPEN",
   "target": "spectral decomposition of an operator on an infinite-dim H",
   "tier": "+\u211d-Open"
@@ -1867,8 +1940,29 @@
     "float": 1.33203125
    }
   },
+  "computed_core": {
+   "first_N_coordinates": [
+    "1",
+    "1/2",
+    "1/4",
+    "1/8",
+    "1/16"
+   ],
+   "tier": "Th_coqc",
+   "value": {
+    "exact": "341/256",
+    "float": 1.33203125
+   },
+   "what": "partial energy \u03a3_{k\u2264N}|x\u2096|\u00b2 (exact, over \u211a)",
+   "witness": "formal/IDM_HilbertReadout.v"
+  },
   "kind": "l2_readout",
   "note": "the completed \u2113\u00b2 element and its total norm need the tail \u03a3_{k>N}|x\u2096|\u00b2 (a limit) \u2014 +\u211d-Open",
+  "open_tail": {
+   "note": "needs the tail \u03a3_{k>N}|x\u2096|\u00b2 (a completed limit)",
+   "tier": "+\u211d-Open",
+   "what": "the completed \u2113\u00b2 element x and its total norm \u2016x\u2016\u00b2 = \u03a3_{k}|x\u2096|\u00b2"
+  },
   "status": "+R_OPEN",
   "target": "x \u2208 \u2113\u00b2 (square-summable sequence)",
   "tier": "+\u211d-Open"
