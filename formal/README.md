@@ -34,7 +34,7 @@ above).
 **The module's LIMITS.** This is the *local* `Th_coqc` corpus only — the rest of the framework's
 `Th_coqc` claims live in sibling repositories (`research_universal_solver`, `readout_genesis`,
 `readout_universe`), not here. Coverage inside this repo is partial by design: `Th_coqc` is "reserved
-for the handful of kinds with a real proof mapping" (root README) — most of `idm`'s 263 registered
+for the handful of kinds with a real proof mapping" (root README) — most of `idm`'s 266 registered
 kinds are `exact` or `finite_diagnostic`, not machine-checked. The one spectral ingredient behind the
 Declaration Bound rows (the fooling family's Sturm count) is verified *numerically* in
 `demos/verify_declaration_bound.py`, not re-derived in Coq — stated here as an explicit fence, not

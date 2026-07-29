@@ -52,7 +52,7 @@ def _read_pyproject_version(pyproject_path: Path) -> str:
 # ---------------------------------------------------------------------------
 # Curated DOMAIN classification, by kind name.
 #
-# Every kind in the live registry (263 at time of writing) is looked up
+# Every kind in the live registry (266 at time of writing) is looked up
 # against these sets, first match wins in the order below. Anything not
 # claimed by an earlier domain falls into 'other'. This keeps the mapping
 # total and exhaustive by construction — nothing can be silently dropped.

@@ -43,6 +43,17 @@ def _P(coeffs):
     return UPoly([Q(c) for c in coeffs], _QR)
 
 
+def _factor_bounded(p: UPoly):
+    """factor_over_Q with the Increment-1 candidate budget — fail closed (HOLD) rather than let
+    Kronecker's combinatorial divisor search hang on a hard high-degree polynomial."""
+    try:
+        return factor_over_Q(p, budget=_FACTOR_BUDGET)
+    except FactorizationBudgetExceeded as ex:
+        raise AlgebraicHOLD(
+            f"factoring a degree-{p.degree()} polynomial exceeds the Increment-1 budget — higher-degree "
+            f"exact real-root isolation is a later WP3 increment ({ex})")
+
+
 def _peval(poly: UPoly, x) -> Q:
     """Evaluate ``poly`` at rational ``x`` — exact (Horner)."""
     x = Q(x)
@@ -82,7 +93,7 @@ class AlgReal:
         p = _P(coeffs)
         if p.degree() < 1:
             return []
-        _lead, facs = factor_over_Q(p)
+        _lead, facs = _factor_bounded(p)
         out: list[AlgReal] = []
         for irr, _mult in facs:
             if irr.degree() < 1:
@@ -109,7 +120,7 @@ class AlgReal:
         p = _P(coeffs)
         if p.degree() < 1:
             return []
-        _lead, facs = factor_over_Q(p)
+        _lead, facs = _factor_bounded(p)
         out: list[tuple[AlgReal, int]] = []
         for irr, mult in facs:
             if irr.degree() < 1:

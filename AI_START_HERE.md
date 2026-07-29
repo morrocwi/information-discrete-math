@@ -23,7 +23,7 @@ number. See `README.md` for the full framing and `THEOREM.md` for the tier defin
    is not present in your checkout, treat `idm.kinds()` (step 2) as the live source of truth
    instead — do not assume absence of the file means absence of capability.
 2. **`python -c "import idm; print(len(idm.kinds()), idm.kinds())"`** — the live, authoritative
-   list of registered solver kinds. At the time this doc was written this returned **263** kinds.
+   list of registered solver kinds. At the time this doc was written this returned **266** kinds.
    Any count printed in prose (including in this file, `README.md`, or badge images) can drift;
    this command is the ground truth on your checkout, always re-run it rather than trusting text.
 3. **`API_INDEX.md`** (this directory) — searchable table: capability → Python API → tier →

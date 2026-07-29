@@ -158,3 +158,12 @@ def test_real_roots_with_multiplicity_no_durand_kerner():
     assert all(r.verify() for r, _ in rm)
     real_mult = sum(m for _, m in rm)
     assert real_mult == 4 and poly.degree() - real_mult == 2   # 2 complex roots, none faked
+
+
+def test_all_real_roots_high_degree_holds_not_hangs():
+    """Reviewer regression: the multiplicity/real-root path must fail closed (budget → HOLD), not hang,
+    on a hard high-degree generic polynomial — same guard as the arithmetic path."""
+    with pytest.raises(AlgebraicHOLD):
+        AlgReal.real_roots_with_multiplicity([3,-5,7,-11,13,-17,19,-23,29,-31,37])   # degree 10, generic
+    with pytest.raises(AlgebraicHOLD):
+        AlgReal.real_roots([3,-5,7,-11,13,-17,19,-23,29,-31,37])
