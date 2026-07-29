@@ -26,8 +26,8 @@ def _sser(p): return _ok("symbolic_series", [SYM.tostr(c) for c in SYM.taylor(SY
 @kind("integrate_rational", "exact")
 def _irat(p):
     """EXACT symbolic integral of a rational function P(x)/Q(x) (coeffs low→high) — partial fractions over
-    ℚ → logs + arctans + a rational part. HOLDs on a degree-≥3 irreducible or repeated-quadratic denominator
-    (needs Hermite/Risch, a later increment)."""
+    ℚ → logs + arctans + a rational part. HOLDs on a degree-≥3 irreducible denominator
+    (needs algebraic-function/Risch, a later increment)."""
     from idm.kernel.poly.rational_integration import integrate_rational, RationalIntegralHOLD
     try:
         r = integrate_rational(p["num"], p["den"], p.get("var", "x"))
