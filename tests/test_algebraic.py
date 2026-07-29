@@ -188,3 +188,22 @@ def test_wp13_exact_eigenvalues_are_algebraic_objects():
     assert {e["rational_value"]: e["multiplicity"] for e in d["real_eigenvalues"]} == {"2": 2, "3": 1}
     # never lose an eigenvalue
     assert d["num_real_with_multiplicity"] + d["num_complex"] == d["size"]
+def test_wp6_symbolic_solve_returns_complete_real_roots():
+    """WP6: symbolic_solve on a univariate ℚ-polynomial returns the COMPLETE exact real solution set —
+    no lost irrational roots — with multiplicity and an honest complex count (was: rational-only)."""
+    import idm
+    # x^3 - 2: the real root ∛2 must appear exactly (previously dropped as 'use poly_roots')
+    r = idm.solve({"kind": "symbolic_solve", "expr": "x**3-2", "var": "x"})["value"]
+    assert r["completeness"] == "real_complete" and r["num_complex"] == 2
+    assert len(r["real_solutions"]) == 1
+    assert r["real_solutions"][0]["min_poly"] == ["-2", "0", "0", "1"]      # x^3 - 2, exact
+    assert not r["real_solutions"][0]["is_rational"]
+    # (x-1)(x-2)(x-3): three rational roots, complete, none lost
+    r2 = idm.solve({"kind": "symbolic_solve", "expr": "x**3-6*x**2+11*x-6", "var": "x"})["value"]
+    assert r2["completeness"] == "complete" and r2["num_complex"] == 0
+    assert [s["exact_value"] for s in r2["real_solutions"]] == ["1", "2", "3"]
+    # no root is ever lost: real (with mult) + complex == degree
+    for expr in ("x**3-2", "x**4-5*x**2+4", "x**5+x+1"):
+        v = idm.solve({"kind": "symbolic_solve", "expr": expr, "var": "x"})["value"]
+        real_mult = sum(s["multiplicity"] for s in v["real_solutions"])
+        assert real_mult + v["num_complex"] == v["degree"]

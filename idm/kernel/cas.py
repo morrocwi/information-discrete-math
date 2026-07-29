@@ -294,11 +294,28 @@ def solve(e, v):
         A, B, C = a(2), a(1), a(0); disc = B * B - 4 * A * C
         return {"solutions": [f"(-({B}) + sqrt({disc}))/(2*({A}))", f"(-({B}) - sqrt({disc}))/(2*({A}))"],
                 "discriminant": tostr(disc)}
-    from ..exact import rational_roots
+    # degree >= 3: the COMPLETE exact real solution set (WP6) — every real root as an exact algebraic
+    # object with its multiplicity (no lost irrational roots), plus an honest count of complex roots.
     coeffs = [a(k) for k in range(deg + 1)]
-    rr = rational_roots(coeffs)
-    return {"rational_solutions": [tostr(r) for r in rr], "degree": deg,
-            "note": "higher-degree: rational roots exact; use kind 'poly_roots' for all complex roots"}
+    try:
+        from .poly.algebraic import AlgReal, AlgebraicHOLD
+        rm = AlgReal.real_roots_with_multiplicity(coeffs)
+        real_count = sum(m for _r, m in rm)
+        sols = [{"exact_value": (str(r.as_rational()) if r.is_rational else None),
+                 "min_poly": [str(c) for c in r.min_poly_coeffs()],
+                 "isolating_interval": [str(r.lo), str(r.hi)],
+                 "approx": float(r.to_float(20)),
+                 "is_rational": r.is_rational,
+                 "multiplicity": m} for r, m in rm]
+        return {"real_solutions": sols, "degree": deg, "num_complex": deg - real_count,
+                "completeness": "complete" if deg - real_count == 0 else "real_complete",
+                "method": "exact real algebraic roots + multiplicity (irreducible factorization + Sturm over ℚ)"}
+    except AlgebraicHOLD as ex:                                   # hard high-degree factorization → honest partial
+        from ..exact import rational_roots
+        rr = rational_roots(coeffs)
+        return {"rational_solutions": [tostr(r) for r in rr], "degree": deg, "completeness": "partial",
+                "note": f"exact real-root isolation held ({ex}); only rational roots shown — "
+                        f"use kind 'poly_roots' for a numeric all-complex readout"}
 
 
 # ---------------------------------------------------------------- symbolic Taylor series ----

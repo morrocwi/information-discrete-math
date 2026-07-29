@@ -16,6 +16,15 @@ New kind **`exact_eigenvalues`** (`exact`, → **267** kinds): the real eigenval
 `x²−x−1`); a rotation `[[0,-1],[1,0]]` → 0 real, 2 complex; `diag(2,2,3)` → eigenvalue 2 (mult 2), 3.
 Hard char-poly factorization fails closed (HOLD), never hangs. The existing numeric `eigenvalues` kind is
 unchanged. Exact complex eigenvalues are a later increment.
+### WP6 (Increment 1) — `symbolic_solve` returns the complete exact real solution set
+For a univariate ℚ-polynomial equation, `symbolic_solve` (via `idm.kernel.cas.solve`) previously returned
+**only rational roots** at degree ≥3 and told you to "use poly_roots" — silently **losing every irrational
+real root**. It now returns the **complete exact real solution set** through WP2/WP3's `AlgReal`: each real
+root as an exact algebraic object (minimal polynomial + isolating interval) with its multiplicity, plus an
+honest `num_complex` and `completeness` (`complete` iff all roots real, else `real_complete`). E.g.
+`x³−2` now returns `∛2` exactly (min-poly `x³−2`) with 2 complex; `(x−1)(x−2)(x−3)` returns 1, 2, 3 complete.
+Degrees 1–2 keep their exact radical forms; a hard high-degree factorization fails closed (`partial` + note),
+never hangs. No lost roots. (Existing behavior for degree ≤2 is byte-identical — golden snapshot unchanged.)
 
 
 ### WP3 (Increment 1) — exact real root objects, no Durand–Kerner
