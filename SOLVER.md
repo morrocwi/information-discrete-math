@@ -1,6 +1,6 @@
 # The Solver — what it solves, and how far (scope at a glance)
 
-> One entry point — `idm.solve({"kind": ..., ...})` — over **265 registered problem kinds across 11
+> One entry point — `idm.solve({"kind": ..., ...})` — over **266 registered problem kinds across 11
 > domains**. Every answer is **tier-tagged** and is one of three honest verdicts: **EXACT**,
 > **CONDITIONAL** (result + declared scope/bound), or **HOLD** (explicit refusal, never a fabricated
 > number). This page tells a human or an AI, in one read, *what the solver can and cannot do* — grounded
@@ -12,13 +12,13 @@ import idm
 idm.solve({"kind": "eigenvalues",  "M": [[2, 1], [1, 2]]})     # EXACT   → 1, 3 (exact ℚ)
 idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-inf", "b": "inf"})  # CONDITIONAL → √π, proven bound
 idm.solve({"kind": "symbolic_solve", "equation": "sin(x)=x/2", "var": "x"})  # HOLD → "non-polynomial" (with reason)
-idm.kinds()          # the full list of 265 kind names
+idm.kinds()          # the full list of 266 kind names
 idm.parse_and_solve("factor x^2 - 5x + 6")     # plain language → structured kind → solve
 ```
 
 Discover from the shell: `python -m idm list` · `python -m idm describe <kind>` · `python -m idm example <kind>`.
 
-## Scope at a glance — 11 domains, 265 kinds
+## Scope at a glance — 11 domains, 266 kinds
 
 | domain | kinds | what it solves (from real kind names) | typical verdict |
 |---|---:|---|---|

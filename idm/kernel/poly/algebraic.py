@@ -100,6 +100,25 @@ class AlgReal:
             raise AlgebraicHOLD(f"real root index {k} out of range (found {len(roots)} real roots)")
         return roots[k]
 
+    @staticmethod
+    def real_roots_with_multiplicity(coeffs) -> "list[tuple[AlgReal, int]]":
+        """Every DISTINCT real root of the ℚ-polynomial ``coeffs`` paired with its EXACT multiplicity
+        (from irreducible factorization over ℚ), sorted ascending. No float, no Durand–Kerner — each root
+        is an exact ``AlgReal`` carrying its irreducible minimal polynomial. The count of complex roots is
+        ``deg − Σ multiplicities`` (they are conjugate pairs; exact complex roots are a later WP3 increment)."""
+        p = _P(coeffs)
+        if p.degree() < 1:
+            return []
+        _lead, facs = factor_over_Q(p)
+        out: list[tuple[AlgReal, int]] = []
+        for irr, mult in facs:
+            if irr.degree() < 1:
+                continue
+            for lo, hi in isolate_real_roots(irr):
+                out.append((AlgReal(irr, *_strict(irr, lo, hi)), mult))
+        out.sort(key=lambda rm: _cmp_key(rm[0]))
+        return out
+
     # ---- basic queries ------------------------------------------------------------------------
     @property
     def is_rational(self) -> bool:
