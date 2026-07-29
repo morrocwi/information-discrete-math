@@ -1118,6 +1118,55 @@
   "tier": "finite_diagnostic",
   "value": 14
  },
+ "exact_eigenvalues": {
+  "kind": "exact_eigenvalues",
+  "method": "exact real eigenvalues + multiplicity (Faddeev\u2013LeVerrier char-poly + Sturm isolation over \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "char_poly": [
+    "3",
+    "-4",
+    "1"
+   ],
+   "completeness": "complete",
+   "num_complex": 0,
+   "num_real_with_multiplicity": 2,
+   "real_eigenvalues": [
+    {
+     "approx": 1.0,
+     "is_rational": true,
+     "isolating_interval": [
+      "-2",
+      "2"
+     ],
+     "min_poly": [
+      "-1",
+      "1"
+     ],
+     "multiplicity": 1,
+     "rational_value": "1",
+     "verified": true
+    },
+    {
+     "approx": 3.0,
+     "is_rational": true,
+     "isolating_interval": [
+      "-4",
+      "4"
+     ],
+     "min_poly": [
+      "-3",
+      "1"
+     ],
+     "multiplicity": 1,
+     "rational_value": "3",
+     "verified": true
+    }
+   ],
+   "size": 2
+  }
+ },
  "exp": {
   "bound": {
    "digits": "4.81599059376837439778860050301e-11",
