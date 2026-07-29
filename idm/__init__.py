@@ -32,8 +32,9 @@ from .convenience import (factorize, gcd, solve_integral, integrate_rational, so
                           eigenvalues, solve_roots, solve_ode)
 # schema/kind discovery in Python (same introspection as `python -m idm`, returning structured data)
 from .discovery import describe, schema, example
-# AI Gateway (Track C, Phase A): a small deterministic entrance over the full solver — idm.ai.run(op, ...)
-from . import ai
+# AI Gateway (Track C): a small deterministic entrance over the full solver — idm.ai.run/route/plan,
+# plus idm.ai_bench (Phase C: a synthetic tool-use dataset + benchmark harness for a router/model).
+from . import ai, ai_bench
 
 # finite elementary + calculus
 exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,
@@ -68,4 +69,4 @@ __all__ = ["__version__", "solve", "serve", "functions", "certified", "algebra",
            "Result", "SolveHold",
            "factorize", "gcd", "solve_integral", "integrate_rational", "solve_matrix",
            "eigenvalues", "solve_roots", "solve_ode",
-           "describe", "schema", "example", "ai"]
+           "describe", "schema", "example", "ai", "ai_bench"]
