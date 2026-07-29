@@ -7,6 +7,18 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### WP8 (Increment 2) — `integrate_rational` now handles repeated irreducible quadratics
+The rational-function integrator previously HELD on a denominator with a repeated irreducible quadratic
+(e.g. `1/(x²+1)²`). It now integrates them via the **reduction formula**
+`∫du/(u²+w²)^n = u/(2w²(n−1)(u²+w²)^{n−1}) + (2n−3)/(2w²(n−1))·∫du/(u²+w²)^{n−1}` (completing the square,
+`w²=q−p²/4`): `∫1/(x²+1)² = ½·x/(x²+1) + ½·arctan x`, `∫x/(x²+1)² = −1/(2(x²+1))`, and mixed cases like
+`1/((x−1)(x²+1)²)` all verify by differentiating back. So `integrate_rational` now covers **any rational
+function whose denominator factors into linear and irreducible-quadratic factors, to any multiplicity** —
+only a degree-≥3 irreducible denominator still HOLDs (algebraic-function / Risch, a later increment). No new
+kind, no count change (269); the `integrate_rational` fixture is degree-2 so the golden snapshot is
+byte-identical.
+
+
 ### WP8 (Increment 1) — exact rational-function integration
 New kind **`integrate_rational`** (`exact`, → **269** kinds): the exact symbolic integral of a rational
 function `P(x)/Q(x)` over ℚ, where the elementary integrator only handled polynomials + a few linear-argument

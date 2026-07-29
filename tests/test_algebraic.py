@@ -294,5 +294,11 @@ def test_wp8_rational_integration_differentiates_back():
                      ([1], [1, 1, 1]), ([0, 0, 1], [1, 0, 1]), ([2, 3], [5, 2, 1]), ([1], [1, -2, 1]),
                      ([0, 0, 0, 1], [1, 0, 1])]:
         assert diff_back_ok(num, den, mp.mpf("0.7")), (num, den)
-    # a degree-3 irreducible denominator HOLDs (declared later increment)
+    # repeated irreducible quadratics now integrate (WP8 Increment 2, reduction formula)
+    for num, den in [([1], [1, 0, 2, 0, 1]),          # 1/(x^2+1)^2
+                     ([1], [1, 0, 3, 0, 3, 0, 1]),     # 1/(x^2+1)^3
+                     ([0, 1], [1, 0, 2, 0, 1]),        # x/(x^2+1)^2
+                     ([1, 1], [1, 2, 3, 2, 1])]:       # (x+1)/(x^2+x+1)^2
+        assert diff_back_ok(num, den, mp.mpf("0.6")), (num, den)
+    # only a degree-3 irreducible denominator HOLDs now (algebraic/Risch — later increment)
     assert idm.solve({"kind": "integrate_rational", "num": [1], "den": [-2, 0, 0, 1]})["status"] == "HOLD"
