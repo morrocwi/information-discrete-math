@@ -7,6 +7,16 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### PyPI packaging made publish-ready (Track B gap 1 — prep)
+`pyproject.toml` now carries the metadata a good PyPI listing needs: `readme = "README.md"` (markdown
+long description), 13 trove `classifiers` (Production/Stable, Science/Research, Python 3.9–3.13, Maths),
+`keywords`, and expanded `[project.urls]` (Repository, Changelog, Issues, Documentation). The build was
+verified end-to-end: `python -m build` produces a wheel + sdist; the wheel installs into a clean target
+and `import idm` solves (269 kinds, `factorize`/`ai.run`/`describe` all work); the METADATA renders the
+long description + classifiers + URLs. The only remaining step is `twine upload`, which needs a founder
+PyPI token — the exact steps are in [`docs/PUBLISHING.md`](docs/PUBLISHING.md). `dist/`/`build/` stay
+git-ignored. No code change, no count change (269).
+
 ### Track C (AI Gateway) Phase C — synthetic tool-use dataset + benchmark harness
 Completes Track C (roadmap #52). `idm/ai_bench.py` (exposed as `idm.ai_bench`):
 - **`dataset()`** — a fixed, deterministic set of 17 tool-use cases spanning all 11 gateway ops, plus

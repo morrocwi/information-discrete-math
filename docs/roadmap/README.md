@@ -32,7 +32,10 @@ add expression-level reasoning · connect the core to close solve/calculus/linal
 ## Track B — Developer experience (for programmers) — [task #51]
 
 From the usability audit (~7/10 → ~9/10, **no new solver**):
-1. **[ ]** One-command install — `pip install information-discrete-math` (needs a founder PyPI decision).
+1. **[~]** One-command install — `pip install information-discrete-math`. Metadata publish-ready
+   (readme + classifiers + URLs in `pyproject.toml`); wheel build verified (installs into a clean env,
+   `import idm` solves). The `twine upload` needs a founder PyPI token — steps in
+   [`docs/PUBLISHING.md`](../PUBLISHING.md).
 2. **[x]** Schema discovery in Python — `idm.describe/schema/example(kind)` → `idm/discovery.py` (shared with the `python -m idm` CLI, one source of truth).
 3. **[x]** Typed convenience — `idm.solve_integral(...)`, `idm.factorize(n)`, `idm.solve_matrix(A, b)` (+ `gcd`, `integrate_rational`, `eigenvalues`, `solve_roots`, `solve_ode`) → `idm/convenience.py`.
 4. **[x]** `Result` object — `.status .value .bound .tier .is_hold .is_ok .raise_for_hold() .to_dict()`; a `dict` subclass so `idm.solve()` stays 100% backward-compatible → `idm/results.py`.
