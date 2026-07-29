@@ -7,6 +7,27 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Track B (developer experience) — `Result` object + typed convenience wrappers
+Two of the five DX gaps (roadmap #51, gaps 3 & 4), pure additions, no behaviour change:
+- **`Result`** (`idm/results.py`) — `idm.solve()` now returns a `Result` instead of a bare dict.
+  `Result` **subclasses `dict`**, so every existing pattern is unchanged (`r["status"]`,
+  `json.dumps(r)`, `isinstance(r, dict)`, dict-equality, the REST server, and the golden snapshots all
+  behave identically — verified: `json.dumps(Result) == json.dumps(dict)`, full golden suite passes). It
+  adds typed accessors on top: `.kind .status .value .bound .tier .reason .method .coq_theorem`,
+  `.is_hold`, `.is_open`, `.is_ok`, `.raise_for_hold()` (raises `idm.SolveHold` with the solver's own
+  reason, and returns `self` on success so it chains), and `.to_dict()`. The predicates cover the full
+  status space the solver actually emits: `is_ok` is defined by the presence of a `value` (so it
+  correctly includes a definitive `REFUTED` counterexample and excludes the value-less open-tail
+  `+R_OPEN`), `is_open` flags the `+R_OPEN` open-tail readout, `is_hold` the no-readout HOLD.
+- **Typed convenience** (`idm/convenience.py`) — one-call wrappers so a programmer need not hand-assemble
+  the problem dict: `idm.factorize(n)`, `idm.gcd(a, b)`, `idm.solve_integral(f, a, b, eps=…)`,
+  `idm.integrate_rational(num, den)`, `idm.solve_matrix(A, b)`, `idm.eigenvalues(matrix)`,
+  `idm.solve_roots(coeffs)`, `idm.solve_ode(coeffs)`. Each returns a `Result`; each dispatches through
+  the same `solve` CI uses — no new math, no new kind.
+
+Remaining Track B gaps: schema discovery `idm.describe/schema/example` (gap 2) and a Quick Start page
+(gap 5) — a later increment; PyPI publish (gap 1) is a founder call. No count change (269).
+
 ### `all_roots` — layer-2 resultant-bits fence (removes the worst multi-minute hangs; heuristic, not a tight bound)
 A quartic with small *input* coefficients but an expensive degree-16 resultant (e.g.
 `[9999,-4242,1313,-77,1]`, well-separated large-magnitude roots) passed the layer-1 input pre-check yet

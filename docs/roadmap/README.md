@@ -34,8 +34,8 @@ add expression-level reasoning · connect the core to close solve/calculus/linal
 From the usability audit (~7/10 → ~9/10, **no new solver**):
 1. **[ ]** One-command install — `pip install information-discrete-math` (needs a founder PyPI decision).
 2. **[ ]** Schema discovery in Python — `idm.describe/schema/example(kind)` (CLI already exists).
-3. **[ ]** Typed convenience — `idm.solve_integral(...)`, `idm.factorize(n)`, `idm.solve_matrix(A, b)`.
-4. **[ ]** `Result` object — `.status .value .bound .tier .is_hold .raise_for_hold()` + `.to_dict()`.
+3. **[x]** Typed convenience — `idm.solve_integral(...)`, `idm.factorize(n)`, `idm.solve_matrix(A, b)` (+ `gcd`, `integrate_rational`, `eigenvalues`, `solve_roots`, `solve_ode`) → `idm/convenience.py`.
+4. **[x]** `Result` object — `.status .value .bound .tier .is_hold .is_ok .raise_for_hold() .to_dict()`; a `dict` subclass so `idm.solve()` stays 100% backward-compatible → `idm/results.py`.
 5. **[ ]** Quick Start page — 10–20 copy-runnable problems from an empty environment.
 
 ## Track C — AI Gateway (for small models) — [task #52]

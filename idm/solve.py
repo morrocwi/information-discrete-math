@@ -1,6 +1,7 @@
 """idm.solve — public dispatch facade. Handlers: idm/_solve_domains/*.py; infrastructure: idm/_solve_core.py."""
 from idm._solve_core import _REG, kind, mp, _HAVE, _CANON_DPS  # noqa: F401
 from idm import _solve_domains  # noqa: F401  (side effect: registers handlers)
+from idm.results import Result
 
 _COQ_BACKED = {
     "orient":            "IDM_Geometry.orient_* (orientation determinant, axiom-free)",
@@ -14,12 +15,16 @@ _COQ_BACKED = {
     "geometric_series":  "IDM_Certified.geom_certified_identity (certified geometric-series bound)",
 }
 def solve(problem):
+    """Solve a STRUCTURED problem and return a :class:`idm.results.Result` (a ``dict`` subclass — every
+    dict access still works; it only adds ``.status`` / ``.value`` / ``.tier`` / ``.is_hold`` /
+    ``.raise_for_hold()`` accessors). An unknown kind or a handler failure returns a HOLD Result,
+    never a crash."""
     if not isinstance(problem, dict) or "kind" not in problem:
-        return {"status": "HOLD", "reason": "problem must be a dict with a 'kind' field"}
+        return Result({"status": "HOLD", "reason": "problem must be a dict with a 'kind' field"})
     k = problem["kind"]
     if k not in _REG:
-        return {"kind": k, "status": "HOLD", "reason": f"unknown problem kind '{k}'",
-                "known_kinds": sorted(_REG)}
+        return Result({"kind": k, "status": "HOLD", "reason": f"unknown problem kind '{k}'",
+                       "known_kinds": sorted(_REG)})
     fn, tier = _REG[k]
     try:
         if _HAVE:
@@ -28,9 +33,9 @@ def solve(problem):
         else:  # pragma: no cover
             res = fn(problem)
     except KeyError as ex:
-        return {"kind": k, "status": "HOLD", "reason": f"missing required field {ex}"}
+        return Result({"kind": k, "status": "HOLD", "reason": f"missing required field {ex}"})
     except Exception as ex:
-        return {"kind": k, "status": "HOLD", "reason": f"{type(ex).__name__}: {ex}"}
+        return Result({"kind": k, "status": "HOLD", "reason": f"{type(ex).__name__}: {ex}"})
     res.setdefault("tier", tier)
     # tier-honesty pass: keep Th_coqc only where a named machine-checked theorem governs the result
     if res.get("tier") == "Th_coqc":
@@ -38,7 +43,7 @@ def solve(problem):
             res["coq_theorem"] = _COQ_BACKED[k]
         else:
             res["tier"] = "exact"   # exact & decidable, but not individually machine-checked in Coq
-    return res
+    return Result(res)
 def kinds():
     """the catalogue of supported problem kinds."""
     return sorted(_REG)
