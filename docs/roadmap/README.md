@@ -54,8 +54,10 @@ C (synthetic tool-use dataset + benchmark vs a real 0.5B). Reduces the model's d
   tier), unified `Result` with the route exposed, structured error codes (`UNKNOWN_OP` + `did_you_mean`
   / `MISSING_PARAM` / `SOLVER_HOLD`), tiers forwarded verbatim (no silent downgrade), and `idm.solve`
   documented as the escalation path to all 269 kinds. Never a capability reduction.
-- **[ ] Phase B** — a router that picks the op from free-form input (expression classifier;
-  plan→validate→execute; dry-run). Needs founder scope/priority.
+- **[x] Phase B** — `idm.ai.route(request)` maps a free-form string (via `idm.parse`) or a structured
+  `{op}`/`{kind}` dict to a plan; `idm.ai.plan(op, ...)` and `run(..., dry_run=True)` return the route +
+  the exact problem dict WITHOUT executing (plan→validate→execute), with an honest required/optional
+  field split (from handler `p["x"]` vs `p.get("x")`); unclassifiable input HOLDs (`UNCLASSIFIED`).
 - **[ ] Phase C** — synthetic tool-use dataset + benchmark against a real 0.5B model. Needs founder
   scope/priority.
 

@@ -58,18 +58,26 @@ def _find_example(name: str) -> Optional[str]:
     return None
 
 
-def _handler_fields(name: str) -> list:
-    """A best-effort list of the parameter names the handler reads — every ``p["x"]`` / ``p.get("x")``
-    / ``p['x']`` in the handler source. Heuristic (not a declared schema): a field read only inside a
-    branch may be optional, and dynamically-built keys are invisible. Sorted, de-duplicated."""
+def _field_access(name: str):
+    """Heuristically split the handler's parameter reads into (required, optional): a subscript read
+    ``p["x"]`` raises ``KeyError`` when absent → treated REQUIRED; a ``p.get("x")`` has a default →
+    OPTIONAL. Both are best-effort from source (a field read only inside a branch may be conditional,
+    dynamically-built keys are invisible), so this is a guide, not a contract. Returns two sorted lists."""
     fn = _REG[name][0]
     try:
         src = inspect.getsource(fn)
     except (OSError, TypeError):
-        return []
-    fields = set(re.findall(r'\bp(?:\.get)?\(\s*["\']([A-Za-z_][A-Za-z0-9_]*)["\']', src))
-    fields |= set(re.findall(r'\bp\[\s*["\']([A-Za-z_][A-Za-z0-9_]*)["\']\s*\]', src))
-    return sorted(fields)
+        return [], []
+    optional = set(re.findall(r'\bp\.get\(\s*["\']([A-Za-z_][A-Za-z0-9_]*)["\']', src))
+    required = set(re.findall(r'\bp\[\s*["\']([A-Za-z_][A-Za-z0-9_]*)["\']\s*\]', src)) - optional
+    return sorted(required), sorted(optional)
+
+
+def _handler_fields(name: str) -> list:
+    """All parameter names the handler reads (required ∪ optional), sorted. Heuristic — see
+    :func:`_field_access`."""
+    req, opt = _field_access(name)
+    return sorted(set(req) | set(opt))
 
 
 def describe(kind: str) -> dict:
@@ -99,8 +107,10 @@ def schema(kind: str) -> dict:
     this repo, so treat ``fields`` as a guide, not a contract."""
     if kind not in _REG:
         raise KeyError(f"unknown kind {kind!r} (see idm.kinds())")
-    return {"kind": kind, "tier": _effective_tier(kind), "fields": _handler_fields(kind),
-            "example": _find_example(kind)}
+    required, optional = _field_access(kind)
+    return {"kind": kind, "tier": _effective_tier(kind),
+            "fields": sorted(set(required) | set(optional)),
+            "required": required, "optional": optional, "example": _find_example(kind)}
 
 
 def example(kind: str) -> Optional[str]:
