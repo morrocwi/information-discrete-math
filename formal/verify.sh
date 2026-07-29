@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder IDM_Schur IDM_HilbertReadout)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder IDM_Schur IDM_HilbertReadout IDM_Continuum)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -198,6 +198,11 @@ declare -a THMS=(
   "partial_energy_monotone:IDM_HilbertReadout"
   "weighted_energy_nonneg:IDM_HilbertReadout"
   "weighted_energy_app:IDM_HilbertReadout"
+  "radd_at:IDM_Continuum"
+  "rmul_at:IDM_Continuum"
+  "radd_comm:IDM_Continuum"
+  "const_gap_zero:IDM_Continuum"
+  "gap_subadditive:IDM_Continuum"
 )
 
 fail=0

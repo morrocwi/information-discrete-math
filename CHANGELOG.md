@@ -7,6 +7,22 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### The continuum as a first-class ℚ PRIMITIVE — `idm.continuum.Continuum`
+Founder question (2026-07-29): *can we build a ℚ-primitive function that behaves like the ℝ-rung
+continuum?* Yes — the operational form of "the continuum is a readout of the discrete" (Part XX /
+machine-checked FTCC bridge). A `Continuum` is a resolution-indexed **exact-ℚ** readout `g : N → ℚ`,
+never an ℝ object:
+- `.at(N)` — the exact ℚ readout at declared resolution N (the primitive operation).
+- `.readout(ε)` — the A8-stable plateau: `CERTIFIED` ℚ value + exact gap bound, or `HOLD` where no
+  plateau exists (divergence / oscillation / no limit) — it refuses to emit a completed limit.
+- a **ℚ-algebra** closed and exact pointwise (`+ − ×`, scalar, `compose`): `(a+b).at(N) == a.at(N)+b.at(N)`,
+  so continuum-readouts are a commutative ℚ-algebra you compute with directly, ℝ never a primitive.
+- **Formal core → 194** (from 189): **`IDM_Continuum.v`** machine-checks the algebra's soundness
+  axiom-free over ℚ — pointwise homomorphism (`radd_at`/`rmul_at`), commutativity, a constant's zero gap,
+  and the key **`gap_subadditive`** (|Δ(g+h)| ≤ |Δg|+|Δh|, so summing two plateauing continua still
+  plateaus — the algebra can't silently break `.readout`'s honesty).
+- `idm/continuum.py` + `tests/test_continuum.py` (9 tests) + discovery pointer in `idm/README.md`.
+
 ### The ℚ-computability law — the +ℝ-Open Hilbert frontier now splits its two truths
 Founder principle (2026-07-29): *if an ℝ-rung quantity is actually COMPUTED, it is computed on ℚ — so
 it must carry a ℚ tier, not a blanket `+ℝ-Open`.* Audit of the 5 frontier kinds found 4 of them do
