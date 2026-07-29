@@ -1271,8 +1271,10 @@ the **A8 plateau**, tagged `finite_diagnostic`; the completed `ε→0` object st
 
 `y′=f(x,y)` **is** the difference equation `y[n+1]=y[n]+I_ε(f)` — the continuous ODE was only ever a
 stability limit of this. RK4 is the fourth-order `I_ε` quadrature of the vector field across one step;
-run to the endpoint it reproduces the exact closed form (`y′=y⇒e`, `y′=2xy⇒e^{x²}`, `y′=1/(1+x²)⇒`
-`arctan`, Riccati `y′=y²⇒1/(1−x)`). No continuum flow is invoked — only accumulated retained steps.
+run to the endpoint it reproduces the named closed form to the declared tolerance (`y′=y⇒e`,
+`y′=2xy⇒e^{x²}`, `y′=1/(1+x²)⇒arctan`, Riccati `y′=y²⇒1/(1−x)`). No continuum flow is invoked — only
+accumulated retained steps. *(The RK4 readout at a declared step count is `finite_diagnostic` over `ℚ`;
+the named completed value — `e`, `arctan x`, … as reals — stays `+ℝ-Open`.)*
 *(Validated: 12/12 ODEs, Appendix E.D.)*
 
 ## 11.5 Discrete special functions (replaces continuum special functions)
@@ -1282,7 +1284,9 @@ continued fraction — never a continuum primitive: `Γ` = discrete quadrature o
 factorial recurrence); `ζ(s)` = Euler–Maclaurin-accelerated partial sum (giving `ζ(2)=π²/6`, `ζ(4)=π⁴/90`,
 `ζ(3)` Apéry, `ζ(½)` regularized); `erf` = its Maclaurin series; `Catalan`, `Li₂`, elliptic `K`, Bessel
 `J₀` = their defining discrete sums/products; the Wallis product and Dirichlet `Si(∞)=π/2` from finite
-acceleration. *(Validated: 23/23 special-function values, Appendix E.E.)*
+acceleration. *(Each value is that discrete process summed/quadratured to a declared tolerance —
+`finite_diagnostic`/`exact` over `ℚ`; the named completed constant — `π²/6`, Apéry `ζ(3)`, `π/2`, … as
+reals — stays `+ℝ-Open`.)* *(Validated: 23/23 special-function values, Appendix E.E.)*
 
 ## 11.6 Closure theorem (the continuum is dispensable)
 
@@ -1534,9 +1538,17 @@ the one place the continuum enters, and it is fenced `+ℝ-Open`.
   retained metric `⟨f,g⟩_G = I_ε(f̄ g)` (Part XIII). **Cauchy–Schwarz** `|⟨f,g⟩| ≤ ‖f‖₂‖g‖₂` is a finite
   `Th_coqc`-elig inequality over `ℚ` (discrete sum form).
 - **Bounded operator = finite retained coupling.** On the `ℚ`-space, an operator is a finite matrix;
-  `L_R` is self-adjoint (`Th_coqc`, witness `formal/IDM_Matrix.v: laplacian_symmetric`) and positive semidefinite (§5.1 `keystone_nonneg`). The full **real spectral theorem** (orthogonal diagonalization with *real* eigenvalues) is **`+ℝ-Open` by our own philosophy** — real eigenvalues require ℝ-completeness — while the finite-`ℚ` structure (symmetry, PSD, rational eigenpairs where they exist) is machine-checked; orthonormal
-  retained-mode basis, real `ℚ`-approx eigenvalues — Part XIII). The completion to an infinite Hilbert
-  space and its spectral measure are `+ℝ-Open`.
+  `L_R` is self-adjoint (`Th_coqc`, witness `formal/IDM_Matrix.v: laplacian_symmetric`) and positive
+  semidefinite (§5.1 `keystone_nonneg`). As in §13.3, the finite spectral content that is a *readout* is
+  **not** Open: the **inertia** of the finite `L_R` (how many eigenvalues are `+`/`−`/`0`) is a
+  **resolved `ℚ` sign-count** — machine-checked so a strict resolved sign never lies, with `⊥` reported
+  where a pivot does not resolve (`Th_coqc`, `formal/IDM_ResolvedCount.v` / §10.2; the full classical
+  signed-floor additionally needs Sturm backward-stability, not claimed here) — each eigenvalue admits a
+  `ℚ`-enclosure via Sturm and eigenpairs to any declared resolution (`finite_diagnostic`), and rational
+  eigenpairs where they exist are exact. What is genuinely **`+ℝ-Open`** is narrower than "the spectral
+  theorem": the **exact (generally irrational) eigenvalues** and the **infinite-dimensional** completion —
+  orthogonal diagonalization over a completed `ℝ`, the retained-mode basis of an infinite Hilbert space,
+  and its spectral measure — which need ℝ-completeness (§10.13).
 - **Riesz representation (finite).** Every admissible linear functional on the finite `ℚ`-space is
   `f ↦ ⟨v,f⟩_G` for a unique retained `v` — `Th_coqc`-elig, by finite linear algebra. The infinite-
   dimensional Riesz theorem is `+ℝ-Open`.
