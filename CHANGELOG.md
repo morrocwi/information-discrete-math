@@ -7,6 +7,17 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### WP11 (Increment 1) — linear ODEs resolve real algebraic characteristic roots at any degree
+`linear_ode` previously **HELD** on an irreducible degree-≥3 characteristic factor ("roots not in
+radicals"). It now resolves that factor's **real** roots exactly as algebraic numbers (WP2/WP3 `AlgReal`):
+each real root ρ contributes the basis `e^{ρx}, x e^{ρx}, …` with ρ described by its exact minimal
+polynomial + isolating interval. So `y‴ − 3y′ + y = 0` (char `r³−3r+1`, three real irrational roots, casus
+irreducibilis) is now **fully solved** — a solution space that was entirely out of reach before. When a
+degree-≥3 factor also has complex roots (e.g. char `r³−2`: real `∛2` + a complex pair), the real part is
+resolved exactly and only the complex conjugate roots are left `partial` (complex-algebraic basis is a
+declared later WP11 increment). Degree-1/2 factors are unchanged (golden snapshot byte-identical).
+
+
 ### WP13 (Increment 1) — exact eigenvalues as algebraic objects
 New kind **`exact_eigenvalues`** (`exact`, → **267** kinds): the real eigenvalues of a rational matrix as
 **exact algebraic objects with multiplicity** — no Durand–Kerner. The characteristic polynomial is exact

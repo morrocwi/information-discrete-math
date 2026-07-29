@@ -217,3 +217,18 @@ def test_wp13_large_matrix_holds_not_hangs():
     M = [[((i * 7 + j * 3 - 5) % 19) - 9 for j in range(10)] for i in range(10)]   # generic 10×10 ints
     r = idm.solve({"kind": "exact_eigenvalues", "matrix": M})
     assert r["status"] in ("ok", "HOLD")     # returns (does not hang); HOLD is the honest Increment-1 answer
+
+
+def test_wp11_ode_resolves_real_algebraic_characteristic_roots():
+    """WP11: a constant-coeff linear ODE whose characteristic polynomial has an irreducible degree-≥3
+    factor now resolves that factor's REAL roots exactly (was: HOLD on the whole factor)."""
+    import idm
+    # char r^3 - 3r + 1: three real irrational roots (casus irreducibilis) → fully SOLVED now
+    r = idm.solve({"kind": "linear_ode", "coeffs": [1, -3, 0, 1]})["value"]
+    assert r["solution_status"] == "solved" and len(r["basis"]) == 3
+    assert all(b["type"] == "real_algebraic" and b["root_min_poly"] == ["1", "-3", "0", "1"] for b in r["basis"])
+    # char r^3 - 2: real root ∛2 resolved exactly; the 2 complex roots honestly left for a later increment
+    r2 = idm.solve({"kind": "linear_ode", "coeffs": [-2, 0, 0, 1]})["value"]
+    assert r2["solution_status"] == "partial"
+    assert len(r2["basis"]) == 1 and r2["basis"][0]["root_min_poly"] == ["-2", "0", "0", "1"]
+    assert "complex" in r2["unresolved"][0]

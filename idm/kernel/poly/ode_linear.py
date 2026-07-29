@@ -137,7 +137,29 @@ def solve_linear_ode(coeffs: Sequence[object]) -> ODESolution:
                                       "poly_power": k, "term": term})
                         terms.append(f"C{ci}*{term}")
         else:
-            unresolved.append(f"irreducible degree-{deg} factor (roots not in radicals)")
+            # degree ≥ 3 irreducible (roots not in radicals): resolve its REAL roots EXACTLY as algebraic
+            # numbers (WP11) — each gives a basis e^{ρx}, x e^{ρx}, … with ρ an exact AlgReal. Complex
+            # roots of this factor need complex-algebraic support (a declared later increment).
+            from .algebraic import AlgReal, AlgebraicHOLD
+            try:
+                real_roots = AlgReal.real_roots(list(g.coeffs))
+            except AlgebraicHOLD:
+                unresolved.append(f"irreducible degree-{deg} factor (real-root isolation exceeded budget)")
+                continue
+            for r in real_roots:
+                approx = float(r.to_float(15))
+                for k in range(mult):
+                    ci += 1
+                    term = f"{_xpow(k)}e^(({approx:.12g})*x)"        # display; the exact root is in the dict
+                    basis.append({"type": "real_algebraic",
+                                  "root_min_poly": [str(c) for c in r.min_poly_coeffs()],
+                                  "root_interval": [str(r.lo), str(r.hi)], "root_approx": approx,
+                                  "poly_power": k, "term": term})
+                    terms.append(f"C{ci}*{term}")
+            complex_count = deg - len(real_roots)                    # conjugate pairs, per factor
+            if complex_count > 0:
+                unresolved.append(f"{complex_count} complex root(s) of an irreducible degree-{deg} factor "
+                                  f"(complex-algebraic basis is a later WP11 increment)")
 
     status = "solved" if not unresolved else "partial"
     general = " + ".join(terms) if terms else "0"
