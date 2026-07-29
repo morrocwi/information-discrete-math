@@ -62,7 +62,8 @@ companion's `ReaderTwoLevels.v` machine-checks that this separation is **sound a
 | a HOLD is **fail-closed**: it absorbs, it never silently becomes a value downstream | `accumulator_failure_left/right_absorbing`, `pipeline_unresolved_left/right_absorbing`, `boundary_blocks_next_stage` |
 | a resolved zero *does* flow to the next stage; a HOLD does not | `recorded_zero_allows_next_stage` vs `boundary_blocks_next_stage` |
 | the empty/degenerate case's verdict depends on the declared contract (e.g. `∫0 dx → "0"` resolved, vs a budget-exceeded factorization → HOLD) | `total_contract_empty_is_zero`, `strict_contract_empty_is_unresolved`, `empty_case_depends_on_contract` |
-| one boundary element cannot be both unit and absorber unless the carrier collapses (why "just use 0 for everything" is unsound) | `rr_identity_and_absorbing_collapses`, `boundary_two_roles_no_collapse` |
+| reusing ONE untagged value as both unit *and* absorber for the **same** operation forces the whole carrier to collapse — why "just use `0` for everything" is unsound | `rr_identity_and_absorbing_collapses` |
+| the typed escape hatch: across **two distinct** operations (accumulation vs sequencing) one boundary state is a unit for one and absorbing for the other with **no** collapse — so keeping resolved-zero and HOLD as distinct states is not just safe but the only sound design | `boundary_two_roles_no_collapse` (= `boundary_acc_left_unit` ∧ `boundary_seq_left_absorbing` ∧ carrier has ≥2 distinct elements) |
 
 **Honest fence.** The companion proves the *discipline* is sound over ℚ — that a typed reader **can**
 and **must** keep these states apart. It does **not** prove that IDM's Python kernel implements the
