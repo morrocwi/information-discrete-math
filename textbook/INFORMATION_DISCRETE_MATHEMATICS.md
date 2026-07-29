@@ -1272,7 +1272,7 @@ the **A8 plateau**, tagged `finite_diagnostic`; the completed `ε→0` object st
 `y′=f(x,y)` **is** the difference equation `y[n+1]=y[n]+I_ε(f)` — the continuous ODE was only ever a
 stability limit of this. RK4 is the fourth-order `I_ε` quadrature of the vector field across one step;
 run to the endpoint it reproduces the named closed form to the declared tolerance (`y′=y⇒e`,
-`y′=2xy⇒e^{x²}`, `y′=1/(1+x²)⇒``arctan`, Riccati `y′=y²⇒1/(1−x)`). No continuum flow is invoked — only
+`y′=2xy⇒e^{x²}`, `y′=1/(1+x²)⇒arctan`, Riccati `y′=y²⇒1/(1−x)`). No continuum flow is invoked — only
 accumulated retained steps. *(The RK4 readout at a declared step count is `finite_diagnostic` over `ℚ`;
 the named completed value — `e`, `arctan x`, … as reals — stays `+ℝ-Open`.)*
 *(Validated: 12/12 ODEs, Appendix E.D.)*
