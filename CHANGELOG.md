@@ -14,9 +14,15 @@ degree-`n²` resultants + Sturm isolation). Profiling found **two independent cl
 its resultant is degree 64) and a coefficient-bits cliff (a degree-4 factor with ~13-bit coefficients
 already runs for tens of seconds). No single smooth proxy separates both, so a **deterministic fence**
 (pure pre-check on `(degree, coefficient bit-length)` — O(1), **no wall-clock**, so golden/tests stay
-reproducible) now caps each axis independently (`max_factor_degree=7`, `max_coeff_bits=11`,
-`max_mix=150` on `n²·bits`) and raises `ComplexRootsHOLD` with an actionable reason **before** the
-expensive work — HOLD, never hang. Every capability that currently returns in ≲15s is preserved
+reproducible) caps the **degree** directly (`max_factor_degree=7`) and the **`n²·bits` interaction**
+(`max_mix=350`), raising `ComplexRootsHOLD` with an actionable reason **before** the expensive work —
+HOLD, never hang. There is deliberately **no standalone bit-length cap**: coefficient size costs only
+*through* the degree-`n²` resultant, so a low-degree large-coefficient factor (e.g. a degree-2 with
+20-bit coefficients, ~0.03s) is fast and is **not** fenced — only `n²·bits` gates the coefficient axis.
+Honest limit (disclosed, not overclaimed): this static pre-check catches the two named cliffs but does
+not fully bound runtime — a mid-degree factor with an expensive degree-`n²` resultant (e.g. a quartic
+with large-magnitude well-separated roots) can still run long inside the caps; a *computed* work budget
+threaded through the resultant/Sturm path is a declared follow-up. Every capability that currently returns in ≲15s is preserved
 (verified: all existing fixtures + `x⁷−2` still resolve; golden unchanged). The `all_roots` kind takes
 `"force": true` (and `all_roots(..., fence=None)` / a widened `fence` dict) to bypass or loosen the
 fence and grind an input out. No new kind, no count change (269).

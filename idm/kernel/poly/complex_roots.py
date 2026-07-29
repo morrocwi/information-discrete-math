@@ -85,18 +85,27 @@ class ComplexRootsHOLD(Exception):
 
 # ── performance fence (deterministic, no wall-clock — golden/tests stay reproducible) ──────────────
 # The cost of resolving one SQUARE-FREE factor of degree n is driven by its degree-n² resultants (which
-# are Sturm-isolated) and by the coefficient explosion those resultants inherit from the input's bit
-# size. Empirically these are TWO independent cliffs — a degree cliff (n=7 runs in ~seconds, n=8 in
-# minutes even for tiny coefficients, because the resultant is degree 64) and a coefficient-bits cliff
-# (a degree-4 factor with ~13-bit coefficients already runs for tens of seconds). No single smooth
-# proxy separates both, so the fence caps each axis independently, with a conservative cross term for
-# the middle. The defaults keep every capability that currently returns in ≲15s and HOLD (never hang)
-# on the "large-coefficient high-degree" inputs; a caller who wants to grind one out can widen the caps
-# via ``all_roots(..., fence=<dict>)`` or disable it with ``fence=None``.
+# are Sturm-isolated). Two things push it into minutes: (1) a DEGREE cliff — a degree-7 factor resolves
+# in seconds, a degree-8 one in minutes even for tiny coefficients, because its resultant is degree 64;
+# (2) COEFFICIENT growth, but only *through* that degree-n² resultant — so coefficient bit-length costs
+# in proportion to the resultant degree, NOT on its own (a degree-2 factor with even 40-bit coefficients
+# resolves in well under a second — its resultant is only degree 4). The fence therefore caps the DEGREE
+# directly and caps the interaction ``n²·bits`` (which already scales bit-length by the resultant
+# degree); there is deliberately NO standalone bit-length cap, because that wrongly rejects fast
+# low-degree/large-coefficient factors. The defaults keep every capability that currently returns in
+# ≲15s and HOLD (never hang) on the "large-coefficient high-degree" inputs; widen the caps via
+# ``all_roots(..., fence=<dict>)`` or disable with ``fence=None``.
+#
+# HONEST LIMIT (not overclaimed): this is a cheap *static* pre-check on (degree, coefficient
+# bit-length). It catches the two named cliffs, but it does NOT fully bound runtime — a mid-degree
+# factor whose degree-n² resultant happens to be expensive (e.g. a quartic with well-separated but
+# large-magnitude roots and 4-digit coefficients) can still run long while sitting inside the caps,
+# because that cost is not visible from (degree, input-bits) alone. Fully bounding every input needs a
+# *computed* work budget threaded through the resultant/Sturm path — a declared later increment (#65).
 _ROOTS_FENCE = {
     "max_factor_degree": 7,   # resultant degree n² ≤ 49; degree-8+ factors run for minutes
-    "max_coeff_bits": 11,     # a factor with ≥12-bit coefficients explodes the resultant (slow even at low degree)
-    "max_mix": 150,           # cap on n²·bits for the middle region (e.g. a degree-7 factor with 4-bit coeffs)
+    "max_mix": 350,           # cap on n²·bits: allows fast cases (deg-4 13-bit ≈ 2.1s → 208) and HOLDs the
+                              # slow ones (deg-5 ~20-bit ≈ 500 → minutes). bits cost only via the n²-resultant.
 }
 
 
@@ -116,11 +125,6 @@ def _fence_factor(n: int, qcoeffs, fence) -> None:
             f"square-free factor of degree {n} exceeds the performance fence (max_factor_degree="
             f"{fence['max_factor_degree']}): its degree-{n * n} resultants would run for minutes. "
             f"Pass all_roots(..., fence=None) to force, or widen 'max_factor_degree'.")
-    if b > fence["max_coeff_bits"]:
-        raise ComplexRootsHOLD(
-            f"square-free factor has {b}-bit coefficients, over the performance fence (max_coeff_bits="
-            f"{fence['max_coeff_bits']}): the resultant's coefficients explode and Sturm isolation runs "
-            f"for minutes even at degree {n}. Pass fence=None to force, or widen 'max_coeff_bits'.")
     if n * n * b > fence["max_mix"]:
         raise ComplexRootsHOLD(
             f"square-free factor (degree {n}, {b}-bit coefficients) has n²·bits={n * n * b} over the "
