@@ -112,56 +112,159 @@ closure — they need the completed continuum, which the philosophy treats as a 
       not in-tree → downgraded to `Th_coqc`-eligible with an honesty note).
 
 
-## CAS closure — prioritized todolist (from `docs/CAS_CLOSURE_CHECKLIST.md`, 2026-07-29 audit)
+## CAS closure — the 14 work packages (founder audit 2026-07-29, refines the raw checklist)
 
-Audit result: **40 CLOSED / 67 PARTIAL / 150 OPEN** across 19 sections. The solver is a tier-honest
-exact-ℚ core, not a general CAS. These are the OPEN items ranked by leverage (unblock-the-most first).
-Each keeps the project's discipline: close as EXACT where provable, else CONDITIONAL/HOLD — never faked.
+**Framing correction.** The raw per-item audit (`docs/CAS_CLOSURE_CHECKLIST.md`) counts *public-CAS
+reachability* — so it marks OPEN many things that already **exist in the kernel but aren't wired to the
+public `symbolic_*` surface**. A founder pass over every `formal/verify.sh` Coq file + the kernel +
+registry + `THEOREM.md` reclassified these. So the real remaining CAS work is **not ~150 things to build
+from scratch** — it is **14 work packages** over **four root layers**.
 
-### Quick wins (implemented-but-unwired, or a cheap correctness fix)
-- [ ] **Wire Gosper's algorithm to a `@kind`.** `idm/kernel/poly/summation.py` (exact symbolic
-      hypergeometric summation / telescoping) is fully implemented and tested (`tests/test_summation.py`)
-      but reachable from no solver kind. Add `symbolic_summation`/`gosper_sum`. *Near-zero cost; closes
-      §10 recurrence-summation/telescoping.* Tier: `exact`.
-- [ ] **Fix exact-decimal literal parsing (correctness bug).** `cas.py:_from_ast` does `Q(node.value)`,
-      so `parse("0.1")` captures the *binary float* `3602879701896397/36028797018963968`, not `1/10` —
-      wrong in a ℚ-exact system. Fix: `Fraction(str(x))` for decimal-point literals. Add a regression test.
+**Already implemented in the kernel — do NOT rebuild, only wire/complete:** immutable expression tree,
+basic canonical ordering, `Relation`, `Piecewise`, unevaluated `Derivative/Integral/Limit`, the assumption
+object, guarded rewrite, exact polynomial arithmetic, factorization over ℚ, square-free factorization,
+resultant, discriminant, Sturm root isolation, rational-function `cancel`/`apart`/`together`, reduced
+Gröbner basis, exact linear-system solve, rational-function limits, **Gosper summation**, matrix minimal
+polynomial, constant-coefficient homogeneous ODE.
 
-### High-leverage (unblock whole sections)
-- [ ] **Algebraic-number field arithmetic + `RootOf` (§5, the #1 gap).** `AlgebraicNumber` is a data-shell
-      with no arithmetic. Implement add/sub/mul/div/compare/minimal-poly over ℚ(α) and a `RootOf(p,k)`
-      object; wire `isolate_real_roots` (already exact) into `solution.solve` so degree-≥3 irrational roots
-      become exact objects instead of `completeness="partial"`. Unblocks §5 entirely + §8 completeness.
-- [ ] **Rational-function symbolic integration via Hermite reduction (§9).** `apart` + exact rational
-      `limits` already exist beside `cas.integrate`, unused. Wire them to integrate `P(x)/Q(x)`. Tier: `exact`.
-- [ ] **Parametric/symbolic linear algebra (§12).** Allow free symbols in matrix entries; symbolic det /
-      inverse (with det≠0 condition) / rank (with parameter conditions) / nullspace. Core CAS territory the
-      repo otherwise executes well over ℚ.
-- [ ] **Inequality solving (§8).** Univariate polynomial/rational inequalities via the existing Sturm /
-      real-root-isolation machinery → sign-interval solution sets. Currently entirely OPEN.
-- [ ] **Forward assumption propagation (§2).** "positive×positive⇒positive"-style inference over `+,×,^,f`
-      so the assumption engine can compute a compound expression's domain (today only single-symbol).
-- [ ] **`Abs` node + `sqrt(x²)=|x|` domain-correct rewrite (§2/§7).** No `Abs` exists; radical simplification
-      is silently wrong under negative x. Add the node + gated rewrite.
+**Four root layers (everything below rolls up to these):**
+1. ▢ Move the public CAS onto one kernel.
+2. ▢ Complete algebraic / complex exact arithmetic.
+3. ▢ Add reasoning: assumptions + rewrites + conditions.
+4. ▢ Connect that core to close solve / calculus / linear-algebra **with certificates**.
 
-### Structural / larger
-- [ ] **Retire the dual expression system (§1/§7).** Either wire the richer `nodes.py`/`engine.py`
-      hashconsed tree + rewrite engine into the live path, or fold its canonicalizer/DAG into `cas.py` —
-      today most §1/§7 machinery is a mostly-unused shadow layer.
-- [ ] **Commutative/associative pattern matching (§7).** `engine.py` is positional-only (deferred),
-      blocking trig/exp-log/radical identity rules from ever being added to the gated rewrite engine.
-- [ ] **Branch-aware complex algebra (§6).** Principal branch, branch-aware log/sqrt/pow, branch-cut
-      metadata — none exist; needed for any complex-analytic kind with a determinate branch.
-- [ ] **Symbolic special-function + transform layers (§11/§14).** Promote a handful of `idm/special.py`
-      functions to `("func", …)` nodes with derivative/recurrence rules; add a symbolic Laplace/Fourier
-      *pair table* with ROC/parameter conditions. (Numeric implementations are honest & extensive already.)
-- [ ] **Symbolic ODE breadth (§13).** First-order separable / exact / homogeneous / Bernoulli / Riccati,
-      and constant-coeff *inhomogeneous* (undetermined coefficients / variation of parameters).
-- [ ] **General resource control (§19).** Recursion-depth, memory, and factorization budgets + memoization
-      — today the only concrete cap is `GroebnerBudgetExceeded`.
-- [ ] **Formal constant objects + integer-relation search (§16).** Distinct `Pi`/`E`/`γ`/`ζ(3)` symbolic
-      leaves backed by the existing machine-checked `Continuum` resolution-enclosure; a PSLQ/integer-relation
-      search that returns a certificate or `HOLD` (never a guessed identity).
+**Explicitly NOT in this list** (theory-open or numeric-engineering, not CAS blockers): P1 general-group
+cardinality, P7/P8 approximate-counting bounds, Sylvester/Haynsworth analytic extensions, adaptive grids.
 
-*Everything above is genuinely OPEN today (evidence per item in `docs/CAS_CLOSURE_CHECKLIST.md`); the
-verification stack (§18) and the EXACT/CONDITIONAL/HOLD discipline are the parts that are already strong.*
+---
+
+### WP1 — Retire the dual symbolic engine *(root 1)*
+Public `symbolic_*` kinds still run on the legacy tuple tree while kernel-v2's typed `Expr` (calculus
+nodes representable but not the wire format) sits unused; the legacy numeric evaluator isn't on the tiered
+evaluator yet. → parser builds kernel-v2 `Expr` directly; migrate `simplify/expand/diff/integrate/solve/
+series/evaluate` off the tuple tree; per-node serializer/round-trip; `idm.solve`/API/REST/CLI return one
+typed result; delete legacy paths after migration.
+**Close when:** no public CAS operation calls the legacy `idm.kernel.cas` tuple tree.
+*(Includes the confirmed correctness bug: `cas.py:_from_ast` `Q(float)` makes `parse("0.1")` a binary-float
+fraction, not `1/10` — fix to `Fraction(str(x))` for decimal literals during the parser migration.)*
+
+### WP2 — Make `AlgebraicNumber` a genuinely computable number *(root 2, #1 gap)*
+Type exists (`AlgebraicNumber`, `ComplexExact`) but arithmetic / precision-escalation / re-isolation /
+field ops are deferred; coefficient tower is only ℤ/ℚ/GF(p). → construct from (min-poly, isolating
+interval/box); exact equality + ordering of real algebraic numbers; `+ − × ÷`; re-isolation after ops;
+conjugates + stable root index; exact complex algebraic arithmetic; fields ℚ(α), tower ℚ(α₁…αₙ),
+rational-function field ℚ(x₁…xₙ); explicit coercion ℚ ↔ algebraic ↔ complex-exact ↔ certified ball.
+**Close when:** every root of ℚ[x] is an exact object that adds/multiplies/divides/compares and
+substitutes back to check the equation.
+
+### WP3 — Wire root isolation → exact root objects *(root 2)*
+Sturm chains + rational-interval real-root isolation exist but return `(l,h]` pairs, not usable objects;
+complex roots aren't enumerated (no splitting field). → `RootOf(p,k)` node; interval → `AlgebraicNumber`;
+multiplicity kept separate from distinct-root index; complex-root isolation via rational rectangles/disks;
+all complex algebraic roots per degree; radical conversion when expressible, stay `RootOf` otherwise.
+**Close when:** a degree-n polynomial returns all n roots with multiplicity — no reduction to
+Durand–Kerner floats.
+
+### WP4 — Assumption engine reasons over *expressions*, not just symbols *(root 3)*
+Today it's closed-vocabulary forward chaining that under-infers to `UNKNOWN`; `domain_of_expr` handles only
+named cases (`log(x)`, `sqrt(x)`, bare-symbol powers), compound args deferred. → infer sign/domain of a
+compound expression; propagate through `+ − × ÷ Pow`; reason from polynomial/rational inequalities;
+condition algebra (`And/Or/Not`, implication, simplification, equivalence/contradiction checks); combine
+denominator/log/root/inverse conditions; emit `Piecewise` when a transform is only conditionally valid;
+separate real/complex branch domains.
+**Close when:** every transformation returns `EXACT` / `CONDITIONAL` / `HOLD` with checkable conditions —
+no string-condition placeholders.
+
+### WP5 — Make the rewrite engine the real simplification core *(root 3)*
+Structural positional matching + loop budget + `PARTIAL` exist; commutative matching doesn't, and the only
+ruleset is the one guarded nested-power collapse (constant-folding/like-term/distribution/antiderivative
+still live in legacy). → associative, commutative, and AC matching; sequence wildcards for n-ary
+`Add/Mul`; a shared normalization ruleset (poly/rational via kernel poly); trig/exp/log/radical rules;
+condition- and `Piecewise`-producing rewrites; cost-directed simplification; a proof trace citing each rule
++ assumption; migrate legacy `simplify/expand` into the rule engine.
+
+### WP6 — Close univariate equation solving *(root 4)*
+`solution.py` does symbolic-linear, numeric-coefficient quadratic, and rational high-degree roots, but
+HOLDs on symbolic quadratic/high-degree coefficients and returns only partial sets when roots are
+irrational. → symbolic quadratic coefficients with discriminant case-split; all degrees via
+`AlgebraicNumber`/`RootOf`; full multiplicity; exact verification of radical/algebraic roots; symbolic
+leading-coefficient degeneration at every degree; parameterized solution sets; rational equations with
+excluded points; supported transcendental classes (exp/log/trig); periodic solution families; completeness
+proven per class-algorithm.
+**Close when:** every univariate polynomial over ℚ gets `completeness="complete"`, and out-of-class
+equations return an unevaluated/conditional object — never a lost root.
+
+### WP7 — Multivariate algebra & system solving *(root 4)*
+Reduced Gröbner basis + normal form + ideal membership exist, but nothing turns a basis into a solution
+set; systems/inequalities are deferred. → multivariate factorization over ℚ; elimination API from a lex
+Gröbner basis; zero-dimensional system solving; triangular decomposition or RUR; algebraic-coordinate
+solution tuples; positive-dimensional parametric varieties; dimension + consistency detection; polynomial
+and rational inequalities (with excluded sets); real decomposition/CAD or a finite-ℚ equivalent;
+quantifier elimination; exact verification of each component.
+**Close when:** a Gröbner basis produces a complete `SolutionSet` or a precise obstruction.
+
+### WP8 — Close symbolic integration *(root 4)*
+Public integrator does polynomial powers + `exp/sin/cos` of some linear arguments, HOLDs otherwise — even
+though factorization + partial fractions already exist. → bridge expression rational functions to `apart`;
+full rational-function integration (incl. repeated irreducible quadratics, log/arctan forms with domain
+conditions); Hermite reduction; algebraic-function integration; substitution detection; integration-by-
+parts strategy; exp-log elementary classes; definite symbolic integration with convergence/branch
+conditions; return an `Integral` node for the unresolved part; verify by exact differentiation.
+*(Not every integral must be elementary — but the unsolved part must remain an exact symbolic object.)*
+
+### WP9 — Symbolic limits, formal series & asymptotics *(root 4)*
+Exact rational-function limits exist but take coefficient lists; the public `limit_*`/`lhopital` are
+numeric Richardson/finite-difference; Laurent series uses numeric FFT. → expression→rational-limit bridge;
+algebraic-function limits; exact order-of-zero/pole; transcendental local limits; symbolic one-sided
+conditions; multivariate/path-dependent limits; a formal power-series ring; exact Laurent; Puiseux; series
+composition & reversion; asymptotic scales incl. log/exp; exact coefficient extraction; a remainder/order
+object.
+**Close when:** a symbolic limit/series needs no sampling when the expression is in a decidable class.
+
+### WP10 — Wire & extend symbolic summation *(root 4)*
+Gosper is real and returns an exact rational certificate for indefinite hypergeometric sums, but it's an
+internal polynomial-ratio API (no definite sums / creative telescoping / multi-term recurrences). →
+expression→hypergeometric-ratio translator; expose Gosper via the unified solver; definite-sum endpoints;
+telescoping; rational/polynomial summation; Zeilberger creative telescoping; recurrence derivation +
+solving; parameter conditions + singular-index exclusions; exact certificate check `R(n+1)r(n)−R(n)=1`.
+
+### WP11 — Close symbolic ODEs *(root 4)*
+Exact solver handles only linear constant-coefficient homogeneous ODEs and HOLDs at an irreducible
+characteristic factor of degree ≥3 (blocked on WP2/WP3). → use algebraic roots at all degrees instead of
+HOLD; inhomogeneous constant-coefficient; initial/boundary conditions; linear systems; first-order
+separable / exact / Bernoulli / homogeneous / Riccati classes; variable-coefficient linear classes;
+power-series / Frobenius; differential-operator factorization; unevaluated object out-of-class;
+substitute-back verification. *(Numeric RK4/BVP/PDE already exist and do not close this gap.)*
+
+### WP12 — Close symbolic transforms *(root 4)*
+Laplace/Mellin/Fourier/inverse-Laplace exposed today are numeric quadrature / finite-window / Talbot
+contour. → symbolic Laplace + inverse; Fourier + inverse; Mellin; Z-transform; rule tables (scaling,
+shift, differentiation, convolution); regions of convergence; parameter/domain conditions; Heaviside /
+delta / distribution nodes; an unevaluated transform object when not closed.
+
+### WP13 — Exact symbolic linear algebra & spectral algebra *(root 4)*
+Exact rational matrix ops + complete rational solve + exact minimal polynomial exist, but real eigenvalues
+are isolating intervals, complex eigenvalues aren't built, and public `eigenvalues` uses Durand–Kerner. →
+matrices over algebraic-number fields; symbolic-parameter matrices; exact eigenvalues as algebraic objects
+(real + complex); exact eigenspaces over extensions; generalized eigenspaces; Jordan normal form; rational
+canonical form; invariant factors; matrix functions reduced mod minimal polynomial; symbolic rank/nullspace
+with parameter case-splits; spectral decomposition returning genuine exact/conditional objects.
+
+### WP14 — Verification & theorem coverage of the CAS layer itself *(root 4)*
+194 Coq theorems cover FOLD/DECISION, finite logic, discrete calculus, certificates, matrices, geometry,
+readout laws — but not that each CAS transform is correct; the dispatcher grants `Th_coqc` only to kinds
+pointing at a named theorem (others downgrade to `exact`). The goal is *not* proving every Python line, but:
+a central certificate format for factorization; algebraic-root certificates; Gröbner verification via
+S-polynomial reductions; a solution-completeness certificate; integration certificate (differentiate-back);
+summation certificate (finite-difference-back); ODE certificate (substitute-back); matrix-decomposition
+reconstruction certificate; formalized shared correctness lemmas for algebraic-number ops; map each exact
+solver to a named theorem or a checkable certificate; a consistency gate between tier, implementation, and
+claimed theorem.
+**Close when:** every `exact` result carries a reconstruction/residual witness a small independent verifier
+can check, and every `Th_coqc` points to a theorem that genuinely matches it.
+
+---
+
+*The raw per-item evidence base is `docs/CAS_CLOSURE_CHECKLIST.md`. The verification stack (§18 there) and
+the EXACT/CONDITIONAL/HOLD discipline are already strong; these 14 packages are the path to a full CAS
+without abandoning that discipline.*

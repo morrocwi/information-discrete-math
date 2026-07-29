@@ -22,8 +22,17 @@
 tier-honest exact-ℚ core** — polynomials, rational limits, real eigenvalues, constant-coefficient linear
 ODEs, Gröbner bases — wrapped in **unusually strong verification infrastructure** (differential testing
 vs SymPy as a *comparator only*, adversarial + property-based harnesses, pervasive real `HOLD`-not-fake
-behavior). Its strengths are exactness and honesty, not breadth. The large OPEN set below is the roadmap,
-declared openly rather than papered over.
+behavior). Its strengths are exactness and honesty, not breadth.
+
+> **What the OPEN count does and does not mean.** This table counts **reachability from the *public*
+> `symbolic_*` surface**. A founder pass over the kernel (2026-07-29) established that a substantial share
+> of the OPEN/PARTIAL items are **already implemented inside the kernel and merely not wired to the public
+> CAS** — e.g. Gosper summation, `Relation`/`Piecewise`/unevaluated `Derivative/Integral/Limit` nodes, the
+> assumption object, the guarded rewrite, root isolation. So the remaining work is **not ~150 things to
+> build from scratch**; it is **14 work packages over four root layers** (move the public CAS onto one
+> kernel · complete algebraic/complex exact arithmetic · add expression-level reasoning · connect the core
+> to close solve/calculus/linear-algebra with certificates). The prioritized plan lives in
+> `BACKLOG.md` → *"CAS closure — the 14 work packages"*; read the per-item evidence below alongside it.
 
 Two architectural facts shape the picture:
 1. **Two parallel expression systems.** The live engine `idm/kernel/cas.py` is a tuple/`Fraction` tree
