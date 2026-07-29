@@ -330,10 +330,30 @@ def test_all_roots_performance_fence():
     _fence_factor(2, [Q(999983), Q(1), Q(1)], _ROOTS_FENCE)                   # deg-2 big-coeff: NOT fenced (must not raise)
 
     # (2) the kind HOLDs fast on the pathological inputs (status HOLD, reason mentions the fence)
-    for coeffs in ([-2, 0, 0, 0, 0, 0, 0, 0, 1],                              # x^8-2 (degree cliff)
-                   [999983, -424242, 131313, -707, 13, 1]):                   # deg-5, ~20-bit coeffs (mix)
+    for coeffs in ([-2, 0, 0, 0, 0, 0, 0, 0, 1],                              # x^8-2 (degree cliff, layer 1)
+                   [999983, -424242, 131313, -707, 13, 1]):                   # deg-5 ~20-bit coeffs (mix, layer 1)
         r = idm.solve({"kind": "all_roots", "coeffs": coeffs})
         assert r["status"] == "HOLD" and "fence" in r["reason"], coeffs
+
+    # (2b) LAYER 2 — a small-INPUT-coefficient quartic whose degree-16 resultant carries 73-bit
+    #      coefficients passes the input pre-check (mix=224) but HOLDs on the built-resultant bit-size
+    #      (was >90s before this gate). Reason cites max_resultant_bits. Regression for #65.
+    r = idm.solve({"kind": "all_roots", "coeffs": [9999, -4242, 1313, -77, 1]})
+    assert r["status"] == "HOLD" and "max_resultant_bits" in r["reason"], r
+
+    # (2c) the layer-2 cap is a HEURISTIC on the built resultant's bit-size, not a tight runtime bound, so
+    #      it must NOT over-block genuinely-fast inputs just above the old threshold. These two isolate in
+    #      ~2s and ~8s respectively (their resultants are 57/58-bit, under the 64-bit cap). Checked via the
+    #      gate helper on the built resultants (fast — no full isolation). Regression for reviewer #92.
+    from idm.kernel.poly.complex_roots import _fence_resultant, _bivar_PQ, _resultant_poly
+    def _resultant_gate(coeffs):
+        n = len(coeffs) - 1
+        P, Qd = _bivar_PQ([Q(c) for c in coeffs])
+        _fence_resultant(_resultant_poly(P, Qd, n, in_x=True), _resultant_poly(P, Qd, n, in_x=False), _ROOTS_FENCE)
+    for fast in ([999, -400, 130, -70, 1], [1, -2, 3, -4, 5, -6, 1]):
+        _resultant_gate(fast)                                                # must NOT raise (fast, ≤58-bit resultant)
+    with pytest.raises(ComplexRootsHOLD, match="max_resultant_bits"):        # 73-bit resultant → HOLD
+        _resultant_gate([9999, -4242, 1313, -77, 1])
 
     # (3) capability preserved — fast cases still resolve, INCLUDING low-degree large-coefficient factors
     #     that the earlier standalone bit cap wrongly HELD (deg-2 with 12–20-bit coeffs resolve in ~0.03s)
