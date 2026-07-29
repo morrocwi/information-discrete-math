@@ -26,6 +26,11 @@ kinds = _solve.kinds
 parse = _parse.parse                     # world-language → structured problem (or HOLD)
 parse_and_solve = _parse.parse_and_solve  # translate, then solve
 
+# typed result + one-call convenience wrappers (Track B — programmer developer-experience)
+from .results import Result, SolveHold
+from .convenience import (factorize, gcd, solve_integral, integrate_rational, solve_matrix,
+                          eigenvalues, solve_roots, solve_ode)
+
 # finite elementary + calculus
 exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,
                                         functions.erf, functions.gamma, functions.sqrt)
@@ -54,4 +59,8 @@ __all__ = ["__version__", "solve", "serve", "functions", "certified", "algebra",
            "derivative", "integral", "limit", "ode", "evaluate",
            "Readout", "CERTIFIED", "HOLD",
            "shortest_path", "critical_path", "widest_path", "minimax_path", "reachability",
-           "path_count", "dashboard"]
+           "path_count", "dashboard",
+           "kinds", "parse", "parse_and_solve",
+           "Result", "SolveHold",
+           "factorize", "gcd", "solve_integral", "integrate_rational", "solve_matrix",
+           "eigenvalues", "solve_roots", "solve_ode"]
