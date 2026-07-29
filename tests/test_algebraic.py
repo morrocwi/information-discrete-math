@@ -335,11 +335,17 @@ def test_all_roots_performance_fence():
         r = idm.solve({"kind": "all_roots", "coeffs": coeffs})
         assert r["status"] == "HOLD" and "fence" in r["reason"], coeffs
 
-    # (2b) LAYER 2 — a small-INPUT-coefficient quartic whose degree-16 resultant carries 73-bit
-    #      coefficients passes the input pre-check (mix=224) but HOLDs on the built-resultant bit-size
-    #      (was >90s before this gate). Reason cites max_resultant_bits. Regression for #65.
+    # (2b) LAYER 2, isolation-bound gate — a small-INPUT-coefficient quartic whose degree-16 resultant
+    #      carries 73-bit coefficients passes the input pre-check (mix=224) but HOLDs on the built-
+    #      resultant bit-size (was >90s before this gate). Reason cites max_resultant_bits. Regression #65.
     r = idm.solve({"kind": "all_roots", "coeffs": [9999, -4242, 1313, -77, 1]})
     assert r["status"] == "HOLD" and "max_resultant_bits" in r["reason"], r
+
+    # (2b') LAYER 2, build-bound gate — x^7-20: a degree-49 resultant at only 55 bits (UNDER the bit cap)
+    #      but degree·bits ≈ 2695, so it HOLDs on max_resultant_degbits (was >60s; the bit cap alone
+    #      missed it — reviewer #92 under-block). Regression #65.
+    r = idm.solve({"kind": "all_roots", "coeffs": [-20, 0, 0, 0, 0, 0, 0, 1]})
+    assert r["status"] == "HOLD" and "max_resultant_degbits" in r["reason"], r
 
     # (2c) the layer-2 cap is a HEURISTIC on the built resultant's bit-size, not a tight runtime bound, so
     #      it must NOT over-block genuinely-fast inputs just above the old threshold. These two isolate in

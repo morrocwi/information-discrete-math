@@ -105,19 +105,27 @@ class ComplexRootsHOLD(Exception):
 #     coefficients but a 73-bit degree-16 resultant that isolates in minutes → HOLD) without over-blocking
 #     the fast ones (fixtures ≤ 39 resultant-bits; a ~58-bit quartic still resolves in ~8s, so the cap
 #     sits at 64 with margin).
-#   NOT a tight bound (disclosed): Sturm-isolation runtime is genuinely *not* a monotone function of
-#     resultant bit-size — a degree-6 resultant at 57 bits isolates in ~2s while a degree-49 one at 55
-#     bits can take over a minute. So the cap both lets some slow large-degree/low-bit inputs through
-#     (e.g. x⁷−20) and would HOLD a rare fast input above it (recover with ``force``). A *tight*
-#     deterministic bound needs a computed work budget counting the actual Sturm sign-evaluations — an
-#     open increment (#65), out of scope here. This layer only removes the worst multi-minute hangs.
+#     Cost has TWO regimes, so layer 2 uses TWO gates (whichever trips first HOLDs):
+#       * isolation-bound — a high-bit resultant is slow to Sturm-isolate regardless of degree
+#         (e.g. [9999,…]: degree-16, 73-bit → >90s). Caught by ``max_resultant_bits``.
+#       * build-bound — a high-DEGREE resultant is slow to build/interpolate even at moderate bits
+#         (e.g. x⁷−20: degree-49, 55-bit → >60s, but only 55 bits so the bit cap misses it). Caught by
+#         ``max_resultant_degbits`` on degree·bits.
+#     Measured (KEEP ≤, BLOCK >): bits 58 (KEEP, ~8s) < 64 < 73 (BLOCK); degree·bits 2205 (KEEP x⁷−2,
+#     ~14s) < 2400 < 2695 (BLOCK x⁷−20). Fixtures sit far below both.
+#   Still a HEURISTIC, not a proven bound (disclosed): Sturm runtime is not a monotone function of any
+#     single feature, so a novel input in the gaps could slip either way (recover with ``force``). These
+#     two gates catch both known cost regimes; a per-run computed budget would be tighter but the
+#     measured proxies (Sturm-eval count, bit-ops) don't correlate with wall-time here either.
 # Together the layers keep every fixture + the ≲15s capability and remove the worst hangs; widen the caps
 # via ``all_roots(..., fence=<dict>)`` or disable with ``fence=None``.
 _ROOTS_FENCE = {
-    "max_factor_degree": 7,   # resultant degree n² ≤ 49; degree-8+ factors run for minutes
-    "max_mix": 350,           # cap on n²·input-bits: cheap first filter (deg-5 ~20-bit → 500 HOLDs)
-    "max_resultant_bits": 64, # HEURISTIC cap on the BUILT resultant's coefficient bit-size (rough proxy,
-                              # not a tight bound): fixtures ≤ 39, ~58-bit quartic ≈ 8s allowed, [9999,…] ≈ 73 → HOLD
+    "max_factor_degree": 7,      # resultant degree n² ≤ 49; degree-8+ factors run for minutes
+    "max_mix": 350,              # cap on n²·input-bits: cheap first filter (deg-5 ~20-bit → 500 HOLDs)
+    "max_resultant_bits": 64,    # isolation-bound gate: built-resultant coefficient bit-size (fixtures
+                                 # ≤ 39; ~58-bit quartic ≈ 8s allowed; [9999,…] ≈ 73 → HOLD)
+    "max_resultant_degbits": 2400,  # build-bound gate: resultant degree·bits (x⁷−2 2205 ≈ 14s allowed;
+                                    # x⁷−20 2695 → HOLD) — catches the high-degree residual the bit cap misses
 }
 
 
@@ -151,15 +159,24 @@ def _fence_resultant(Rx, Ry, fence) -> None:
     build, before the expensive isolation. Deterministic (a function of the resultants only); resultant
     bit-size is only a rough proxy for isolation time, so this removes the worst hangs but is not exact —
     ``fence=None`` disables it."""
-    if not fence or "max_resultant_bits" not in fence:
+    if not fence:
         return
     rb = max(_coeff_bits(Rx.coeffs), _coeff_bits(Ry.coeffs))
-    if rb > fence["max_resultant_bits"]:
+    deg = Rx.degree()
+    # isolation-bound gate: a high-bit resultant is slow to isolate regardless of degree
+    if "max_resultant_bits" in fence and rb > fence["max_resultant_bits"]:
         raise ComplexRootsHOLD(
             f"the built resultant carries {rb}-bit coefficients, over the performance fence "
-            f"(max_resultant_bits={fence['max_resultant_bits']}): Sturm-isolating a degree-{Rx.degree()} "
+            f"(max_resultant_bits={fence['max_resultant_bits']}): Sturm-isolating a degree-{deg} "
             f"resultant this large is likely slow (a heuristic size proxy, not a precise runtime bound). "
             f"Pass all_roots(..., fence=None) to force, or widen 'max_resultant_bits'.")
+    # build-bound gate: a high-degree resultant is slow to build/interpolate even at moderate bit-size
+    if "max_resultant_degbits" in fence and deg * rb > fence["max_resultant_degbits"]:
+        raise ComplexRootsHOLD(
+            f"the built resultant has degree·bits = {deg}·{rb} = {deg * rb}, over the performance fence "
+            f"(max_resultant_degbits={fence['max_resultant_degbits']}): a resultant this large (high "
+            f"degree × coefficient size) is likely slow to build and isolate (a heuristic proxy, not a "
+            f"precise runtime bound). Pass all_roots(..., fence=None) to force, or widen it.")
 
 
 def _bivar_PQ(coeffs):

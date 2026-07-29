@@ -7,6 +7,19 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### `all_roots` — second (build-bound) fence gate closes the high-degree residual (#65)
+The layer-2 resultant-bits gate caught *isolation-bound* hangs (a high-bit resultant) but missed
+*build-bound* ones — a high-DEGREE resultant is slow to build/interpolate even at moderate bits
+(e.g. `x⁷−20`: a degree-49 resultant at only 55 bits, under the 64-bit cap, yet >60s). Instrumenting
+showed neither Sturm-eval count nor bit-operation count correlates with wall-time here (the cost sits in
+different phases — build vs isolation — for different inputs), so a single computed counter can't bound
+it either. Instead a **second deterministic gate** on the resultant's **degree·bits**
+(`max_resultant_degbits=2400`) now catches the build-bound regime: `x⁷−20` (degree·bits ≈ 2695) → **HOLD
+in ~1s** (was >60s), while `x⁷−2` (≈ 2205, ~14s) and every fixture stay under it. Measured margins:
+KEEP ≤ 2205 < 2400 < 2695 ≤ BLOCK. Still an honest **heuristic** (not a proven bound — a novel input in
+the gaps could slip; `force` / `fence` override) but it now covers **both** cost regimes. Deterministic,
+still entirely in `complex_roots.py`, golden unchanged, no count change (269).
+
 ### Track C (AI Gateway) Phase A — `idm.ai`: a small deterministic entrance over the full solver
 An **entrance**, never a capability reduction (roadmap #52, Phase A): a small model (or a human) can
 drive the solver through ~11 high-level ops instead of memorizing 269 kind names.
