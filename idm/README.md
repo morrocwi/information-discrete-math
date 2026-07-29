@@ -16,6 +16,12 @@ domain modules — `algebra`, `analysis`, `combopt`, `crypto`, `diffeq`, `discre
   `HOLD` if the request isn't recognized.
 - `idm.certified.*` (`geom_series`, `exp`, `simpson`, `richardson`, `integral`, `integral_nd`, …) —
   `Readout(value, bound, status, reason)` with `CERTIFIED`/`HOLD`.
+- `idm.continuum.Continuum` — the continuum as a first-class **ℚ primitive** (a resolution-indexed exact-ℚ
+  readout, never an ℝ object): `.at(N)` exact ℚ at resolution N; `.readout(ε)` returns `CERTIFIED` only on
+  a **proven** tail bound (else an observed plateau is `finite_diagnostic`, or `HOLD` — never a fabricated
+  limit); a ℚ-algebra (`+ - *`, scalar,
+  `compose`) closed and exact pointwise. Canonical builders `geometric(r)`, `from_sequence(seq)`. Its
+  algebra laws are machine-checked axiom-free over ℚ in `formal/IDM_Continuum.v`.
 - The top-level convenience re-exports in `idm/__init__.py`: `pi`, `e`, `ln2`, `derivative`,
   `integral`, `limit`, `ode`, `evaluate`, `shortest_path`, `critical_path`, `widest_path`,
   `minimax_path`, `reachability`, `path_count`, `dashboard`.
