@@ -63,8 +63,13 @@ no_decoder_recovers_state : forall X R (O : X -> R) x1 x2,
 with a gauge-redundancy specialization `gauge_redundancy_forces_undecodability` (`O (h x) = O x`). This
 is the abstract twin of the companion's **zero-fibre indistinguishability equivalence**: `indist Φ Ψ :=
 I(Φ−Ψ)=0` is proved reflexive/symmetric/transitive (`indist_refl/sym/trans`), and
-`keystone_zero_iff_component` supplies its concrete content (constant on each connected component).
-Instantiating `O := Φ ↦ [Φ]_indist` makes `no_decoder_recovers_state` apply directly to the zero fibre.
+`keystone_zero_iff_component` supplies its concrete content (constant on each connected component) —
+both under the **strictly-positive edge-weight** hypothesis that `indist_refl/sym/trans` require to be
+an equivalence relation at all. Conceptually the two compose: instantiating `O := Φ ↦ [Φ]_indist` lets
+`no_decoder_recovers_state` speak about the zero fibre. **This composition is an informal observation,
+not itself machine-checked** — no `.v` here `Require`s `InfoTrueRecordUnreadable_attempt` and
+instantiates it against the keystone kernel; each half is Coq-verified on its own, the bridge between
+them is prose.
 
 **Honest fence (Dr).** The shared core — the equivalence-kernel (kernel-pair) of a non-injective readout
 partitions distinct true states into classes no decoder can separate — is *generic*: it holds for any
