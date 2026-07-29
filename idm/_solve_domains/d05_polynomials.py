@@ -58,6 +58,19 @@ def _all_real_roots(p):
                 "completeness": "complete" if deg - real_count == 0 else "real_complete"},
                "exact real roots + multiplicity (irreducible factorization + Sturm isolation over ℚ)")
 
+@kind("all_roots", "exact")
+def _all_roots_kind(p):
+    """ALL roots of a ℚ-polynomial — real AND complex — as exact rational-rectangle enclosures with exact
+    algebraic real/imaginary parts (no Durand–Kerner). Certified complete (isolated count == degree) or
+    HOLD. Completes the complex half of the exact root-isolation story."""
+    from idm.kernel.poly.complex_roots import all_roots as _ar, ComplexRootsHOLD
+    try:
+        r = _ar(p["coeffs"])
+    except ComplexRootsHOLD as ex:
+        return {"kind": "all_roots", "status": "HOLD", "reason": str(ex)}
+    return _ok("all_roots", r,
+               "all real+complex roots as exact rational-rectangle enclosures (resultant + interval isolation over ℚ)")
+
 @kind("algebraic_arith", "exact")
 def _alg_arith(p):
     """Exact arithmetic (add/sub/mul/div) on two real algebraic numbers, each given as a ℚ-polynomial +

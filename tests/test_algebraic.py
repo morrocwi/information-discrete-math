@@ -251,3 +251,20 @@ def test_wp11_ode_repeated_factor_complex_count_and_high_degree_hold():
     t = time.time()
     r2 = idm.solve({"kind": "linear_ode", "coeffs": [-2,0,0,0,0,0,0,0,0,0,1]})["value"]
     assert r2["solution_status"] == "partial" and time.time() - t < 20
+
+
+def test_all_roots_real_and_complex_complete():
+    """Complex-root increment: all_roots returns every root (real + complex) as exact rational-rectangle
+    enclosures, count == degree, conjugate-paired, each verified. Completes degree-n → all n roots."""
+    import idm
+    def rr(coeffs): return idm.solve({"kind": "all_roots", "coeffs": coeffs})["value"]
+    r = rr([1, 0, 1])                                  # x^2+1 -> ±i
+    assert r["num_real"] == 0 and r["num_complex"] == 2 and len(r["roots"]) == 2
+    r2 = rr([-2, 0, 0, 1])                             # x^3-2 -> ∛2 + complex pair
+    assert r2["num_real"] == 1 and r2["num_complex"] == 2
+    r3 = rr([-1, 0, 0, 0, 1])                          # x^4-1 -> ±1, ±i
+    assert r3["num_real"] == 2 and r3["num_complex"] == 2
+    for coeffs in ([1,0,1],[-2,0,0,1],[5,-2,1],[1,0,0,0,1],[-6,11,-6,1]):
+        v = rr(coeffs)
+        assert v["num_real"] + v["num_complex"] == v["degree"]    # complete: no root lost
+        assert all(x["verified"] for x in v["roots"])             # each Re/Im part substitutes back exactly

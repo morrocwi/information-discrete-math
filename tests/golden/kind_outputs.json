@@ -199,6 +199,75 @@
    ]
   }
  },
+ "all_roots": {
+  "kind": "all_roots",
+  "method": "all real+complex roots as exact rational-rectangle enclosures (resultant + interval isolation over \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "degree": 2,
+   "num_complex": 2,
+   "num_real": 0,
+   "roots": [
+    {
+     "im": {
+      "approx": -1.0,
+      "interval": [
+       "-2",
+       "2"
+      ],
+      "is_rational": true,
+      "min_poly": [
+       "1",
+       "1"
+      ]
+     },
+     "is_real": false,
+     "re": {
+      "approx": 0.0,
+      "interval": [
+       "-1",
+       "1"
+      ],
+      "is_rational": true,
+      "min_poly": [
+       "0",
+       "1"
+      ]
+     },
+     "verified": true
+    },
+    {
+     "im": {
+      "approx": 1.0,
+      "interval": [
+       "-2",
+       "2"
+      ],
+      "is_rational": true,
+      "min_poly": [
+       "-1",
+       "1"
+      ]
+     },
+     "is_real": false,
+     "re": {
+      "approx": 0.0,
+      "interval": [
+       "-1",
+       "1"
+      ],
+      "is_rational": true,
+      "min_poly": [
+       "0",
+       "1"
+      ]
+     },
+     "verified": true
+    }
+   ]
+  }
+ },
  "arc_length": {
   "kind": "arc_length",
   "method": "\u222b\u221a(1+f'\u00b2) finite quadrature",
