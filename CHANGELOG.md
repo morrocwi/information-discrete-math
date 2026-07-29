@@ -7,6 +7,14 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-30
+
+**Developer-experience & exact-CAS release.** Highlights: complete complex root-finding with
+multiplicity + a deterministic performance fence; a published machine-checked formal companion wired
+into the ecosystem; a full programmer DX layer (`Result` object, typed convenience wrappers, schema
+discovery, Quick Start); and the AI Gateway (`idm.ai`: a small deterministic entrance + free-form
+router + benchmark harness). No new solver kinds (269); every change is additive and tier-honest.
+
 ### PyPI packaging made publish-ready (Track B gap 1 — prep)
 `pyproject.toml` now carries the metadata a good PyPI listing needs: `readme = "README.md"` (markdown
 long description), 13 trove `classifiers` (Production/Stable, Science/Research, Python 3.9–3.13, Maths),
