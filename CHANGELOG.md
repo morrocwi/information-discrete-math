@@ -7,6 +7,20 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### `all_roots` — deterministic performance fence (HOLD, never hang, on large-coefficient high-degree inputs)
+`all_roots` could run for **minutes** on a high-degree or large-coefficient square-free factor (its
+degree-`n²` resultants + Sturm isolation). Profiling found **two independent cliffs** — a degree cliff
+(a degree-7 factor resolves in ~seconds, a degree-8 one in minutes even for tiny coefficients, because
+its resultant is degree 64) and a coefficient-bits cliff (a degree-4 factor with ~13-bit coefficients
+already runs for tens of seconds). No single smooth proxy separates both, so a **deterministic fence**
+(pure pre-check on `(degree, coefficient bit-length)` — O(1), **no wall-clock**, so golden/tests stay
+reproducible) now caps each axis independently (`max_factor_degree=7`, `max_coeff_bits=11`,
+`max_mix=150` on `n²·bits`) and raises `ComplexRootsHOLD` with an actionable reason **before** the
+expensive work — HOLD, never hang. Every capability that currently returns in ≲15s is preserved
+(verified: all existing fixtures + `x⁷−2` still resolve; golden unchanged). The `all_roots` kind takes
+`"force": true` (and `all_roots(..., fence=None)` / a widened `fence` dict) to bypass or loosen the
+fence and grind an input out. No new kind, no count change (269).
+
 ### Wired the published formal companion `zero-readout-certifies` into the ecosystem
 Added [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md) — the single map of the machine-checked
 sibling repos this repo cites, and, for `zero-readout-certifies` (Coq 8.20 / Rocq 9.2, 38 audited results,

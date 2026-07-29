@@ -62,10 +62,12 @@ def _all_real_roots(p):
 def _all_roots_kind(p):
     """ALL roots of a ℚ-polynomial — real AND complex — as exact rational-rectangle enclosures with exact
     algebraic real/imaginary parts (no Durand–Kerner). Certified complete (isolated count == degree) or
-    HOLD. Completes the complex half of the exact root-isolation story."""
-    from idm.kernel.poly.complex_roots import all_roots as _ar, ComplexRootsHOLD
+    HOLD. Completes the complex half of the exact root-isolation story. HOLDs deterministically (never
+    hangs) on a large-coefficient high-degree input via a performance fence; pass ``"force": true`` to
+    disable the fence and grind it out."""
+    from idm.kernel.poly.complex_roots import all_roots as _ar, ComplexRootsHOLD, _ROOTS_FENCE
     try:
-        r = _ar(p["coeffs"])
+        r = _ar(p["coeffs"], fence=None if p.get("force") else _ROOTS_FENCE)
     except ComplexRootsHOLD as ex:
         return {"kind": "all_roots", "status": "HOLD", "reason": str(ex)}
     return _ok("all_roots", r,
