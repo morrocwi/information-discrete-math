@@ -9,7 +9,7 @@ dependency. Endpoints:
     GET  /                → this index (endpoint catalogue + example bodies)
     GET  /docs            → interactive Swagger UI (try any endpoint in the browser)
     GET  /openapi.json    → the full OpenAPI 3 description (schemas for every endpoint)
-    GET  /kinds           → the catalogue of the 263 problem kinds
+    GET  /kinds           → the catalogue of the 265 problem kinds
     POST /solve           → body: a structured problem {kind, ...} OR {text: "..."}; certified result
     POST /parse           → body: {text: "..."}; the world-language → structured translation (or HOLD)
 
