@@ -7,6 +7,17 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### `all_roots` — root multiplicity (repeated-root polynomials no longer HOLD)
+`all_roots` previously HELD on any polynomial with a repeated root (`(x−1)³`). It now finds the DISTINCT
+roots of each **square-free factor** and tags them with that factor's multiplicity, so it returns every
+root (real + complex) with its exact **multiplicity** and certifies completeness by `Σ multiplicity ==
+degree`. E.g. `(x−1)³` → root 1 (multiplicity 3); `(x²+1)²` → `±i` each multiplicity 2; `(x²+1)(x−1)²` →
+`±i` (m1) + `1` (m2). Each root gains a `multiplicity` field and the result a `num_distinct`; `num_real`/
+`num_complex` are now counted with multiplicity (so they still sum to the degree). Bonus: each square-free
+factor is lower-degree, so this is also faster than isolating the whole polynomial. No new kind, no count
+change (269).
+
+
 ### WP8 (Increment 2) — `integrate_rational` now handles repeated irreducible quadratics
 The rational-function integrator previously HELD on a denominator with a repeated irreducible quadratic
 (e.g. `1/(x²+1)²`). It now integrates them via the **reduction formula**
