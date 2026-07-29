@@ -1,6 +1,7 @@
 """Hilbert-space mathematical core — finite-dim exact / finite_diagnostic, and the +ℝ fence."""
 import os, sys, ast
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from fractions import Fraction
 import idm
 
 
@@ -106,3 +107,18 @@ def test_two_tier_readout_gives_the_q_core_its_honest_tier():
     # the sole non-computing kind is honest about producing no ℚ core at all
     rs = idm.solve({"kind": "infinite_spectral_readout", "operator_description": "d/dx"})
     assert rs["computed_core"] is None and rs["open_tail"]["tier"] == "+ℝ-Open"
+
+
+def test_L2_tier_tracks_the_measure_hypothesis():
+    """The Th_coqc nonneg witness for L2's weighted quadrature assumes weights form a measure (wᵢ ≥ 0).
+    The tier must track whether THIS input meets that hypothesis: measure weights → Th_coqc; a signed
+    weight (not a measure, value can go negative) → honestly drop to `exact`, never cite a witness whose
+    premise fails. (Regression for the reviewed L2 overclaim: [1,2,-3]·[1,1,-1] gave -4 under Th_coqc.)"""
+    ok = idm.solve({"kind": "L2_readout", "values_on_mesh": [1, 2, 3], "weights": ["1/2", "1/2", "1"]})
+    assert ok["computed_core"]["tier"] == "Th_coqc" and ok["computed_core"]["witness"]
+
+    signed = idm.solve({"kind": "L2_readout", "values_on_mesh": [1, 2, -3], "weights": [1, 1, -1]})
+    core = signed["computed_core"]
+    assert core["tier"] == "exact", "signed (non-measure) weights must NOT claim the Th_coqc nonneg witness"
+    assert "witness" not in core, "a dropped-to-exact core must not cite the nonneg witness"
+    assert Fraction(core["value"]["exact"]) == -4  # the honest exact ℚ value, no false nonneg claim

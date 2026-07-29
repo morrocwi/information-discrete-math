@@ -77,3 +77,36 @@ Proof.
   setoid_replace (partial_energy xs) with (partial_energy xs + 0) at 1 by ring.
   apply Qplus_le_compat; [ apply Qle_refl | apply Qsq_nonneg ].
 Qed.
+
+(* --- The WEIGHTED quadrature core: L2_readout computes Σ wᵢ·|f(xᵢ)|² on a declared mesh (X,μ). μ is a
+   MEASURE, so the weights wᵢ are nonnegative — that is the hypothesis under which the readout is a
+   genuine seminorm. `weighted_energy` over a list of (wᵢ, vᵢ) pairs is exactly that quadrature. Its
+   nonneg/additive facts hold over ℚ, axiom-free — so L2_readout's `computed_core` is Th_coqc precisely
+   when its weights form a real measure (wᵢ ≥ 0); with a signed weight the hypothesis fails and the code
+   honestly drops the tag to `exact`. *)
+Definition weighted_energy (wxs : list (Q * Q)) : Q :=
+  fold_right (fun p acc => fst p * (snd p * snd p) + acc) 0 wxs.
+
+(* (4) Under nonnegative measure weights, the weighted quadrature readout is nonnegative. *)
+Theorem weighted_energy_nonneg :
+  forall wxs : list (Q * Q),
+    Forall (fun p => 0 <= fst p) wxs ->
+    0 <= weighted_energy wxs.
+Proof.
+  induction wxs as [| p ps IH]; simpl; intro H.
+  - apply Qle_refl.
+  - inversion H; subst.
+    apply Qadd_nonneg.
+    + apply Qmult_le_0_compat; [ assumption | apply Qsq_nonneg ].
+    + apply IH; assumption.
+Qed.
+
+(* (5) The weighted quadrature is exact-additive over ℚ (composes with no rounding), like the unweighted. *)
+Theorem weighted_energy_app :
+  forall a b : list (Q * Q),
+    weighted_energy (a ++ b) == weighted_energy a + weighted_energy b.
+Proof.
+  induction a as [| p ps IH]; intro b; simpl.
+  - rewrite Qplus_0_l. reflexivity.
+  - rewrite IH. ring.
+Qed.

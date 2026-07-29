@@ -42,7 +42,7 @@ silently absorbed into the axiom-free claim.
 
 ## Reproduce
 
-**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 187 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
+**One command:** `bash formal/verify.sh` — compiles every witness and confirms all 189 theorems are axiom-free (*Closed under the global context*); exits 0 iff all pass.
 
 ### Manual
 

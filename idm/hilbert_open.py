@@ -85,12 +85,23 @@ def L2_readout(values_on_mesh, weights):
     L² space is +ℝ-Open. Reuses the finite-sum discipline (the true integral is the readout, never formed)."""
     vals = [Q(str(v)) for v in values_on_mesh]; w = [Q(str(x)) for x in weights]
     approx = sum((wi * vi * vi for wi, vi in zip(w, vals)), Q(0))
+    # L²(X,μ): μ is a MEASURE, so genuine quadrature weights are ≥ 0 — exactly the hypothesis of the
+    # weighted_energy_nonneg witness. The core is Th_coqc precisely when THIS input meets that hypothesis;
+    # with a signed weight (not a measure) the value is still exact over ℚ but the nonneg witness does not
+    # apply, so we honestly drop to `exact` rather than cite a witness whose premise fails.
+    weights_are_measure = all(wi >= 0 for wi in w)
+    core = {"what": "finite quadrature Σ wᵢ|f(xᵢ)|² on the declared mesh (exact, over ℚ)",
+            "value": {"exact": str(approx), "float": float(approx)}, "nodes": len(vals)}
+    if weights_are_measure:
+        core["tier"] = "Th_coqc"; core["witness"] = _WITNESS   # weighted_energy_nonneg/_app (weights ≥ 0)
+    else:
+        core["tier"] = "exact"
+        core["note"] = ("weights include a negative value → not a measure (μ≥0), so the Th_coqc nonneg "
+                        "witness does not apply; the quadrature is still exact over ℚ")
     return _open("‖f‖²_{L²(X,μ)} = ∫|f|² dμ",
                  {"quadrature_Σ wᵢ|f(xᵢ)|²": {"exact": str(approx), "float": float(approx)}, "nodes": len(vals)},
                  len(vals), "the completed L² space / the exact integral is +ℝ-Open; only a finite mesh sum is shown",
-                 computed_core={"what": "finite quadrature Σ wᵢ|f(xᵢ)|² on the declared mesh (exact, over ℚ)",
-                                "value": {"exact": str(approx), "float": float(approx)}, "nodes": len(vals),
-                                "tier": "Th_coqc", "witness": _WITNESS},   # same Σℚ²: nonneg·exact-additive·monotone
+                 computed_core=core,
                  open_tail={"what": "the completed L²(X,μ) space / the exact integral ∫|f|² dμ",
                             "tier": "+ℝ-Open", "note": "the true integral is the readout of the mesh sum, never formed"})
 

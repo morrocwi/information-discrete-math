@@ -196,6 +196,8 @@ declare -a THMS=(
   "partial_energy_nonneg:IDM_HilbertReadout"
   "partial_energy_app:IDM_HilbertReadout"
   "partial_energy_monotone:IDM_HilbertReadout"
+  "weighted_energy_nonneg:IDM_HilbertReadout"
+  "weighted_energy_app:IDM_HilbertReadout"
 )
 
 fail=0
