@@ -26,6 +26,7 @@ def test_every_bridged_bare_name_resolves_to_a_repo_local_file():
     """Each name the bridge enables must import from one of the bridge's own active directories
     (tools/ · provefull/ · the vendored mirrors) — never from site-packages or anywhere else."""
     assert _ACTIVE_DIRS, "the bridge inserted no directories — layout detection is broken"
+    assert _BARE_MODULES, "no bare names to guard — the loop below would pass vacuously"
     for name in _BARE_MODULES:
         spec = importlib.util.find_spec(name)
         assert spec is not None, f"bridged bare module {name!r} does not resolve — bridge broken"
