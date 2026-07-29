@@ -28,9 +28,21 @@ from __future__ import annotations
 import difflib
 from typing import List
 
-from .solve import solve
+from .solve import solve, _REG
 from .results import Result
 from . import discovery
+from .parse import parse
+
+
+def _raw_kind_plan(kind, params, source):
+    """Plan for a kind OUTSIDE the gateway's ops (op=None) — still routable (never a capability
+    reduction), but HOLD if the kind isn't in the registry at all."""
+    if kind not in _REG:
+        return {"status": "HOLD", "error_code": "UNKNOWN_KIND", "source": source,
+                "reason": f"unknown kind {kind!r} (see idm.kinds())"}
+    return {"status": "ready", "route": {"op": None, "kind": kind},
+            "problem": {"kind": kind, **params}, "source": source,
+            "note": "kind is outside the gateway's ops; run via idm.solve({'kind': ...})."}
 
 # The high-level operation vocabulary: a friendly op name -> the registry kind it routes to, with a
 # one-line description. Deterministic dictionary routing — no model, no guessing. Kept small (the whole
@@ -68,12 +80,15 @@ def op_names() -> List[str]:
     return list(_OPS)
 
 
-def run(op: str, **params) -> Result:
+def run(op: str, dry_run: bool = False, **params) -> Result:
     """Route a high-level ``op`` (see :func:`ops`) with its ``params`` to the matching solver kind and
     return a :class:`idm.results.Result`. The result always carries ``route = {"op", "kind"}``. On an
     unknown op or a HOLD, the Result carries a structured ``error_code`` (``UNKNOWN_OP`` /
     ``MISSING_PARAM`` / ``SOLVER_HOLD``); an unknown op also gets a ``did_you_mean`` suggestion and the
-    full op list. Extra kwargs pass straight through to the problem dict (advanced options preserved)."""
+    full op list. Extra kwargs pass straight through to the problem dict (advanced options preserved).
+
+    ``dry_run=True`` returns the PLAN (:func:`plan`) — the route + the exact problem dict that WOULD be
+    solved, plus a heuristic field check — WITHOUT executing. Lets a model preview/validate its call."""
     if op not in _OPS:
         suggestion = difflib.get_close_matches(op, _OPS, n=1)
         return Result({
@@ -84,6 +99,8 @@ def run(op: str, **params) -> Result:
             "escalate": "for kinds outside the gateway's ~11 ops, call idm.solve({'kind': ...}) directly "
                         "— the full 269-kind registry is always reachable (idm.kinds()).",
         })
+    if dry_run:
+        return Result(plan(op, **params))            # plan → validate → (execute) — stop after validate
     kind = _OPS[op]["kind"]
     res = solve({"kind": kind, **params})            # forward verbatim — no math, no tier change here
     out = Result(res)
@@ -95,4 +112,65 @@ def run(op: str, **params) -> Result:
     return out
 
 
-__all__ = ["run", "ops", "op_names"]
+def plan(op: str, **params) -> dict:
+    """The PLAN for an op call, WITHOUT executing (the validate step of plan→validate→execute): the
+    route, the exact ``problem`` dict that would be solved, and a HEURISTIC field check. ``status`` is
+    ``"ready"`` (all known parameter fields supplied) or ``"needs_params"`` (some are missing). Because
+    the registry does not declare which fields are required vs optional, ``missing`` lists schema fields
+    not supplied and is advisory — a call can still succeed without an "optional" one, so ``run`` is the
+    ground truth. An unknown op returns ``status="HOLD"`` with ``error_code="UNKNOWN_OP"``."""
+    if op not in _OPS:
+        suggestion = difflib.get_close_matches(op, _OPS, n=1)
+        return {"status": "HOLD", "error_code": "UNKNOWN_OP", "op": op,
+                "did_you_mean": suggestion[0] if suggestion else None, "ops": op_names()}
+    kind = _OPS[op]["kind"]
+    s = discovery.schema(kind)
+    missing = [f for f in s["required"] if f not in params]        # only truly-required (p["x"]) fields
+    return {"status": "ready" if not missing else "needs_params",
+            "route": {"op": op, "kind": kind}, "problem": {"kind": kind, **params},
+            "required": s["required"], "optional": s["optional"], "missing": missing,
+            "note": "the required/missing split is heuristic (from handler source); run() is the ground truth.",
+            "dry_run": True}
+
+
+def route(request) -> dict:
+    """Deterministically map a free-form or structured ``request`` to a plan (the domain router +
+    expression classifier). Accepts:
+      * a **string** — translated by :func:`idm.parse` (rule-based world-language → problem dict), then
+        the resulting kind is mapped back to a gateway op when one exists;
+      * a **dict with ``"op"``** — planned directly;
+      * a **dict with ``"kind"``** — mapped to a gateway op when one exists (else routed as a raw kind).
+    Returns a plan dict (as :func:`plan`) augmented with ``source``; ``status="HOLD"`` when the request
+    can't be classified. This does no NL magic beyond ``idm.parse`` and reports honestly when unsure."""
+    if isinstance(request, str):
+        parsed = parse(request)
+        if not isinstance(parsed, dict) or parsed.get("status") == "HOLD" or "kind" not in parsed:
+            return {"status": "HOLD", "error_code": "UNCLASSIFIED", "source": request,
+                    "reason": "could not translate the request to a known problem (idm.parse HELD)",
+                    "ops": op_names()}
+        kind = parsed["kind"]
+        params = {k: v for k, v in parsed.items() if not k.startswith("_") and k != "kind"}
+        op = _KIND_TO_OP.get(kind)
+        if op:
+            out = plan(op, **params); out["source"] = request; return out
+        return _raw_kind_plan(kind, params, request)
+    if isinstance(request, dict):
+        if "op" in request:
+            p = {k: v for k, v in request.items() if k != "op"}
+            out = plan(request["op"], **p); out["source"] = request; return out
+        if "kind" in request:
+            kind = request["kind"]
+            params = {k: v for k, v in request.items() if k != "kind"}
+            op = _KIND_TO_OP.get(kind)
+            if op:
+                out = plan(op, **params); out["source"] = request; return out
+            return _raw_kind_plan(kind, params, request)
+    return {"status": "HOLD", "error_code": "UNCLASSIFIED", "source": request,
+            "reason": "request must be a string, a {'op': ...} dict, or a {'kind': ...} dict", "ops": op_names()}
+
+
+# reverse index kind -> op, for route() to map a parsed/structured kind back to a gateway op
+_KIND_TO_OP = {spec["kind"]: op for op, spec in _OPS.items()}
+
+
+__all__ = ["run", "ops", "op_names", "plan", "route"]

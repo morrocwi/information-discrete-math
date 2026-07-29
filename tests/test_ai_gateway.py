@@ -58,6 +58,54 @@ def test_gateway_never_hides_the_full_api():
     assert routed_kinds < set(idm.kinds()) and len(idm.kinds()) > 200
 
 
+def test_phase_b_dry_run_and_plan():
+    """Phase B: run(..., dry_run=True) and plan() return the route + problem WITHOUT executing, and the
+    required/missing validate is honest (uses only truly-required p[...] fields, not optionals)."""
+    # dry_run returns the plan, does not execute
+    p = idm.ai.run("factor", dry_run=True, n=360360)
+    assert p["dry_run"] and p["status"] == "ready"
+    assert p["route"] == {"op": "factor", "kind": "factorize"}
+    assert p["problem"] == {"kind": "factorize", "n": 360360} and "value" not in p
+
+    # an optional field absent (all_roots' `force`) is NOT flagged missing → status ready
+    pr = idm.ai.plan("roots", coeffs=[-2, 0, 0, 1])
+    assert pr["status"] == "ready" and pr["missing"] == [] and "force" in pr["optional"]
+
+    # a truly-required field absent → needs_params
+    pm = idm.ai.plan("solve_linear", A=[[1]])
+    assert pm["status"] == "needs_params" and pm["missing"] == ["b"]
+
+    # unknown op → HOLD/UNKNOWN_OP with a suggestion
+    pu = idm.ai.plan("factour")
+    assert pu["status"] == "HOLD" and pu["error_code"] == "UNKNOWN_OP" and pu["did_you_mean"] == "factor"
+
+
+def test_phase_b_route_free_form_and_structured():
+    """Phase B route(): free-form strings via idm.parse, and structured {op}/{kind} dicts, all map to a
+    plan; an unclassifiable request HOLDs honestly."""
+    # free-form string → parsed to a kind → mapped to the gateway op
+    r = idm.ai.route("factor 360360")
+    assert r["status"] == "ready" and r["route"] == {"op": "factor", "kind": "factorize"}
+    assert r["problem"]["n"] == 360360 and r["source"] == "factor 360360"
+
+    # structured {"op": ...} and {"kind": ...} dicts
+    assert idm.ai.route({"op": "roots", "coeffs": [-2, 0, 0, 1]})["status"] == "ready"
+    assert idm.ai.route({"kind": "factorize", "n": 12})["route"]["op"] == "factor"
+
+    # a REAL kind outside the gateway's ops still routes (op=None) — never a capability reduction
+    outside = idm.ai.route({"kind": "char_poly", "matrix": [[1, 2], [3, 4]]})
+    assert outside["status"] == "ready" and outside["route"] == {"op": None, "kind": "char_poly"}
+
+    # a bogus kind → HOLD/UNKNOWN_KIND (validated), not a silent "ready"
+    bogus = idm.ai.route({"kind": "definitely_not_a_kind", "x": 1})
+    assert bogus["status"] == "HOLD" and bogus["error_code"] == "UNKNOWN_KIND"
+
+    # unclassifiable / odd inputs → HOLD, never a crash
+    for junk in ("what is the meaning of life", None, 42, [], {}, {"foo": "bar"}):
+        r = idm.ai.route(junk)
+        assert r["status"] == "HOLD" and r.get("error_code") in ("UNCLASSIFIED", "UNKNOWN_KIND"), junk
+
+
 def _min_params(kind):
     import tests.test_properties as tp
     return tp.FIXTURES.get(kind, {})

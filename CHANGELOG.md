@@ -7,6 +7,20 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Track C (AI Gateway) Phase B — free-form router + plan/validate/dry-run
+Builds on Phase A (roadmap #52, Phase B), additive:
+- **`idm.ai.route(request)`** — the domain router / expression classifier. A free-form **string** is
+  translated by `idm.parse` (rule-based world-language → problem dict) and its kind mapped back to a
+  gateway op; a structured `{"op": …}` or `{"kind": …}` dict is normalized; a kind outside the ~11 ops
+  still routes (op=None) — never a capability reduction. Unclassifiable input → `status:"HOLD"`,
+  `error_code:"UNCLASSIFIED"` (honest, no NL guessing beyond `idm.parse`).
+- **`idm.ai.plan(op, **params)`** and **`idm.ai.run(op, dry_run=True, **params)`** — the plan→validate
+  step: return the route + the exact `problem` dict that WOULD be solved, without executing. The
+  validate is honest — `idm.schema` now splits **required** (`p["x"]` subscript reads) vs **optional**
+  (`p.get("x")`), so `plan` flags only genuinely-missing required fields (`status` ready/needs_params),
+  not absent optionals. `idm.schema(kind)` gains `required`/`optional` keys.
+Phase C (synthetic dataset + 0.5B benchmark) remains. Tests: `tests/test_ai_gateway.py` +2. No count change (269).
+
 ### `all_roots` — second (build-bound) fence gate closes the high-degree residual (#65)
 The layer-2 resultant-bits gate caught *isolation-bound* hangs (a high-bit resultant) but missed
 *build-bound* ones — a high-DEGREE resultant is slow to build/interpolate even at moderate bits
