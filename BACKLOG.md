@@ -80,8 +80,9 @@ closure — they need the completed continuum, which the philosophy treats as a 
 - [x] **Topology / manifolds / differential geometry** — DONE (v1.11): Part XXI decisive stance +
       paradox dissolution (Banach–Tarski, discrete Gauss–Bonnet), computed 16/16.
 - [x] **PDE** — DONE (v1.11): Part XXI, Navier–Stokes/blow-up dissolved, finite-ε heat/wave well-posed.
-- [ ] **Named open problems** chapter: Hauptvermutung, strong LLN, topos completeness, exact `π`/`φ`
-      objects (all listed in §10.13) — each stated, predicted, fenced.
+- [x] **Named open problems** chapter — DONE (§10.14 "The named-Open-problems frontier, in depth"):
+      Hauptvermutung, strong LLN, topos completeness, exact `π`/`φ` objects — each stated, our
+      readout-first stance predicted, and honestly fenced (declared `+ℝ-Open`, no closure claimed).
 
 ## Tier 4 — discipline hardening (extracted-but-not-yet-ported from cpg_math MathSolver)
 
