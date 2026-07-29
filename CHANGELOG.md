@@ -7,6 +7,22 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Track C (AI Gateway) Phase A — `idm.ai`: a small deterministic entrance over the full solver
+An **entrance**, never a capability reduction (roadmap #52, Phase A): a small model (or a human) can
+drive the solver through ~11 high-level ops instead of memorizing 269 kind names.
+- **`idm.ai.run(op, **params)`** deterministically routes an op to its registry kind and returns a
+  `Result` — `run("factor", n=360360)`, `run("roots", coeffs=[…])`, `run("solve_linear", A=…, b=…)`, etc.
+  Ops: `factor · gcd · integrate · integrate_exact · roots · solve_linear · eigenvalues · determinant ·
+  ode · limit · shortest_path`.
+- **`idm.ai.ops()`** is the central schema — each op with its target kind, parameter fields (from
+  `idm.schema`), and honest tier — the small decision space a model reasons over.
+- Design principles honored: the **route** is always exposed (`result["route"] = {op, kind}`); **tiers
+  are forwarded verbatim** (the gateway does no math, no silent exact→numeric downgrade); failures are
+  **structured** (`error_code` ∈ `UNKNOWN_OP` (+`did_you_mean`) / `MISSING_PARAM` / `SOLVER_HOLD`);
+  extra kwargs pass straight through; and the full 269-kind `idm.solve` registry is the documented
+  **escalation path**. Phases B (free-form router) and C (0.5B benchmark) are declared later increments
+  needing founder scope. Tests: `tests/test_ai_gateway.py` (5). No new kind, no count change (269).
+
 ### Track B (developer experience) — `Result` object + typed convenience wrappers
 Two of the five DX gaps (roadmap #51, gaps 3 & 4), pure additions, no behaviour change:
 - **`Result`** (`idm/results.py`) — `idm.solve()` now returns a `Result` instead of a bare dict.

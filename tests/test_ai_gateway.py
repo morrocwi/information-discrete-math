@@ -1,0 +1,63 @@
+"""Track C Phase A — the AI Gateway (idm.ai): a small deterministic entrance over the full solver.
+
+Locks that the gateway is an ENTRANCE, never a capability reduction: it routes ~11 high-level ops to
+the real kinds, exposes the route, forwards tiers verbatim (no silent downgrade), returns structured
+error codes, and always points at the full registry as the escalation path.
+"""
+import idm
+from idm.results import Result
+
+
+def test_ops_vocabulary_is_small_and_well_formed():
+    ops = idm.ai.ops()
+    assert 8 <= len(ops) <= 12                                  # the point: a small decision space
+    for o in ops:
+        assert o["kind"] in idm.kinds()                        # every op routes to a REAL kind
+        assert set(o) == {"op", "kind", "about", "fields", "tier"}
+        assert o["tier"] == idm.describe(o["kind"])["tier"]    # tier is the honest, effective tier
+    assert idm.ai.op_names() == [o["op"] for o in ops]
+
+
+def test_run_routes_and_exposes_the_route():
+    r = idm.ai.run("factor", n=360360)
+    assert isinstance(r, Result) and r.is_ok
+    assert r.value == idm.solve({"kind": "factorize", "n": 360360})["value"]   # same as direct solve
+    assert r["route"] == {"op": "factor", "kind": "factorize"}                 # route always exposed
+    # a few more ops resolve correctly through the gateway
+    assert idm.ai.run("gcd", a=48, b=36).value == 12
+    assert idm.ai.run("solve_linear", A=[[2, 1], [1, 3]], b=[3, 5]).value["solution_type"] == "unique"
+    assert idm.ai.run("roots", coeffs=[-2, 0, 0, 1]).is_ok
+    assert "C1*e^x" in idm.ai.run("ode", coeffs=[2, -3, 1]).value["general"]
+
+
+def test_tier_is_forwarded_verbatim_not_downgraded():
+    # the gateway does no math; the tier it returns is exactly what idm.solve returns for that kind
+    for op, kind in (("factor", "factorize"), ("shortest_path", "shortest_path"), ("ode", "linear_ode")):
+        assert idm.ai.run.__module__  # sanity
+        direct = idm.solve({"kind": kind, **_min_params(kind)})
+        routed = idm.ai.run(op, **_min_params(kind))
+        assert routed.tier == direct.tier
+
+
+def test_structured_error_codes():
+    # unknown op → UNKNOWN_OP + a did_you_mean suggestion + the full op list + an escalation hint
+    u = idm.ai.run("factour", n=12)
+    assert u.is_hold and u["error_code"] == "UNKNOWN_OP" and u["did_you_mean"] == "factor"
+    assert u["ops"] == idm.ai.op_names() and "idm.solve" in u["escalate"]
+    # missing required field → MISSING_PARAM
+    m = idm.ai.run("factor")
+    assert m.is_hold and m["error_code"] == "MISSING_PARAM"
+    # a genuine solver HOLD is forwarded with the route + SOLVER_HOLD
+    h = idm.ai.run("roots", coeffs=[9999, -4242, 1313, -77, 1])
+    assert h.is_hold and h["error_code"] == "SOLVER_HOLD" and h["route"]["kind"] == "all_roots"
+
+
+def test_gateway_never_hides_the_full_api():
+    # the ~11 ops are a strict subset; the full registry is much larger and reachable via idm.solve
+    routed_kinds = {o["kind"] for o in idm.ai.ops()}
+    assert routed_kinds < set(idm.kinds()) and len(idm.kinds()) > 200
+
+
+def _min_params(kind):
+    import tests.test_properties as tp
+    return tp.FIXTURES.get(kind, {})
