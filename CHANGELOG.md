@@ -13,8 +13,10 @@ continuum?* Yes — the operational form of "the continuum is a readout of the d
 machine-checked FTCC bridge). A `Continuum` is a resolution-indexed **exact-ℚ** readout `g : N → ℚ`,
 never an ℝ object:
 - `.at(N)` — the exact ℚ readout at declared resolution N (the primitive operation).
-- `.readout(ε)` — the A8-stable plateau: `CERTIFIED` ℚ value + exact gap bound, or `HOLD` where no
-  plateau exists (divergence / oscillation / no limit) — it refuses to emit a completed limit.
+- `.readout(ε)` — tier-honest: `CERTIFIED` **only** on a PROVEN tail bound (`geometric`'s exact
+  rᴺ⁺¹/(1−r), or a bound propagated through `+`/`−` by the triangle law); a bare observed plateau is
+  `finite_diagnostic` (measured, not proven beyond N — a flat-then-diverge sequence lands here, never
+  falsely CERTIFIED); `HOLD` where no plateau exists. It never emits a completed limit.
 - a **ℚ-algebra** closed and exact pointwise (`+ − ×`, scalar, `compose`): `(a+b).at(N) == a.at(N)+b.at(N)`,
   so continuum-readouts are a commutative ℚ-algebra you compute with directly, ℝ never a primitive.
 - **Formal core → 194** (from 189): **`IDM_Continuum.v`** machine-checks the algebra's soundness
