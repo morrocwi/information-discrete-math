@@ -98,20 +98,26 @@ class ComplexRootsHOLD(Exception):
 #
 # The fence has TWO layers, both deterministic (no wall-clock, so golden/tests stay reproducible):
 #   LAYER 1 — a free *static* pre-check on the input (degree, coefficient bit-length), before any work.
-#   LAYER 2 — a check on the BUILT resultant's coefficient bit-size, measured after the (cheap ~0.03s)
-#     resultant construction but before the expensive Sturm isolation. The dominant cost is isolating
-#     the degree-n² resultant, and that cost tracks the resultant's *actual* coefficient bit-size far
-#     better than the input's — e.g. the quartic [9999,-4242,1313,-77,1] has small input coefficients
-#     (layer 1 lets it through) but its degree-16 resultant carries 73-bit coefficients and isolating it
-#     runs for minutes; layer 2 sees those 73 bits and HOLDs. Fast cases stay well under the cap (every
-#     fixture ≤ 39 resultant-bits; x⁷−2 at 45 → ~15s is the slowest allowed).
-# Together they keep every capability that returns in ≲15s and HOLD (never hang) on the rest; widen the
-# caps via ``all_roots(..., fence=<dict>)`` or disable with ``fence=None``.
+#   LAYER 2 — a HEURISTIC check on the BUILT resultant's coefficient bit-size, measured after the (cheap
+#     ~0.03s) resultant construction but before the expensive Sturm isolation. The dominant cost is
+#     isolating the degree-n² resultant; its coefficient bit-size is a *rough* proxy for that cost — good
+#     enough to catch the egregious cases (the quartic [9999,-4242,1313,-77,1] has small input
+#     coefficients but a 73-bit degree-16 resultant that isolates in minutes → HOLD) without over-blocking
+#     the fast ones (fixtures ≤ 39 resultant-bits; a ~58-bit quartic still resolves in ~8s, so the cap
+#     sits at 64 with margin).
+#   NOT a tight bound (disclosed): Sturm-isolation runtime is genuinely *not* a monotone function of
+#     resultant bit-size — a degree-6 resultant at 57 bits isolates in ~2s while a degree-49 one at 55
+#     bits can take over a minute. So the cap both lets some slow large-degree/low-bit inputs through
+#     (e.g. x⁷−20) and would HOLD a rare fast input above it (recover with ``force``). A *tight*
+#     deterministic bound needs a computed work budget counting the actual Sturm sign-evaluations — an
+#     open increment (#65), out of scope here. This layer only removes the worst multi-minute hangs.
+# Together the layers keep every fixture + the ≲15s capability and remove the worst hangs; widen the caps
+# via ``all_roots(..., fence=<dict>)`` or disable with ``fence=None``.
 _ROOTS_FENCE = {
     "max_factor_degree": 7,   # resultant degree n² ≤ 49; degree-8+ factors run for minutes
     "max_mix": 350,           # cap on n²·input-bits: cheap first filter (deg-5 ~20-bit → 500 HOLDs)
-    "max_resultant_bits": 56, # cap on the BUILT resultant's coefficient bit-size — the real cost driver
-                              # (fixtures ≤ 39, x⁷−2 ≈ 45; the [9999,…] quartic ≈ 73 → HOLD)
+    "max_resultant_bits": 64, # HEURISTIC cap on the BUILT resultant's coefficient bit-size (rough proxy,
+                              # not a tight bound): fixtures ≤ 39, ~58-bit quartic ≈ 8s allowed, [9999,…] ≈ 73 → HOLD
 }
 
 
@@ -139,10 +145,12 @@ def _fence_factor(n: int, qcoeffs, fence) -> None:
 
 
 def _fence_resultant(Rx, Ry, fence) -> None:
-    """Layer-2 fence: HOLD when the BUILT resultants' coefficient bit-size predicts a minutes-long Sturm
-    isolation, even though the input coefficients were small (e.g. a quartic whose degree-16 resultant
-    carries 73-bit coefficients). Measured after the cheap build, before the expensive isolation.
-    Deterministic (a function of the resultants only); ``fence=None`` disables it."""
+    """Layer-2 fence (HEURISTIC, not a tight bound): HOLD when the BUILT resultants' coefficient bit-size
+    is large enough that Sturm isolation is *likely* slow, even though the input coefficients were small
+    (e.g. a quartic whose degree-16 resultant carries 73-bit coefficients). Measured after the cheap
+    build, before the expensive isolation. Deterministic (a function of the resultants only); resultant
+    bit-size is only a rough proxy for isolation time, so this removes the worst hangs but is not exact —
+    ``fence=None`` disables it."""
     if not fence or "max_resultant_bits" not in fence:
         return
     rb = max(_coeff_bits(Rx.coeffs), _coeff_bits(Ry.coeffs))
@@ -150,8 +158,8 @@ def _fence_resultant(Rx, Ry, fence) -> None:
         raise ComplexRootsHOLD(
             f"the built resultant carries {rb}-bit coefficients, over the performance fence "
             f"(max_resultant_bits={fence['max_resultant_bits']}): Sturm-isolating a degree-{Rx.degree()} "
-            f"resultant with coefficients this large runs for minutes. Pass all_roots(..., fence=None) to "
-            f"force, or widen 'max_resultant_bits'.")
+            f"resultant this large is likely slow (a heuristic size proxy, not a precise runtime bound). "
+            f"Pass all_roots(..., fence=None) to force, or widen 'max_resultant_bits'.")
 
 
 def _bivar_PQ(coeffs):

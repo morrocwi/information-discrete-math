@@ -7,17 +7,22 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
-### `all_roots` — layer-2 resultant-bits fence (bounds the inputs the static pre-check couldn't)
-Closes the honest limit disclosed with the layer-1 fence: a quartic with small *input* coefficients but
-an expensive degree-16 resultant (e.g. `[9999,-4242,1313,-77,1]`, well-separated large-magnitude roots)
-passed the input pre-check yet ran for **>90s**. Profiling pinned the cost to Sturm-**isolating** the
-built resultant (the resultant itself builds in ~0.03s), and that cost tracks the resultant's *actual*
-coefficient bit-size far better than the input's. A second deterministic layer now measures the built
-resultant's coefficient bit-size — after the cheap build, before the expensive isolation — and HOLDs
-when it exceeds `max_resultant_bits=56` (every fixture ≤ 39, `x⁷−2` ≈ 45 → still resolves in ~15s; the
-`[9999,…]` quartic ≈ 73 → **HOLD in 0.06s**). Still deterministic (a function of the resultants only —
-no wall-clock), entirely within `complex_roots.py` (no change to shared `univariate.py`), golden
-unchanged, `"force": true` / `fence=None` still bypass. No new kind, no count change (269).
+### `all_roots` — layer-2 resultant-bits fence (removes the worst multi-minute hangs; heuristic, not a tight bound)
+A quartic with small *input* coefficients but an expensive degree-16 resultant (e.g.
+`[9999,-4242,1313,-77,1]`, well-separated large-magnitude roots) passed the layer-1 input pre-check yet
+ran for **>90s**. Profiling pinned the cost to Sturm-**isolating** the built resultant (which itself
+builds in ~0.03s). A second deterministic layer now measures the built resultant's coefficient bit-size
+— after the cheap build, before the expensive isolation — and HOLDs above `max_resultant_bits=64`, so
+`[9999,…]` (73-bit resultant) HOLDs in ~0.06s while every fixture (≤ 39) and fast mid-range inputs (a
+~58-bit quartic resolves in ~8s) still resolve. **Honest scope (not overclaimed):** isolation runtime is
+genuinely *not* a monotone function of resultant bit-size (a degree-6 resultant at 57 bits isolates in
+~2s while a degree-49 one at 55 bits can take over a minute), so this cap is a **heuristic size proxy**
+that removes the worst hangs but is neither an upper nor a lower runtime bound — it can still let a slow
+large-degree/low-bit input through (recover nothing needed) or, rarely, HOLD a fast input above the cap
+(recover with `force`). A *tight* deterministic bound needs a computed work budget counting the actual
+Sturm sign-evaluations — still open (#65). Deterministic (function of the resultants only, no
+wall-clock), entirely within `complex_roots.py` (no `univariate.py` change), golden unchanged,
+`"force": true` / `fence=None` bypass. No new kind, no count change (269).
 
 ### Documented a third machine-checked arrival at the same indistinguishability kernel
 `docs/FORMAL_COMPANIONS.md` now records that `readout_genesis`'s `InfoTrueRecordUnreadable`
