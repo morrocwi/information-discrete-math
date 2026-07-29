@@ -7,6 +7,18 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### `all_roots` — layer-2 resultant-bits fence (bounds the inputs the static pre-check couldn't)
+Closes the honest limit disclosed with the layer-1 fence: a quartic with small *input* coefficients but
+an expensive degree-16 resultant (e.g. `[9999,-4242,1313,-77,1]`, well-separated large-magnitude roots)
+passed the input pre-check yet ran for **>90s**. Profiling pinned the cost to Sturm-**isolating** the
+built resultant (the resultant itself builds in ~0.03s), and that cost tracks the resultant's *actual*
+coefficient bit-size far better than the input's. A second deterministic layer now measures the built
+resultant's coefficient bit-size — after the cheap build, before the expensive isolation — and HOLDs
+when it exceeds `max_resultant_bits=56` (every fixture ≤ 39, `x⁷−2` ≈ 45 → still resolves in ~15s; the
+`[9999,…]` quartic ≈ 73 → **HOLD in 0.06s**). Still deterministic (a function of the resultants only —
+no wall-clock), entirely within `complex_roots.py` (no change to shared `univariate.py`), golden
+unchanged, `"force": true` / `fence=None` still bypass. No new kind, no count change (269).
+
 ### Documented a third machine-checked arrival at the same indistinguishability kernel
 `docs/FORMAL_COMPANIONS.md` now records that `readout_genesis`'s `InfoTrueRecordUnreadable`
 (`Th_coqc`, axiom-free — verified locally: 3 lemmas, all *Closed under the global context*;
