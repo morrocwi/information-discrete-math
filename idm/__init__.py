@@ -30,6 +30,8 @@ parse_and_solve = _parse.parse_and_solve  # translate, then solve
 from .results import Result, SolveHold
 from .convenience import (factorize, gcd, solve_integral, integrate_rational, solve_matrix,
                           eigenvalues, solve_roots, solve_ode)
+# schema/kind discovery in Python (same introspection as `python -m idm`, returning structured data)
+from .discovery import describe, schema, example
 
 # finite elementary + calculus
 exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,
@@ -63,4 +65,5 @@ __all__ = ["__version__", "solve", "serve", "functions", "certified", "algebra",
            "kinds", "parse", "parse_and_solve",
            "Result", "SolveHold",
            "factorize", "gcd", "solve_integral", "integrate_rational", "solve_matrix",
-           "eigenvalues", "solve_roots", "solve_ode"]
+           "eigenvalues", "solve_roots", "solve_ode",
+           "describe", "schema", "example"]

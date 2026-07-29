@@ -42,6 +42,8 @@ branch you need, then read its own tier before trusting the number.
 > 11 domains / 266 kinds, the EXACT / CONDITIONAL / HOLD verdict discipline, and the honest boundary of
 > the exact symbolic (CAS) layer (audited: [`docs/CAS_CLOSURE_CHECKLIST.md`](docs/CAS_CLOSURE_CHECKLIST.md),
 > 40 closed / 67 partial / 150 open), all traceable through the knowledge graph. What's coming next: [`docs/roadmap/`](docs/roadmap/).
+>
+> **New here? Start with [`docs/QUICKSTART.md`](docs/QUICKSTART.md)** — `idm` in 10 minutes, copy-runnable.
 
 ## 5-level platform
 

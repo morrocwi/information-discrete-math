@@ -15,37 +15,16 @@ from __future__ import annotations
 
 import argparse
 import inspect
-import re
 import sys
-from pathlib import Path
 
 import idm
 from idm.solve import _REG, _COQ_BACKED
-
-
-def _effective_tier(name: str) -> str:
-    """The HONEST tier the solver would actually return for this kind — mirrors idm.solve()'s
-    tier-honesty pass: a registry `Th_coqc` tag is kept only for kinds with a named machine-checked
-    theorem (`_COQ_BACKED`); every other `Th_coqc`-tagged handler downgrades to `exact`. So the CLI
-    reports what `idm.solve` really emits, not the raw decorator tag."""
-    tier = _REG[name][1] if name in _REG else "?"
-    if tier == "Th_coqc" and name not in _COQ_BACKED:
-        return "exact"
-    return tier
+# single source of truth for the introspection helpers — shared with the Python API (idm.describe/…)
+from idm.discovery import _effective_tier, _repo_root, _find_example  # noqa: F401
 
 # The four tiers actually assigned in idm/solve.py's registry (grep-verified, not assumed):
 # Th_coqc / exact / +ℝ-Open explicit; finite_diagnostic is the @kind() default.
 _KNOWN_TIERS = ("Th_coqc", "finite_diagnostic", "exact", "+ℝ-Open")
-
-
-def _repo_root() -> Path:
-    """Best-effort source root: the parent of the installed/checked-out `idm` package.
-
-    Works for a source checkout (repo root has tests/). For a pip-installed wheel there is no
-    tests/ directory shipped, so `example` will honestly report no example on file rather than
-    fabricate one.
-    """
-    return Path(__file__).resolve().parent.parent
 
 
 def _cmd_list(args: argparse.Namespace) -> int:
@@ -90,28 +69,6 @@ def _cmd_describe(args: argparse.Namespace) -> int:
         print("doc: (none on file for this handler)")
     print(f"verify: pytest tests/ -k {name}")
     return 0
-
-
-def _find_example(name: str) -> str | None:
-    root = _repo_root()
-    tests_dir = root / "tests"
-    examples_dir = root / "examples"
-    pattern = re.compile(
-        r'\{[^{}]*"kind"\s*:\s*"' + re.escape(name) + r'"[^{}]*\}', re.DOTALL
-    )
-    for d in (tests_dir, examples_dir):
-        if not d.is_dir():
-            continue
-        for path in sorted(d.rglob("*.py")):
-            try:
-                text = path.read_text(encoding="utf-8")
-            except OSError:
-                continue
-            m = pattern.search(text)
-            if m:
-                snippet = re.sub(r"\s+", " ", m.group(0)).strip()
-                return f"{snippet}    # from {path.relative_to(root)}"
-    return None
 
 
 def _cmd_example(args: argparse.Namespace) -> int:

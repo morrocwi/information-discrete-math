@@ -25,8 +25,19 @@ Two of the five DX gaps (roadmap #51, gaps 3 & 4), pure additions, no behaviour 
   `idm.solve_roots(coeffs)`, `idm.solve_ode(coeffs)`. Each returns a `Result`; each dispatches through
   the same `solve` CI uses — no new math, no new kind.
 
-Remaining Track B gaps: schema discovery `idm.describe/schema/example` (gap 2) and a Quick Start page
-(gap 5) — a later increment; PyPI publish (gap 1) is a founder call. No count change (269).
+PyPI publish (gap 1) is a founder call. No count change (269).
+
+### Track B (developer experience) — schema discovery + Quick Start
+The other two pure-DX gaps (roadmap #51, gaps 2 & 5):
+- **`idm.describe(kind)` / `idm.schema(kind)` / `idm.example(kind)`** (`idm/discovery.py`) — the same
+  introspection the `python -m idm` CLI does, now returning STRUCTURED data in Python: `describe` gives
+  tier + handler signature + doc + a verify hint; `schema` gives the (heuristically-derived, honestly
+  labelled) parameter names the handler reads plus a real on-file example; `example` returns a real
+  `{"kind": …}` problem dict found in `tests/`. Unknown kind → `KeyError`. The CLI now imports these
+  helpers, so CLI and Python API are one source of truth (no duplicated logic).
+- **Quick Start** — [`docs/QUICKSTART.md`](docs/QUICKSTART.md): `idm` in 10 minutes, copy-runnable, every
+  shown output produced by running it; linked from the README. This closes Track B's internal DX gaps
+  (2, 3, 4, 5); only gap 1 (PyPI publish) remains, a founder call. No count change (269).
 
 ### `all_roots` — layer-2 resultant-bits fence (removes the worst multi-minute hangs; heuristic, not a tight bound)
 A quartic with small *input* coefficients but an expensive degree-16 resultant (e.g.
