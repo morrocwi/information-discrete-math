@@ -115,6 +115,29 @@
    "float": 0.13529241638500808
   }
  },
+ "algebraic_arith": {
+  "kind": "algebraic_arith",
+  "method": "exact algebraic add (min-poly via \u211a(\u03b1,\u03b2) dependency)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "approx": 3.1462643699419726,
+   "is_rational": false,
+   "isolating_interval": [
+    "11/4",
+    "7/2"
+   ],
+   "min_poly": [
+    "1",
+    "0",
+    "-10",
+    "0",
+    "1"
+   ],
+   "rational_value": null,
+   "verified": true
+  }
+ },
  "arc_length": {
   "kind": "arc_length",
   "method": "\u222b\u221a(1+f'\u00b2) finite quadrature",
@@ -3556,6 +3579,27 @@
     "exact": "677/30",
     "float": 22.566666666666666
    }
+  }
+ },
+ "real_root": {
+  "kind": "real_root",
+  "method": "exact real algebraic root (Sturm isolation over \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "approx": 1.4142135623730951,
+   "is_rational": false,
+   "isolating_interval": [
+    "0",
+    "3"
+   ],
+   "min_poly": [
+    "-2",
+    "0",
+    "1"
+   ],
+   "rational_value": null,
+   "verified": true
   }
  },
  "regression": {
