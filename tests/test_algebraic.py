@@ -276,3 +276,23 @@ def test_all_roots_real_and_complex_complete():
         assert all(x["verified"] for x in v["roots"])             # each Re/Im part substitutes back exactly
     # a repeated-root polynomial fails closed (HOLD) — multiplicity is a declared later increment
     assert idm.solve({"kind": "all_roots", "coeffs": [-1, 3, -3, 1]})["status"] == "HOLD"   # (x-1)^3
+
+
+def test_wp8_rational_integration_differentiates_back():
+    """WP8: exact rational-function integration — verify d/dx of the result equals the integrand."""
+    import idm, mpmath as mp, re
+    mp.mp.dps = 30
+    def diff_back_ok(num, den, x0):
+        r = idm.solve({"kind": "integrate_rational", "num": num, "den": den})["value"]["integral"]
+        expr = re.sub(r"ln\|([^|]*)\|", r"mp.log(\1)", r)
+        expr = expr.replace("^", "**").replace("arctan", "mp.atan").replace("sqrt", "mp.sqrt").replace("+ C", "").replace("C", "0")
+        f = lambda xv: eval(expr, {"mp": mp, "x": mp.mpf(xv)})
+        h = mp.mpf("1e-18"); d = (f(x0 + h) - f(x0 - h)) / (2 * h)
+        x = mp.mpf(x0); n = sum(mp.mpf(c) * x ** i for i, c in enumerate(num)); dn = sum(mp.mpf(c) * x ** i for i, c in enumerate(den))
+        return abs(d - n / dn) < mp.mpf("1e-6")
+    for num, den in [([1], [1, 0, 1]), ([1], [-1, 0, 1]), ([1], [2, -3, 1]), ([0, 1], [1, 0, 1]),
+                     ([1], [1, 1, 1]), ([0, 0, 1], [1, 0, 1]), ([2, 3], [5, 2, 1]), ([1], [1, -2, 1]),
+                     ([0, 0, 0, 1], [1, 0, 1])]:
+        assert diff_back_ok(num, den, mp.mpf("0.7")), (num, den)
+    # a degree-3 irreducible denominator HOLDs (declared later increment)
+    assert idm.solve({"kind": "integrate_rational", "num": [1], "den": [-2, 0, 0, 1]})["status"] == "HOLD"

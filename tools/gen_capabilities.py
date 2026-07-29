@@ -158,7 +158,7 @@ DOMAIN_MEMBERS: dict[str, set[str]] = {
         "gradient", "gradient_descent", "newton_min", "newton_system",
         "minimize", "root_find", "fixed_point", "lagrange_min",
         "faulhaber", "geometric_series", "geometric", "interpolate",
-        "argument_principle", "exp",
+        "argument_principle", "integrate_rational", "exp",
         # special functions
         "Ci", "E1", "Ei", "Si", "airy_Ai", "bessel_I", "bessel_J", "beta",
         "chebyshev_T", "chebyshev_U", "digamma", "dirichlet_beta",
