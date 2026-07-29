@@ -67,11 +67,25 @@ C (synthetic tool-use dataset + benchmark vs a real 0.5B). Reduces the model's d
   `idm.ai.route` as the oracle (100%/100%). To benchmark a real 0.5B, pass a router that calls the
   model — no weights are shipped or needed for the self-test.
 
-## Next version (v1.5, proposed)
+## v1.5.0 (released 2026-07-30)
 
-A **developer-experience** release that also lands the first CAS-depth increments already shipped:
-- Track B gaps 2/3/4/5 (pure DX, no behavior change) + Track A WP6 (complete univariate solving).
-- Gap 1 (PyPI publish) and the AI-Gateway Phase A are founder calls on scope/priority.
+A **developer-experience & exact-CAS** release — all additive, tier-honest, 269 kinds:
+- **Track A (CAS depth):** complete complex root-finding with multiplicity (`all_roots`), the exact
+  rational-function integrator (repeated quadratics via the reduction formula), and a two-layer
+  deterministic performance fence (HOLD, never hang, on large-coefficient/high-degree inputs).
+- **Track B (DX):** the `Result` object, typed convenience wrappers, schema discovery
+  (`idm.describe/schema/example`), and the Quick Start page. Gap 1 (PyPI) is *packaged and verified* —
+  only the `twine upload` (a founder token) remains ([`../PUBLISHING.md`](../PUBLISHING.md)).
+- **Track C (AI Gateway):** `idm.ai` — Phase A entrance (`run`/`ops`), Phase B free-form router
+  (`route`/`plan`/`dry_run`), Phase C benchmark harness (`idm.ai_bench`).
+- **Formal:** the published companion `zero-readout-certifies` wired into the ecosystem
+  ([`../FORMAL_COMPANIONS.md`](../FORMAL_COMPANIONS.md)).
+
+## Next (open, founder-directed)
+- **PyPI upload** — needs a founder token (packaging done).
+- **Track A frontier** — degree-≥3 irreducible integration (Risch), exact complex arithmetic
+  (separation bounds), a *tight* `all_roots` runtime bound (the current fence is a disclosed heuristic).
+- **AI Gateway** — benchmark against a real 0.5B model (harness is ready).
 
 **Not in scope / not CAS blockers:** P1 general-group cardinality, P7/P8 approximate-counting bounds,
 Sylvester/Haynsworth analytic extensions, adaptive numerical grids (theory-open or numeric-engineering).
