@@ -80,6 +80,7 @@ FIXTURES = {
     "poly_roots": {"coeffs": [-6, 11, -6, 1]}, "rational_roots": {"coeffs": [-6, 11, -6, 1]},
     "real_root": {"coeffs": [-2, 0, 1], "index": 1},
     "all_real_roots": {"coeffs": [0, -2, 0, 1]},
+    "all_roots": {"coeffs": [1, 0, 1]},
     "exact_eigenvalues": {"matrix": [[2, 1], [1, 2]]},
     "algebraic_arith": {"a": {"coeffs": [-2, 0, 1], "index": 1},
                         "b": {"coeffs": [-3, 0, 1], "index": 1}, "op": "add"},

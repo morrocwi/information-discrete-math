@@ -6,7 +6,7 @@
 [Information Discrete Mathematics](../README.md) by Yaoharee Lahtee._
 
 > **This is ONE product of a larger platform — do not infer the project's scope from this folder.**
-> The parent project is a **267-kind unified solver** (`idm.solve`) + exact CAS + certified readouts +
+> The parent project is a **268-kind unified solver** (`idm.solve`) + exact CAS + certified readouts +
 > 184 machine-checked Coq theorems. Retained Spectral is its eigenvalue/eigenvector/inertia surface.
 > Start at [`../AI_START_HERE.md`](../AI_START_HERE.md) · machine-readable [`../capabilities.json`](../capabilities.json) · API map [`../API_INDEX.md`](../API_INDEX.md).
 

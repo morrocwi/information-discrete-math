@@ -2,7 +2,7 @@
 
 **What this folder does.** `idm/` is the installable package (`import idm`). It is a thin, tested
 facade over the repository's verified modules: one unified dispatcher (`solve.py`, the `@kind(name,
-tier)` registry with 267 registered kinds), a natural-language front end (`parse.py`), a certified-
+tier)` registry with 268 registered kinds), a natural-language front end (`parse.py`), a certified-
 readout re-export (`certified.py`), the finite elementary/calculus surface (`functions.py`), and
 domain modules — `algebra`, `analysis`, `combopt`, `crypto`, `diffeq`, `discrete`, `exact`, `geometry`,
 `hilbert` / `hilbert_open`, `integrate`, `interval`, `optimize`, `positivity`, `readouts`, `rcp`,
@@ -42,7 +42,7 @@ verdict. `idm.certified` is itself a re-export of `tools/certified_readout.py` �
 the full suite (`pytest -q`) also exercises `idm.kernel.poly` via `tests/test_kernel_*.py` and runs
 the differential + adversarial harness (`tests/harness.py`) against every registered kind.
 
-**Limits.** The registry currently reports 267 registered kinds, but only a named subset carries a
+**Limits.** The registry currently reports 268 registered kinds, but only a named subset carries a
 `Th_coqc` (`coq_theorem`) tag pointing into `formal/` — most exact handlers are `exact` (finite ℤ/ℚ
 computation, no per-implementation Coq proof) or `finite_diagnostic` (declared-tolerance agreement).
 Read the returned `status`/tier on every call rather than assuming machine-checked correctness; a

@@ -8,7 +8,7 @@
 
 ## Where we are
 
-- **267 solver kinds** across 11 domains · **194 machine-checked axiom-free Coq theorems** · every answer
+- **268 solver kinds** across 11 domains · **194 machine-checked axiom-free Coq theorems** · every answer
   is **EXACT / CONDITIONAL / HOLD** (never a fabricated number).
 - The kind count is now **single-sourced**: gates read `len(idm.kinds())`, and a doc-scan gate
   (`tests/test_repo_consistency_gates.py::test_kind_count_is_single_sourced_across_docs`) fails CI if any

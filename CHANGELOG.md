@@ -7,6 +7,23 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Complex-root isolation — `all_roots`: every root, real AND complex, as exact enclosures (→268)
+Completes the "degree-n polynomial → all n roots" story (the complex half of WP3/WP6/WP11/WP13). New kind
+**`all_roots`** (`exact`): every root is an **exact rational-rectangle enclosure** `[re]×[im]` isolating one
+root, with the real and imaginary parts each an exact real algebraic number (`AlgReal`) — **no
+Durand–Kerner**. Method (all over ℚ): split `p(x+iy) = P + iQ`; the real/imaginary parts are the real roots
+of `Res_y(P,Q)` / `Res_x(P,Q)` (recovered exactly by evaluation + Lagrange interpolation of the univariate
+resultant), isolated as `AlgReal`; a candidate pair `(a,b)` is a root iff `P(a,b)=Q(a,b)=0`, decided by
+exact rational **interval arithmetic** (sidesteps the algebraic-product blow-up). The resultants' real
+roots are isolated by **Sturm on their square-free part** (no factoring — the resultants have degree n²),
+so it handles **distinct-root (square-free) ℚ-polynomials at any degree**; the result is certified complete
+(isolated count == degree, complex in conjugate pairs) or HOLDs. A repeated-root input fails closed (an
+irrational part carries a defining polynomial, not the minimal one; repeated-root multiplicity + exact
+complex arithmetic are declared later increments). E.g. `x²+1`→
+`±i`; `x³−2`→ `∛2` + a complex pair; `x⁴+1`→ the four `±√2/2 ± i√2/2`; `x⁴−1`→ `±1, ±i`. Exact complex
+*arithmetic* on these roots is a later increment. `idm/kernel/poly/complex_roots.py` + test.
+
+
 ### WP11 (Increment 1) — linear ODEs resolve real algebraic characteristic roots at any degree
 `linear_ode` previously **HELD** on an irreducible degree-≥3 characteristic factor ("roots not in
 radicals"). It now resolves that factor's **real** roots exactly as algebraic numbers (WP2/WP3 `AlgReal`):
