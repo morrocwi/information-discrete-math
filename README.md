@@ -30,13 +30,18 @@ Information Discrete Mathematics
 │                                                                     eigenvectors (retained_mode.py)
 │                                                                     inertia / eigenvalue counts (inertia.py)
 ├── REST / OpenAPI         python3 -m idm.server                   — Swagger UI at 127.0.0.1:8737/docs
-├── Formal proofs          formal/*.v + formal/verify.sh           — 184 Coq theorems, axiom-free
+├── Formal proofs          formal/*.v + formal/verify.sh           — 194 Coq theorems, axiom-free
 └── Benchmarks             benchmarks/ · retained_spectral/competition/  — RCP savings, spectral speed
 ```
 
 Every branch returns a tier-tagged verdict (`Th_coqc` / `exact` / `finite_diagnostic` / `Dr` /
 `+ℝ-Open`, see [Evidence ladder + honesty tiers](#evidence-ladder--honesty-tiers) below) — pick the
 branch you need, then read its own tier before trusting the number.
+
+> **Scope at a glance (humans + AI):** [`SOLVER.md`](SOLVER.md) — what the solver solves across its
+> 11 domains / 263 kinds, the EXACT / CONDITIONAL / HOLD verdict discipline, and the honest boundary of
+> the exact symbolic (CAS) layer (audited: [`docs/CAS_CLOSURE_CHECKLIST.md`](docs/CAS_CLOSURE_CHECKLIST.md),
+> 40 closed / 67 partial / 150 open), all traceable through the knowledge graph.
 
 ## 5-level platform
 

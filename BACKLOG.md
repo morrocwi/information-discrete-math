@@ -110,3 +110,58 @@ closure — they need the completed continuum, which the philosophy treats as a 
       internal `(§10.9)` pointers to `(§10.13)` (consistency review item — DONE). Also corrected a
       pre-existing stale "machine-checked" citation in §10.7 (`formal/InfoCausalPartialOrder_attempt.v`,
       not in-tree → downgraded to `Th_coqc`-eligible with an honesty note).
+
+
+## CAS closure — prioritized todolist (from `docs/CAS_CLOSURE_CHECKLIST.md`, 2026-07-29 audit)
+
+Audit result: **40 CLOSED / 67 PARTIAL / 150 OPEN** across 19 sections. The solver is a tier-honest
+exact-ℚ core, not a general CAS. These are the OPEN items ranked by leverage (unblock-the-most first).
+Each keeps the project's discipline: close as EXACT where provable, else CONDITIONAL/HOLD — never faked.
+
+### Quick wins (implemented-but-unwired, or a cheap correctness fix)
+- [ ] **Wire Gosper's algorithm to a `@kind`.** `idm/kernel/poly/summation.py` (exact symbolic
+      hypergeometric summation / telescoping) is fully implemented and tested (`tests/test_summation.py`)
+      but reachable from no solver kind. Add `symbolic_summation`/`gosper_sum`. *Near-zero cost; closes
+      §10 recurrence-summation/telescoping.* Tier: `exact`.
+- [ ] **Fix exact-decimal literal parsing (correctness bug).** `cas.py:_from_ast` does `Q(node.value)`,
+      so `parse("0.1")` captures the *binary float* `3602879701896397/36028797018963968`, not `1/10` —
+      wrong in a ℚ-exact system. Fix: `Fraction(str(x))` for decimal-point literals. Add a regression test.
+
+### High-leverage (unblock whole sections)
+- [ ] **Algebraic-number field arithmetic + `RootOf` (§5, the #1 gap).** `AlgebraicNumber` is a data-shell
+      with no arithmetic. Implement add/sub/mul/div/compare/minimal-poly over ℚ(α) and a `RootOf(p,k)`
+      object; wire `isolate_real_roots` (already exact) into `solution.solve` so degree-≥3 irrational roots
+      become exact objects instead of `completeness="partial"`. Unblocks §5 entirely + §8 completeness.
+- [ ] **Rational-function symbolic integration via Hermite reduction (§9).** `apart` + exact rational
+      `limits` already exist beside `cas.integrate`, unused. Wire them to integrate `P(x)/Q(x)`. Tier: `exact`.
+- [ ] **Parametric/symbolic linear algebra (§12).** Allow free symbols in matrix entries; symbolic det /
+      inverse (with det≠0 condition) / rank (with parameter conditions) / nullspace. Core CAS territory the
+      repo otherwise executes well over ℚ.
+- [ ] **Inequality solving (§8).** Univariate polynomial/rational inequalities via the existing Sturm /
+      real-root-isolation machinery → sign-interval solution sets. Currently entirely OPEN.
+- [ ] **Forward assumption propagation (§2).** "positive×positive⇒positive"-style inference over `+,×,^,f`
+      so the assumption engine can compute a compound expression's domain (today only single-symbol).
+- [ ] **`Abs` node + `sqrt(x²)=|x|` domain-correct rewrite (§2/§7).** No `Abs` exists; radical simplification
+      is silently wrong under negative x. Add the node + gated rewrite.
+
+### Structural / larger
+- [ ] **Retire the dual expression system (§1/§7).** Either wire the richer `nodes.py`/`engine.py`
+      hashconsed tree + rewrite engine into the live path, or fold its canonicalizer/DAG into `cas.py` —
+      today most §1/§7 machinery is a mostly-unused shadow layer.
+- [ ] **Commutative/associative pattern matching (§7).** `engine.py` is positional-only (deferred),
+      blocking trig/exp-log/radical identity rules from ever being added to the gated rewrite engine.
+- [ ] **Branch-aware complex algebra (§6).** Principal branch, branch-aware log/sqrt/pow, branch-cut
+      metadata — none exist; needed for any complex-analytic kind with a determinate branch.
+- [ ] **Symbolic special-function + transform layers (§11/§14).** Promote a handful of `idm/special.py`
+      functions to `("func", …)` nodes with derivative/recurrence rules; add a symbolic Laplace/Fourier
+      *pair table* with ROC/parameter conditions. (Numeric implementations are honest & extensive already.)
+- [ ] **Symbolic ODE breadth (§13).** First-order separable / exact / homogeneous / Bernoulli / Riccati,
+      and constant-coeff *inhomogeneous* (undetermined coefficients / variation of parameters).
+- [ ] **General resource control (§19).** Recursion-depth, memory, and factorization budgets + memoization
+      — today the only concrete cap is `GroebnerBudgetExceeded`.
+- [ ] **Formal constant objects + integer-relation search (§16).** Distinct `Pi`/`E`/`γ`/`ζ(3)` symbolic
+      leaves backed by the existing machine-checked `Continuum` resolution-enclosure; a PSLQ/integer-relation
+      search that returns a certificate or `HOLD` (never a guessed identity).
+
+*Everything above is genuinely OPEN today (evidence per item in `docs/CAS_CLOSURE_CHECKLIST.md`); the
+verification stack (§18) and the EXACT/CONDITIONAL/HOLD discipline are the parts that are already strong.*
