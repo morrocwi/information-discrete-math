@@ -79,6 +79,7 @@ FIXTURES = {
     "poly_gcd": {"a": [-1, 0, 1], "b": [-1, 1]}, "poly_from_roots": {"roots": [1, 2, 3]},
     "poly_roots": {"coeffs": [-6, 11, -6, 1]}, "rational_roots": {"coeffs": [-6, 11, -6, 1]},
     "real_root": {"coeffs": [-2, 0, 1], "index": 1},
+    "all_real_roots": {"coeffs": [0, -2, 0, 1]},
     "algebraic_arith": {"a": {"coeffs": [-2, 0, 1], "index": 1},
                         "b": {"coeffs": [-3, 0, 1], "index": 1}, "op": "add"},
     "interpolate": {"points": [[0, 1], [1, 3], [2, 7]], "x": 3},

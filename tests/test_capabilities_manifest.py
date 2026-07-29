@@ -48,8 +48,8 @@ def test_domain_union_covers_every_kind_exactly_once():
         f"in manifest but not in idm.kinds(): {set(seen) - live_kinds}"
     )
     assert len(seen) == len(set(seen)), "a kind appears in more than one domain"
-    assert len(seen) == len(live_kinds) == 265, (
-        "expected the full 265-kind registry; if this repo has grown the "
+    assert len(seen) == len(live_kinds) == 266, (
+        "expected the full 266-kind registry; if this repo has grown the "
         "registry, this constant (and the task's grounding facts) needs an "
         "update alongside the manifest"
     )

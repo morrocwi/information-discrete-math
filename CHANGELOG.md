@@ -7,6 +7,17 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### WP3 (Increment 1) — exact real root objects, no Durand–Kerner
+Builds on WP2's `AlgReal`. New kind **`all_real_roots`** (`exact`, → **266** kinds): given a ℚ-polynomial,
+it returns **every real root as an exact algebraic object with its multiplicity** (irreducible
+factorization over ℚ + Sturm isolation), sorted, verified by substitute-back — **no reduction to
+Durand–Kerner floats**. It also reports `num_complex = deg − Σ(real multiplicities)` and a `completeness`
+of `complete` (all roots real) or `real_complete` (all real roots found exactly; the remaining complex
+conjugate pairs are a declared later WP3 increment). `AlgReal.real_roots_with_multiplicity` exposes the
+same at the kernel level. This meets the WP3 real-part closure criterion: a degree-n polynomial yields all
+its real roots with multiplicity, exactly. Registry 265 → 266, counts synced across all docs + gates.
+
+
 ### WP2 — exact real algebraic-number arithmetic (the #1 CAS gap, now open)
 The `AlgebraicNumber` type was a data-shell with no arithmetic. **`idm/kernel/poly/algebraic.py`** makes a
 root of a ℚ-polynomial a genuinely computable exact object — `AlgReal(min_poly, isolating_interval)`:

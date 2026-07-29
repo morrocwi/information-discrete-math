@@ -31,6 +31,33 @@ def _real_root(p):
         return {"kind": "real_root", "status": "HOLD", "reason": str(ex)}
     return _alg_out("real_root", ar, "exact real algebraic root (Sturm isolation over ℚ)")
 
+@kind("all_real_roots", "exact")
+def _all_real_roots(p):
+    """Every real root of a ℚ-polynomial as an EXACT algebraic object with its multiplicity — no float,
+    no Durand–Kerner. Reports how many roots are complex (deg − Σ real multiplicities); `completeness` is
+    `complete` iff every root is real, else `real_complete` (all real roots found exactly; the remaining
+    complex conjugate pairs are a later WP3 increment)."""
+    try:
+        rm = AlgReal.real_roots_with_multiplicity(p["coeffs"])
+    except AlgebraicHOLD as ex:
+        return {"kind": "all_real_roots", "status": "HOLD", "reason": str(ex)}
+    from idm.kernel.poly.algebraic import _P as _mkpoly
+    deg = _mkpoly(p["coeffs"]).degree()
+    real_count = sum(m for _r, m in rm)
+    roots = [{"min_poly": [str(c) for c in r.min_poly_coeffs()],
+              "isolating_interval": [str(r.lo), str(r.hi)],
+              "approx": float(r.to_float(20)),
+              "is_rational": r.is_rational,
+              "rational_value": (str(r.as_rational()) if r.is_rational else None),
+              "multiplicity": m,
+              "verified": r.verify()} for r, m in rm]
+    return _ok("all_real_roots",
+               {"degree": deg, "real_roots": roots,
+                "num_real_with_multiplicity": real_count,
+                "num_complex": deg - real_count,
+                "completeness": "complete" if deg - real_count == 0 else "real_complete"},
+               "exact real roots + multiplicity (irreducible factorization + Sturm isolation over ℚ)")
+
 @kind("algebraic_arith", "exact")
 def _alg_arith(p):
     """Exact arithmetic (add/sub/mul/div) on two real algebraic numbers, each given as a ℚ-polynomial +

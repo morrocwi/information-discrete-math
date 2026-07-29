@@ -3,7 +3,7 @@
     "name": "information-discrete-math",
     "version": "1.4.1",
     "primary_api": "idm.solve",
-    "total_problem_kinds": 265
+    "total_problem_kinds": 266
   },
   "interfaces": {
     "python": "idm.solve",
@@ -183,6 +183,7 @@
     "exact_algebra": {
       "kinds": [
         "algebraic_arith",
+        "all_real_roots",
         "bezout",
         "continued_fraction",
         "expand",
@@ -206,7 +207,7 @@
         "symbolic_series",
         "symbolic_solve"
       ],
-      "count": 23
+      "count": 24
     },
     "calculus": {
       "kinds": [

@@ -142,3 +142,28 @@ def test_differential_against_sympy_minimal_polynomial():
     ]
     for ours, sy in cases:
         assert _mp(ours) == sympy_minpoly(sy), f"minpoly mismatch for {ours!r}"
+
+
+def test_real_roots_with_multiplicity_no_durand_kerner():
+    """WP3 real-part closure: every real root exact + multiplicity, sorted, no float; complex counted."""
+    # (x-1)^2 (x^2-2) (x^2+1) : real roots -sqrt2(m1), 1(m2), sqrt2(m1); 2 complex (±i)
+    from idm.kernel.poly.univariate import UPoly, mul
+    from idm.kernel.poly.coeffring import QRing
+    D = QRing()
+    def PP(cs): return UPoly([Q(c) for c in cs], D)
+    poly = mul(mul(mul(PP([-1,1]),PP([-1,1])), PP([-2,0,1])), PP([1,0,1]))
+    rm = AlgReal.real_roots_with_multiplicity([int(c) for c in poly.coeffs])
+    assert [(str(r.as_rational()) if r.is_rational else _mp(r), m) for r, m in rm] == [
+        ([Q(-2),0,Q(1)], 1), ("1", 2), ([Q(-2),0,Q(1)], 1)]
+    assert all(r.verify() for r, _ in rm)
+    real_mult = sum(m for _, m in rm)
+    assert real_mult == 4 and poly.degree() - real_mult == 2   # 2 complex roots, none faked
+
+
+def test_all_real_roots_high_degree_holds_not_hangs():
+    """Reviewer regression: the multiplicity/real-root path must fail closed (budget → HOLD), not hang,
+    on a hard high-degree generic polynomial — same guard as the arithmetic path."""
+    with pytest.raises(AlgebraicHOLD):
+        AlgReal.real_roots_with_multiplicity([3,-5,7,-11,13,-17,19,-23,29,-31,37])   # degree 10, generic
+    with pytest.raises(AlgebraicHOLD):
+        AlgReal.real_roots([3,-5,7,-11,13,-17,19,-23,29,-31,37])

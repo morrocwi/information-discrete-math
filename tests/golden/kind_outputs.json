@@ -138,6 +138,67 @@
    "verified": true
   }
  },
+ "all_real_roots": {
+  "kind": "all_real_roots",
+  "method": "exact real roots + multiplicity (irreducible factorization + Sturm isolation over \u211a)",
+  "status": "ok",
+  "tier": "exact",
+  "value": {
+   "completeness": "complete",
+   "degree": 3,
+   "num_complex": 0,
+   "num_real_with_multiplicity": 3,
+   "real_roots": [
+    {
+     "approx": -1.4142135623730951,
+     "is_rational": false,
+     "isolating_interval": [
+      "-3",
+      "0"
+     ],
+     "min_poly": [
+      "-2",
+      "0",
+      "1"
+     ],
+     "multiplicity": 1,
+     "rational_value": null,
+     "verified": true
+    },
+    {
+     "approx": 0.0,
+     "is_rational": true,
+     "isolating_interval": [
+      "-1",
+      "1"
+     ],
+     "min_poly": [
+      "0",
+      "1"
+     ],
+     "multiplicity": 1,
+     "rational_value": "0",
+     "verified": true
+    },
+    {
+     "approx": 1.4142135623730951,
+     "is_rational": false,
+     "isolating_interval": [
+      "0",
+      "3"
+     ],
+     "min_poly": [
+      "-2",
+      "0",
+      "1"
+     ],
+     "multiplicity": 1,
+     "rational_value": null,
+     "verified": true
+    }
+   ]
+  }
+ },
  "arc_length": {
   "kind": "arc_length",
   "method": "\u222b\u221a(1+f'\u00b2) finite quadrature",

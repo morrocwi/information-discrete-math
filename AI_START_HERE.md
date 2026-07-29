@@ -1,7 +1,7 @@
 # AI_START_HERE.md — read this before touching any single file
 
 > [!WARNING]
-> **Do not infer the capability of this repository from a single module.** This is a 265-kind
+> **Do not infer the capability of this repository from a single module.** This is a 266-kind
 > unified solver with five distinct solving surfaces (below), a machine-checked Coq arc, and a
 > benchmarked spectral product. Reading one file — one kind's implementation, one test, one demo
 > — and generalizing from it will under- or over-claim what is here. Follow the discovery order
@@ -23,7 +23,7 @@ number. See `README.md` for the full framing and `THEOREM.md` for the tier defin
    is not present in your checkout, treat `idm.kinds()` (step 2) as the live source of truth
    instead — do not assume absence of the file means absence of capability.
 2. **`python -c "import idm; print(len(idm.kinds()), idm.kinds())"`** — the live, authoritative
-   list of registered solver kinds. At the time this doc was written this returned **263** kinds.
+   list of registered solver kinds. At the time this doc was written this returned **266** kinds.
    Any count printed in prose (including in this file, `README.md`, or badge images) can drift;
    this command is the ground truth on your checkout, always re-run it rather than trusting text.
 3. **`API_INDEX.md`** (this directory) — searchable table: capability → Python API → tier →
@@ -46,7 +46,7 @@ number. See `README.md` for the full framing and `THEOREM.md` for the tier defin
 
 ```python
 import idm
-idm.kinds()                          # -> list of 265 registered kind names
+idm.kinds()                          # -> list of 266 registered kind names
 idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e-8})
 # -> {"kind": "integral", "status": "CERTIFIED", "tier": "finite_diagnostic",
 #     "value": {...}, "bound": {...}, "method": "..."}
@@ -55,7 +55,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 `idm.solve(problem)` takes a **structured** dict — the caller declares `kind` first (translate the
 world-language question into an information-language declaration, then solve; see
 `METHOD.md`) — and dispatches through the registry in `idm/solve.py` (`@kind(name, tier)` /
-`_REG[name] = (fn, tier)`). One entry point, 265 kinds, tier-tagged results. `idm.kinds()` returns
+`_REG[name] = (fn, tier)`). One entry point, 266 kinds, tier-tagged results. `idm.kinds()` returns
 the live registry keys — confirmed by reading `idm/solve.py` and importing the package.
 
 **Note on tiers:** the tier string a kind's `@kind(...)` decorator declares in the source is not
@@ -70,7 +70,7 @@ Every one of these is real, importable code in this checkout — verified while 
 
 | # | Surface | Entry point | What it's for |
 |---|---|---|---|
-| 1 | **Unified solver** | `idm.solve(problem)` / `idm.kinds()` (`idm/solve.py`) | One dispatcher over all 265 kinds, tier-tagged results |
+| 1 | **Unified solver** | `idm.solve(problem)` / `idm.kinds()` (`idm/solve.py`) | One dispatcher over all 266 kinds, tier-tagged results |
 | 2 | **Exact CAS** | `idm.kernel.poly` (`idm/kernel/poly/`) — `linsolve`, `groebner`, `limits`, `ode_linear`, `factorize`, `eigen`, `subresultant`, ... | Domain-parametrized exact ℚ[x]/ℤ[x]/GF(p)[x] polynomial algebra — no floating point |
 | 3 | **Retained Spectral** | `retained_spectral/` — `engine.native_eigvals_from_tridiagonal`, `retained_mode.modes`, `inertia.count_below_banded` / `resolved_count_below` | Schrödinger-spectrum / tridiagonal-eigenvalue solver, benchmarked product (see README "Featured math product") |
 | 4 | **`idm.certified`** | `idm.certified.integral`, `idm.certified.integral_nd`, `idm.certified.geom_series`, `idm.certified.exp`, ... (`idm/certified.py`) | Certified computation: value + proven bound + `ACCEPT`/`HOLD`. Note `integral`/`integral_nd` are actually `Th_coqc`-tier (Coq-backed, see `THEOREM.md` §7), not a lower tier — check `API_INDEX.md` per-API rather than assuming |

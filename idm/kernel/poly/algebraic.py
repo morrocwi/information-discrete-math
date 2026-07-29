@@ -43,6 +43,17 @@ def _P(coeffs):
     return UPoly([Q(c) for c in coeffs], _QR)
 
 
+def _factor_bounded(p: UPoly):
+    """factor_over_Q with the Increment-1 candidate budget — fail closed (HOLD) rather than let
+    Kronecker's combinatorial divisor search hang on a hard high-degree polynomial."""
+    try:
+        return factor_over_Q(p, budget=_FACTOR_BUDGET)
+    except FactorizationBudgetExceeded as ex:
+        raise AlgebraicHOLD(
+            f"factoring a degree-{p.degree()} polynomial exceeds the Increment-1 budget — higher-degree "
+            f"exact real-root isolation is a later WP3 increment ({ex})")
+
+
 def _peval(poly: UPoly, x) -> Q:
     """Evaluate ``poly`` at rational ``x`` — exact (Horner)."""
     x = Q(x)
@@ -82,7 +93,7 @@ class AlgReal:
         p = _P(coeffs)
         if p.degree() < 1:
             return []
-        _lead, facs = factor_over_Q(p)
+        _lead, facs = _factor_bounded(p)
         out: list[AlgReal] = []
         for irr, _mult in facs:
             if irr.degree() < 1:
@@ -99,6 +110,25 @@ class AlgReal:
         if not (0 <= k < len(roots)):
             raise AlgebraicHOLD(f"real root index {k} out of range (found {len(roots)} real roots)")
         return roots[k]
+
+    @staticmethod
+    def real_roots_with_multiplicity(coeffs) -> "list[tuple[AlgReal, int]]":
+        """Every DISTINCT real root of the ℚ-polynomial ``coeffs`` paired with its EXACT multiplicity
+        (from irreducible factorization over ℚ), sorted ascending. No float, no Durand–Kerner — each root
+        is an exact ``AlgReal`` carrying its irreducible minimal polynomial. The count of complex roots is
+        ``deg − Σ multiplicities`` (they are conjugate pairs; exact complex roots are a later WP3 increment)."""
+        p = _P(coeffs)
+        if p.degree() < 1:
+            return []
+        _lead, facs = _factor_bounded(p)
+        out: list[tuple[AlgReal, int]] = []
+        for irr, mult in facs:
+            if irr.degree() < 1:
+                continue
+            for lo, hi in isolate_real_roots(irr):
+                out.append((AlgReal(irr, *_strict(irr, lo, hi)), mult))
+        out.sort(key=lambda rm: _cmp_key(rm[0]))
+        return out
 
     # ---- basic queries ------------------------------------------------------------------------
     @property

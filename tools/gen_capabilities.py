@@ -52,7 +52,7 @@ def _read_pyproject_version(pyproject_path: Path) -> str:
 # ---------------------------------------------------------------------------
 # Curated DOMAIN classification, by kind name.
 #
-# Every kind in the live registry (263 at time of writing) is looked up
+# Every kind in the live registry (266 at time of writing) is looked up
 # against these sets, first match wins in the order below. Anything not
 # claimed by an earlier domain falls into 'other'. This keeps the mapping
 # total and exhaustive by construction — nothing can be silently dropped.
@@ -141,7 +141,7 @@ DOMAIN_MEMBERS: dict[str, set[str]] = {
         "poly_from_roots", "poly_gcd", "poly_integral", "poly_mul",
         "poly_roots", "rational_roots", "integer_root", "groebner_basis",
         "continued_fraction", "pade", "bezout",
-        "real_root", "algebraic_arith",
+        "real_root", "algebraic_arith", "all_real_roots",
     },
     # Analysis: integration, series, transforms, root/optimum finding,
     # special functions.

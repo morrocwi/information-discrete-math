@@ -6,7 +6,7 @@
 
 **The continuum, computed as a readout of the discrete.** _by Yaoharee Lahtee_
 
-[![solver](https://img.shields.io/badge/unified%20solver-265%20registered%20kinds-brightgreen)](API.md)
+[![solver](https://img.shields.io/badge/unified%20solver-266%20registered%20kinds-brightgreen)](API.md)
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
 [![Coq](https://img.shields.io/badge/Coq-8.20%20·%20194%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
@@ -19,7 +19,7 @@
 
 ```
 Information Discrete Mathematics
-├── Unified solver        idm.solve({"kind": ..., ...})            — one registry, 265 registered problem kinds
+├── Unified solver        idm.solve({"kind": ..., ...})            — one registry, 266 registered problem kinds
 │                          idm.parse / idm.parse_and_solve         — plain-language front end
 ├── Exact mathematics      idm.exact · idm.algebra · idm.symbolic  — ℤ/ℚ, no float in the result
 │                          idm.kernel.poly.*                       — exact rational polynomial tower
@@ -39,7 +39,7 @@ Every branch returns a tier-tagged verdict (`Th_coqc` / `exact` / `finite_diagno
 branch you need, then read its own tier before trusting the number.
 
 > **Scope at a glance (humans + AI):** [`SOLVER.md`](SOLVER.md) — what the solver solves across its
-> 11 domains / 265 kinds, the EXACT / CONDITIONAL / HOLD verdict discipline, and the honest boundary of
+> 11 domains / 266 kinds, the EXACT / CONDITIONAL / HOLD verdict discipline, and the honest boundary of
 > the exact symbolic (CAS) layer (audited: [`docs/CAS_CLOSURE_CHECKLIST.md`](docs/CAS_CLOSURE_CHECKLIST.md),
 > 40 closed / 67 partial / 150 open), all traceable through the knowledge graph.
 
@@ -50,7 +50,7 @@ finite laws". Each level below is independently usable; the minimal import is th
 
 | level | what it's for | minimal import |
 |---|---|---|
-| **1. Unified solver** | one entry point across all 265 registered kinds | `import idm`<br>`idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-inf", "b": "inf"})` |
+| **1. Unified solver** | one entry point across all 266 registered kinds | `import idm`<br>`idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-inf", "b": "inf"})` |
 | **2. Retained Spectral** | the ready-to-use Schrödinger spectrum product — eigenvalues, eigenvectors, inertia | `from retained_spectral import solve, examples`<br>`from retained_spectral.retained_mode import modes`<br>`from retained_spectral.inertia import count_below_banded` |
 | **3. Certified readouts** | a value plus a proven error bound, or an honest `HOLD` | `from idm.certified import integral_nd` |
 | **4. Exact kernel** | ℤ/ℚ-only computation with no floating point in the result | `from idm.kernel.poly import eigen, factorize, groebner` |
@@ -175,13 +175,13 @@ it is importable and skip it cleanly otherwise.
 > [!TIP]
 > **A unified, general-purpose mathematical solver — not just a manifesto, and not a calculator with a
 > long menu.** One `idm.solve(problem)` call reads `problem["kind"]` and dispatches through a registry
-> supporting **265 registered problem kinds** — integrals, ODE/PDE, limits & series, special functions,
+> supporting **266 registered problem kinds** — integrals, ODE/PDE, limits & series, special functions,
 > transforms, optimization, an exact symbolic CAS, number theory, linear algebra, graphs/DP, exact‑ℚ LP
 > & SAT, **rigorous interval certification**, statistics, exact‑ℚ geometry, cryptographic number theory,
 > and a Hilbert‑space core — each a tier‑honest finite readout that returns `CERTIFIED` / `ok` / `HOLD`
 > (it refuses rather than guess).
 >
-> _The 265 are **registered problem kinds** under one `solve()`, not 265 separate programs — related
+> _The 266 are **registered problem kinds** under one `solve()`, not 266 separate programs — related
 > kinds share a computational core (e.g. one double‑exponential quadrature family serves many integrals),
 > and each returns a `CERTIFIED` / `ok` / `HOLD` verdict carrying its evidence tier._
 >
@@ -327,7 +327,7 @@ energy), with a preservation certificate on every run.
 one‑distinction closure, retained boundary records, and terminal‑relevance unfolding, plus
 boundary‑neutral **Retained Closure Fusion (RCF)**. It builds no maximal cliques and runs no clique
 calibration; the FTCC fold is its engine and junction tree stays a comparator only. Architecture,
-equations, resource gates, the 230‑kind branch map (plus the 28‑kind Hilbert core and the `polynomial_positivity` certificate solver → **265** live), and the claim boundary:
+equations, resource gates, the 230‑kind branch map (plus the 28‑kind Hilbert core and the `polynomial_positivity` certificate solver → **266** live), and the claim boundary:
 [`RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md`](RCP_NATIVE_RETAINED_FOLD_ARCHITECTURE.md) (`finite_diagnostic`).
 
 **Native sensitivity, not an autodiff wrapper.** **Retained Readout Pullback (RRP)** does one upward
@@ -414,16 +414,16 @@ curl -s -X POST localhost:8737/solve -d '{"kind":"constant","name":"pi"}'
 curl -s -X POST localhost:8737/solve -d '{"text":"is 97 prime?"}'   # natural language
 ```
 
-A unified `solve(problem)` interface supports **265 registered problem kinds** — the entire continuum
+A unified `solve(problem)` interface supports **266 registered problem kinds** — the entire continuum
 frontier (integration, ODE/PDE, limits/series, special functions, transforms, continuous optimization)
 plus an exact symbolic CAS, a deep exact/discrete backbone (number theory, normal forms, DP, graphs,
 exact‑ℚ LP, SAT), a **rigorous certification layer** (interval‑arithmetic enclosures, IVT‑proven roots,
 Gershgorin discs), **statistics · exact‑ℚ computational geometry · cryptographic number theory**, and a
 **Hilbert‑space core** — each a certified finite readout, tier‑tagged, with an `ACCEPT`/`HOLD` verdict
 where a bound is proven. One entry point routes by `kind` through a registry (so related kinds reuse a
-shared core rather than 265 disjoint implementations); a natural‑language front‑end translates
+shared core rather than 266 disjoint implementations); a natural‑language front‑end translates
 world‑language requests into structured kinds, and an OpenAPI 3 / Swagger UI serves it all. It is a
-**broad general-purpose mathematical solver API**: 265 registered kinds under one verdict-bearing
+**broad general-purpose mathematical solver API**: 266 registered kinds under one verdict-bearing
 interface, each result tier‑tagged.
 Full reference: [`API.md`](API.md) · roadmap: [`SOLVER_ROADMAP.md`](SOLVER_ROADMAP.md).
 
