@@ -58,8 +58,11 @@ C (synthetic tool-use dataset + benchmark vs a real 0.5B). Reduces the model's d
   `{op}`/`{kind}` dict to a plan; `idm.ai.plan(op, ...)` and `run(..., dry_run=True)` return the route +
   the exact problem dict WITHOUT executing (plan→validate→execute), with an honest required/optional
   field split (from handler `p["x"]` vs `p.get("x")`); unclassifiable input HOLDs (`UNCLASSIFIED`).
-- **[ ] Phase C** — synthetic tool-use dataset + benchmark against a real 0.5B model. Needs founder
-  scope/priority.
+- **[x] Phase C** — `idm/ai_bench.py`: a fixed synthetic tool-use dataset (`dataset()`, 17 cases over
+  all 11 ops incl. free-form + unclassifiable) + a model-agnostic benchmark harness (`score(router)`
+  reports op-selection & end-to-end execution accuracy). `benchmark_router()` scores the deterministic
+  `idm.ai.route` as the oracle (100%/100%). To benchmark a real 0.5B, pass a router that calls the
+  model — no weights are shipped or needed for the self-test.
 
 ## Next version (v1.5, proposed)
 

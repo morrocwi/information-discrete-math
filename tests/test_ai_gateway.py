@@ -109,3 +109,23 @@ def test_phase_b_route_free_form_and_structured():
 def _min_params(kind):
     import tests.test_properties as tp
     return tp.FIXTURES.get(kind, {})
+
+
+def test_phase_c_benchmark_harness():
+    """Phase C: the synthetic dataset + benchmark harness. The deterministic router (the oracle) is
+    perfect; the harness DISCRIMINATES a weak router (proving the score is meaningful, not trivially 1)."""
+    import idm
+
+    # oracle: idm.ai.route scores 100% op-selection and 100% execution over the dataset
+    r = idm.ai_bench.benchmark_router()
+    assert r["n"] >= 15 and r["op_accuracy"] == 1.0 and r["exec_accuracy"] == 1.0
+    assert r["failures"] == []
+
+    # the harness discriminates: a dumb router that always says "factor" scores far below the oracle
+    dumb = idm.ai_bench.score(lambda request: "factor")
+    assert dumb["op_accuracy"] < 0.3 and len(dumb["failures"]) > 10
+
+    # a router can return a bare op string OR a plan/route dict — both are scored (accepts either shape)
+    via_dict = idm.ai_bench.score(idm.ai.route)
+    via_str = idm.ai_bench.score(lambda req: (idm.ai.route(req).get("route") or {}).get("op"))
+    assert via_dict["op_accuracy"] == via_str["op_accuracy"] == 1.0

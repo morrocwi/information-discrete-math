@@ -7,6 +7,19 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+### Track C (AI Gateway) Phase C — synthetic tool-use dataset + benchmark harness
+Completes Track C (roadmap #52). `idm/ai_bench.py` (exposed as `idm.ai_bench`):
+- **`dataset()`** — a fixed, deterministic set of 17 tool-use cases spanning all 11 gateway ops, plus
+  free-form-string cases (routed via `idm.parse`) and deliberately-unclassifiable ones, each labelled
+  with the expected op and the expected solve status.
+- **`score(router)`** — model-agnostic: run any `router` callable (request → an op name, or a
+  plan/route dict) over the dataset and report **op-selection accuracy** and **end-to-end execution
+  accuracy** with the per-case failures.
+- **`benchmark_router()`** — scores the built-in deterministic `idm.ai.route` as the oracle/ceiling
+  (**100 % op-selection, 100 % execution**). To benchmark a real 0.5B model, pass a router that calls
+  it — no model weights are shipped or needed for the self-test; the harness is proven to discriminate
+  (a constant "always factor" router scores < 0.3). No new kind, no count change (269).
+
 ### Track C (AI Gateway) Phase B — free-form router + plan/validate/dry-run
 Builds on Phase A (roadmap #52, Phase B), additive:
 - **`idm.ai.route(request)`** — the domain router / expression classifier. A free-form **string** is
