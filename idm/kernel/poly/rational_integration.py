@@ -13,10 +13,10 @@ Method (all exact over ℚ):
        * ``c/(x−a)^k`` (k≥2)   → ``−c/((k−1)(x−a)^{k−1})`` (a rational term)
        * ``(bx+c)/(x²+px+q)``  (irreducible) → ``(b/2)·ln(x²+px+q) + K·arctan((x+p/2)/w)``, ``w=√(q−p²/4)``.
 
-Scope: linear factors to any multiplicity, and irreducible-quadratic factors of multiplicity 1. An
-irreducible factor of degree ≥3, or an irreducible quadratic of multiplicity ≥2 (which needs Hermite
-reduction), HOLDs honestly — declared later increments. Every step is exact ℚ; the answer is verifiable by
-differentiating it back.
+Scope: linear AND irreducible-quadratic factors to ANY multiplicity — the repeated-quadratic case uses the
+reduction formula ∫du/(u²+w²)^n. Only an irreducible factor of degree ≥3 HOLDs honestly (needs algebraic-
+function integration / Risch — a declared later increment). Every step is exact ℚ; verifiable by
+differentiating the answer back.
 """
 from __future__ import annotations
 
@@ -31,8 +31,8 @@ _QR = QRing()
 
 
 class RationalIntegralHOLD(Exception):
-    """Raised when the rational function is outside the Increment-1 scope (degree-≥3 irreducible factor,
-    or a repeated irreducible quadratic needing Hermite reduction)."""
+    """Raised when the rational function is outside scope — only a degree-≥3 irreducible denominator
+    factor, which needs algebraic-function / Risch integration (a declared later increment)."""
 
 
 def _P(coeffs):
@@ -41,6 +41,19 @@ def _P(coeffs):
 
 def _fmt(x: Q) -> str:
     return str(x.numerator) if x.denominator == 1 else f"{x.numerator}/{x.denominator}"
+
+
+def _reduce_quad(k: int, w2: Q):
+    """The reduction ∫du/(u²+w²)^k = Σ_j coeff_j · u/(u²+w²)^j  +  arctan_coeff · (1/w)·arctan(u/w).
+    Returns ({j: coeff_j}, arctan_coeff), exact over ℚ (w² rational). Recurrence:
+        I_k = u/(2w²(k−1)(u²+w²)^{k−1}) + (2k−3)/(2w²(k−1))·I_{k−1},  I_1 = (1/w)arctan(u/w)."""
+    if k == 1:
+        return {}, Q(1)
+    sub_terms, sub_arc = _reduce_quad(k - 1, w2)
+    fac = Q(2 * k - 3) / (2 * w2 * (k - 1))
+    terms = {j: fac * co for j, co in sub_terms.items()}
+    terms[k - 1] = terms.get(k - 1, Q(0)) + Q(1) / (2 * w2 * (k - 1))
+    return terms, fac * sub_arc
 
 
 def _powpoly(g: UPoly, k: int) -> UPoly:
@@ -78,9 +91,6 @@ def integrate_rational(num_coeffs, den_coeffs, var: str = "x") -> dict:
         if f.degree() >= 3:
             raise RationalIntegralHOLD(
                 f"denominator has an irreducible degree-{f.degree()} factor (needs algebraic/Risch — later increment)")
-        if f.degree() == 2 and m >= 2:
-            raise RationalIntegralHOLD(
-                "denominator has a repeated irreducible quadratic (needs Hermite reduction — later increment)")
 
     if rem.is_zero():
         parts = [p for p in (poly_int,) if p and p != "0"]
@@ -102,17 +112,27 @@ def integrate_rational(num_coeffs, den_coeffs, var: str = "x") -> dict:
             else:
                 rc = -c / (k - 1)
                 rational_terms.append(f"({_fmt(rc)})/({_linfac_str(a, var)})^{k - 1}")
-        else:                                             # x^2 + p x + q, irreducible, k == 1
+        else:                                             # x^2 + p x + q, irreducible, multiplicity k
             p, qc = f.coeffs[1], f.coeffs[0]
             b = N.coeffs[1] if len(N.coeffs) > 1 else Q(0)
             c = N.coeffs[0] if N.coeffs else Q(0)
+            quad = _quad_str(p, qc, var)
+            u = _linfac_str(-p / 2, var)                  # u = x + p/2  (=(x - (-p/2)))
+            # (b/2)·∫ 2u/(u²+w²)^k : a log at k=1, a rational term for k≥2
             if b != 0:
-                log_terms.append({"coeff": _fmt(b / 2), "arg": _quad_str(p, qc, var)})
-            c2 = c - b * p / 2                            # remaining ∫ c2/(x²+px+q)
+                if k == 1:
+                    log_terms.append({"coeff": _fmt(b / 2), "arg": quad})
+                else:
+                    rational_terms.append(f"({_fmt(-(b / 2) / (k - 1))})/({quad})^{k - 1}")
+            c2 = c - b * p / 2                            # remaining ∫ c2/(u²+w²)^k via the reduction formula
             if c2 != 0:
                 w_sq = qc - p * p / 4                     # = -(disc)/4 > 0 for an irreducible quadratic
-                arctan_terms.append({"coeff_over_w": _fmt(c2), "w_squared": _fmt(w_sq),
-                                     "shift": _fmt(p / 2), "var": var})
+                red_terms, arc = _reduce_quad(k, w_sq)
+                for j, co in red_terms.items():
+                    rational_terms.append(f"({_fmt(c2 * co)})*({u})/({quad})^{j}")
+                if arc != 0:
+                    arctan_terms.append({"coeff_over_w": _fmt(c2 * arc), "w_squared": _fmt(w_sq),
+                                         "shift": _fmt(p / 2), "var": var})
 
     parts = [poly_int] + rational_terms
     return _assemble([p for p in parts if p and p != "0"], log_terms, arctan_terms, "C")
