@@ -171,15 +171,13 @@ def _box_eval(biv, alo, ahi, blo, bhi):
     return lo, hi
 
 
-def all_roots(coeffs) -> dict:
-    """Every root of the ℚ-polynomial ``coeffs`` (low→high), real and complex, as exact rational-rectangle
-    enclosures with exact real/imaginary algebraic parts. Returns a dict with ``roots`` (each: re/im as
-    {min_poly, interval, approx, is_rational}, plus is_real), ``num_real``, ``num_complex``, ``degree``.
-    HOLDs if completeness cannot be certified (the isolated count must equal the degree)."""
+def _roots_of_squarefree(coeffs) -> list:
+    """All DISTINCT roots (real + complex) of a SQUARE-FREE ℚ-polynomial as exact rectangle enclosures.
+    Requires the isolated count to equal the degree, else HOLDs — callers pass square-free factors."""
     p = _P(coeffs)
     n = p.degree()
     if n < 1:
-        return {"degree": n, "roots": [], "num_real": 0, "num_complex": 0}
+        return []
     P, Qd = _bivar_PQ([Q(c) for c in coeffs])
     try:
         Rx = _resultant_poly(P, Qd, n, in_x=True)
@@ -214,13 +212,37 @@ def all_roots(coeffs) -> dict:
                 "interval": [str(r.lo), str(r.hi)], "approx": float(r.to_float(20)),
                 "is_rational": r.is_rational}
 
-    # a root is real iff its imaginary part is exactly 0 (which is the rational 0)
     out = [{"re": _part(a), "im": _part(b), "is_real": b.is_rational and b.as_rational() == 0,
             "verified": a.verify() and b.verify()} for a, b in roots]
-    out.sort(key=lambda d: (d["re"]["approx"], d["im"]["approx"]))
-    num_real = sum(1 for r in out if r["is_real"])
-    num_complex = len(out) - num_real
-    if len(out) != n:                                 # completeness certificate: all n roots accounted for
+    if len(out) != n:                                 # every distinct root of this square-free factor found
         raise ComplexRootsHOLD(
-            f"isolated {len(out)} roots but degree is {n} — could not certify a complete root set")
-    return {"degree": n, "roots": out, "num_real": num_real, "num_complex": num_complex}
+            f"isolated {len(out)} roots of a degree-{n} square-free factor — could not certify complete")
+    return out
+
+
+def all_roots(coeffs) -> dict:
+    """Every root of the ℚ-polynomial ``coeffs`` (low→high), real and complex, as exact rational-rectangle
+    enclosures WITH MULTIPLICITY. Each root: ``re``/``im`` = {min_poly, interval, approx, is_rational},
+    ``is_real``, ``multiplicity``, ``verified``. Certified complete: Σ multiplicity == degree (else HOLD).
+    Works by finding the DISTINCT roots of each square-free factor and tagging them with its multiplicity —
+    so it handles repeated roots too, and each factor is lower-degree (also faster)."""
+    from .univariate import square_free_factorization
+    p = _P(coeffs)
+    n = p.degree()
+    if n < 1:
+        return {"degree": n, "roots": [], "num_real": 0, "num_complex": 0, "num_distinct": 0}
+    _lead, sqf = square_free_factorization(p)          # p = lead · ∏ gᵢ^i, gᵢ square-free
+    out = []
+    for g, i in sqf:
+        if g.degree() < 1:
+            continue
+        for r in _roots_of_squarefree([str(c) for c in g.coeffs]):
+            r["multiplicity"] = i
+            out.append(r)
+    out.sort(key=lambda d: (d["re"]["approx"], d["im"]["approx"]))
+    total = sum(r["multiplicity"] for r in out)       # completeness certificate: roots·mult == degree
+    if total != n:
+        raise ComplexRootsHOLD(f"roots with multiplicity sum to {total} but degree is {n} — incomplete")
+    num_real = sum(r["multiplicity"] for r in out if r["is_real"])
+    return {"degree": n, "roots": out, "num_real": num_real, "num_complex": total - num_real,
+            "num_distinct": len(out)}

@@ -207,6 +207,7 @@
   "value": {
    "degree": 2,
    "num_complex": 2,
+   "num_distinct": 2,
    "num_real": 0,
    "roots": [
     {
@@ -223,6 +224,7 @@
       ]
      },
      "is_real": false,
+     "multiplicity": 1,
      "re": {
       "approx": 0.0,
       "interval": [
@@ -251,6 +253,7 @@
       ]
      },
      "is_real": false,
+     "multiplicity": 1,
      "re": {
       "approx": 0.0,
       "interval": [

@@ -274,8 +274,15 @@ def test_all_roots_real_and_complex_complete():
         v = rr(coeffs)
         assert v["num_real"] + v["num_complex"] == v["degree"]    # complete: no root lost
         assert all(x["verified"] for x in v["roots"])             # each Re/Im part substitutes back exactly
-    # a repeated-root polynomial fails closed (HOLD) — multiplicity is a declared later increment
-    assert idm.solve({"kind": "all_roots", "coeffs": [-1, 3, -3, 1]})["status"] == "HOLD"   # (x-1)^3
+    # repeated roots now carry multiplicity, and Σ multiplicity == degree
+    r4 = rr([-1, 3, -3, 1])                            # (x-1)^3 → root 1 with multiplicity 3
+    assert r4["num_distinct"] == 1 and r4["roots"][0]["multiplicity"] == 3
+    assert sum(x["multiplicity"] for x in r4["roots"]) == r4["degree"] == 3
+    r5 = rr([1, 0, 2, 0, 1])                           # (x^2+1)^2 → ±i each multiplicity 2
+    assert r5["num_distinct"] == 2 and all(x["multiplicity"] == 2 for x in r5["roots"]) and r5["num_complex"] == 4
+    for coeffs in ([-6, 11, -6, 1], [-1, 3, -3, 1], [1, 0, 2, 0, 1], [2, -3, 0, 1, 0, -3, 2]):
+        v = rr(coeffs)
+        assert sum(x["multiplicity"] for x in v["roots"]) == v["degree"]   # complete with multiplicity
 
 
 def test_wp8_rational_integration_differentiates_back():
