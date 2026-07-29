@@ -12,8 +12,10 @@ The characteristic polynomial is factored EXACTLY over ℚ (:func:`factor_over_Q
   * degree-2 irreducible factors give the exact conjugate pair — ``α = -b/2`` (rational) and
     ``β² = (4c - b²)/4`` (rational) for a negative discriminant, or the two irrational real roots
     ``(-b ± √disc)/2`` for a positive one;
-  * a degree-≥3 irreducible factor has roots not expressible by the radicals this kernel offers, so
-    the solver HOLDs on that factor rather than fabricating a closed form — an honest fence.
+  * a degree-≥3 irreducible factor: its REAL roots are resolved EXACTLY as algebraic numbers (WP11,
+    ``AlgReal``) → basis ``e^{ρx}, …`` with ρ carried by its minimal polynomial + isolating interval;
+    only the factor's complex roots stay unresolved (``partial``) — complex-algebraic basis is a later
+    increment. A very hard high-degree factorization fails closed (``partial``), never hangs.
 
 The result lists every basis function of the solution space (its dimension equals the ODE order),
 each tagged with its exact data, plus a human-readable general solution ``C₁·… + C₂·… ``.
@@ -90,7 +92,13 @@ def solve_linear_ode(coeffs: Sequence[object]) -> ODESolution:
     order = len(c) - 1
 
     char = UPoly(c, D)
-    _lead, factors = factor_over_Q(char)
+    from .factorize import FactorizationBudgetExceeded
+    try:                                                   # bound the char-poly factorization: a hard
+        _lead, factors = factor_over_Q(char, budget=3_000)  # high-degree irreducible char HOLDs, never hangs
+    except FactorizationBudgetExceeded as ex:
+        return ODESolution("partial", order, [], "0",
+                           [f"characteristic polynomial factorization exceeded the budget ({ex}) — "
+                            f"high-degree exact ODE solving is a later increment"])
 
     basis: List[dict] = []
     unresolved: List[str] = []
@@ -156,10 +164,10 @@ def solve_linear_ode(coeffs: Sequence[object]) -> ODESolution:
                                   "root_interval": [str(r.lo), str(r.hi)], "root_approx": approx,
                                   "poly_power": k, "term": term})
                     terms.append(f"C{ci}*{term}")
-            complex_count = deg - len(real_roots)                    # conjugate pairs, per factor
+            complex_count = mult * (deg - len(real_roots))          # conjugate pairs × factor multiplicity
             if complex_count > 0:
                 unresolved.append(f"{complex_count} complex root(s) of an irreducible degree-{deg} factor "
-                                  f"(complex-algebraic basis is a later WP11 increment)")
+                                  f"(multiplicity {mult}; complex-algebraic basis is a later WP11 increment)")
 
     status = "solved" if not unresolved else "partial"
     general = " + ".join(terms) if terms else "0"

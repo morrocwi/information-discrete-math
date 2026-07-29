@@ -232,3 +232,22 @@ def test_wp11_ode_resolves_real_algebraic_characteristic_roots():
     assert r2["solution_status"] == "partial"
     assert len(r2["basis"]) == 1 and r2["basis"][0]["root_min_poly"] == ["-2", "0", "0", "1"]
     assert "complex" in r2["unresolved"][0]
+
+
+def test_wp11_ode_repeated_factor_complex_count_and_high_degree_hold():
+    """Reviewer regressions: (B) complex count of a repeated irreducible factor is multiplicity-weighted;
+    (C) a hard high-degree characteristic polynomial HOLDs (budget), not hang."""
+    import idm, time
+    from idm.kernel.poly.univariate import UPoly, mul
+    from idm.kernel.poly.coeffring import QRing
+    D = QRing()
+    def PP(cs): return UPoly([Q(c) for c in cs], D)
+    # (r^3-2)^2: multiplicity 2, one real root ∛2 → real basis 2, complex count 4 (2 pairs × mult 2)
+    sq = mul(PP([-2,0,0,1]), PP([-2,0,0,1]))
+    r = idm.solve({"kind": "linear_ode", "coeffs": [int(c) for c in sq.coeffs]})["value"]
+    assert r["solution_status"] == "partial" and len(r["basis"]) == 2
+    assert "4 complex" in r["unresolved"][0] and "multiplicity 2" in r["unresolved"][0]
+    # r^10-2 (irreducible degree 10): must return partial within a few seconds, not hang
+    t = time.time()
+    r2 = idm.solve({"kind": "linear_ode", "coeffs": [-2,0,0,0,0,0,0,0,0,0,1]})["value"]
+    assert r2["solution_status"] == "partial" and time.time() - t < 20
