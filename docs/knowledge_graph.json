@@ -138,6 +138,21 @@
   ],
   "cross_references": {
     "benchmark_claims_doc": "docs/BENCHMARK_CLAIMS.md",
+    "formal_companions_map": "docs/FORMAL_COMPANIONS.md",
+    "external_formal_siblings": {
+      "note": "self-contained Coq artifacts in the same program (author Yaoharee Lahtee); cited as witnesses, not authority. Full map + code-to-proof mapping in docs/FORMAL_COMPANIONS.md.",
+      "zero-readout-certifies": {
+        "url": "https://github.com/morrocwi/zero-readout-certifies",
+        "doi": "10.5281/zenodo.21665100",
+        "machine_checks": "keystone operator zero fibre (I(Phi)=0 iff Phi constant on each connected component) + typed reader-state separation backing this repo's HOLD discipline (resolved zero distinct from unresolved HOLD; HOLD fail-closed)",
+        "audited_results": 38,
+        "prover": "Coq 8.20 / Rocq 9.2, all Closed under the global context",
+        "backs_idm_section": "THEOREM.md#IV keystone; docs/FORMAL_COMPANIONS.md"
+      },
+      "research_universal_solver": "spine PDE + retained-difference root delta_R arc",
+      "readout_genesis": "English Genesis number ladder D->Z->Q->R (readout-not-truth)",
+      "readout_universe": "Philosophy & Logic textbook, RDL/logic floor (C1-C7)"
+    },
     "root_docs_not_duplicated": ["README.md", "API.md", "INDEX.md", "THEOREM.md"]
   }
 }

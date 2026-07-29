@@ -110,6 +110,15 @@ standard graph Laplacian. The interpretive reading — *information*, not length
 central invariant, with distances/spectra/mass-ratios read out of `L_R` — is stated *separately* from
 the theorem and labelled as interpretation.
 
+**Published companion — the zero fibre + the HOLD floor.** The local witness above proves the keystone
+*identity* and PSD-ness. The **zero fibre** of the same operator — `I(Φ)=0 ⟺ Φ constant on every
+connected component` (positive weights) — together with the typed **reader-state** separation that
+backs this repo's HOLD discipline (a resolved `0` is provably a distinct object from an unresolved
+HOLD, and a HOLD is fail-closed), is machine-checked and *published* in the sibling artifact
+`zero-readout-certifies` (Coq 8.20 / Rocq 9.2, 38 audited results, all *Closed under the global
+context*, DOI [`10.5281/zenodo.21665100`](https://doi.org/10.5281/zenodo.21665100)). The full
+code-to-proof mapping is [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md).
+
 ### V · FOLD + DECISION (A2/A3) and the exact FTCC: `I_ε(D_ε f)[N] = f[N] − f[0]`
 
 **Statement (`Th_coqc`, axiom-free).** With the causal difference `D_ε f[n] := (f[n] ⊖ f[n−1]) / ε`
