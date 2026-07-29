@@ -48,6 +48,17 @@ result + aliases/defaults) · B (domain router + expression classifier + plan→
 C (synthetic tool-use dataset + benchmark vs a real 0.5B). Reduces the model's decision space from 266 to
 8–12 per step while the router still reaches all 266.
 
+- **[x] Phase A** — `idm/ai.py`: `idm.ai.run(op, **params)` deterministic entrance over 11 high-level ops
+  (`factor`, `gcd`, `integrate`, `integrate_exact`, `roots`, `solve_linear`, `eigenvalues`,
+  `determinant`, `ode`, `limit`, `shortest_path`), `idm.ai.ops()` central schema (op → kind, fields,
+  tier), unified `Result` with the route exposed, structured error codes (`UNKNOWN_OP` + `did_you_mean`
+  / `MISSING_PARAM` / `SOLVER_HOLD`), tiers forwarded verbatim (no silent downgrade), and `idm.solve`
+  documented as the escalation path to all 269 kinds. Never a capability reduction.
+- **[ ] Phase B** — a router that picks the op from free-form input (expression classifier;
+  plan→validate→execute; dry-run). Needs founder scope/priority.
+- **[ ] Phase C** — synthetic tool-use dataset + benchmark against a real 0.5B model. Needs founder
+  scope/priority.
+
 ## Next version (v1.5, proposed)
 
 A **developer-experience** release that also lands the first CAS-depth increments already shipped:
