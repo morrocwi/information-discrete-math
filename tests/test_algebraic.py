@@ -99,6 +99,26 @@ def test_real_roots_count_and_isolation():
         AlgReal.rootof([-2, 0, 1], 5)                                # out-of-range index
 
 
+def test_to_float_is_correct_for_rational_results():
+    """Reviewer regression (bug 1): to_float / the public `approx` must equal the exact value for a
+    RATIONAL result, not the artificial (r-1, r] lower endpoint."""
+    assert float(AlgReal.from_rational(2).to_float(20)) == 2.0
+    assert float(AlgReal.from_rational(0).to_float(20)) == 0.0
+    assert float(AlgReal.real_roots([-3, -2, 1])[0].to_float(10)) == -1.0   # roots of x²-2x-3 are -1, 3
+    assert float((SQRT2() - SQRT2()).to_float(20)) == 0.0                    # α−α = 0 exactly
+    assert float((SQRT2() * SQRT2()).to_float(20)) == 2.0                    # α·α = 2 exactly
+    assert abs(float(SQRT2().to_float(20)) - 2 ** 0.5) < 1e-12               # irrational still accurate
+
+
+def test_hard_high_degree_holds_not_hangs():
+    """Reviewer regression (bug 2): a high-degree combination whose minimal-polynomial isolation would
+    run Kronecker's search unboundedly must HOLD (deterministic budget), never hang."""
+    a = AlgReal.rootof([-6, -5, 5, 4, 1], 0)      # a real root of a degree-4 polynomial
+    b = AlgReal.rootof([-6, -3, 1], 1)            # a real root of a degree-2 polynomial
+    with pytest.raises(AlgebraicHOLD):
+        a * b                                     # degree-8 result → exceeds the Increment-1 budget → HOLD
+
+
 def test_differential_against_sympy_minimal_polynomial():
     """Cross-check the minimal polynomial of algebraic combinations against SymPy (comparator only)."""
     sympy = pytest.importorskip("sympy")

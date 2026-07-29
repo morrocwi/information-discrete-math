@@ -24,7 +24,12 @@ from fractions import Fraction as Q
 
 from .coeffring import QRing
 from .univariate import UPoly, isolate_real_roots, count_real_roots
-from .factorize import factor_over_Q
+from .factorize import factor_over_Q, FactorizationBudgetExceeded
+
+# Kronecker candidate budget for isolating a result's minimal polynomial. Bounds the combinatorial
+# divisor search so a hard high-degree combination fails closed (HOLD) instead of hanging — Increment 1
+# targets low-degree exact algebraic arithmetic; higher degrees are a later WP2 increment.
+_FACTOR_BUDGET = 3_000
 
 _QR = QRing()
 
@@ -116,11 +121,16 @@ class AlgReal:
         return AlgReal(self.poly, lo, hi)
 
     def to_float(self, dps: int = 30):
-        """A disclosed, NON-exact decimal readout (for display only) — refine + midpoint."""
+        """A disclosed, NON-exact decimal readout (for display only)."""
         import mpmath as mp
-        r = self.refine(Q(1, 10) ** (dps + 2))
         with mp.workdps(dps + 5):
-            return mp.mpf(r.lo.numerator) / r.lo.denominator      # lower endpoint, honest bracket
+            if self.is_rational:                                  # exact rational → its own value
+                q = self.as_rational()
+                return mp.mpf(q.numerator) / q.denominator
+            r = self.refine(Q(1, 10) ** (dps + 2))                # irrational → midpoint of a tight bracket
+            mlo = mp.mpf(r.lo.numerator) / r.lo.denominator
+            mhi = mp.mpf(r.hi.numerator) / r.hi.denominator
+            return (mlo + mhi) / 2
 
     def verify(self) -> bool:
         """Substitute-back certificate: the minimal polynomial has exactly one real root in (lo, hi] and
@@ -249,7 +259,9 @@ def _coerce(x) -> AlgReal:
 
 
 def _cmp_key(a: AlgReal):
-    """Sort key: a rational midpoint of a refined interval (used only for ordering distinct roots)."""
+    """Sort key (exact ℚ): the value itself if rational, else the midpoint of a refined bracket."""
+    if a.is_rational:
+        return a.as_rational()
     r = a.refine(Q(1, 10 ** 6))
     return (r.lo + r.hi) / 2
 
@@ -276,7 +288,8 @@ def _refine(poly: UPoly, lo, hi, width):
     lo, hi = Q(lo), Q(hi)
     width = Q(width)
     if poly.degree() == 1:
-        return lo, hi
+        root = -poly.coeffs[0] / poly.coeffs[1]          # collapse to the EXACT rational root
+        return root, root
     slo = _sgn(_peval(poly, lo))
     if slo == 0:                                        # lo is exactly the root (rational): pin it
         return lo, lo
@@ -431,7 +444,12 @@ def _isolate_value(coeffs, a: AlgReal, b: AlgReal, kind: str) -> AlgReal:
     ℚ-factor) and an isolating interval, by refining α,β until exactly one factor's real root lies in the
     interval-arithmetic enclosure of γ."""
     R = _P(coeffs)
-    _lead, facs = factor_over_Q(R)
+    try:
+        _lead, facs = factor_over_Q(R, budget=_FACTOR_BUDGET)
+    except FactorizationBudgetExceeded as ex:
+        raise AlgebraicHOLD(
+            f"result minimal polynomial (degree {R.degree()}) exceeds the Increment-1 factorization "
+            f"budget — higher-degree exact algebraic arithmetic is a later WP2 increment ({ex})")
     cands = [irr for irr, _m in facs if irr.degree() >= 1]
     ra, rb = a, b
     for _ in range(400):
