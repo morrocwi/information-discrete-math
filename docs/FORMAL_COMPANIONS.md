@@ -48,6 +48,34 @@ witnesses — a zero-weight edge or a disconnected declaration makes zero *not* 
 `L_R` certifies exactly that the declared comparison structure *cannot distinguish* the compared
 states — zero is the failure locus of retained distinction, not an absence of value.
 
+#### Third arrival — the same indistinguishability kernel, reached again (Dr: coherence, not new depth)
+
+A third machine-checked sibling arrives at the *same* structure from a different framing. In
+`readout_genesis`, **`InfoTrueRecordUnreadable`** (`formal/InfoTrueRecordUnreadable_attempt.v`,
+`Th_coqc` — `coqc` here reports *Closed under the global context* for all three lemmas) proves, for
+**any** readout `O`,
+
+```coq
+no_decoder_recovers_state : forall X R (O : X -> R) x1 x2,
+  x1 <> x2 -> O x1 = O x2 -> forall D : R -> X, D (O x1) = x1 -> D (O x2) = x2 -> False.
+```
+
+with a gauge-redundancy specialization `gauge_redundancy_forces_undecodability` (`O (h x) = O x`). This
+is the abstract twin of the companion's **zero-fibre indistinguishability equivalence**: `indist Φ Ψ :=
+I(Φ−Ψ)=0` is proved reflexive/symmetric/transitive (`indist_refl/sym/trans`), and
+`keystone_zero_iff_component` supplies its concrete content (constant on each connected component).
+Instantiating `O := Φ ↦ [Φ]_indist` makes `no_decoder_recovers_state` apply directly to the zero fibre.
+
+**Honest fence (Dr).** The shared core — the equivalence-kernel (kernel-pair) of a non-injective readout
+partitions distinct true states into classes no decoder can separate — is *generic*: it holds for any
+non-injective map, and the abstract lemma's proof is a one-line consequence of non-injectivity. So the
+several independent arrivals (an abstract collapse map here, a concrete Dirichlet-form zero fibre in the
+companion, and a pigeonhole route) are **coherence across the program, not three independent pieces of
+deep evidence**. What is worth keeping is the opposite of a boast: a foundation's central move here is
+*elementary and universal* — exactly what a foundational move should be. (Provenance note: the sibling
+results `minimal_three_values` and `discrete_floor` live in **this** repo's
+`formal/IDM_ReadoutMinimality.v` and `formal/IDM_Genesis.v`, not in `readout_genesis`.)
+
 ### 2. The typed reader states — the machine-checked floor under IDM's HOLD discipline
 
 Every exact kernel in IDM refuses to fake a result: on a genuinely unresolved case it raises a
