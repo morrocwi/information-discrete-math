@@ -207,3 +207,13 @@ def test_wp6_symbolic_solve_returns_complete_real_roots():
         v = idm.solve({"kind": "symbolic_solve", "expr": expr, "var": "x"})["value"]
         real_mult = sum(s["multiplicity"] for s in v["real_solutions"])
         assert real_mult + v["num_complex"] == v["degree"]
+
+
+def test_wp13_large_matrix_holds_not_hangs():
+    """Reviewer regression: exact_eigenvalues on a big matrix (large char-poly coefficients) must HOLD via
+    the factorization budget, NOT hang. The root cause was rational_roots' O(m) divisor helper running
+    before the budget; it is now O(√m). This must return within a couple of seconds."""
+    import idm
+    M = [[((i * 7 + j * 3 - 5) % 19) - 9 for j in range(10)] for i in range(10)]   # generic 10×10 ints
+    r = idm.solve({"kind": "exact_eigenvalues", "matrix": M})
+    assert r["status"] in ("ok", "HOLD")     # returns (does not hang); HOLD is the honest Increment-1 answer

@@ -184,7 +184,21 @@ def rational_roots(coeffs):
     ci = [int(x * den) for x in c]
     a0, an = ci[0], ci[-1]
     def facs(m):
-        m = abs(m); return [d for d in range(1, m + 1) if m % d == 0] or [1]
+        # every divisor of |m|, found in O(√m) (was O(m) trial division — it hung rational_roots on the
+        # large constant/leading coefficients of a big matrix's characteristic polynomial). Order is
+        # irrelevant here (the divisors feed a set of candidate roots), so no downstream output changes.
+        m = abs(m)
+        if m == 0:
+            return [1]
+        ds = []
+        i = 1
+        while i * i <= m:
+            if m % i == 0:
+                ds.append(i)
+                if i != m // i:
+                    ds.append(m // i)
+            i += 1
+        return ds
     cands = set()
     for p in facs(a0):
         for qd in facs(an):
