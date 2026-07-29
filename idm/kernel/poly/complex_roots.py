@@ -124,8 +124,9 @@ _ROOTS_FENCE = {
     "max_mix": 350,              # cap on n²·input-bits: cheap first filter (deg-5 ~20-bit → 500 HOLDs)
     "max_resultant_bits": 64,    # isolation-bound gate: built-resultant coefficient bit-size (fixtures
                                  # ≤ 39; ~58-bit quartic ≈ 8s allowed; [9999,…] ≈ 73 → HOLD)
-    "max_resultant_degbits": 2400,  # build-bound gate: resultant degree·bits (x⁷−2 2205 ≈ 14s allowed;
-                                    # x⁷−20 2695 → HOLD) — catches the high-degree residual the bit cap misses
+    "max_resultant_degbits": 2400,  # build-bound gate: resultant degree·bits. Conservative "not minutes"
+                                    # line — measured x⁷−5 (2352) ≈ 15s allowed, x⁷−8 (2450) ≈ 36s HOLD,
+                                    # x⁷−20 (2695) >60s HOLD; the 15–40s grey zone is `force`-recoverable.
 }
 
 
