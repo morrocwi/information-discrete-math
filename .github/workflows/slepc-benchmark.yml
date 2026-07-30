@@ -1,11 +1,9 @@
 name: slepc-head-to-head
 
+# Manual-only: installing the SLEPc/PETSc peer is heavy and runner-fragile, so this head-to-head does
+# not gate routine PRs. Run it on demand from the Actions tab (Run workflow) when validating a spectral
+# speed claim; the result is uploaded as `slepc_vs_retained.json`.
 on:
-  pull_request:
-    paths:
-      - "benchmarks/slepc_vs_retained.py"
-      - ".github/workflows/slepc-benchmark.yml"
-      - "retained_spectral/**"
   workflow_dispatch:
 
 jobs:
