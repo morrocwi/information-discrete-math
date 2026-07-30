@@ -1,4 +1,4 @@
-"""idm.continuum — the continuum as a first-class ℚ readout primitive.
+"""idm.continuum — the continuum as a first-class ℚ primitive, never ℝ as an object.
 
 A `Continuum` is not a real-number object. It is a resolution-indexed exact-rational readout
 `g : N -> Q` with an explicit evidence discipline:
@@ -8,17 +8,14 @@ A `Continuum` is not a real-number object. It is a resolution-indexed exact-rati
 - otherwise a finite observed plateau returns `STABLE` (historical alias `DIAGNOSTIC`);
 - if neither condition is met, it returns `HOLD`.
 
-The exact pointwise algebra is mapped to `formal/IDM_Continuum.v`. Completed-limit interpretation remains
-separate from the finite computation.
+The exact pointwise algebra is mapped to `formal/IDM_Continuum.v`. The completed-limit interpretation
+stays behind the explicit +ℝ-Open fence.
 """
 from fractions import Fraction as Q
 
 from .certified import Readout, CERTIFIED, STABLE, HOLD
 
 WITNESS = "formal/IDM_Continuum.v"
-
-# Compatibility alias. An observed plateau is now represented by the project-wide STABLE status rather
-# than an ad-hoc string that the shared Readout type could not validate.
 DIAGNOSTIC = STABLE
 
 
@@ -28,12 +25,6 @@ class Continuum:
     __slots__ = ("_g", "name", "_tail_bound")
 
     def __init__(self, gen, name=None, tail_bound=None):
-        """Create a readout generator.
-
-        `tail_bound`, when supplied, is a proved callable `N -> Q` bounding distance from the named
-        appearance. Without it, a finite plateau can establish only `STABLE` evidence.
-        """
-
         self._g = gen
         self.name = name or "continuum"
         self._tail_bound = tail_bound
@@ -48,17 +39,11 @@ class Continuum:
         return value if isinstance(value, Q) else Q(str(value))
 
     def readout(self, eps, window=3, max_N=4096):
-        """Return a proved target enclosure, a finite stability result, or HOLD.
-
-        If a proved tail bound exists, the least inspected `N` satisfying `tail_bound(N) <= eps` yields
-        `CERTIFIED`. Otherwise, `window` successive observed gaps below `eps` yield `STABLE`; this does not
-        claim the pattern continues beyond the sampled window. Failure to reach either condition yields
-        `HOLD`.
-        """
+        """Return a proved target enclosure, a finite stability result, or HOLD."""
 
         eps = Q(str(eps))
         if eps <= 0:
-            return Readout(None, None, HOLD, "tolerance ε must be > 0")
+            return Readout(None, None, HOLD, "tolerance ε must be > 0; completed limit stays +ℝ-Open")
 
         if self._tail_bound is not None:
             for N in range(max_N + 1):
@@ -68,14 +53,14 @@ class Continuum:
                         self.at(N),
                         bound,
                         CERTIFIED,
-                        f"{self.name}: proven tail bound <= ε at N={N}; readout at declared resolution, "
-                        "not a claim that a completed limit was physically formed",
+                        f"{self.name}: proven tail bound <= ε at N={N}; exact finite readout, "
+                        "while the completed limit stays +ℝ-Open",
                     )
             return Readout(
                 None,
                 None,
                 HOLD,
-                f"{self.name}: proven tail bound never reaches ε within {max_N} refinements",
+                f"{self.name}: proven tail bound never reaches ε within {max_N} refinements; +ℝ-Open",
             )
 
         gaps = []
@@ -89,36 +74,29 @@ class Continuum:
                     max(gaps[-window:]),
                     STABLE,
                     f"{self.name}: OBSERVED plateau at N={N} (last {window} gaps <= ε) — "
-                    "finite_diagnostic, NOT proven beyond N (supply a tail_bound to certify); "
-                    "the completed limit remains open",
+                    "finite_diagnostic, NOT proven beyond N; completed limit stays +ℝ-Open",
                 )
             previous = current
         return Readout(
             None,
             None,
             HOLD,
-            f"{self.name}: no plateau within {max_N} refinements; refusing to emit a completed limit",
+            f"{self.name}: no plateau within {max_N} refinements; refusing a completed limit (+ℝ-Open)",
         )
 
     @staticmethod
     def const(q):
-        """Return the constant exact-rational readout, whose proved tail bound is zero."""
-
         q = Q(str(q))
         return Continuum(lambda N, _q=q: _q, name=f"const({q})", tail_bound=lambda N: Q(0))
 
     @staticmethod
     def from_gen(gen, name=None, tail_bound=None):
-        """Wrap a resolution-to-rational generator with an optional proved tail bound."""
-
         return Continuum(gen, name=name, tail_bound=tail_bound)
 
     def _coerce(self, other):
         return other if isinstance(other, Continuum) else Continuum.const(other)
 
     def _combined_tail(self, other):
-        """Propagate proved additive bounds by the triangle inequality."""
-
         if self._tail_bound is None or other._tail_bound is None:
             return None
         return lambda N, a=self._tail_bound, b=other._tail_bound: Q(str(a(N))) + Q(str(b(N)))
@@ -148,8 +126,6 @@ class Continuum:
     __rmul__ = __mul__
 
     def compose(self, reindex):
-        """Reindex the finite resolution: `(a.compose(h)).at(N) == a.at(h(N))`."""
-
         return Continuum(lambda N: self.at(int(reindex(N))), name=f"{self.name}∘reindex")
 
     def __repr__(self):
