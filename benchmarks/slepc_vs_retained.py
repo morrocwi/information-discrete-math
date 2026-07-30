@@ -39,10 +39,17 @@ for _name in (
 import numpy as np
 from scipy.linalg import eigh_tridiagonal
 
-import slepc4py
-slepc4py.init(sys.argv)
-from petsc4py import PETSc
-from slepc4py import SLEPc
+try:
+    import slepc4py
+    slepc4py.init(sys.argv)
+    from petsc4py import PETSc
+    from slepc4py import SLEPc
+except ImportError as exc:  # the independent peer is required to run this head-to-head
+    sys.stderr.write(
+        f"SKIPPED: this benchmark requires the SLEPc/PETSc peer, which is not installed ({exc}).\n"
+        "Install it (e.g. `apt install python3-slepc4py-real python3-petsc4py-real`, or via conda/pip)\n"
+        "and re-run, or trigger the `slepc-head-to-head` workflow from the Actions tab.\n")
+    raise SystemExit(2)
 
 from retained_spectral.engine import (
     native_eigvals_from_tridiagonal,
