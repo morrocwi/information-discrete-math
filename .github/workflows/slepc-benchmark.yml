@@ -1,0 +1,63 @@
+name: slepc-head-to-head
+
+# Manual-only: installing the SLEPc/PETSc peer is heavy and runner-fragile, so this head-to-head does
+# not gate routine PRs. Run it on demand from the Actions tab (Run workflow) when validating a spectral
+# speed claim; the result is uploaded as `slepc_vs_retained.json`.
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      IDM_SLEPC_REPEATS: "5"
+      IDM_SLEPC_BOOTSTRAPS: "5000"
+      IDM_SLEPC_RESULT: "slepc_vs_retained.json"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the independent SLEPc/PETSc peer and native benchmark field
+        run: |
+          set -e
+          sudo add-apt-repository -y universe
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            python3-numpy python3-scipy python3-venv python3-pip \
+            python3-petsc4py-real python3-slepc4py-real
+          /usr/bin/python3 -m venv --system-site-packages .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install "numba==0.60.0"
+
+          PETSC_PYTHON="$(find /usr/lib/petscdir -type d -path '*/lib/python3/dist-packages' | head -1)"
+          SLEPC_PYTHON="$(find /usr/lib/slepcdir -type d -path '*/lib/python3/dist-packages' | head -1)"
+          test -n "$PETSC_PYTHON" && test -n "$SLEPC_PYTHON"
+          echo "PETSC Python: $PETSC_PYTHON"
+          echo "SLEPC Python: $SLEPC_PYTHON"
+          echo "PYTHONPATH=$PETSC_PYTHON:$SLEPC_PYTHON:${PYTHONPATH:-}" >> "$GITHUB_ENV"
+      - name: Disclose versions
+        run: |
+          .venv/bin/python - <<'PY'
+          import numpy, scipy, numba
+          import slepc4py
+          slepc4py.init([])
+          from petsc4py import PETSc
+          from slepc4py import SLEPc
+          print("numpy", numpy.__version__)
+          print("scipy", scipy.__version__)
+          print("numba", numba.__version__)
+          print("PETSc", PETSc.Sys.getVersion())
+          print("SLEPc", SLEPc.Sys.getVersion())
+          PY
+      - name: Run same-operator correctness-gated benchmark
+        run: .venv/bin/python benchmarks/slepc_vs_retained.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: slepc-vs-retained-results
+          path: slepc_vs_retained.json
+          if-no-files-found: warn
