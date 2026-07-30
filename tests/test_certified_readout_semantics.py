@@ -1,7 +1,5 @@
 from fractions import Fraction
 
-import pytest
-
 from idm import certified as cr
 
 
@@ -40,7 +38,6 @@ def test_apriori_richardson_is_not_promoted_to_target_certificate():
     assert not out.certified
 
 
-@pytest.mark.skipif(not cr._bridge._HAVE_MP if hasattr(cr._bridge, "_HAVE_MP") else False, reason="mpmath optional")
 def test_integral_refinement_is_stability_only():
     out = cr.integral(lambda x: x*x, 0, 1, "1e-6")
     assert out.status == cr.STABLE
