@@ -11,7 +11,7 @@ From a checkout: `pip install -e .` (or just run with `PYTHONPATH=.`). Then:
 
 ```python
 import idm
-idm.__version__          # -> "1.5.0"
+idm.__version__          # -> "1.5.1"
 len(idm.kinds())         # -> 269 supported problem kinds
 ```
 

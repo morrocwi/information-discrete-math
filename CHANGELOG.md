@@ -7,6 +7,33 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-07-30
+
+**Patch release: plugin-version sync + the SLEPc head-to-head benchmark.** No solver change, no new
+kinds (still 269), no tier change on any claim.
+
+### Claude Code plugin version was frozen at 1.3.0
+`plugins/information-discrete-math/.claude-plugin/plugin.json` still declared `1.3.0` while the package
+had shipped 1.4.0 and 1.5.0, and `.claude-plugin/marketplace.json` pinned `ref: "v1.3.0"` — so
+`/plugin install information-discrete-math@yaoharee-lahtee-math` handed out a v1.3.0 skill regardless of
+the release. Both now track the package version (`1.5.1` / `ref: "v1.5.1"`), so an install resolves to
+the released skill. The README release badge (also stuck on v1.3.0) and the `idm.__version__` example in
+`docs/QUICKSTART.md` were corrected in the same pass. The existing repo-consistency gate
+(`tests/test_repo_consistency_gates.py`) covers `idm.__version__` / `pyproject.toml` /
+`capabilities.json`; the plugin manifest was outside its reach — that is the drift this release closes.
+
+### Retained Spectral vs SLEPc head-to-head (#60, #101)
+An honest, falsifiable benchmark of the native retained-spectral path against SLEPc/PETSc, plus a
+manual-only (`workflow_dispatch`) CI job — installing the peer is runner-fragile, so it does not gate
+normal PRs. Peer non-convergence is now recorded as an outcome rather than crashing the run: a
+`SlepcDidNotConverge` case is logged `did_not_converge` with the requested modes, no speed verdict is
+emitted for it, and **a DNF forces the overall verdict to `HOLD_NO_SPEED_PROOF`** — a declared case
+without a valid head-to-head cannot substantiate a universal "native is faster" claim. Measured live:
+n=20k k=4 → native eigenpairs ~7.7× faster (CI [7.13, 8.20], eigenvalues agree); n=50k k=8 and
+n=100k k=16 → SLEPc converged 0/k after 20000 iterations under shift-invert + LU + true-residual at
+tol 1e-9, recorded as DNF pending a peer-config review. Overall verdict stands at
+`HOLD_NO_SPEED_PROOF` — no speed claim is made from this run.
+
 ## [1.5.0] - 2026-07-30
 
 **Developer-experience & exact-CAS release.** Highlights: complete complex root-finding with

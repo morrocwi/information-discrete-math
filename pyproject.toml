@@ -1,6 +1,6 @@
 [project]
 name = "information-discrete-math"
-version = "1.5.0"
+version = "1.5.1"
 description = "Readout-first mathematics: the continuum computed as a readout of the discrete."
 readme = "README.md"
 authors = [{ name = "Yaoharee Lahtee" }]
