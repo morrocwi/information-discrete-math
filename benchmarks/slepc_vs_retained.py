@@ -180,6 +180,18 @@ def time_native_pairs(
     return samples, final_lams, max_residual, final_orth
 
 
+class SlepcDidNotConverge(RuntimeError):
+    """The independent peer failed to converge the requested modes under its declared tolerance/iteration
+    budget. Recorded as an honest per-case outcome (peer DNF), NOT silently turned into a native win —
+    the benchmark reports it and withholds any speed verdict for that case."""
+
+    def __init__(self, converged: int, requested: int, iterations: int) -> None:
+        super().__init__(f"SLEPc converged {converged}/{requested} after {iterations} iterations")
+        self.converged = converged
+        self.requested = requested
+        self.iterations = iterations
+
+
 def slepc_once(
     A: PETSc.Mat, k: int, tol: float
 ) -> tuple[float, np.ndarray, float, int]:
@@ -210,7 +222,7 @@ def slepc_once(
     iterations = int(eps.getIterationNumber())
     if nconv < k:
         eps.destroy()
-        raise RuntimeError(f"SLEPc converged {nconv}/{k} after {iterations} iterations")
+        raise SlepcDidNotConverge(nconv, k, iterations)
 
     vals = np.asarray(sorted(float(np.real(eps.getEigenvalue(i))) for i in range(k)))
     errors = [
@@ -294,20 +306,25 @@ def main() -> int:
         np_times, np_values, np_residual, np_orth = time_native_pairs(
             d, e, case.k, case.tolerance
         )
-        sp_times, sp_values, sp_residual, sp_iterations = time_slepc(
-            A, case.k, case.tolerance
-        )
+        # The independent peer may fail to converge the requested modes under its declared
+        # tolerance/iteration budget. That is an honest per-case outcome, NOT a native speed win:
+        # record it, withhold any speed verdict for the case, and force the overall verdict to HOLD
+        # (a declared case without a valid head-to-head cannot substantiate a universal claim).
+        peer_converged = True
+        try:
+            sp_times, sp_values, sp_residual, sp_iterations = time_slepc(
+                A, case.k, case.tolerance
+            )
+        except SlepcDidNotConverge as dnf:
+            peer_converged = False
+            print(
+                f"SLEPc DID NOT CONVERGE: {dnf.converged}/{dnf.requested} modes after "
+                f"{dnf.iterations} iterations — recording peer DNF, no speed verdict for this case.",
+                flush=True,
+            )
 
         nv_accuracy = accuracy(nv, reference, 0.0, case.tolerance)
         np_accuracy = accuracy(np_values, reference, np_residual, case.tolerance)
-        sp_accuracy = accuracy(sp_values, reference, sp_residual, case.tolerance)
-        correct = bool(nv_accuracy["ok"] and np_accuracy["ok"] and sp_accuracy["ok"])
-        value_ratio = bootstrap_ratio(sp_times, nv_times)
-        pair_ratio = bootstrap_ratio(sp_times, np_times)
-
-        all_correct = all_correct and correct
-        all_value_wins = all_value_wins and value_ratio["verdict"] == "native_faster"
-        all_pair_wins = all_pair_wins and pair_ratio["verdict"] == "native_faster"
 
         item = {
             "case": asdict(case),
@@ -324,28 +341,51 @@ def main() -> int:
                 "accuracy": np_accuracy,
                 "orthogonality_error": np_orth,
             },
-            "slepc_krylovschur_shiftinvert_eigenpairs": {
+        }
+
+        if peer_converged:
+            sp_accuracy = accuracy(sp_values, reference, sp_residual, case.tolerance)
+            correct = bool(nv_accuracy["ok"] and np_accuracy["ok"] and sp_accuracy["ok"])
+            value_ratio = bootstrap_ratio(sp_times, nv_times)
+            pair_ratio = bootstrap_ratio(sp_times, np_times)
+            all_correct = all_correct and correct
+            all_value_wins = all_value_wins and value_ratio["verdict"] == "native_faster"
+            all_pair_wins = all_pair_wins and pair_ratio["verdict"] == "native_faster"
+            item["slepc_krylovschur_shiftinvert_eigenpairs"] = {
                 "samples_seconds": sp_times,
                 "median_seconds": statistics.median(sp_times),
                 "accuracy": sp_accuracy,
                 "iterations": sp_iterations,
                 "true_residual": True,
-            },
-            "slepc_speedup_over_native_eigenvalues": value_ratio,
-            "slepc_speedup_over_native_eigenpairs": pair_ratio,
-        }
+            }
+            item["slepc_speedup_over_native_eigenvalues"] = value_ratio
+            item["slepc_speedup_over_native_eigenpairs"] = pair_ratio
+            print(
+                f"native values={statistics.median(nv_times):.6f}s | "
+                f"native pairs={statistics.median(np_times):.6f}s | "
+                f"SLEPc pairs={statistics.median(sp_times):.6f}s | "
+                f"pair speedup={pair_ratio['median_speedup_peer_over_native']:.2f}x "
+                f"CI=[{pair_ratio['ci95_low']:.2f},{pair_ratio['ci95_high']:.2f}] | "
+                f"accuracy={correct}",
+                flush=True,
+            )
+        else:
+            # peer DNF → no valid comparison; cannot claim a native win for this declared case
+            all_pair_wins = False
+            all_value_wins = False
+            all_correct = all_correct and bool(nv_accuracy["ok"] and np_accuracy["ok"])
+            item["slepc_krylovschur_shiftinvert_eigenpairs"] = {
+                "status": "did_not_converge",
+                "requested_modes": case.k,
+                "true_residual": True,
+                "note": "SLEPc did not converge under the declared tolerance/iteration budget; "
+                        "no speed verdict recorded. Needs a peer-config review before any claim.",
+            }
+            item["slepc_speedup_over_native_eigenvalues"] = {"verdict": "peer_did_not_converge"}
+            item["slepc_speedup_over_native_eigenpairs"] = {"verdict": "peer_did_not_converge"}
+
         record["cases"].append(item)
         A.destroy()
-
-        print(
-            f"native values={statistics.median(nv_times):.6f}s | "
-            f"native pairs={statistics.median(np_times):.6f}s | "
-            f"SLEPc pairs={statistics.median(sp_times):.6f}s | "
-            f"pair speedup={pair_ratio['median_speedup_peer_over_native']:.2f}x "
-            f"CI=[{pair_ratio['ci95_low']:.2f},{pair_ratio['ci95_high']:.2f}] | "
-            f"accuracy={correct}",
-            flush=True,
-        )
 
     record["gates"] = {
         "all_correct": all_correct,
