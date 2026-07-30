@@ -67,6 +67,14 @@ C (synthetic tool-use dataset + benchmark vs a real 0.5B). Reduces the model's d
   `idm.ai.route` as the oracle (100%/100%). To benchmark a real 0.5B, pass a router that calls the
   model — no weights are shipped or needed for the self-test.
 
+## v1.5.1 (released 2026-07-30)
+
+A **patch** release — no solver change, still 269 kinds:
+- **Plugin sync:** the Claude Code plugin manifest and marketplace `ref` were frozen at v1.3.0 while the
+  package shipped 1.4.0/1.5.0, so an install handed out a stale skill. Both now track the package version.
+- **Retained Spectral vs SLEPc:** a falsifiable head-to-head (manual-only CI). Peer non-convergence is
+  recorded honestly and forces the overall verdict to `HOLD_NO_SPEED_PROOF` — no speed claim is made.
+
 ## v1.5.0 (released 2026-07-30)
 
 A **developer-experience & exact-CAS** release — all additive, tier-honest, 269 kinds:
