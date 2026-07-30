@@ -1,7 +1,9 @@
 """idm.continuum — the continuum as a first-class ℚ primitive, never ℝ as an object.
 
 A `Continuum` is not a real-number object. It is a resolution-indexed exact-rational readout
-`g : N -> Q` with an explicit evidence discipline:
+`g : N -> Q` with an explicit evidence discipline. In the project's interpretive vocabulary, the
+continuum is a readout of the discrete; mathematically, this module exposes only finite rational values
+and explicit evidence statuses.
 
 - `.at(N)` returns the exact rational readout at a declared finite resolution;
 - `.readout(eps)` returns `CERTIFIED` only when a proved tail bound is carried;
@@ -54,7 +56,7 @@ class Continuum:
                         bound,
                         CERTIFIED,
                         f"{self.name}: proven tail bound <= ε at N={N}; exact finite readout, "
-                        "while the completed limit stays +ℝ-Open",
+                        "NOT the completed limit; the latter stays +ℝ-Open",
                     )
             return Readout(
                 None,
