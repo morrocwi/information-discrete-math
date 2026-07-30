@@ -2,11 +2,11 @@ from fractions import Fraction
 
 import pytest
 
-import certified_readout as cr
+from idm import certified as cr
 
 
 def test_geometric_is_target_certified():
-    out = cr.geom_series_certified(Fraction(1, 3), Fraction(1, 10**12))
+    out = cr.geom_series(Fraction(1, 3), Fraction(1, 10**12))
     assert out.status == cr.CERTIFIED
     assert out.certified
     assert not out.stable
@@ -14,7 +14,7 @@ def test_geometric_is_target_certified():
 
 
 def test_exponential_is_exact_rational_target_certificate():
-    out = cr.exp_certified("0.4", "1e-20")
+    out = cr.exp("0.4", "1e-20")
     assert out.status == cr.CERTIFIED
     assert isinstance(out.q, Fraction)
     assert isinstance(out.bound, Fraction)
@@ -22,12 +22,12 @@ def test_exponential_is_exact_rational_target_certificate():
 
 
 def test_simpson_refuses_inexact_node_values():
-    out = cr.simpson_certified(lambda x: float(x) ** 2, 0, 1, "1e-6", d4_bound=0)
+    out = cr.simpson(lambda x: float(x) ** 2, 0, 1, "1e-6", d4_bound=0)
     assert out.status == cr.HOLD
 
 
 def test_simpson_certifies_exact_rational_polynomial():
-    out = cr.simpson_certified(lambda x: x**2, 0, 3, Fraction(1, 10**9), d4_bound=0)
+    out = cr.simpson(lambda x: x**2, 0, 3, Fraction(1, 10**9), d4_bound=0)
     assert out.status == cr.CERTIFIED
     assert out.q == 9
     assert out.bound == 0
@@ -40,9 +40,9 @@ def test_apriori_richardson_is_not_promoted_to_target_certificate():
     assert not out.certified
 
 
-@pytest.mark.skipif(not cr._HAVE_MP, reason="mpmath optional")
+@pytest.mark.skipif(not cr._bridge._HAVE_MP if hasattr(cr._bridge, "_HAVE_MP") else False, reason="mpmath optional")
 def test_integral_refinement_is_stability_only():
-    out = cr.integral_stable_certified(lambda x: x*x, 0, 1, "1e-6")
+    out = cr.integral(lambda x: x*x, 0, 1, "1e-6")
     assert out.status == cr.STABLE
     assert out.stable
     assert not out.certified
