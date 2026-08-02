@@ -44,9 +44,13 @@ ordinal/proof strength with **zero continuum apparatus**. — **CONFIRMED, stron
 
 **Exp. B — does an (I1–I4)-without-I5 example exist?**
 Web-search-verified: `RCA0` (reverse mathematics base system) has proof-theoretic ordinal `ω^ω`
-— far weaker than even PA — yet, extended only to `WKL0`, already proves the Intermediate Value
-Theorem and Heine–Borel on `[0,1]^n`, i.e. real-number-flavored statements, at low ordinal
-strength. — **CONFIRMED, but weaker than Exp. A**: `RCA0`/`WKL0`'s "reals" are Cauchy sequences
+— far weaker than even PA — and already proves the Intermediate Value Theorem on real-valued
+continuous functions on its own (IVT does not need `WKL0`); extending it to `WKL0` (still
+ordinal `ω^ω` — the jump to `WKL0` adds no proof-theoretic strength over `RCA0`) additionally
+proves Heine–Borel on `[0,1]^n`. So the real-number-flavored apparatus (Cauchy-sequence reals,
+IVT, and — one step up, still at the same low ordinal — Heine–Borel) sits at uniformly low
+ordinal strength; the case for "continuum apparatus without I5" is if anything **cleaner** than
+first stated, not weaker. — **CONFIRMED**: `RCA0`/`WKL0`'s "reals" are Cauchy sequences
 with a computable modulus, i.e. already close to the *readout-style* ℝ this repo already accepts
 (§ discrete number ladder), not the full classical LUB-completeness a realist means by I1. A
 cleaner example (e.g. full second-order arithmetic `Z2`, which does prove classical
@@ -78,8 +82,14 @@ not `Th_coqc`.
 
 ## Negative findings / caveats (do not silently drop these)
 
-1. Exp. B's counterexample is soft — `RCA0`/`WKL0`'s reals are already readout-flavored, so it
-   doesn't cleanly show "full classical I1 with weak I5." A sharper example is still open.
+1. Exp. B's counterexample still only shows readout-flavored (Cauchy-sequence) reals at low
+   ordinal strength, not the full classical LUB-completeness a realist means by I1 — `Z2`
+   (second-order arithmetic) is the sharper candidate for that and remains unverified this pass.
+   That said, an independent checker re-ran this experiment and found the low-ordinal case
+   *stronger* than first drafted (IVT needs no `WKL0` at all; `WKL0` itself adds zero ordinal
+   strength over `RCA0`'s `ω^ω`) — so this caveat is narrower than the first draft implied: it is
+   about *which flavor* of I1 has been shown decoupled from I5, not about whether decoupling in
+   this direction happens at all.
 2. **Deeper open question (Dr, unresolved — flag, don't paper over)**: is I5 actually a *new*
    infinity, or just "which induction principles a system licenses over an already-accepted
    completed `ℕ`"? IDM already treats `D≅ℕ` as machine-checked and complete (§ discrete number
@@ -87,8 +97,15 @@ not `Th_coqc`.
    than what's needed for feasible computation — even ordinary PA induction, let alone `ε₀` — is
    already smuggling a completed-infinite-totality commitment, and that I5 is not a sibling of
    I1–I4 but a restatement of the same D-vs-completed-ℕ question IDM already settled by adopting
-   `D≅ℕ`. This finding does **not** resolve that tension; it should be stated as an open dispute
-   if I5 is added, not decided in the textbook's voice.
+   `D≅ℕ`. Sharper form of the same objection (raised by the independent checker, not yet answered
+   here): if I5 really does collapse into `D≅ℕ`, then the discrete ladder's own machine-checked
+   `D≅ℕ` result should be directly interrogable for whether it already licenses `ε₀`-induction to
+   a finite-readout reasoner — i.e. there may be a `Th_coqc`-tier fact inside this repo's *own*
+   formal core (Exp. C found none *currently proved*, which is not the same as "none derivable")
+   that would settle part of this dispute mechanically rather than philosophically. This finding
+   does **not** attempt that derivation and does **not** resolve the tension; it should be stated
+   as an open dispute — with this sharper form named — if I5 is ever added, not decided in the
+   textbook's voice.
 3. Exp. D is shallow (one search pass) — do not cite it as if a literature review was done.
 
 ## What's actually usable right now
@@ -100,9 +117,23 @@ not `Th_coqc`.
 - **Usable**: Gentzen/Ackermann (Exp. A) as the textbook's worked example when a BB(n)-style or
   Gödel-style independence result comes up — gives a correct, non-continuum diagnosis instead of
   defaulting to "this needs infinity" undifferentiated.
-- **Not yet usable / still open**: a clean Exp. B counterexample; a real literature review for
-  Exp. D; and the ultrafinitist objection in caveat 2, which is a live philosophical fork, not a
-  closed matter.
+- **Not yet usable / still open**: a `Z2`-level clean Exp. B counterexample for full classical I1;
+  a real literature review for Exp. D; and the ultrafinitist objection in caveat 2 (now including
+  the sharper "does `D≅ℕ` already mechanically settle this" form), which is a live philosophical
+  fork, not a closed matter.
+
+## Independent review
+
+An independent checker (separate AI session, adversarial/fault-finding mandate, no shared context
+with the author) reviewed this finding pre-merge: reproduced the Exp. C grep independently
+(confirmed 0 real hits), verified the historical/technical claims, confirmed tier-honesty, and
+confirmed the doc touches no other file. Verdict: **PASS-WITH-NOTES**. Two notes were applied
+back into this file: (1) the Exp. B phrasing understated its own result — IVT needs no `WKL0`,
+and `WKL0` adds no ordinal strength over `RCA0`'s `ω^ω`, so the low-ordinal/continuum-apparatus
+case is cleaner than first drafted, not weaker; (2) caveat 2 was sharpened with the checker's
+observation that a mechanical (`Th_coqc`-tier) resolution may be derivable from this repo's own
+`D≅ℕ` result rather than staying purely philosophical — left as a named open question, not
+answered here.
 
 ## Recommendation
 
