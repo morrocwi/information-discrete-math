@@ -206,11 +206,15 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
 
     if not engine.NATIVE_KERNEL_COMPILED:
         pytest.skip("run_competition fails closed without the compiled kernel (no numba)")
-    result = run_competition(repeats=2, audit_repeats=1, include_jax=False)
+    result = run_competition(repeats=2, audit_repeats=1, include_jax=False, include_k1_discrete=False)
     gates = result["verdict_gates"]
     for key in ("native_correct_all", "scipy_correct_all", "native_accept_all",
-                "scipy_accept_all", "speed_ci_native_faster_all"):
+                "scipy_accept_all", "speed_ci_native_faster_all_k_gt_1"):
         assert key in gates
+    # k=1 cases are excluded from the speed gate (retention needs >=2 related readouts to act
+    # across; a singleton request has nothing to retain across) and reported separately instead.
+    assert "k1_discrete_readout" in result
+    assert result["k1_discrete_readout"]["cases"] == {}  # skipped via include_k1_discrete=False
     assert result["source_commit"] == "unit-test-sha"
     assert result["end_to_end"]["seed"] == 20260727
     assert "thread_environment" in result["environment"]
@@ -279,6 +283,91 @@ def test_charts_render_ci_and_raw_samples(tmp_path, monkeypatch):
     detail = render_detail(data, tmp_path / "detail.png")
     assert hero.stat().st_size > 5000
     assert detail.stat().st_size > 5000
+
+
+class _FakeCompletedProcess:
+    def __init__(self, returncode: int, stderr: str = "", stdout: str = ""):
+        self.returncode = returncode
+        self.stderr = stderr
+        self.stdout = stdout
+
+
+def test_k1_perf_instruction_count_rejects_nonzero_returncode(monkeypatch):
+    """A worker that crashes must not have perf's instruction count for its brief, failed
+    runtime returned as if it were a valid measurement — the exact gap an independent review
+    found unguarded (perf happily reports a number for a crashed process)."""
+    from retained_spectral.competition import k1_discrete_readout as k1
+
+    monkeypatch.setattr(k1.shutil, "which", lambda name: "/usr/bin/perf")
+    monkeypatch.setattr(
+        k1.subprocess, "run",
+        lambda *a, **k: _FakeCompletedProcess(returncode=1, stderr="1,234,567 instructions:u"),
+    )
+    assert k1._perf_instruction_count("factorized_sextic_ground", "native", 512, 500) is None
+
+
+def test_k1_perf_instruction_count_accepts_clean_exit(monkeypatch):
+    from retained_spectral.competition import k1_discrete_readout as k1
+
+    monkeypatch.setattr(k1.shutil, "which", lambda name: "/usr/bin/perf")
+    monkeypatch.setattr(
+        k1.subprocess, "run",
+        lambda *a, **k: _FakeCompletedProcess(returncode=0, stderr="1,234,567 instructions:u"),
+    )
+    assert k1._perf_instruction_count("factorized_sextic_ground", "native", 512, 500) == 1234567
+
+
+def test_k1_discrete_verdict_insufficient_instrumentation_when_perf_missing(monkeypatch):
+    from retained_spectral.competition import k1_discrete_readout as k1
+
+    monkeypatch.setattr(k1.shutil, "which", lambda name: None)
+    result = k1.k1_discrete_verdict("factorized_sextic_ground")
+    assert result["verdict"] == "insufficient-instrumentation"
+    assert result["tier"] == "Open"
+
+
+def test_k1_discrete_verdict_threshold_logic(monkeypatch):
+    """Drive the win/tie/loss threshold (0.95/1.05) with fixed synthetic instruction counts,
+    independent of any real perf run — deterministic, no subprocess, no timing noise."""
+    from retained_spectral.competition import k1_discrete_readout as k1
+
+    def fake_instructions_per_call(problem_name, solver, *, intervals=512, n_lo=500, n_hi=2000, trials=3):
+        # native uses roughly 2x the peer's instructions -> peer_fewer_instructions
+        base = 400_000.0
+        value = base * 2 if solver == "native" else base
+        return {"median": value, "min": value, "max": value, "trials": [value] * trials}
+
+    monkeypatch.setattr(k1, "instructions_per_call", fake_instructions_per_call)
+    result = k1.k1_discrete_verdict("factorized_sextic_ground", trials=3)
+    assert result["verdict"] == "peer_fewer_instructions"
+    assert result["tier"] == "finite_diagnostic"
+    assert result["ratio_native_over_peer_median"] == pytest.approx(2.0)
+
+    def fake_comparable(problem_name, solver, *, intervals=512, n_lo=500, n_hi=2000, trials=3):
+        value = 400_000.0 * (1.02 if solver == "native" else 1.0)
+        return {"median": value, "min": value, "max": value, "trials": [value] * trials}
+
+    monkeypatch.setattr(k1, "instructions_per_call", fake_comparable)
+    assert k1.k1_discrete_verdict("factorized_sextic_ground")["verdict"] == "comparable"
+
+
+@pytest.mark.skipif(
+    __import__("shutil").which("perf") is None,
+    reason="perf binary not available on this host",
+)
+def test_k1_discrete_verdict_real_perf_integration():
+    """Lightweight real-perf smoke test (skipped where perf isn't installed): confirms the
+    whole pipeline — worker subprocess, perf invocation, regex parse, slope, median-of-trials
+    — produces a well-formed, correctly-tiered result end to end, not just under mocks."""
+    from retained_spectral.competition.k1_discrete_readout import k1_discrete_verdict
+
+    result = k1_discrete_verdict("factorized_sextic_ground", trials=2)
+    assert result["tier"] in ("finite_diagnostic", "Open")
+    if result["tier"] == "finite_diagnostic":
+        assert result["verdict"] in (
+            "native_fewer_instructions", "peer_fewer_instructions", "comparable",
+        )
+        assert result["native_instructions_per_call"]["median"] > 0
 
 
 if __name__ == "__main__":
