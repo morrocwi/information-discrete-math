@@ -7,6 +7,18 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+- Fix (PR #109, not yet merged): `retained_spectral/competition/executor_audit.py`'s ARPACK
+  (`eigsh`) comparator switched from plain `which="SA"` to shift-invert (`sigma` = a
+  Gershgorin lower bound on the operator, `which="LM"`), fixing `ArpackNoConvergence` on
+  `morse_lambda5_all_bound`. Independently re-verified against LAPACK on all 7 declared cases
+  (1e-9-1e-13 agreement). **Note:** this also changes ARPACK's own reported timing on the other
+  6 cases (5x-150x faster in solver-mode terms, e.g. `factorized_sextic_ground` 214ms -> 1.4ms)
+  — a comparator-mode effect, not an algorithmic change, and it does not feed the
+  `speed_ci_native_faster_all` gate (that peer is `SciPy eigh_tridiagonal`, not `eigsh`), so it
+  does not affect the pass/fail verdict. Anyone reading historical `eigsh` timing numbers in
+  `competition_results.json`/rendered charts after this merges should know the jump is from this
+  mode switch, not a hardware or algorithmic change.
+
 ## [1.5.1] - 2026-07-30
 
 **Patch release: plugin-version sync + the SLEPc head-to-head benchmark.** No solver change, no new
