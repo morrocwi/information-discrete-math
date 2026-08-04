@@ -299,6 +299,44 @@ def test_necessary_coverage_check_catches_wide_separation_too():
         assert result.status == "HOLD", (a2, result.reason)
 
 
+def test_necessary_coverage_check_catches_wide_separation_at_low_modes_too():
+    """A second round of independent review found the wide scan's local-minimum test compared
+    coarse SAMPLE values directly against `energy`, which at low `modes` (energy close to the
+    missed well's own ground state) put the classically-allowed band narrower than the wide
+    scan's grid spacing - reproduced a silent wrong ACCEPT at a2=50000, modes=1 with error 1.6e-2
+    against tolerance 2e-8 (verified independently against a 400,000-point full-domain SciPy
+    solve). Fixed by refining each coarse candidate dip's TRUE minimum via local golden-section
+    search before comparing to energy, rather than comparing raw samples. Regression-guarded here
+    across a range of a2 at modes=1, the exact axis the review varied that the original test
+    suite (fixed at modes=4) never exercised."""
+    for a2 in (2500.0, 5000.0, 50000.0):
+        problem = engine.RawSpectralProblem(
+            name=f"double_well_low_modes_a2_{a2:g}", potential="symmetric_double_well",
+            parameters=(("lam", 1.0), ("a2", a2)), modes=1, tolerance=2.0e-8,
+        )
+        result = engine.retained_raw_input_readout(problem)
+        assert result.status == "HOLD", (a2, result.reason)
+
+
+def test_raw_input_readout_with_vectors_resolves_near_degenerate_doublet():
+    """Independent review found the vector pipeline fed a loosely-converged eigenvalue
+    (problem.tolerance, e.g. 1e-6) into retained_mode.modes's much tighter default residual gate
+    (vector_rho=1e-10) for a genuine tunnelling doublet, producing spurious HOLDs that looked like
+    orthogonality failures but were actually an eigenvalue-precision artifact. Fixed by converging
+    the eigenvalues fed to the vector readout to a much tighter tolerance than either
+    problem.tolerance or vector_rho. This regression-guards the exact doublet case the review
+    used (symmetric_double_well, a2=4.0, a genuine near-degenerate pair)."""
+    problem = engine.RawSpectralProblem(
+        name="double_well_doublet_a2_4", potential="symmetric_double_well",
+        parameters=(("lam", 1.0), ("a2", 4.0)), modes=4, tolerance=2.0e-8,
+    )
+    result = engine.retained_raw_input_readout_with_vectors(problem)
+    assert result.eigenvalue_result.status == "ACCEPT"
+    assert result.vector_verdict == "ACCEPT", result.vector_notes
+    assert all(s == "ACCEPT" for s in result.vector_status)
+    assert max(result.vector_residuals) < 1e-9
+
+
 def test_necessary_coverage_check_does_not_regress_declared_or_adversarial_cases():
     """The new coverage check must not introduce a single false HOLD on any case that was
     already correct — including the sextic double-well case in the adversarial suite, which

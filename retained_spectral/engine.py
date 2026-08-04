@@ -613,6 +613,40 @@ def _fine_component_scan(
     )
 
 
+def _refine_local_minimum(
+    problem: RawSpectralProblem,
+    lo: float,
+    hi: float,
+    iterations: int = 60,
+) -> tuple[float, float]:
+    """Golden-section refinement of a local minimum bracketed by ``(lo, hi)``,
+    assuming unimodality inside the bracket (reasonable immediately around a
+    single coarse-grid dip). No scipy dependency -- this module is kept
+    dependency-light on purpose (numpy + stdlib only).
+    """
+    golden = (math.sqrt(5.0) - 1.0) / 2.0
+    a, b = lo, hi
+
+    def _value(x: float) -> float:
+        with np.errstate(over="ignore"):
+            return float(potential_values(problem, np.asarray([x]))[0])
+
+    c = b - golden * (b - a)
+    d = a + golden * (b - a)
+    fc, fd = _value(c), _value(d)
+    for _ in range(iterations):
+        if fc < fd:
+            b, d, fd = d, c, fc
+            c = b - golden * (b - a)
+            fc = _value(c)
+        else:
+            a, c, fc = c, d, fd
+            d = a + golden * (b - a)
+            fd = _value(d)
+    x_min = 0.5 * (a + b)
+    return x_min, _value(x_min)
+
+
 def _wide_missed_well_scan(
     problem: RawSpectralProblem,
     window: tuple[float, float],
@@ -621,18 +655,30 @@ def _wide_missed_well_scan(
     grid_points: int,
 ) -> tuple[bool, str]:
     """Coarse, wide search for an entirely separate well far outside
-    ``window``. Deliberately NOT a connected-components test: at a radius
-    wide enough to reach a macroscopically-separated well, a uniform grid's
-    spacing can easily exceed the width of the narrow classically-allowed
-    band near threshold (verified directly: for one of the seven declared
-    cases, a coarse scan at ~16000x the local scale had ~7.8-unit spacing
-    against a ~5.3-unit-wide true allowed band, and missed the well
-    entirely). A potential well's own SHAPE is far wider than that band, so
-    this instead looks for local minima of V and flags any minimum below
-    ``energy`` lying outside the window -- a check that stays reliable even
-    at coarse resolution over a wide range, at the cost of only catching
-    minima whose shape is resolved by ``grid_points`` samples (still far
-    less demanding than resolving the allowed band itself).
+    ``window``. Deliberately NOT a bare "is this coarse sample below energy"
+    test: at low ``energy`` (few requested modes -- ``energy`` is close to
+    the missed well's own ground state), the classically-allowed band there
+    can be far narrower than this scan's grid spacing, so no single coarse
+    SAMPLE may ever land below `energy` even though the true continuous
+    minimum does. (An earlier version of this function tested exactly that
+    and was independently found, by adversarial review, to silently release
+    a wrong ground state at ``symmetric_double_well(lam=1, a2=50000,
+    modes=1)`` -- error 1.6e-2 against a tolerance of 2e-8, reported ACCEPT.
+    Verified directly against an independent 400,000-point full-domain
+    SciPy diagonalisation.)
+
+    The fix: use the coarse grid only to locate CANDIDATE dips (any local
+    minimum of the sampled values, regardless of how deep it looks at this
+    resolution -- finding the SHAPE of a dip is a far less demanding
+    resolution requirement than sampling inside a narrow allowed band), then
+    refine each candidate's true minimum value with a local golden-section
+    search inside its immediate coarse bracket. The comparison against
+    `energy` is made on the REFINED value, not the coarse sample.
+
+    A dip whose minimum is still decreasing at either scan edge is treated
+    as inconclusive and reported as an uncovered (HOLD) case, the same
+    fail-closed policy as the fine scan's boundary handling -- not assumed
+    closed just because nothing was sampled past the declared radius.
     """
     left, right = window
     scan_left = left - scan_radius
@@ -643,22 +689,36 @@ def _wide_missed_well_scan(
 
     is_local_min = np.zeros(grid_points, dtype=bool)
     is_local_min[1:-1] = (values[1:-1] < values[:-2]) & (values[1:-1] < values[2:])
-    candidates = np.flatnonzero(is_local_min & (values <= energy))
-    for index in candidates:
-        x = float(grid[index])
-        if x < left or x > right:
+    candidate_indices = np.flatnonzero(is_local_min)
+
+    for index in candidate_indices:
+        lo = float(grid[max(index - 1, 0)])
+        hi = float(grid[min(index + 1, grid_points - 1)])
+        x_min, v_min = _refine_local_minimum(problem, lo, hi)
+        if left <= x_min <= right:
+            continue  # the located dip is inside the accepted window
+        if v_min <= energy:
             return False, (
-                f"a local minimum of the potential at x={x:.6g} "
-                f"(V={float(values[index]):.6g}) is below energy {energy:.6g} "
-                f"and lies outside the accepted window [{left:.6g}, "
-                f"{right:.6g}] (wide scan over [{scan_left:.6g}, "
-                f"{scan_right:.6g}])"
+                f"a refined local minimum of the potential at x={x_min:.6g} "
+                f"(V={v_min:.6g}) is below energy {energy:.6g} and lies "
+                f"outside the accepted window [{left:.6g}, {right:.6g}] "
+                f"(wide scan over [{scan_left:.6g}, {scan_right:.6g}])"
             )
+
+    if values[0] < values[1] or values[-1] < values[-2]:
+        # The potential is still decreasing at the scan's own edge -- a
+        # deeper minimum may sit just beyond this declared radius. Cannot
+        # certify coverage from this scan alone.
+        return False, (
+            f"the potential is still decreasing at the wide scan boundary "
+            f"[{scan_left:.6g}, {scan_right:.6g}] -- a minimum beyond this "
+            "declared radius cannot be ruled out from this scan"
+        )
 
     return True, (
         f"wide scan over [{scan_left:.6g}, {scan_right:.6g}] found no "
-        f"other potential minimum below energy {energy:.6g} outside "
-        f"[{left:.6g}, {right:.6g}]"
+        f"other refined potential minimum below energy {energy:.6g} "
+        f"outside [{left:.6g}, {right:.6g}]"
     )
 
 
@@ -1058,8 +1118,22 @@ def retained_raw_input_readout_with_vectors(
     # extrapolation estimate, not an eigenvalue of any single matrix, so the
     # raw eigenvalues of (diagonal, off_diagonal) are recomputed here for the
     # vector readout rather than reusing the corrected values directly.
+    #
+    # Converged to a tolerance MUCH tighter than `problem.tolerance` (and
+    # tighter than `vector_rho`): independent review found that passing
+    # `problem.tolerance` directly (the solver's own declared eigenvalue
+    # tolerance, e.g. 1e-6) into a near-degenerate case fed a
+    # loosely-converged eigenvalue into `retained_mode.modes`'s much
+    # tighter default residual gate (vector_rho=1e-10), producing spurious
+    # HOLDs that looked like real orthogonality/degeneracy failures but
+    # were actually an eigenvalue-precision mismatch (confirmed directly:
+    # the same tunnelling-doublet case flipped from HOLD to ACCEPT purely
+    # by re-solving the eigenvalues to 1e-13 instead of 1e-6). The vector
+    # residual gate needs eigenvalues resolved well past its own tolerance
+    # to give an honest reading of vector quality, not solver precision.
+    lam_tolerance = min(problem.tolerance, vector_rho) * 0.01
     raw_lams = native_eigvals_from_tridiagonal(
-        diagonal, off_diagonal, problem.modes, problem.tolerance,
+        diagonal, off_diagonal, problem.modes, lam_tolerance,
     )
     vectors, residuals, vec_status, vec_verdict, orth, notes = retained_mode.modes(
         diagonal, off_diagonal, raw_lams, rho=vector_rho,
