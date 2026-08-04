@@ -564,18 +564,35 @@ def _fine_component_scan(
     window: tuple[float, float],
     energy: float,
     scan_radius: float,
-    grid_points: int,
+    scale: float,
+    min_grid_points: int = 4096,
+    max_grid_points: int = 262144,
 ) -> tuple[bool, str]:
     """Precise, moderate-radius scan for a component straddling or just past
     the window boundary -- the classic "barrier that looks like a tail" case
-    (the paper's literal example). Grid spacing here is fine relative to
-    ``scan_radius``, so it correctly resolves narrow allowed bands near
-    threshold; it is not, by itself, a defence against a well far outside
-    this radius (see ``_wide_missed_well_scan`` for that).
+    (the paper's literal example).
+
+    Grid resolution is tied to ``scale`` (the FOUND well's own local
+    curvature length, already known here -- unlike the wide scan's unknown
+    second-well curvature) rather than a fixed point count. A fixed
+    ``grid_points=4096`` over ``scan_radius`` was independently found, by
+    round-3 adversarial review, to spuriously HOLD legitimate single-well
+    problems at high curvature (e.g. ``harmonic(omega=10000, modes=1)``):
+    the classically-allowed band near threshold there is narrower than the
+    fixed grid's spacing, so no sample lands inside it anywhere -- including
+    inside the window itself, which the fail-closed "inconsistent" branch
+    below then (correctly, given what it could see, but not usefully)
+    reports as HOLD. Resolution is now set so spacing is a small fraction
+    of ``scale``, capped at ``max_grid_points`` to bound cost.
     """
     left, right = window
     scan_left = left - scan_radius
     scan_right = right + scan_radius
+    target_spacing = max(0.01 * scale, 1.0e-12)
+    grid_points = int(np.clip(
+        math.ceil((scan_right - scan_left) / target_spacing),
+        min_grid_points, max_grid_points,
+    ))
     grid = np.linspace(scan_left, scan_right, grid_points)
     with np.errstate(over="ignore"):
         values = potential_values(problem, grid)
@@ -774,7 +791,7 @@ def _necessary_coverage_check(
 
     fine_radius = max(50.0 * scale, 10.0 * width)
     fine_covered, fine_reason = _fine_component_scan(
-        problem, window, energy, fine_radius, grid_points=4096,
+        problem, window, energy, fine_radius, scale,
     )
     if not fine_covered:
         return False, fine_reason

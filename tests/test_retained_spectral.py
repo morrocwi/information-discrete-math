@@ -318,6 +318,26 @@ def test_necessary_coverage_check_catches_wide_separation_at_low_modes_too():
         assert result.status == "HOLD", (a2, result.reason)
 
 
+def test_fine_component_scan_does_not_false_hold_high_curvature_single_wells():
+    """Round-3 independent review found _fine_component_scan (unchanged since the original coverage
+    check, sibling to _wide_missed_well_scan) had the SAME raw-sample-vs-energy vulnerability the
+    wide scan was just fixed for: at high curvature and few requested modes, the classically-allowed
+    band near threshold is narrower than a fixed 4096-point grid's spacing, so no sample lands
+    inside it anywhere -- including inside the window -- producing a false HOLD on a plain,
+    correct, single-well harmonic oscillator (reproduced directly at omega=10000, modes=1: a
+    textbook case with an exact analytic answer). Fixed by tying grid resolution to the found
+    well's own local curvature scale (known here, unlike the wide scan's unknown second-well
+    curvature) instead of a fixed point count."""
+    for omega in (2000.0, 4000.0, 6000.0, 10000.0):
+        problem = engine.RawSpectralProblem(
+            name=f"fast_ho_{omega:g}", potential="harmonic",
+            parameters=(("omega", omega), ("center", 0.0)), modes=1, tolerance=1e-6,
+        )
+        result = engine.retained_raw_input_readout(problem)
+        assert result.status == "ACCEPT", (omega, result.reason)
+        assert abs(result.values[0] - 0.5 * omega) <= problem.tolerance
+
+
 def test_raw_input_readout_with_vectors_resolves_near_degenerate_doublet():
     """Independent review found the vector pipeline fed a loosely-converged eigenvalue
     (problem.tolerance, e.g. 1e-6) into retained_mode.modes's much tighter default residual gate
