@@ -203,6 +203,14 @@ def potential_values(
         return 0.5 * (wp**2 - wpp)
     if problem.potential == "pure_quartic":
         return p["coupling"] * x**4
+    if problem.potential == "abs_linear":
+        # NON-SMOOTH: V = g|x| has a kink at the origin.  The O(h^2) Richardson
+        # expansion assumed by both pipelines is not justified here.
+        return p["g"] * np.abs(x)
+    if problem.potential == "symmetric_double_well":
+        # CLUSTERED: quartic double well; the low levels form tunnelling
+        # doublets whose splitting falls exponentially with the barrier.
+        return p["lam"] * (x**2 - p["a2"]) ** 2
     raise ValueError(f"unknown potential: {problem.potential}")
 
 
@@ -551,6 +559,101 @@ def _expand_failed_boundaries(
     return expanded, left_pass and right_pass
 
 
+def _necessary_coverage_check(
+    problem: RawSpectralProblem,
+    window: tuple[float, float],
+    energy: float,
+    scale: float,
+) -> tuple[bool, str]:
+    """Necessary-condition scan for a second, missed well.
+
+    ``_turning_tail_pass`` above tests a SUFFICIENT condition only: does the
+    boundary lie deep enough in a classically forbidden region to trust a
+    decaying tail. A barrier between two wells passes that exact test as
+    convincingly as a true decaying tail does -- the boundary looks identical
+    from outside. This is the failure mode reported in the paper's
+    "silent failure" case (``symmetric_double_well``): the decay gate passes,
+    the mesh/window diagnostic bound passes, and the released values are
+    simply the spectrum of the wrong (single) well.
+
+    The necessary condition this checks instead: does the classically
+    allowed region ``{x : V(x) <= energy}`` have any component lying, even
+    partially, outside the accepted ``window``? If so, a state was excluded
+    by construction, independent of how small the diagnostic bound is.
+
+    This is scanned over a wider, explicitly bounded range -- not the
+    literal real line, which is not a finite readout. Two residual gaps are
+    real and not hidden: a classically-allowed component narrower than the
+    scan spacing between grid points can still be missed, and a component
+    centred beyond the declared scan radius is invisible to this check.
+    Both are the same kind of finite-resolution gap the rest of this module
+    already discloses (e.g. the pivot floor, the decay gate's own
+    tolerance-derived threshold) -- reported here for the same reason.
+    """
+    left, right = window
+    width = right - left
+    scan_radius = max(50.0 * scale, 10.0 * width)
+    scan_left = left - scan_radius
+    scan_right = right + scan_radius
+    grid_points = 4096
+    grid = np.linspace(scan_left, scan_right, grid_points)
+    with np.errstate(over="ignore"):
+        # Some declared potentials (e.g. cosh-based) overflow to +inf far
+        # from the well -- mathematically correct ("not allowed" there),
+        # just noisy without this.
+        values = potential_values(problem, grid)
+    allowed = values <= energy
+
+    if not np.any(allowed):
+        # Should not happen -- `energy` is one of the solver's own released
+        # eigenvalues, so its own window's classically-allowed region must be
+        # nonempty. Treat inconsistency as uncovered (fail closed) rather
+        # than silently reporting coverage.
+        return False, (
+            "no classically-allowed region found in the scan range "
+            f"[{scan_left:.6g}, {scan_right:.6g}] at energy {energy:.6g} "
+            "-- inconsistent with the solver's own released value, "
+            "reported as uncovered rather than assumed covered"
+        )
+
+    changes = np.diff(allowed.astype(np.int8))
+    component_starts = list(np.flatnonzero(changes == 1) + 1)
+    component_ends = list(np.flatnonzero(changes == -1))
+    if allowed[0]:
+        component_starts = [0] + component_starts
+    if allowed[-1]:
+        component_ends = component_ends + [len(allowed) - 1]
+
+    for start_index, end_index in zip(component_starts, component_ends):
+        component_left = float(grid[start_index])
+        component_right = float(grid[end_index])
+        touches_left_boundary = start_index == 0
+        touches_right_boundary = end_index == len(allowed) - 1
+        if component_left < left or component_right > right:
+            if touches_left_boundary or touches_right_boundary:
+                # The scan range itself may be too narrow to have closed
+                # this component off; report it as such rather than
+                # asserting a bound outside what was actually scanned.
+                return False, (
+                    f"a classically-allowed component extends to the scan "
+                    f"boundary near {component_left:.6g} to "
+                    f"{component_right:.6g} without closing inside the scan "
+                    f"range [{scan_left:.6g}, {scan_right:.6g}] -- cannot "
+                    "certify coverage from this scan alone"
+                )
+            return False, (
+                f"a classically-allowed component [{component_left:.6g}, "
+                f"{component_right:.6g}] lies outside the accepted window "
+                f"[{left:.6g}, {right:.6g}]"
+            )
+
+    return True, (
+        f"all classically-allowed components at energy {energy:.6g} lie "
+        f"within the accepted window [{left:.6g}, {right:.6g}], scanned "
+        f"over [{scan_left:.6g}, {scan_right:.6g}]"
+    )
+
+
 @dataclass(frozen=True)
 class _MeshReadout:
     values: np.ndarray
@@ -761,11 +864,25 @@ def retained_raw_input_readout(
 
     assert accepted_mesh is not None
     diagnostic = accepted_mesh.mesh_shift + window_shift
-    status = (
-        "ACCEPT"
-        if float(np.max(diagnostic)) <= problem.tolerance
-        else "HOLD"
+    diagnostic_ok = float(np.max(diagnostic)) <= problem.tolerance
+
+    # Necessary condition, independent of the diagnostic bound above: does a
+    # classically-allowed component lie outside the accepted window? A
+    # sufficient boundary-decay pass (already folded into `window` via
+    # `_expand_failed_boundaries`) cannot rule this out -- a barrier between
+    # two wells passes it exactly as a true decaying tail does. Checked once,
+    # against the final accepted window and the highest released eigenvalue
+    # estimate, not on every round -- this is the gate that decides ACCEPT.
+    covered, coverage_reason = _necessary_coverage_check(
+        problem,
+        window,
+        float(np.max(accepted_mesh.values)),
+        scale,
     )
+
+    status = "ACCEPT" if diagnostic_ok and covered else "HOLD"
+    if not covered:
+        reason = f"necessary coverage check failed: {coverage_reason}"
     return RawSpectralResult(
         method="Retained Multilevel Sturm (RMS)",
         status=status,

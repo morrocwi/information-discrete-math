@@ -265,6 +265,60 @@ def test_sturm_certificate_rejects_a_wrong_eigenvalue():
     assert not sturm_index_certificate(diag, off, bad, abs_delta=1e-6)["ok"]
 
 
+def test_necessary_coverage_check_catches_the_silent_double_well_failure():
+    """The reported paper failure, reproduced against the real engine: a symmetric double well
+    whose barrier is deep enough to pass the (sufficient-only) decay gate, so the planner locates
+    only one well. Before this check existed, the released status was ACCEPT with a passing
+    diagnostic bound (1.58e-9) despite an actual error of 16.07 (the second well's doublet was
+    silently dropped). The necessary coverage check must now report HOLD for this exact case."""
+    problem = engine.RawSpectralProblem(
+        name="double_well_a2_9", potential="symmetric_double_well",
+        parameters=(("lam", 1.0), ("a2", 9.0)), modes=4, tolerance=2.0e-8,
+    )
+    result = engine.retained_raw_input_readout(problem)
+    assert result.status == "HOLD"
+    assert "coverage" in result.reason
+    # the diagnostic bound alone was always misleadingly small for this case -- the point of
+    # this test is that status no longer trusts it alone
+    assert float(max(result.diagnostic_bounds)) <= problem.tolerance
+
+
+def test_necessary_coverage_check_does_not_regress_declared_or_adversarial_cases():
+    """The new coverage check must not introduce a single false HOLD on any case that was
+    already correct — including the sextic double-well case in the adversarial suite, which
+    (unlike the paper's silent-failure case) is genuinely covered by its planner-chosen window."""
+    from retained_spectral.competition.credibility_audit import adversarial_targets
+
+    for target in engine.raw_benchmark_targets():
+        result = engine.retained_raw_input_readout(target.problem)
+        assert result.status == "ACCEPT", (target.problem.name, result.reason)
+
+    for target in adversarial_targets():
+        result = engine.retained_raw_input_readout(target.problem)
+        assert result.status == "ACCEPT", (target.problem.name, result.reason)
+        max_err = max(
+            abs(got - want) for got, want in zip(result.values, target.reference)
+        ) if len(result.values) == len(target.reference) else float("inf")
+        assert max_err <= target.problem.tolerance, (target.problem.name, max_err)
+
+
+def test_necessary_coverage_check_unit():
+    """Direct unit test of the scan logic: a component entirely outside the window is caught; a
+    window that already contains the whole classically-allowed region is not flagged."""
+    problem = engine.RawSpectralProblem(
+        name="unit_double_well", potential="symmetric_double_well",
+        parameters=(("lam", 1.0), ("a2", 9.0)), modes=1, tolerance=1e-6,
+    )
+    # a window covering only the left well: the right well's component must be caught
+    covered, reason = engine._necessary_coverage_check(problem, (-6.0, 0.0), energy=5.0, scale=1.0)
+    assert covered is False
+    assert "outside the accepted window" in reason or "scan boundary" in reason
+
+    # a window wide enough to cover both wells: must not be flagged
+    covered, reason = engine._necessary_coverage_check(problem, (-6.0, 6.0), energy=5.0, scale=1.0)
+    assert covered is True
+
+
 def test_charts_render_ci_and_raw_samples(tmp_path, monkeypatch):
     """render_hero / render_detail draw from the measured record: the detail forest plot needs the
     per-case bootstrap CI and the raw samples the run now records."""
