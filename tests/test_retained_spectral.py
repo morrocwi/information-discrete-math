@@ -283,6 +283,22 @@ def test_necessary_coverage_check_catches_the_silent_double_well_failure():
     assert float(max(result.diagnostic_bounds)) <= problem.tolerance
 
 
+def test_necessary_coverage_check_catches_wide_separation_too():
+    """Independent adversarial review of an earlier version of this fix found it silently missed
+    the exact same failure class once well separation exceeded ~10x the window width (the scan
+    radius was tied to local scale, not to any real search distance) - reproduced at a2=900 and
+    worse at a2=2500, where the scan never even reached the second well. This regression-guards
+    the two-tier fix (fine boundary scan + wide local-minimum scan) against exactly those cases,
+    plus one narrower and one far wider still."""
+    for a2 in (100.0, 600.0, 900.0, 2500.0):
+        problem = engine.RawSpectralProblem(
+            name=f"double_well_a2_{a2:g}", potential="symmetric_double_well",
+            parameters=(("lam", 1.0), ("a2", a2)), modes=4, tolerance=2.0e-8,
+        )
+        result = engine.retained_raw_input_readout(problem)
+        assert result.status == "HOLD", (a2, result.reason)
+
+
 def test_necessary_coverage_check_does_not_regress_declared_or_adversarial_cases():
     """The new coverage check must not introduce a single false HOLD on any case that was
     already correct — including the sextic double-well case in the adversarial suite, which
@@ -317,6 +333,48 @@ def test_necessary_coverage_check_unit():
     # a window wide enough to cover both wells: must not be flagged
     covered, reason = engine._necessary_coverage_check(problem, (-6.0, 6.0), energy=5.0, scale=1.0)
     assert covered is True
+
+
+def test_raw_input_readout_with_vectors_returns_orthonormal_eigenvectors():
+    """The new raw-input -> eigenvalue + eigenvector pipeline (retained_raw_input_readout_with_
+    vectors), joining the RMS eigenvalue solver to retained_mode.modes for the same operator.
+    Vectors must be unit-norm, mutually orthogonal, and low-residual against the exact finite
+    operator the eigenvalues were computed on."""
+    import numpy as np
+
+    problem = engine.RawSpectralProblem(
+        name="harmonic_low4", potential="harmonic",
+        parameters=(("omega", 1.0), ("center", 0.0)), modes=4, tolerance=2.0e-8,
+    )
+    result = engine.retained_raw_input_readout_with_vectors(problem)
+    assert result.status == "ACCEPT"
+    assert result.vector_verdict == "ACCEPT"
+    assert len(result.vectors) == 4
+    assert all(s == "ACCEPT" for s in result.vector_status)
+    assert max(result.vector_residuals) < 1e-6
+
+    Z = np.array(result.vectors)
+    assert np.allclose(np.linalg.norm(Z, axis=1), 1.0, atol=1e-8)
+    gram = Z @ Z.T
+    assert np.allclose(gram, np.eye(4), atol=1e-6)
+    assert result.orthogonality_error < 1e-6
+
+
+def test_raw_input_readout_with_vectors_skips_on_hold_eigenvalues():
+    """When the eigenvalue readout itself is HOLD (e.g. the double-well coverage-check failure),
+    vector recovery must not be attempted against an untrusted window -- vectors stay empty and
+    the combined status is HOLD, with an explanatory note, not a silently-computed (and
+    meaningless) vector."""
+    problem = engine.RawSpectralProblem(
+        name="double_well_a2_9", potential="symmetric_double_well",
+        parameters=(("lam", 1.0), ("a2", 9.0)), modes=4, tolerance=2.0e-8,
+    )
+    result = engine.retained_raw_input_readout_with_vectors(problem)
+    assert result.eigenvalue_result.status == "HOLD"
+    assert result.status == "HOLD"
+    assert result.vectors == ()
+    assert result.vector_verdict == "HOLD"
+    assert "not attempted" in result.vector_notes[0]
 
 
 def test_charts_render_ci_and_raw_samples(tmp_path, monkeypatch):
