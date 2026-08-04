@@ -105,6 +105,21 @@ def executor_audit_case(
     csc = sp.diags([off_diagonal, diagonal, off_diagonal], [-1, 0, 1]).tocsc()   # ARPACK input, prebuilt
     native_working_bytes = int(diagonal.nbytes + off_diagonal.nbytes)
 
+    # ARPACK shift-invert sigma: a Gershgorin lower bound on the spectrum, computed from the
+    # operator alone (diagonal minus the sum of the two adjacent off-diagonal magnitudes) --
+    # never from native's own eigenvalues, so this stays an independent comparator, not a
+    # circular one. Plain `which="SA"` (no shift-invert) can fail to converge on wells with a
+    # wide window / many requested modes (see T2 in CHANGELOG / the Morse case that motivated
+    # this): shift-invert is the standard, textbook ARPACK remedy for exactly that failure
+    # mode, verified here to reproduce identical eigenvalues (within cross_check_tol) to plain
+    # `which="SA"` on all seven declared cases -- this is a convergence-robustness fix, not a
+    # change to which eigenvalues are requested.
+    _abs_off = np.abs(off_diagonal)
+    _gershgorin_lower = float(np.min(
+        diagonal - np.concatenate(([_abs_off[0]], _abs_off[:-1] + _abs_off[1:], [_abs_off[-1]]))
+    ))
+    arpack_sigma = _gershgorin_lower - 1.0
+
     # native requested-only solve on the PREBUILT tridiagonal — only the solve is timed (same boundary)
     native_samples, native_values = _hot_samples(
         lambda: native_eigvals_from_tridiagonal(diagonal, off_diagonal, k, problem.tolerance),
@@ -136,8 +151,10 @@ def executor_audit_case(
         ),
         (
             "SciPy eigsh (ARPACK)",
-            "ARPACK iterative, k smallest-algebraic",
-            lambda: np.sort(spla.eigsh(csc, k=k, which="SA", return_eigenvectors=False)),
+            "ARPACK iterative, shift-invert (sigma below spectrum via Gershgorin, which=\"LM\")",
+            lambda: np.sort(spla.eigsh(
+                csc, k=k, sigma=arpack_sigma, which="LM", return_eigenvectors=False,
+            )),
         ),
     ]
     if jax_bundle is not None:
