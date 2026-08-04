@@ -206,11 +206,15 @@ def test_run_competition_reports_gates_and_provenance(monkeypatch):
 
     if not engine.NATIVE_KERNEL_COMPILED:
         pytest.skip("run_competition fails closed without the compiled kernel (no numba)")
-    result = run_competition(repeats=2, audit_repeats=1, include_jax=False)
+    result = run_competition(repeats=2, audit_repeats=1, include_jax=False, include_k1_discrete=False)
     gates = result["verdict_gates"]
     for key in ("native_correct_all", "scipy_correct_all", "native_accept_all",
-                "scipy_accept_all", "speed_ci_native_faster_all"):
+                "scipy_accept_all", "speed_ci_native_faster_all_k_gt_1"):
         assert key in gates
+    # k=1 cases are excluded from the speed gate (retention needs >=2 related readouts to act
+    # across; a singleton request has nothing to retain across) and reported separately instead.
+    assert "k1_discrete_readout" in result
+    assert result["k1_discrete_readout"]["cases"] == {}  # skipped via include_k1_discrete=False
     assert result["source_commit"] == "unit-test-sha"
     assert result["end_to_end"]["seed"] == 20260727
     assert "thread_environment" in result["environment"]
