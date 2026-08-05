@@ -494,9 +494,24 @@ def _locate_native_well(
     # an unrelated, if directionally correct, reason) -- not a designed
     # guarantee. Each round is one cheap 1025-point vectorised evaluation,
     # so raising the cap substantially costs nothing in the common case
-    # (which converges in 1-2 rounds) while making the practical reach
+    # (which converges in 1-4 rounds on every declared/adversarial case,
+    # confirmed by direct timing) while making the practical reach
     # effectively unbounded for any realistic potential (40 rounds ->
     # ~8 * 2**39, far beyond anything a real declared potential would need).
+    #
+    # Disclosed residual (found reviewing this same raise): at truly
+    # extreme-magnitude problem parameters (e.g. a `center` around 1e13+,
+    # unreachable by any declared/adversarial case but not excluded by
+    # RawSpectralProblem's own type), float64 samples across the search
+    # window can become indistinguishable from roundoff, and `np.argmin`
+    # can then satisfy the break condition on noise rather than a genuine
+    # minimum -- a false-convergence failure mode, structurally different
+    # from (and not fixed by) raising this cap. Currently caught downstream
+    # by the coverage check reporting HOLD rather than a silent wrong
+    # ACCEPT (verified directly), so not exploitable as a silent-wrong bug
+    # today -- but that is the SAME "masked by an independent check, not a
+    # designed guarantee" pattern this whole search-cap fix exists to move
+    # away from, just at a more extreme scale. Tracked, not fixed here.
     for _ in range(40):
         grid = np.linspace(center - radius, center + radius, 1025)
         values = potential_values(problem, grid)
