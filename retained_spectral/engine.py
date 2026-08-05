@@ -203,6 +203,14 @@ def potential_values(
         return 0.5 * (wp**2 - wpp)
     if problem.potential == "pure_quartic":
         return p["coupling"] * x**4
+    if problem.potential == "abs_linear":
+        # NON-SMOOTH: V = g|x| has a kink at the origin.  The O(h^2) Richardson
+        # expansion assumed by both pipelines is not justified here.
+        return p["g"] * np.abs(x)
+    if problem.potential == "symmetric_double_well":
+        # CLUSTERED: quartic double well; the low levels form tunnelling
+        # doublets whose splitting falls exponentially with the barrier.
+        return p["lam"] * (x**2 - p["a2"]) ** 2
     raise ValueError(f"unknown potential: {problem.potential}")
 
 
@@ -551,6 +559,253 @@ def _expand_failed_boundaries(
     return expanded, left_pass and right_pass
 
 
+def _fine_component_scan(
+    problem: RawSpectralProblem,
+    window: tuple[float, float],
+    energy: float,
+    scan_radius: float,
+    scale: float,
+    min_grid_points: int = 4096,
+    max_grid_points: int = 262144,
+) -> tuple[bool, str]:
+    """Precise, moderate-radius scan for a component straddling or just past
+    the window boundary -- the classic "barrier that looks like a tail" case
+    (the paper's literal example).
+
+    Grid resolution is tied to ``scale`` (the FOUND well's own local
+    curvature length, already known here -- unlike the wide scan's unknown
+    second-well curvature) rather than a fixed point count. A fixed
+    ``grid_points=4096`` over ``scan_radius`` was independently found, by
+    round-3 adversarial review, to spuriously HOLD legitimate single-well
+    problems at high curvature (e.g. ``harmonic(omega=10000, modes=1)``):
+    the classically-allowed band near threshold there is narrower than the
+    fixed grid's spacing, so no sample lands inside it anywhere -- including
+    inside the window itself, which the fail-closed "inconsistent" branch
+    below then (correctly, given what it could see, but not usefully)
+    reports as HOLD. Resolution is now set so spacing is a small fraction
+    of ``scale``, capped at ``max_grid_points`` to bound cost.
+    """
+    left, right = window
+    scan_left = left - scan_radius
+    scan_right = right + scan_radius
+    target_spacing = max(0.01 * scale, 1.0e-12)
+    grid_points = int(np.clip(
+        math.ceil((scan_right - scan_left) / target_spacing),
+        min_grid_points, max_grid_points,
+    ))
+    grid = np.linspace(scan_left, scan_right, grid_points)
+    with np.errstate(over="ignore"):
+        values = potential_values(problem, grid)
+    allowed = values <= energy
+
+    if not np.any(allowed):
+        return False, (
+            "no classically-allowed region found in the fine scan range "
+            f"[{scan_left:.6g}, {scan_right:.6g}] at energy {energy:.6g} "
+            "-- inconsistent with the solver's own released value"
+        )
+
+    changes = np.diff(allowed.astype(np.int8))
+    component_starts = list(np.flatnonzero(changes == 1) + 1)
+    component_ends = list(np.flatnonzero(changes == -1))
+    if allowed[0]:
+        component_starts = [0] + component_starts
+    if allowed[-1]:
+        component_ends = component_ends + [len(allowed) - 1]
+
+    for start_index, end_index in zip(component_starts, component_ends):
+        component_left = float(grid[start_index])
+        component_right = float(grid[end_index])
+        if component_left < left or component_right > right:
+            return False, (
+                f"a classically-allowed component [{component_left:.6g}, "
+                f"{component_right:.6g}] lies outside the accepted window "
+                f"[{left:.6g}, {right:.6g}] (fine scan over "
+                f"[{scan_left:.6g}, {scan_right:.6g}])"
+            )
+
+    return True, (
+        f"fine scan over [{scan_left:.6g}, {scan_right:.6g}] found no "
+        f"classically-allowed component outside [{left:.6g}, {right:.6g}]"
+    )
+
+
+def _refine_local_minimum(
+    problem: RawSpectralProblem,
+    lo: float,
+    hi: float,
+    iterations: int = 60,
+) -> tuple[float, float]:
+    """Golden-section refinement of a local minimum bracketed by ``(lo, hi)``,
+    assuming unimodality inside the bracket (reasonable immediately around a
+    single coarse-grid dip). No scipy dependency -- this module is kept
+    dependency-light on purpose (numpy + stdlib only).
+    """
+    golden = (math.sqrt(5.0) - 1.0) / 2.0
+    a, b = lo, hi
+
+    def _value(x: float) -> float:
+        with np.errstate(over="ignore"):
+            return float(potential_values(problem, np.asarray([x]))[0])
+
+    c = b - golden * (b - a)
+    d = a + golden * (b - a)
+    fc, fd = _value(c), _value(d)
+    for _ in range(iterations):
+        if fc < fd:
+            b, d, fd = d, c, fc
+            c = b - golden * (b - a)
+            fc = _value(c)
+        else:
+            a, c, fc = c, d, fd
+            d = a + golden * (b - a)
+            fd = _value(d)
+    x_min = 0.5 * (a + b)
+    return x_min, _value(x_min)
+
+
+def _wide_missed_well_scan(
+    problem: RawSpectralProblem,
+    window: tuple[float, float],
+    energy: float,
+    scan_radius: float,
+    grid_points: int,
+) -> tuple[bool, str]:
+    """Coarse, wide search for an entirely separate well far outside
+    ``window``. Deliberately NOT a bare "is this coarse sample below energy"
+    test: at low ``energy`` (few requested modes -- ``energy`` is close to
+    the missed well's own ground state), the classically-allowed band there
+    can be far narrower than this scan's grid spacing, so no single coarse
+    SAMPLE may ever land below `energy` even though the true continuous
+    minimum does. (An earlier version of this function tested exactly that
+    and was independently found, by adversarial review, to silently release
+    a wrong ground state at ``symmetric_double_well(lam=1, a2=50000,
+    modes=1)`` -- error 1.6e-2 against a tolerance of 2e-8, reported ACCEPT.
+    Verified directly against an independent 400,000-point full-domain
+    SciPy diagonalisation.)
+
+    The fix: use the coarse grid only to locate CANDIDATE dips (any local
+    minimum of the sampled values, regardless of how deep it looks at this
+    resolution -- finding the SHAPE of a dip is a far less demanding
+    resolution requirement than sampling inside a narrow allowed band), then
+    refine each candidate's true minimum value with a local golden-section
+    search inside its immediate coarse bracket. The comparison against
+    `energy` is made on the REFINED value, not the coarse sample.
+
+    A dip whose minimum is still decreasing at either scan edge is treated
+    as inconclusive and reported as an uncovered (HOLD) case, the same
+    fail-closed policy as the fine scan's boundary handling -- not assumed
+    closed just because nothing was sampled past the declared radius.
+    """
+    left, right = window
+    scan_left = left - scan_radius
+    scan_right = right + scan_radius
+    grid = np.linspace(scan_left, scan_right, grid_points)
+    with np.errstate(over="ignore"):
+        values = potential_values(problem, grid)
+
+    is_local_min = np.zeros(grid_points, dtype=bool)
+    is_local_min[1:-1] = (values[1:-1] < values[:-2]) & (values[1:-1] < values[2:])
+    candidate_indices = np.flatnonzero(is_local_min)
+
+    for index in candidate_indices:
+        lo = float(grid[max(index - 1, 0)])
+        hi = float(grid[min(index + 1, grid_points - 1)])
+        x_min, v_min = _refine_local_minimum(problem, lo, hi)
+        if left <= x_min <= right:
+            continue  # the located dip is inside the accepted window
+        if v_min <= energy:
+            return False, (
+                f"a refined local minimum of the potential at x={x_min:.6g} "
+                f"(V={v_min:.6g}) is below energy {energy:.6g} and lies "
+                f"outside the accepted window [{left:.6g}, {right:.6g}] "
+                f"(wide scan over [{scan_left:.6g}, {scan_right:.6g}])"
+            )
+
+    if values[0] < values[1] or values[-1] < values[-2]:
+        # The potential is still decreasing at the scan's own edge -- a
+        # deeper minimum may sit just beyond this declared radius. Cannot
+        # certify coverage from this scan alone.
+        return False, (
+            f"the potential is still decreasing at the wide scan boundary "
+            f"[{scan_left:.6g}, {scan_right:.6g}] -- a minimum beyond this "
+            "declared radius cannot be ruled out from this scan"
+        )
+
+    return True, (
+        f"wide scan over [{scan_left:.6g}, {scan_right:.6g}] found no "
+        f"other refined potential minimum below energy {energy:.6g} "
+        f"outside [{left:.6g}, {right:.6g}]"
+    )
+
+
+def _necessary_coverage_check(
+    problem: RawSpectralProblem,
+    window: tuple[float, float],
+    energy: float,
+    scale: float,
+) -> tuple[bool, str]:
+    """Necessary-condition check for a second, missed well.
+
+    ``_turning_tail_pass`` above tests a SUFFICIENT condition only: does the
+    boundary lie deep enough in a classically forbidden region to trust a
+    decaying tail. A barrier between two wells passes that exact test as
+    convincingly as a true decaying tail does -- the boundary looks identical
+    from outside. This is the failure mode reported in the paper's
+    "silent failure" case (``symmetric_double_well``): the decay gate passes,
+    the mesh/window diagnostic bound passes, and the released values are
+    simply the spectrum of the wrong (single) well.
+
+    Two complementary scans, both must pass:
+
+    1. ``_fine_component_scan`` -- a moderate-radius, fine-resolution scan
+       that catches a component straddling or just past the window boundary
+       (the paper's literal example, well separation ~10x the window
+       width).
+    2. ``_wide_missed_well_scan`` -- a much wider, coarser scan that hunts
+       for a local minimum of V below `energy` far outside the window
+       (catches macroscopically-separated wells the fine scan's radius
+       does not reach). This is a local-minimum search, not a
+       connected-components test, specifically because a uniform grid wide
+       enough to reach a distant well can have spacing coarser than the
+       classically-allowed band's own width -- verified directly against
+       this codebase's own declared cases before shipping this design;
+       an earlier, single-scan version of this check either missed distant
+       wells entirely (scan too narrow) or missed the TRUE well itself
+       (scan wide enough but too coarse to resolve the allowed band) before
+       this two-tier split was added.
+
+    Either scan finding a definitive miss is reported as HOLD immediately.
+    Both scans are still bounded, DECLARED ranges -- never the literal real
+    line, which is not a finite readout. Residual gaps, disclosed rather
+    than hidden: a classically-allowed component narrower than the fine
+    scan's grid spacing can still be missed; a well whose own shape is
+    narrower than the wide scan's grid spacing, or that sits beyond either
+    scan's declared radius, is invisible to this check. Both are the same
+    kind of finite-resolution disclosure the rest of this module already
+    makes (e.g. the pivot floor, the decay gate's own tolerance-derived
+    threshold).
+    """
+    left, right = window
+    width = right - left
+
+    fine_radius = max(50.0 * scale, 10.0 * width)
+    fine_covered, fine_reason = _fine_component_scan(
+        problem, window, energy, fine_radius, scale,
+    )
+    if not fine_covered:
+        return False, fine_reason
+
+    wide_radius = max(2000.0 * scale, 200.0 * width)
+    wide_covered, wide_reason = _wide_missed_well_scan(
+        problem, window, energy, wide_radius, grid_points=4096,
+    )
+    if not wide_covered:
+        return False, wide_reason
+
+    return True, f"{fine_reason}; {wide_reason}"
+
+
 @dataclass(frozen=True)
 class _MeshReadout:
     values: np.ndarray
@@ -761,11 +1016,25 @@ def retained_raw_input_readout(
 
     assert accepted_mesh is not None
     diagnostic = accepted_mesh.mesh_shift + window_shift
-    status = (
-        "ACCEPT"
-        if float(np.max(diagnostic)) <= problem.tolerance
-        else "HOLD"
+    diagnostic_ok = float(np.max(diagnostic)) <= problem.tolerance
+
+    # Necessary condition, independent of the diagnostic bound above: does a
+    # classically-allowed component lie outside the accepted window? A
+    # sufficient boundary-decay pass (already folded into `window` via
+    # `_expand_failed_boundaries`) cannot rule this out -- a barrier between
+    # two wells passes it exactly as a true decaying tail does. Checked once,
+    # against the final accepted window and the highest released eigenvalue
+    # estimate, not on every round -- this is the gate that decides ACCEPT.
+    covered, coverage_reason = _necessary_coverage_check(
+        problem,
+        window,
+        float(np.max(accepted_mesh.values)),
+        scale,
     )
+
+    status = "ACCEPT" if diagnostic_ok and covered else "HOLD"
+    if not covered:
+        reason = f"necessary coverage check failed: {coverage_reason}"
     return RawSpectralResult(
         method="Retained Multilevel Sturm (RMS)",
         status=status,
@@ -788,6 +1057,118 @@ def retained_raw_input_readout(
 
 def result_as_dict(result: RawSpectralResult) -> dict[str, object]:
     return asdict(result)
+
+
+@dataclass(frozen=True)
+class RawSpectralModeResult:
+    """Raw-input eigenvalues (``eigenvalue_result``) plus retained-mode
+    eigenvector readouts for the same finite operator, joined into one
+    pipeline. This is a NEW, additive entry point -- it does not change
+    ``retained_raw_input_readout``'s own return shape or behaviour, so no
+    existing caller is affected by its existence.
+
+    The two readouts are independently gated and never collapsed into one
+    number: an eigenvalue can be ACCEPT while its eigenvector readout is
+    HOLD (e.g. a near-degenerate cluster the mode selection cannot resolve
+    at the declared orthogonality tolerance) or vice versa is not possible
+    (a HOLD eigenvalue result means the window/coverage itself is not
+    trusted, so vectors are not attempted against it). ``status`` is
+    ACCEPT only when both are.
+    """
+    eigenvalue_result: RawSpectralResult
+    vectors: tuple[np.ndarray, ...]
+    vector_residuals: tuple[float, ...]
+    vector_status: tuple[str, ...]
+    vector_verdict: str
+    orthogonality_error: float
+    vector_notes: tuple[str, ...]
+    status: str
+
+
+def retained_raw_input_readout_with_vectors(
+    problem: RawSpectralProblem,
+    *,
+    max_intervals: int = 1_048_576,
+    max_window_rounds: int = 8,
+    vector_rho: float = 1e-10,
+) -> RawSpectralModeResult:
+    """Raw input -> eigenvalues (``retained_raw_input_readout``) AND
+    eigenvectors (``retained_spectral.retained_mode.modes``), reusing the
+    pivot state the Sturm/bisection kernel already retains rather than a
+    separate inverse-iteration pass.
+
+    If the eigenvalue readout itself is HOLD (window/coverage not trusted),
+    eigenvector recovery is not attempted -- a vector readout against a
+    window that may already be wrong would be meaningless, not merely
+    unreliable. ``vectors``/``vector_status``/etc. are then empty and
+    ``vector_verdict`` is ``"HOLD"``, with a note explaining why.
+    """
+    from retained_spectral import retained_mode
+
+    eigen_result = retained_raw_input_readout(
+        problem, max_intervals=max_intervals, max_window_rounds=max_window_rounds,
+    )
+
+    if eigen_result.status != "ACCEPT":
+        return RawSpectralModeResult(
+            eigenvalue_result=eigen_result,
+            vectors=(),
+            vector_residuals=(),
+            vector_status=(),
+            vector_verdict="HOLD",
+            orthogonality_error=float("nan"),
+            vector_notes=(
+                "eigenvector readout not attempted: the eigenvalue result "
+                f"itself is {eigen_result.status} ({eigen_result.reason}) "
+                "-- a vector readout against an untrusted window would not "
+                "be meaningful",
+            ),
+            status="HOLD",
+        )
+
+    diagonal, off_diagonal, _spacing = retained_tridiagonal(
+        problem, eigen_result.window, eigen_result.finest_intervals,
+    )
+    # The twisted-factorization pivots in retained_mode.modes are only
+    # meaningful evaluated at an actual eigenvalue of THIS exact finite
+    # operator -- the Richardson-corrected `eigen_result.values` is an
+    # extrapolation estimate, not an eigenvalue of any single matrix, so the
+    # raw eigenvalues of (diagonal, off_diagonal) are recomputed here for the
+    # vector readout rather than reusing the corrected values directly.
+    #
+    # Converged to a tolerance MUCH tighter than `problem.tolerance` (and
+    # tighter than `vector_rho`): independent review found that passing
+    # `problem.tolerance` directly (the solver's own declared eigenvalue
+    # tolerance, e.g. 1e-6) into a near-degenerate case fed a
+    # loosely-converged eigenvalue into `retained_mode.modes`'s much
+    # tighter default residual gate (vector_rho=1e-10), producing spurious
+    # HOLDs that looked like real orthogonality/degeneracy failures but
+    # were actually an eigenvalue-precision mismatch (confirmed directly:
+    # the same tunnelling-doublet case flipped from HOLD to ACCEPT purely
+    # by re-solving the eigenvalues to 1e-13 instead of 1e-6). The vector
+    # residual gate needs eigenvalues resolved well past its own tolerance
+    # to give an honest reading of vector quality, not solver precision.
+    lam_tolerance = min(problem.tolerance, vector_rho) * 0.01
+    raw_lams = native_eigvals_from_tridiagonal(
+        diagonal, off_diagonal, problem.modes, lam_tolerance,
+    )
+    vectors, residuals, vec_status, vec_verdict, orth, notes = retained_mode.modes(
+        diagonal, off_diagonal, raw_lams, rho=vector_rho,
+    )
+    combined_status = (
+        "ACCEPT" if eigen_result.status == "ACCEPT" and vec_verdict == "ACCEPT"
+        else "HOLD"
+    )
+    return RawSpectralModeResult(
+        eigenvalue_result=eigen_result,
+        vectors=tuple(vectors),
+        vector_residuals=tuple(float(r) for r in residuals),
+        vector_status=tuple(vec_status),
+        vector_verdict=vec_verdict,
+        orthogonality_error=float(orth),
+        vector_notes=tuple(notes),
+        status=combined_status,
+    )
 
 
 def native_eigvals_from_tridiagonal(diagonal, off_diagonal, k: int, energy_tolerance: float):
