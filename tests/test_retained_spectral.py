@@ -338,6 +338,24 @@ def test_fine_component_scan_does_not_false_hold_high_curvature_single_wells():
         assert abs(result.values[0] - 0.5 * omega) <= problem.tolerance
 
 
+def test_wide_missed_well_scan_no_longer_relies_on_locate_well_incidental_masking():
+    """Issue #112 (round-4 follow-up, not a blocker for PR #111 but real technical debt): the wide
+    scan's grid resolution was a bare fixed 4096, safe in practice only by incidental interaction
+    with _locate_native_well's then-7-round search cap failing closed on absurd separations before
+    this scan even ran. Fixed by (a) tying the wide scan's resolution to the found well's own
+    scale (a heuristic, disclosed as such, not a guarantee) and (b) raising _locate_native_well's
+    search cap so it is no longer the thing silently doing the real work. Regression-guards a
+    range of separations beyond what PR #111's own regression tests covered, confirming HOLD for
+    the right, disclosed reason rather than by accident."""
+    for a2 in (1.0e5, 1.0e6, 1.0e7, 1.0e8):
+        problem = engine.RawSpectralProblem(
+            name=f"double_well_112_a2_{a2:g}", potential="symmetric_double_well",
+            parameters=(("lam", 1.0), ("a2", a2)), modes=4, tolerance=2.0e-8,
+        )
+        result = engine.retained_raw_input_readout(problem)
+        assert result.status == "HOLD", (a2, result.reason)
+
+
 def test_raw_input_readout_with_vectors_resolves_near_degenerate_doublet():
     """Independent review found the vector pipeline fed a loosely-converged eigenvalue
     (problem.tolerance, e.g. 1e-6) into retained_mode.modes's much tighter default residual gate

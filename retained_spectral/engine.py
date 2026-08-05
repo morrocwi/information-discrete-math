@@ -484,7 +484,20 @@ def _locate_native_well(
     minimum_index = 0
     grid = np.empty(0)
     values = np.empty(0)
-    for _ in range(7):
+    # A fixed 7-round cap (reach ~1024 units by re-centred doubling) was
+    # found, in the course of fixing issue #112, to be the same "fixed
+    # budget regardless of problem scale" vulnerability class as the
+    # coverage-check scans: for a well genuinely centred beyond that reach,
+    # this search lands on a bogus non-minimum partway down a monotonic
+    # slope. It happened to be masked in every case tested so far (the
+    # bogus window's own monotonic tail then fails the coverage check for
+    # an unrelated, if directionally correct, reason) -- not a designed
+    # guarantee. Each round is one cheap 1025-point vectorised evaluation,
+    # so raising the cap substantially costs nothing in the common case
+    # (which converges in 1-2 rounds) while making the practical reach
+    # effectively unbounded for any realistic potential (40 rounds ->
+    # ~8 * 2**39, far beyond anything a real declared potential would need).
+    for _ in range(40):
         grid = np.linspace(center - radius, center + radius, 1025)
         values = potential_values(problem, grid)
         minimum_index = int(np.argmin(values))
@@ -669,7 +682,9 @@ def _wide_missed_well_scan(
     window: tuple[float, float],
     energy: float,
     scan_radius: float,
-    grid_points: int,
+    scale: float,
+    min_grid_points: int = 4096,
+    max_grid_points: int = 1_048_576,
 ) -> tuple[bool, str]:
     """Coarse, wide search for an entirely separate well far outside
     ``window``. Deliberately NOT a bare "is this coarse sample below energy"
@@ -696,10 +711,28 @@ def _wide_missed_well_scan(
     as inconclusive and reported as an uncovered (HOLD) case, the same
     fail-closed policy as the fine scan's boundary handling -- not assumed
     closed just because nothing was sampled past the declared radius.
+
+    Grid resolution (issue #112, follow-up to the fine-scan fix above): tied
+    to ``scale`` -- the FOUND well's own curvature length -- rather than a
+    fixed point count, on the working assumption that a missed well in the
+    same declared potential family has a broadly comparable physical width.
+    This is a heuristic, not a guarantee (the missed well's true curvature
+    is, by definition, unknown), so the target spacing here is deliberately
+    looser than the fine scan's (candidate-SHAPE detection needs far less
+    resolution than sampling inside a narrow allowed band, and the
+    golden-section refinement above corrects residual coarseness in the
+    candidate's location once a dip is found at all) -- but it no longer
+    relies purely on ``_locate_native_well``'s own search cap to fail closed
+    for well-separations this scan's old fixed grid would have missed.
     """
     left, right = window
     scan_left = left - scan_radius
     scan_right = right + scan_radius
+    target_spacing = max(0.1 * scale, 1.0e-9)
+    grid_points = int(np.clip(
+        math.ceil((scan_right - scan_left) / target_spacing),
+        min_grid_points, max_grid_points,
+    ))
     grid = np.linspace(scan_left, scan_right, grid_points)
     with np.errstate(over="ignore"):
         values = potential_values(problem, grid)
@@ -798,7 +831,7 @@ def _necessary_coverage_check(
 
     wide_radius = max(2000.0 * scale, 200.0 * width)
     wide_covered, wide_reason = _wide_missed_well_scan(
-        problem, window, energy, wide_radius, grid_points=4096,
+        problem, window, energy, wide_radius, scale,
     )
     if not wide_covered:
         return False, wide_reason
