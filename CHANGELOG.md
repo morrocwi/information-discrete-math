@@ -7,6 +7,16 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+- New **`case_studies/double_pendulum_readout/`** — a worked, end-to-end application of the
+  contaminated-concept table + operator-first + never-take-the-infinite-limit discipline to a
+  real chaotic system (angle-free exact-rational reformulation, a bounded-truncation fix for an
+  unbounded-`Fraction` blowup, an operator-first Jacobian probe whose first prediction failed
+  honestly, a Benettin finite-N growth-rate estimate that explicitly refuses the `t->infinity`
+  Lyapunov limit, and one standalone `Th_coqc` theorem — SHAKE's rigid-constraint Lagrange
+  multiplier is irrational for this system's concrete first step). **Deliberately not wired into
+  `formal/verify.sh`'s curated theorem list or any README/SKILL.md count** — illustrative, not a
+  core-library claim; see the case study's own README for exactly what is and is not established.
+
 - Fix (PR #109, not yet merged): `retained_spectral/competition/executor_audit.py`'s ARPACK
   (`eigsh`) comparator switched from plain `which="SA"` to shift-invert (`sigma` = a
   Gershgorin lower bound on the operator, `which="LM"`), fixing `ArpackNoConvergence` on
