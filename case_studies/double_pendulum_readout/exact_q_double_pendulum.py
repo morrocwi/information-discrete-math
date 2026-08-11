@@ -39,9 +39,6 @@ K = Fr(20000)                      # penalty spring stiffness (rational). Larger
                                     # needs a smaller time step to stay stable -- the usual
                                     # penalty-method tradeoff, not something IDM changes.
 tau = Fr(1, 4000)                  # discrete tick (exact rational time step)
-N_STEPS = 4000                     # total steps simulated (== 1.0 time unit at this tau)
-N_STEPS_EXACT = 250                # exact-Q run is far more expensive; capped separately
-                                    # so the script finishes -- the cap itself is the finding
 
 
 # ---------------------------------------------------------------------------

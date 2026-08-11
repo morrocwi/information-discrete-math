@@ -103,14 +103,12 @@ def power_iteration(J, iters=200, seed=None):
     n = len(J)
     v = seed or [1.0] * n
     v = [x / norm(v) for x in v]
-    eigval = 0.0
     for _ in range(iters):
         w = mat_vec(J, v)
         wn = norm(w)
         if wn == 0:
             break
         v = [x / wn for x in w]
-        eigval = wn  # magnitude estimate; refine with Rayleigh quotient below
     Jv = mat_vec(J, v)
     eigval_rayleigh = sum(a * b for a, b in zip(v, Jv))
     return v, eigval_rayleigh

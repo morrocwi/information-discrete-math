@@ -26,8 +26,15 @@ which injected infinity/zero is at stake before deferring to it):
    (section 3 below) confirms float64 and bounded-Fraction agree to ~1e-15 in this exact
    system, so this substitution is empirically, not just theoretically, justified.
 
-3. The initial conditions use EXACT rational points via Pythagorean triples -- no sqrt, no
-   cos/sin, anywhere in placing the pendulum arms. This part stays fully uncontaminated.
+3. The initial conditions are PLACED using Pythagorean-triple ratios (e.g. `12/13`) so that,
+   mathematically, no sqrt/cos/sin is needed to satisfy the rod-length constraint exactly --
+   but this file's step_map (imported from idm_operator_first_chaos_fix.py) runs entirely in
+   Python float, not fractions.Fraction, so those ratios are stored as float64
+   approximations of the exact rational values, same as everything else in this file (see
+   point 2). Only exact_q_double_pendulum.py / exact_q_bounded_double_pendulum.py actually
+   carry the initial condition in fractions.Fraction; this file trades that exactness for
+   the speed needed to run thousands of Benettin-renormalization steps, and says so here
+   rather than implying otherwise.
 """
 from __future__ import annotations
 
@@ -68,10 +75,6 @@ def energy(state):
 # Benettin finite-N renormalized growth-rate estimate.
 # Block size DELTA and block count N_BLOCKS are DECLARED, FIXED integers -- never a limit.
 # ---------------------------------------------------------------------------
-def norm8(v):
-    return math.sqrt(sum(x * x for x in v))  # declared float64 approximation -- see docstring
-
-
 def finite_growth_rate(state0, eps=1e-8, delta_steps=10, n_blocks=200, direction=None):
     """Returns (finite_avg_log_growth_per_tau, per_block_log_growth_list, final_energy_drift).
 
@@ -82,7 +85,7 @@ def finite_growth_rate(state0, eps=1e-8, delta_steps=10, n_blocks=200, direction
     ref = list(state0)
     if direction is None:
         direction = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # default: perturb r1x only
-    dn = norm8(direction)
+    dn = op.norm(direction)
     direction = [d / dn for d in direction]
     pert = [r + eps * d for r, d in zip(ref, direction)]
 
@@ -93,7 +96,7 @@ def finite_growth_rate(state0, eps=1e-8, delta_steps=10, n_blocks=200, direction
             ref = op.step_map(ref)
             pert = op.step_map(pert)
         sep = [p - r for p, r in zip(pert, ref)]
-        sep_norm = norm8(sep)  # declared float64 approximation of the true (irrational) norm
+        sep_norm = op.norm(sep)  # declared float64 approximation of the true (irrational) norm
         if sep_norm == 0.0:
             log_growths.append(float("-inf"))
             break
