@@ -1,201 +1,233 @@
-# Certificate-First Mathematical Learning: An Information Discrete Mathematics Architecture for Verifiable AI-Assisted Education
+# Certificate-First Mathematical Learning: A Coq-Grounded IDM-Readout Architecture for AI-Assisted Mathematics Education
 
 **Article type:** Technical Article
 
 **Target journal:** Journal of Innovative Learning (JIL), Institute for Innovative Learning, Mahidol University
 
-**Word count:** 4095
+**Word count:** 4659
 
-**Abstract.** Generative artificial intelligence can produce fluent mathematical explanations while remaining vulnerable to arithmetic, symbolic, and logical error. In education, this creates a design problem: a system may appear pedagogically helpful while providing learners with answers whose evidential status is unclear. This technical article proposes Certificate-First Mathematical Learning (CFML), an architecture in which an AI-generated mathematical response is not treated as an accepted answer until it is paired with machine-checkable or explicitly bounded evidence. The proposal is implemented conceptually through Information Discrete Mathematics (IDM), an open-source mathematical solver that routes declared problem types to exact, certified, or fail-closed computational paths. CFML separates natural-language interpretation from mathematical verification and exposes three learner-facing verdicts: EXACT, CONDITIONAL, and HOLD. The architecture is organized as an input-process-output-feedback-environment system: learners declare a task, the system selects an admissible computational route, an evidence packet is produced, a verdict gate controls what may be asserted, and feedback returns both the result and its warrant. The article specifies the evidence packet, pedagogical interaction patterns, implementation requirements, and limitations. CFML is presented as a technical learning architecture rather than a claim of demonstrated learning gains; its educational effectiveness requires subsequent controlled studies. The contribution is a practical design principle for AI-assisted mathematics: fluency may generate candidate reasoning, but acceptance should be governed by verifiable evidence.
+**Abstract.** Generative artificial intelligence can produce mathematically fluent text without providing a warrant for the claims it presents. This technical article develops Certificate-First Mathematical Learning (CFML) as a proof-rooted architecture for AI-assisted mathematics education. The design is deliberately constrained: no architectural primitive is introduced unless it can be traced to an axiom-free Coq theorem already present in Information Discrete Mathematics (IDM) or Readout Universe. The resulting architecture has five formally grounded invariants. First, the task and requested readout are declared before authorization, following the IDM Declaration Bound. Second, a verdict is treated as a readout relative to a declared threshold or route rather than as the mathematical object itself, following the Readout Universe threshold theorems and IDM equivariant-readout results. Third, exact identities and certified finite bounds are distinguished from unsupported outputs by proof type, using IDM's certified finite-readout theorems. Fourth, unresolved status is kept distinct from determinate neutrality, using the axiom-free four-valued readout-minimality results. Fifth, provenance is retained rather than collapsed, following the injective retained-difference core. CFML therefore treats a language-model response as an untrusted candidate; only a theorem-linked evidence packet may authorize a learner-facing EXACT or CONDITIONAL verdict, while absent or mismatched evidence yields HOLD. The article provides a theorem-to-architecture ledger, a system-concept mapping, and Coq-rooted worked cases. It does not claim that Coq proves learning effectiveness; educational outcomes remain an empirical question for subsequent studies. The contribution is a formally disciplined learning architecture in which generative fluency and epistemic authorization are separated by construction.
 
-**Keywords:** AI-assisted mathematics, verifiable learning, mathematical reasoning, formative feedback, certificate-first architecture
+**Keywords:** AI-assisted mathematics, formal verification, Coq, certificate-first learning, Information Discrete Mathematics, readout
 
 ## 1. Introduction
 
-Generative artificial intelligence has made mathematical help available at a scale that conventional tutoring systems could not easily provide. A learner can ask for a worked solution, an explanation, an alternative method, or an immediate response to an error. Yet the central educational risk is also clear: linguistic fluency and mathematical warrant are different properties. Large language models may decompose a problem plausibly while making a local arithmetic or logical mistake, and a learner may not possess the knowledge needed to detect the mistake. Verification therefore cannot be treated as an optional final check. It is part of the instructional design.
+Generative artificial intelligence has changed the practical conditions of mathematical learning. A learner can obtain a worked solution, an explanation, a reformulation, or a proposed proof within seconds. The educational difficulty is that linguistic completeness and mathematical warrant are not the same property. A response can look finished while containing a local arithmetic error, an invalid transformation, an unverified approximation, or an assumption that was never declared. In such a setting, the central design problem is not simply how to generate better explanations. It is how to prevent the act of generation from being mistaken for the act of authorization.
 
-The distinction is especially important in mathematics because the object of learning is not merely a final answer. Mathematical competence includes representing a problem, selecting admissible operations, producing a chain of justification, recognizing constraints, and knowing when a conclusion has not been established. Research on mathematical language models has progressively moved from direct answer generation toward verifier-based selection, program-aided reasoning, external execution, and formal theorem proving (Cobbe et al., 2021; Gao et al., 2023; Yang et al., 2023). These approaches improve the reliability of machine reasoning, but educational use adds a further requirement: evidence should be exposed in a form that supports learner judgment rather than hidden behind a tool call.
+Research on mathematical language models has already moved toward this separation. Verifier-guided problem solving, program-aided reasoning, external execution, and formal theorem-proving environments all treat generation and checking as distinguishable operations (Cobbe et al., 2021; Gao et al., 2023; Yang et al., 2023). Educational deployment adds a further requirement: the checking relation should not remain hidden inside a back end. Learners should be able to see what kind of evidence supports a mathematical claim, what assumptions that evidence depends on, and when the system refuses to authorize a conclusion.
 
-This article proposes Certificate-First Mathematical Learning (CFML), a technical architecture for AI-assisted mathematics in which every candidate answer is separated from its evidential status. The architecture uses Information Discrete Mathematics (IDM) as an implementation substrate. IDM is an open-source solver with a unified problem registry, exact and certified computational routes, explicit scope boundaries, and fail-closed behavior. Its current public documentation describes 269 registered problem kinds across 11 domains and three top-level verdict classes: EXACT, CONDITIONAL, and HOLD (Lahtee, 2026). The educational proposal does not depend on the claim that one solver can cover all mathematics. On the contrary, CFML is built around declared limits: when a problem lies outside a certified route, the system should expose that fact.
+This article develops Certificate-First Mathematical Learning (CFML) from two existing roots only: Information Discrete Mathematics (IDM) and Readout Universe (Lahtee, 2026a, 2026b). This restriction is methodological, not rhetorical. The architecture is not allowed to acquire a new conceptual component merely because it appears pedagogically attractive. Each invariant admitted into the formal core must be linked to an existing Coq theorem whose axiom profile is reported as closed under the global context. Claims tagged elsewhere as narrative bridges, open conjectures, finite diagnostics, or theorem statements with undeclared classical assumptions are not used as foundations here.
 
-The design follows the system-concept orientation used by the Journal of Innovative Learning, where educational innovation is considered through input, process, output, feedback, and environment (Pichitpornchai, 2025). In CFML, the input is a learner's mathematical task and declaration of what is being asked; the process is route selection and evidence production; the output is a result plus a verdict; feedback includes evidence, error localization, or a principled refusal; and the environment is the human-AI learning setting in which the learner remains responsible for interpretation and revision.
+The architecture therefore begins from a smaller question than a general theory of AI tutoring: What is the minimum proof-grounded control structure required before an AI-generated mathematical response may be presented as an authorized result? The answer developed here is a declaration gate, a route-and-certificate gate, a typed evidential standing, and a proof-transparent feedback readout. The language model is intentionally outside the trusted kernel. It may generate candidates, questions, or explanations, but it does not decide the mathematical standing of its own output.
 
-The article addresses one technical question: How can an AI-assisted mathematics environment be designed so that answer generation and answer acceptance are governed by different mechanisms? The objective is not to report learning gains. It is to specify a reproducible architecture that can later be evaluated experimentally.
+Four contributions are made. First, the paper introduces a root-constrained design methodology in which every architectural invariant is accompanied by an explicit Coq lineage. Second, it derives a declaration-before-authorization gate from the IDM Declaration Bound rather than treating prompt interpretation as an informal pre-processing step. Third, it separates exact, certified-bounded, and unresolved states using IDM's certified finite-readout and readout-minimality theorems. Fourth, it positions learner-facing feedback as a readout of a proof object and declaration record, not as a second unverified explanation. No learning-effect claim is made. Coq establishes the mathematical invariants of the architecture; whether those invariants improve learning must be tested empirically.
 
 ## 2. Literature Review
 
-The proposed architecture connects three strands of work: mathematical reasoning with language models, tool-mediated verification, and learning designs that make feedback and self-explanation visible.
+The literature is used here to locate the educational problem, not to generate the architecture's formal primitives. Those primitives come only from the IDM and Readout Coq roots.
 
-### 2.1 Generative mathematical reasoning and verification
+### 2.1 Mathematical generation and external verification
 
-Quantitative reasoning remains a demanding setting for language models because a small local error can invalidate an otherwise plausible solution. The GSM8K work showed that verifier-based ranking could improve mathematical problem solving by separating candidate generation from evaluation (Cobbe et al., 2021). Minerva subsequently demonstrated that technical-domain pretraining can substantially improve quantitative reasoning, while still leaving a meaningful portion of problems unsolved (Lewkowycz et al., 2022). These results support a useful architectural distinction: generation can be strong without being sufficient for acceptance.
+Verifier-based mathematical reasoning has repeatedly shown the value of separating candidate production from evaluation. In GSM8K, learned verifiers were used to rank candidate solutions rather than allowing generation alone to determine acceptance (Cobbe et al., 2021). Minerva demonstrated strong quantitative reasoning from technically trained language models while leaving a substantial unsolved set, reinforcing the difference between fluent competence and universal correctness (Lewkowycz et al., 2022). Program-Aided Language Models delegated execution to an external interpreter after the language model generated a programmatic solution path (Gao et al., 2023). LeanDojo placed theorem generation inside a formal Lean environment in which invalid proof terms are rejected by the proof assistant (Yang et al., 2023).
 
-Later work has made the verifier more explicit. PAL delegates computation to an external interpreter after a language model has translated a problem into executable steps, reducing the need for the model itself to perform every arithmetic operation (Gao et al., 2023). Formal theorem-proving systems provide a stronger form of external constraint because a proof assistant rejects an invalid proof term. LeanDojo, for example, connects language-model theorem generation with a formal Lean environment and a reproducible proof corpus (Yang et al., 2023). At the same time, studies of self-verification caution against assuming that an LLM can reliably judge its own reasoning merely because it can produce a second explanation. Hong et al. (2023) found substantial limitations in model self-verification on logical fallacies, and recent work continues to treat verification as a separate capability rather than a guaranteed by-product of generation (Pan et al., 2026).
+These systems motivate, but do not formally ground, CFML. The distinctive move in this paper is to expose the checking relation as part of the learning interface and to constrain that interface by theorem provenance. A candidate answer is not merely assigned a confidence score. It is paired with a declaration, a route, a certificate type, a source theorem, and a verdict whose meaning is limited by those objects.
 
-CFML adopts the same separation, but changes its educational location. Verification is not only an internal reliability mechanism; it becomes a learner-facing object. The system exposes what kind of evidence supports the answer and whether that evidence is exact, bounded, or insufficient.
+### 2.2 AI assistance, substitution, and learner judgment
 
-### 2.2 AI support and the risk of answer substitution
+Educational evidence also warns against equating improved task completion with improved independent learning. Bastani et al. (2025) reported that unrestricted generative-AI assistance could improve performance while the tool was present yet reduce subsequent unaided performance, whereas a more strongly safeguarded tutoring design mitigated much of that cost. Other work shows that structured conversational tutoring can produce positive outcomes when the interaction is designed around learning rather than answer delivery (Henkel et al., 2024). In proof learning, specialized review support has likewise been investigated as an alternative to relying on a general-purpose chatbot alone (Chen et al., 2025).
 
-A learning system can improve task performance without improving independent learning. This distinction is especially relevant for generative AI. In a large field experiment in high-school mathematics, Bastani et al. (2025) found that unrestricted generative-AI assistance improved performance while the tool was available, but could reduce later performance when access was removed; a safeguarded tutor design mitigated much of that negative effect. The result does not imply that generative AI is intrinsically harmful. It shows that interface and feedback design influence whether AI functions as support or substitution.
+CFML does not infer from these studies that visible certificates necessarily improve learning. Instead, they justify treating the learner's relation to evidence as an educational design variable worth making explicit. The formal architecture guarantees only that an authorized mathematical readout carries declared provenance. Whether a learner uses that provenance productively is outside the scope of the theorem layer.
 
-Evidence from tutoring systems also suggests that AI can be educationally useful when embedded in structured interaction. Henkel et al. (2024) reported positive mathematics outcomes for a conversational tutor deployed in Ghana, while a recent proof-learning study found that specialized proof-review support could be more educationally productive than relying on a general-purpose chatbot alone (Chen et al., 2025). These studies motivate an architecture in which the AI is not simply optimized to produce the fastest correct-looking answer.
+### 2.3 Self-explanation and formative feedback as interface context
 
-A certificate-first design introduces friction intentionally. The learner can still receive explanation and guidance, but the system distinguishes a proposed line of reasoning from a verified mathematical claim. This distinction is compatible with the classic self-explanation literature. Chi et al. (1989) showed that stronger learners generated explanations that connected worked steps to underlying principles and monitored their own understanding more accurately. CFML therefore treats evidence as material for explanation: a certificate should not merely say that the machine is correct; it should reveal enough structure for a learner to interrogate why the answer is acceptable.
+The self-explanation literature shows that learning involves more than seeing a correct worked answer. Chi et al. (1989) found that successful learners generated explanations connecting solution steps to underlying principles and monitored their own understanding. Technology-enhanced diagnostic systems similarly use structured evidence to determine what kind of feedback should be returned (Panjaburee et al., 2010; Panjaburee & Srisawasdi, 2025). These traditions inform the presentation layer of CFML: evidence should be inspectable and usable for questioning. They do not, however, license a claim that the architecture has already produced self-explanation, transfer, or metacognitive gains. Those remain hypotheses for later evaluation.
 
-### 2.3 Diagnostic and feedback architectures
-
-Technology-enhanced learning research has long used diagnosis and feedback loops to adapt instruction. The concept-effect relationship approach developed diagnostic systems that link assessment outcomes to prerequisite concepts and targeted learning guidance (Panjaburee et al., 2010). More recently, Panjaburee and Srisawasdi (2025) synthesized testing, diagnosis, constructivist learning, and formative assessment into a technology-enhanced personalized learning framework. CFML is narrower in content but similar in systems logic: mathematical evidence becomes a diagnostic signal that can determine the next feedback move.
-
-The difference is that CFML diagnoses the standing of a mathematical claim before it diagnoses the learner. A failed certificate may indicate an algebraic error, a violated domain condition, an incomplete numerical bound, an unsupported transformation, or a problem outside the solver's declared scope. Only after this technical status is known should the interface decide how to formulate educational feedback.
+The gap addressed by this article is therefore narrow. Existing AI-mathematics work often uses verification to improve machine correctness, while educational work studies how feedback structures affect learners. CFML inserts an explicitly theorem-rooted authorization layer between those domains: verification becomes a visible, typed readout whose formal standing can be inspected before any pedagogical interpretation is added.
 
 ## 3. Methodology
 
-This work uses a technical-design methodology rather than a human-subject experiment. The method consisted of four stages.
+This study uses root-constrained technical design. The method differs from ordinary conceptual synthesis because a proposed component is rejected unless it has a machine-checked lineage in one of the two designated source systems.
 
-First, the design requirements were derived from the literature on mathematical verification, program-aided reasoning, formal proof, and AI-supported learning. The requirements were: separation of generation from validation; explicit problem declaration; machine-readable evidence; fail-closed behavior; learner-visible feedback; and traceability from a claim to the computational route that supports it.
+### 3.1 Admission rule for architectural claims
 
-Second, the current IDM implementation was examined as a reference substrate. The manuscript is based on the public repository state available in August 2026. The repository documents a unified `idm.solve()` entry point, 269 registered problem kinds, exact arithmetic over integer/rational structures for supported tasks, certified numerical readouts with declared bounds for selected tasks, and explicit HOLD outcomes when a supported certificate cannot be produced or when a request exceeds declared scope (Lahtee, 2026). The local formal-proof directory additionally documents 194 Coq theorems checked as axiom-free within its stated finite scope. These counts describe the software snapshot; they are not claims that all 269 problem kinds are formally proved.
+A CFML invariant was admitted only when four conditions were satisfied. First, its source had to be IDM or Readout Universe. Second, the supporting result had to be a Coq theorem with an axiom-free profile, reported as "Closed under the global context" or documented as part of the axiom-free discrete core. Third, the manuscript's wording could not exceed the theorem's scope. Fourth, any move from theorem to educational interface had to be labeled as a design interpretation rather than as a theorem about learners.
 
-Third, the architecture was mapped to a learning system using five components: input, process, output, feedback, and environment. Each component was required to expose both computational and pedagogical information.
+This rule excludes several tempting but unsupported claims. CFML does not claim that formal verification creates understanding, that HOLD improves metacognition, that a declaration gate guarantees correct natural-language interpretation, or that a certificate necessarily produces transfer. It also does not import open conjectures or narrative "readout" claims as if they were formal results.
 
-Fourth, design examples were constructed to illustrate behavior across exact, bounded, and unsupported tasks. These examples are implementation patterns, not an empirical dataset. No student performance, learning gain, or comparative model accuracy is reported. Accordingly, no human-participant ethics approval was required for this technical article.
+### 3.2 Formal roots
+
+The IDM root contributes four theorem clusters. The Declaration Bound proves, in its finite combinatorial model, that a predeclared threshold query can ignore the streamed tail while a deferred regime that must preserve all possible queries requires linearly growing retained information; the key theorems are `declared_forgets_tail`, `deferred_record_bits`, and `declaration_separation`. The certified-readout root proves exact finite identities and computable bounds, including `geom_certified_identity`, `geom_certified_defect`, `geom_majorant_tail`, and `iter_sq_certified`. The a-priori root supplies structural certification without waiting for observed convergence, including `apriori_multiplicative_contracts`, `apriori_stable`, and `richardson_apriori_stable`. The readout-minimality root proves that determinate neutrality and unresolved bottom are distinct, through `neutral_distinct_from_bottom`, `bottom_unique`, and `neutral_is_not_bottom`. These files explicitly report axiom-free Coq 8.20 proofs (Lahtee, 2026a).
+
+The Readout Universe root contributes two additional clusters. Its local `UPL_Sorites.v` formalizes a monotone world-side quantity and a thresholded knower-side readout. `readout_monotone`, `flip_unique`, `tolerance_violation_iff_flip`, and `threshold_order` establish that the readout's behavior depends on its declared threshold and that the transition belongs to the readout relation rather than to an assumed discontinuity in the underlying graded quantity. Its re-verified `evidence/RD.v` supplies the retained-difference object stratum, including `RD4_succ_inj`, `toNat_inj`, `eval_hom`, and `eqn_transfer`; the repository records this discrete core as axiom-free (Lahtee, 2026b).
+
+### 3.3 Theorem-to-architecture ledger
+
+Table 1 is the formal admission ledger. It is intentionally stricter than a conceptual mapping: every row names a proof root and limits the architectural consequence to what that root can support.
+
+| Invariant | Coq root | Permitted architectural consequence |
+|---|---|---|
+| Declaration before authorization | `declared_forgets_tail`; `deferred_record_bits`; `declaration_separation` (IDM Declaration Bound) | Freeze the requested readout before evidence is accepted; do not infer semantic correctness beyond the declaration. |
+| Readout-relative verdict | `readout_monotone`; `tolerance_violation_iff_flip`; `threshold_order` (Readout Universe UPL) | Retain threshold/tolerance with the verdict; the readout is not context-free. |
+| Faithful readout | `equivariant_stabilizer_containment`; `faithful_stabilizer_equality` (IDM Equivariant Readout) | Do not erase distinctions required by the declared transformation structure. |
+| Exact certificate | `geom_certified_identity`; `geom_certified_defect` (IDM Certified) | Authorize EXACT by an exact identity in the declared finite domain, not by confidence. |
+| Bounded certificate | `geom_majorant_tail`; `iter_sq_certified`; `apriori_stable`; `richardson_apriori_stable` (IDM Certified/A-priori) | Authorize CONDITIONAL here only with a Coq-certified finite bound and retained assumptions. |
+| HOLD distinct from determinate neutral | `neutral_distinct_from_bottom`; `bottom_unique`; `neutral_is_not_bottom` (IDM Readout Minimality) | Do not collapse unresolved status into a determinate neutral or zero result. |
+| Provenance retention | `RD4_succ_inj`; `toNat_inj`; `eval_hom`; `eqn_transfer` (Readout Universe RD) | Keep declaration/proof histories distinguishable; this is an operational instantiation, not a theorem about pedagogy. |
+
+### 3.4 Validation strategy
+
+The validation in this technical article is proof-level rather than learner-level. The architecture is checked by theorem coverage: every trusted invariant must have a named Coq root, and any function outside that root is marked untrusted or interpretive. A language model is therefore not validated as a theorem prover by this paper. It is modeled operationally as a source of candidate expressions. The trusted kernel begins only when the declaration and evidence route are fixed.
+
+No synthetic student data, simulated effect sizes, or comparative learning outcomes are introduced. The worked cases in Section 6 are theorem instantiations, not experiments. Human-participant research is the next empirical stage, not a hidden premise of the present article.
 
 ## 4. Technical Proposals
 
-### 4.1 Certificate-First Mathematical Learning architecture
+### 4.1 The trusted core and the untrusted generator
 
-CFML defines a mathematical response as a pair rather than a sentence:
+CFML divides the system into an untrusted generative side and a trusted authorization side. The generative side may contain a language model, a learner's own proposed derivation, or both. Nothing on that side is treated as established merely because it is fluent or complete. The trusted side contains only the declaration record, the admissible IDM route, the evidence object, and the theorem-linked verdict.
 
-**candidate response + evidence packet -> verdict.**
+The central relation is therefore not "AI answer -> feedback" but:
 
-A natural-language model may generate the candidate response, but it does not determine the verdict by itself. The verdict is produced by a computational or formal route whose admissibility is declared before acceptance.
+declared readout + candidate + Coq-rooted evidence -> authorized readout.
 
-The architecture contains six operational stages.
+The candidate may be absent, wrong, or rhetorically persuasive without changing the authorization rule. This is a design constraint. Its mathematical roots are the separation between object and readout in the threshold formalization, the declaration-timing results in IDM, and the proof-carrying exact/bounded results in the certified-readout layer.
 
-**Stage 1: Task declaration.** The system identifies the mathematical object, requested operation, domain assumptions, and expected form of answer. Ambiguity is not silently resolved when different interpretations would change correctness.
+### 4.2 Stage 0: Declaration and specification gate
 
-**Stage 2: Route selection.** The declared task is mapped to an available route: exact symbolic computation, exact finite algorithm, certified numerical method, formal proof checker, or no admissible route. Route selection is a scope decision, not a confidence score.
+Before any candidate can be authorized, CFML freezes a declaration record containing the mathematical object, requested operation, domain assumptions, target readout, and any tolerance or threshold that changes the meaning of acceptance. The declaration gate does not claim to solve semantic parsing. A natural-language request can still be misunderstood. The guarantee is narrower: later evidence is bound to one explicit declaration rather than being retrofitted after an answer has been generated.
 
-**Stage 3: Candidate generation.** A language model, learner, symbolic engine, or combination of these may propose a solution or intermediate steps. Candidate generation is intentionally permissive because creativity and explanatory variety are useful at this stage.
+This ordering is rooted in the Declaration Bound. In its formal model, `declared_forgets_tail` proves that a predeclared query depends only on the relevant prefix, while `deferred_record_bits` and `declaration_separation` prove a sharply different information requirement when the query is deferred. CFML does not transfer the theorem's storage complexity directly into a pedagogical effect. It transfers only the control principle that declaration timing changes what information a valid readout must retain.
 
-**Stage 4: Evidence production.** The system requests evidence appropriate to the route. Evidence may be an exact rational result, a factorization identity, a residual equal to zero, an interval enclosure, a proven error bound, a formal proof term, or an explicit reason why certification cannot be completed.
+The Readout Universe threshold theorem `threshold_order` supplies the second reason for freezing the declaration: changing the threshold changes the readout relation. A verdict without its threshold is therefore incomplete as a record.
 
-**Stage 5: Verdict gating.** The answer is assigned one of three learner-facing states. EXACT means the result is exact within the declared finite or symbolic domain. CONDITIONAL means the result is usable only with its stated tolerance, bound, model, or scope condition. HOLD means the system withholds acceptance because required evidence is unavailable, the problem lies outside declared scope, or a necessary condition fails.
+### 4.3 Stage 1: Route and evidence typing
 
-**Stage 6: Pedagogical feedback.** The interface converts the evidence packet into a learning move. For EXACT, the learner can be asked to explain the invariant or identity that makes the answer exact. For CONDITIONAL, the learner can inspect the bound and decide whether it is adequate for the task. For HOLD, the learner is shown what is missing and may reformulate the problem, supply an assumption, choose a different method, or escalate to a teacher.
+After declaration, the system selects a route whose proof status is known. In this paper, only two authorization-producing evidence types are admitted.
 
-This sequence is shown in Figure 1.
+EXACT evidence is an equality, identity, or exact finite construction established in the declared domain. `geom_certified_identity` and `geom_certified_defect` are canonical examples: they give an exact algebraic relation between a finite geometric readout and its defect.
 
-**Figure 1. Certificate-First Mathematical Learning architecture.**
+CONDITIONAL evidence is admitted here only in the narrow sense of a Coq-certified finite bound. It is not a generic label for "probably correct." `geom_majorant_tail`, `iter_sq_certified`, `apriori_stable`, and `richardson_apriori_stable` demonstrate the relevant proof form: a finite output is accompanied by an inequality or computable bound whose assumptions are explicit. Other possible meanings of conditionality are outside the formal scope of this article and therefore cannot authorize a CFML result here.
 
-### 4.2 Evidence packet
+If no theorem-linked exact identity or certified finite bound is available for the declared route, the system cannot promote the candidate to an authorized answer. It returns HOLD.
 
-A certificate-first interface should return more than `answer = x`. At minimum, an evidence packet should contain: (a) the normalized task declaration; (b) the computational route; (c) the result; (d) the verdict; (e) the evidence object or bound; (f) assumptions and domain restrictions; (g) unresolved conditions; and (h) a human-readable explanation of why the verdict was issued.
+### 4.4 Stage 2: Typed standing and the role of HOLD
 
-For education, an additional field is valuable: the next-question prompt. Rather than automatically explaining everything, the system can use the evidence to ask a focused question such as 'Which assumption makes this inverse valid?', 'Why does this interval certify the sign?', or 'What information is missing before this equation can be solved exactly?' This preserves a distinction between evidence provision and learner explanation.
+HOLD is not a low confidence score. It is an unresolved readout state. The distinction matters because IDM's `IDM_ReadoutMinimality.v` proves that a determinate neutral value and unresolved bottom are not the same object. `neutral_distinct_from_bottom` proves their inequality; `bottom_unique` characterizes bottom as the unique least element in the information order; and `neutral_is_not_bottom` proves that determinate neutrality carries information that bottom does not.
 
-### 4.3 System-concept mapping
+CFML imports this distinction conservatively. It does not identify the entire four-valued algebra with educational correctness. It uses only the theorem-backed separation: "determinate" and "unresolved" may not be collapsed into one symbol without losing information. Accordingly, a result that is exactly neutral, zero, or otherwise determinate is not treated as HOLD, and HOLD is not rendered as if it were a weakly supported numerical answer.
 
-Table 1 maps CFML to the system concept used in innovative learning.
+The learner-facing vocabulary remains EXACT, CONDITIONAL, and HOLD because those labels match the IDM solver discipline. Internally, however, the evidence packet carries the theorem name, assumptions, declaration, and proof type. The visible three-state readout is therefore a projection of a richer provenance record, not the ontology of the proof system itself.
 
-**Table 1. System-concept mapping of CFML**
+### 4.5 Stage 3: Provenance retention
 
-| Component | CFML object | Educational function |
+CFML requires that the declaration and the evidence route remain attached to the verdict. This is a design instantiation of the retained-difference discipline rather than a claim that the educational architecture is logically entailed by arithmetic. In Readout Universe's `RD.v`, `RD4_succ_inj` formalizes injective retention at the successor level, while `toNat_inj` and the evaluation-transfer theorems preserve distinguishability across representations. The operational consequence adopted here is simple: two differently declared tasks or proof routes must not be silently merged into one provenance-free answer record.
+
+This requirement is particularly important for AI-generated prose. A natural-language explanation can paraphrase two routes until they look similar. The evidence packet prevents that paraphrase from erasing the mathematical lineage that authorized the result.
+
+### 4.6 Proof-transparent feedback readout
+
+The feedback layer is restricted to displaying or querying the formal packet: the declaration, route, theorem, assumptions, result, bound where applicable, and verdict. A teacher or interface may turn those objects into questions, but the resulting pedagogical prompt is not itself part of the Coq theorem. This distinction keeps the architecture honest: proof transparency is guaranteed at the record level; learning from that transparency is an empirical hypothesis.
+
+Figure 1 summarizes the architecture and shows the theorem roots beneath the trusted stages.
+
+**Figure 1. Coq-grounded CFML architecture and proof-root lineage.**
+
+### 4.7 System-concept mapping
+
+The JIL system concept can be retained without introducing additional formal primitives. Input is the declared mathematical object. Process is route selection and certificate production. Output is the theorem-linked result and standing. Feedback is the proof-transparent readout of that packet. Environment is the human-AI setting in which the generator remains untrusted and the authorization kernel remains theorem-constrained.
+
+| System component | Theorem-grounded object | Boundary |
 |---|---|---|
-| Input | Declared problem, assumptions, learner goal | Makes the target of reasoning explicit |
-| Process | Route selection, candidate generation, evidence production | Separates fluent reasoning from mathematical validation |
-| Output | Result + EXACT / CONDITIONAL / HOLD verdict | Prevents an unsupported answer from appearing equivalent to a certified one |
-| Feedback | Evidence, error localization, next-question prompt | Supports revision, self-explanation, and formative dialogue |
-| Environment | Learner, AI interface, teacher, solver, formal tools | Keeps responsibility distributed and auditable |
-
-### 4.4 Why three verdicts are preferable to a single confidence score
-
-A scalar confidence score is a weak substitute for mathematical status. A model may be highly confident in a wrong answer, and an exact algorithm may produce a result without any probabilistic interpretation. CFML therefore uses categorical epistemic states tied to evidence. EXACT is not 'very confident'; it indicates that the selected route returns an exact result under its declared domain. CONDITIONAL is not 'medium confidence'; it indicates that the result depends on an explicit bound or condition. HOLD is not 'low confidence'; it is an operational refusal to convert an unverified candidate into an accepted mathematical claim.
-
-This distinction is pedagogically important because it teaches learners to ask a different question. Instead of 'How sure is the AI?', the interface encourages 'What warrants this conclusion?'
-
-### 4.5 Relationship to existing AI-tool architectures
-
-CFML is compatible with verifier models, code execution, computer algebra systems, interval arithmetic, and proof assistants. Its novelty is not a new mathematical verifier. The proposal is the educational orchestration layer that makes route, evidence, and refusal visible and uses them to control feedback. In PAL, an interpreter is used to improve reasoning reliability (Gao et al., 2023). In LeanDojo, a formal environment constrains theorem proving (Yang et al., 2023). CFML generalizes the instructional pattern: whichever verifier is used, its evidence status should become part of the learning interaction.
-
-The architecture is also deliberately plural. One route may be exact over rational numbers, another may use a numerical enclosure, and a third may require a proof assistant. CFML does not collapse these forms of warrant into a single 'correct' label.
+| Input | Frozen declaration: object, assumptions, threshold/tolerance | Defines what the later proof is about. |
+| Process | IDM route + certificate production; LLM candidate remains untrusted | Separates generation from authorization. |
+| Output | Result + theorem-linked EXACT / CONDITIONAL / HOLD | Makes mathematical standing explicit without substituting confidence for evidence. |
+| Feedback | Visible declaration, theorem, assumptions, bound, and status | Exposes the warrant; no learning effect is claimed by Coq. |
+| Environment | Learner + teacher + untrusted generator + theorem-constrained kernel | Keeps human interpretation outside the formal guarantee. |
 
 ## 5. Discussion
 
-The central design claim of CFML is modest but consequential: an AI-assisted mathematics system should not use the same mechanism to generate a response and to authorize that response as mathematically established. This separation is common in high-reliability software and increasingly visible in mathematical AI, but educational interfaces often hide it. A learner typically sees one polished response even when the underlying evidential situation is heterogeneous.
+The revised architecture changes the center of gravity of the paper. CFML is not proposed as a general educational philosophy created around IDM. It is a constrained readout architecture extracted from theorem-bearing structures that already exist in IDM and Readout Universe, then placed in an educational setting with its inferential limits left visible.
 
-Making verdicts explicit may support several forms of learning. EXACT can direct attention to invariant structure and exact transformation. CONDITIONAL can introduce learners to tolerances, approximations, modeling assumptions, and the difference between a numerical answer and a bound on that answer. HOLD can normalize a mathematically legitimate state that conventional chat interfaces tend to suppress: there are occasions when the correct action is to refrain from claiming a result.
+The strongest consequence is the separation of generative fluency from epistemic authorization. The language model can remain useful without being trusted. It can propose a factorization, suggest a route, paraphrase a bound, or ask a question, but the status of a mathematical claim is determined by an independently declared proof route. This is close in spirit to verifier-guided AI systems, but CFML makes the warrant part of the learner-facing record and refuses to promote a result when the proof route is absent.
 
-The HOLD state is particularly important for AI literacy. If an educational system always produces an answer, learners are trained to interpret completion as competence. A fail-closed architecture teaches a different norm: inability to certify is information. This is consistent with findings that unrestricted generative-AI assistance can become a substitute for independent problem solving, whereas stronger guardrails can preserve more of the learning process (Bastani et al., 2025).
+A second consequence is that "I do not know" becomes structurally distinct from "the answer is zero," "the two sides balance," or any other determinate neutral result. This is not justified by a psychological argument. It is inherited from the readout-minimality theorem that separates determinate neutral from bottom. In an educational interface, the distinction prevents absence of authorization from being disguised as a weak answer.
 
-However, certification is not equivalent to understanding. A machine-checkable proof or exact computation can be opaque to a learner. CFML therefore requires a pedagogical translation layer rather than displaying raw certificates alone. The evidence packet should support questions, counterexamples, and learner explanation. This is where CFML connects to self-explanation research: the educational objective is not to transfer certainty from the machine to the learner, but to give the learner a reliable object against which reasoning can be tested (Chi et al., 1989).
+A third consequence is that tolerance is no longer an invisible implementation detail. Readout Universe's threshold theorems show formally that threshold choice changes the readout relation, while IDM's finite-bound theorems make an explicit tolerance mathematically inspectable. Thus a learner-facing conditional result should carry the threshold or bound that makes it conditional. The system should not display "correct" as a context-free label when its proof status is actually conditional on a declared finite envelope.
 
-The architecture also has limits. First, a certificate is only as strong as its specification. If the wrong problem is declared, an exact answer can be exactly irrelevant. Second, many mathematically meaningful tasks cannot be fully certified by a single finite solver. Third, formal proof coverage is expensive and selective. Fourth, the current article does not establish that CFML improves achievement, transfer, metacognition, or long-term retention. Those are empirical questions.
+The architecture nevertheless has strict limits. Coq does not prove that the learner interpreted the declaration correctly, that an AI explanation is comprehensible, that visible provenance reduces overreliance, or that HOLD improves self-regulation. Formal verification can guarantee internal mathematical relations only after the relevant objects have been specified. The specification problem therefore remains: if the wrong mathematical object is declared, a perfectly verified certificate can be irrelevant to the learner's intended question. CFML responds by freezing and exposing the declaration, not by pretending to solve natural-language semantics.
 
-A suitable next study would compare a conventional LLM tutor with a certificate-first tutor on matched mathematical tasks. Primary outcomes should include not only immediate correctness but also error detection, explanation quality, transfer to structurally altered problems, and performance after AI support is removed. Such a study would test whether visible evidence changes learning behavior rather than merely system reliability.
+This limitation is a strength for subsequent research because it separates two empirical questions that are often conflated. One question concerns system reliability: does the interface prevent unsupported candidates from being authorized? The other concerns learning: does exposure to declaration, theorem, bound, and HOLD states improve error detection, explanation, transfer, or unaided performance? The present article addresses the first at the level of formal design invariants. The second requires controlled human research.
 
 ## 6. Implementation
 
-The current IDM software provides a concrete route for implementing CFML because its public interface already separates problem kinds and verdict status. A front end can call a single structured entry point, but the educational layer should preserve the route metadata rather than flattening all outputs into prose.
+A minimal CFML implementation can be built directly above the IDM solver and the two formal-root repositories without inventing a new epistemic layer.
 
-A minimal implementation can be expressed as the following pseudocode:
+### 6.1 Execution sequence
 
-1. Parse the learner request into a structured mathematical declaration.
-2. Ask the learner to confirm any assumption that materially affects the task.
-3. Query the solver registry for an admissible kind and its evidence tier.
-4. Generate or accept a candidate solution.
-5. Run the designated exact, certified, numerical, or formal route.
-6. Construct the evidence packet.
-7. Issue EXACT, CONDITIONAL, or HOLD.
-8. Generate feedback from the evidence packet, not from the candidate answer alone.
-9. Log the route and verdict for teacher review or later learner reflection.
+1. Parse the learner request into a provisional mathematical declaration.
+2. Expose the declaration fields that affect meaning: object, operation, assumptions, target readout, tolerance, and threshold.
+3. Freeze the confirmed declaration before route selection.
+4. Treat any learner or LLM solution as an untrusted candidate associated with that declaration.
+5. Select an IDM route whose evidence type is formally admitted in the root ledger.
+6. Produce an exact proof-linked object or a certified finite bound. If neither is available, issue HOLD.
+7. Store the evidence packet with declaration, theorem source, assumptions, result, bound if present, and learner-facing standing.
+8. Render feedback from the packet without allowing the prose generator to change the verdict.
 
-Table 2 gives design examples based on documented IDM capabilities.
+The key engineering rule is that the explanation and the authorization record are separate objects. Regenerating prose cannot alter a failed certificate, erase a bound, or convert HOLD into a numerical answer.
 
-**Table 2. Illustrative CFML interactions**
+### 6.2 Coq-rooted worked cases
 
-| Task | Route | Verdict logic | Learner-facing feedback |
+The examples below are not benchmark results. Each is a direct use of an already machine-checked theorem pattern.
+
+| Case | Coq root | Standing | Learner-facing readout |
 |---|---|---|---|
-| Factor x^2 - 5x + 6 | Exact polynomial factorization | EXACT if multiplication reconstructs the original polynomial | Ask the learner to verify why the two roots determine the factors |
-| Determine eigenvalues of [[2,1],[1,2]] | Exact linear-algebra route over supported domain | EXACT when characteristic polynomial/eigenvalue computation closes exactly | Ask what matrix symmetry contributes and how the result can be checked |
-| Evaluate an integral requiring certified numerics | Certified numerical route | CONDITIONAL with a stated enclosure or proven error bound | Ask whether the declared tolerance is sufficient for the problem context |
-| Solve a non-polynomial equation outside the exact symbolic route | Scope gate | HOLD when no complete admissible route is available | Explain the unsupported step and offer a numerical or reformulated route without pretending it is exact |
+| Finite geometric readout | `geom_certified_defect` | EXACT | Show the finite sum and exact defect term. |
+| Richardson refinement | `richardson_apriori_stable` | CONDITIONAL | Show the finite stability bound and assumptions. |
+| Threshold readout | `threshold_order` | Readout-specific | Display the declared threshold because it changes the readout. |
+| Neutral vs unresolved | `neutral_is_not_bottom` | Determinate OR HOLD | Render unresolved as HOLD, never as a weak neutral answer. |
 
-The current repository documentation also exposes capability descriptions, tests, and formal pointers. This traceability can be used to build a teacher-facing audit view in which each classroom response can be traced from claim to solver kind, implementation, test, and—where available—formal theorem. Such provenance is useful for both educational quality assurance and AI governance.
+The geometric-series case illustrates why "certificate-first" is more than post-hoc answer checking. The exact identity fixes what the finite readout means, and the defect term is carried with the result. A learner may then ask why the defect has that form, but the pedagogical question comes after the mathematical standing has been fixed.
 
-A production classroom implementation should add three safeguards. First, the natural-language parser must never silently alter domain assumptions. Second, the evidence packet should be stored independently of the explanation so that a persuasive explanation cannot overwrite a failed verdict. Third, the interface should reveal HOLD as a normal result rather than treating it as an error state to be automatically retried until some answer appears.
+The Richardson case shows the narrower meaning of CONDITIONAL adopted in this paper. The system may present a finite approximation only together with the structural contraction assumptions and proven stability bound. If those assumptions cannot be established for the declared route, the architecture does not downgrade the result to a vague probability. It returns HOLD.
 
-CFML can be implemented with other mathematical engines as well. The requirement is architectural: the generative layer proposes; an independent admissible route evaluates; the evidence status gates assertion; and the pedagogical layer turns that status into feedback.
+The threshold case illustrates why declaration is part of the evidence packet. The same graded sequence can be read differently at different thresholds, and `threshold_order` formalizes the ordering relation between those readouts. The threshold is therefore not metadata that can be discarded after computation.
+
+The neutral-versus-bottom case is a negative control at the level of status semantics. The formal result rules out collapsing a determinate neutral reading into unresolved bottom. This is exactly the distinction required for a fail-closed educational interface.
+
+### 6.3 Reproducibility and audit
+
+The manuscript should be distributed with a formal-root ledger that names repository, file, theorem, axiom profile, and architectural use for every trusted invariant. The current source repositories already expose verification commands and explicit axiom audits. CFML adds no new foundational theorem in this article; it composes those verified results as architectural constraints. This choice avoids claiming a new Coq proof that has not itself been compiled and audited.
+
+For later empirical evaluation, a technical test harness should inject incorrect candidate answers, missing declarations, mismatched tolerances, and unavailable proof routes, then confirm that the interface cannot authorize them. Such a harness would test implementation conformance to the formal architecture. It would still not establish learning gains. A separate learner study would be required for that question.
 
 ## 7. Acknowledgements
 
-The author thanks Walancha for sustained discussion and practical support during the broader development of the research program from which this technical article emerged.
+The author thanks Walancha for sustained discussion and practical support during the broader research program from which the IDM and Readout formal systems, and subsequently this educational architecture, were developed.
 
 ## 8. Declaration of Interest
 
-The author is the creator and maintainer of Information Discrete Mathematics (IDM), the open-source software used as the implementation substrate in this article. This relationship is disclosed as a potential non-financial competing interest. No other competing financial interests are declared.
+The author is the creator and maintainer of Information Discrete Mathematics and Readout Universe, the two source systems used to derive the architecture. This relationship is disclosed as a potential non-financial competing interest. No other competing financial interests are declared.
 
 ## 9. AI Use Disclosure
 
-OpenAI ChatGPT (GPT-5.6 Sol) was used for literature-discovery support, manuscript structuring, language editing, and document preparation. No synthetic learner data or fabricated experimental results were generated. All cited sources were checked against publisher, conference, journal, or primary-source records, and the author remains responsible for the accuracy and integrity of the submitted manuscript.
+OpenAI ChatGPT (GPT-5.6 Sol) was used for literature-discovery support, manuscript structuring, language editing, and document preparation. The architecture itself was constrained to theorem roots already present in IDM and Readout Universe; the AI system was not treated as a source of mathematical authority. No synthetic learner data or fabricated experimental results were generated. The author remains responsible for the manuscript and all claims.
 
 ## 10. Code and Materials Availability
 
-The implementation substrate is the public Information Discrete Mathematics repository, version 1.5.1, at https://github.com/morrocwi/information-discrete-math. The journal-specific manuscript source and implementation notes are maintained on the paper branch prepared for this submission.
+The implementation substrate is Information Discrete Mathematics, and the formal epistemic/readout root is Readout Universe. The submission branch includes the manuscript and a formal-root ledger mapping every trusted CFML invariant to named Coq theorems and their stated axiom profiles.
 
 ## 11. References
 
-- Bastani, H., Bastani, O., Sungu, A., Ge, H., Kabakcı, Ö., & Mariman, R. (2025). Generative AI without guardrails can harm learning: Evidence from high school mathematics. Proceedings of the National Academy of Sciences, 122(26), e2422633122. https://doi.org/10.1073/pnas.2422633122
-- Chen, E., Judicke, S., Beigh, K., Tang, X., Xiao, Z., Li, C., Li, S., Luttmer, R., Singh, S., Yampolsky, M., Parikh, N., Zhao, Y., Chen, M., Huang, S., Mohanty, A., Johnson, G., Mackey, J., Lin, J., & Koedinger, K. (2025). Generative AI alone may not be enough: Evaluating AI support for learning mathematical proof. arXiv. https://arxiv.org/abs/2509.16778
-- Chi, M. T. H., Bassok, M., Lewis, M. W., Reimann, P., & Glaser, R. (1989). Self-explanations: How students study and use examples in learning to solve problems. Cognitive Science, 13(2), 145–182. https://doi.org/10.1207/s15516709cog1302_1
-- Cobbe, K., Kosaraju, V., Bavarian, M., Chen, M., Jun, H., Kaiser, L., Plappert, M., Tworek, J., Hilton, J., Nakano, R., Hesse, C., & Schulman, J. (2021). Training verifiers to solve math word problems. arXiv. https://arxiv.org/abs/2110.14168
-- Gao, L., Madaan, A., Zhou, S., Alon, U., Liu, P., Yang, Y., Callan, J., & Neubig, G. (2023). PAL: Program-aided language models. Proceedings of the 40th International Conference on Machine Learning, 202, 10764–10799. https://proceedings.mlr.press/v202/gao23f.html
+- Bastani, H., Bastani, O., Sungu, A., Ge, H., Kabakci, O., & Mariman, R. (2025). Generative AI without guardrails can harm learning: Evidence from high school mathematics. Proceedings of the National Academy of Sciences, 122(26), e2422633122. https://doi.org/10.1073/pnas.2422633122
+- Chen, E., Judicke, S., Beigh, K., Tang, X., Xiao, Z., Li, C., et al. (2025). Generative AI alone may not be enough: Evaluating AI support for learning mathematical proof. arXiv. https://arxiv.org/abs/2509.16778
+- Chi, M. T. H., Bassok, M., Lewis, M. W., Reimann, P., & Glaser, R. (1989). Self-explanations: How students study and use examples in learning to solve problems. Cognitive Science, 13(2), 145-182. https://doi.org/10.1207/s15516709cog1302_1
+- Cobbe, K., Kosaraju, V., Bavarian, M., Chen, M., Jun, H., Kaiser, L., et al. (2021). Training verifiers to solve math word problems. arXiv. https://arxiv.org/abs/2110.14168
+- Gao, L., Madaan, A., Zhou, S., Alon, U., Liu, P., Yang, Y., et al. (2023). PAL: Program-aided language models. Proceedings of the 40th International Conference on Machine Learning, 202, 10764-10799. https://proceedings.mlr.press/v202/gao23f.html
 - Henkel, O., Horne-Robinson, H., Kozhakhmetova, N., & Lee, A. (2024). Effective and scalable math support: Evidence on the impact of an AI tutor on math achievement in Ghana. arXiv. https://arxiv.org/abs/2402.09809
-- Hong, R., Zhang, H., Pang, X., Yu, D., & Zhang, C. (2023). A closer look at the self-verification abilities of large language models in logical reasoning. arXiv. https://arxiv.org/abs/2311.07954
-- Lahtee, Y. (2026). Information Discrete Mathematics (Version 1.5.1) [Computer software]. GitHub. https://github.com/morrocwi/information-discrete-math
-- Lewkowycz, A., Andreassen, A., Dohan, D., Dyer, E., Michalewski, H., Ramasesh, V., Slone, A., Anil, C., Schlag, I., Gutman-Solo, T., Wu, Y., Neyshabur, B., Gur-Ari, G., & Misra, V. (2022). Solving quantitative reasoning problems with language models. arXiv. https://arxiv.org/abs/2206.14858
-- Pan, H., Bao, J., Jiang, H., & Song, Y. (2026). FABSVer: Faster training and better self-verification for LLM mathematical reasoning. arXiv. https://arxiv.org/abs/2605.28389
-- Panjaburee, P., Hwang, G.-J., Triampo, W., & Shih, B.-Y. (2010). A multi-expert approach for developing testing and diagnostic systems based on the concept-effect model. Computers & Education, 55(2), 527–540. https://doi.org/10.1016/j.compedu.2010.02.015
-- Panjaburee, P., & Srisawasdi, N. (2025). Technology-enhanced personalized learning environment: Moving forward from the research to practices on science, technology, and mathematics education. Journal of Innovative Learning, 1(1), 19–31. https://il.mahidol.ac.th/jil_systems/index.php/01/article/view/34
-- Pichitpornchai, C. (2025). Excel in learning by integrating the system concept, the physiology of learning, and innovative learning. Journal of Innovative Learning, 1(1), 1–12. https://il.mahidol.ac.th/jil_systems/index.php/01/article/view/30
-- Yang, K., Swope, A., Gu, A., Chalamala, R., Song, P., Yu, S., Godil, S., Prenger, R. J., & Anandkumar, A. (2023). LeanDojo: Theorem proving with retrieval-augmented language models. Advances in Neural Information Processing Systems, 36. https://doi.org/10.52202/075280-0944
+- Lahtee, Y. (2026a). Information Discrete Mathematics (Version 1.5.1) [Computer software and formal mathematics repository]. GitHub. https://github.com/morrocwi/information-discrete-math
+- Lahtee, Y. (2026b). Readout Universe: A philosophy and logic for grounding claims [Computer software, formal evidence, and research monograph]. GitHub. https://github.com/morrocwi/readout_universe
+- Lewkowycz, A., Andreassen, A., Dohan, D., Dyer, E., Michalewski, H., Ramasesh, V., et al. (2022). Solving quantitative reasoning problems with language models. arXiv. https://arxiv.org/abs/2206.14858
+- Panjaburee, P., Hwang, G.-J., Triampo, W., & Shih, B.-Y. (2010). A multi-expert approach for developing testing and diagnostic systems based on the concept-effect model. Computers & Education, 55(2), 527-540. https://doi.org/10.1016/j.compedu.2010.02.015
+- Panjaburee, P., & Srisawasdi, N. (2025). Technology-enhanced personalized learning environment: Moving forward from the research to practices on science, technology, and mathematics education. Journal of Innovative Learning, 1(1), 19-31. https://il.mahidol.ac.th/jil_systems/index.php/01/article/view/34
+- Pichitpornchai, C. (2025). Excel in learning by integrating the system concept, the physiology of learning, and innovative learning. Journal of Innovative Learning, 1(1), 1-12. https://il.mahidol.ac.th/jil_systems/index.php/01/article/view/30
+- Yang, K., Swope, A., Gu, A., Chalamala, R., Song, P., Yu, S., et al. (2023). LeanDojo: Theorem proving with retrieval-augmented language models. Advances in Neural Information Processing Systems, 36. https://doi.org/10.52202/075280-0944
