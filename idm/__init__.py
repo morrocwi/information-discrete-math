@@ -2,71 +2,181 @@
 
     import idm
     idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e-8})
-    idm.pi()                         # π as a finite readout
-    idm.certified.geom_series(1/3, 1e-12)      # (value, proven bound, ACCEPT/HOLD)
-    idm.shortest_path(W)             # min-plus all-pairs
+    idm.pi()                                      # π as a finite readout
+    idm.certified.geom_series("0.333333", "1e-12")
+    idm.certified.certify_threshold(11, 1, 9)     # Decision.ABOVE
+    idm.shortest_path(W)                          # min-plus all-pairs
 
-A readout-first foundation: everything read is a finite, discrete, rational readout; the continuum is
-reconstructed, never assumed. The finite core is machine-checked axiom-free in `formal/` (120 theorems).
-This package is a clean facade over the repository's verified modules — same code CI runs.
+A readout-first foundation: finite source semantics, exact arithmetic where available,
+evidence-qualified numerical readouts, and fail-closed decisions. The formal core is in
+``formal/``; public numerical results distinguish ``CERTIFIED``, ``STABLE``, and ``HOLD``.
 
-Submodules: functions · certified · algebra · readouts · exact · analysis · discrete · integrate ·
-diffeq · series · special · transforms · optimize · symbolic · combopt · interval · stats · geometry ·
-crypto · parse · rcp · solve · server.
+Submodules: functions · certified · readout_boundary · algebra · readouts · exact · analysis ·
+discrete · integrate · diffeq · series · special · transforms · optimize · symbolic · combopt ·
+interval · stats · geometry · crypto · parse · rcp · solve · server.
 """
 # Single source of truth is pyproject.toml; kept in sync by tests/test_version_consistency.py
 # (a CI gate that fails if this string, pyproject, and capabilities.json ever diverge).
 __version__ = "1.5.1"
 
-from . import functions, certified, algebra, readouts, exact, analysis, discrete, integrate, diffeq, series, special, transforms, optimize, symbolic, combopt, interval, stats, geometry, crypto, hilbert, hilbert_open, parse as _parse, rcp, solve as _solve
+from . import (
+    functions,
+    certified,
+    readout_boundary,
+    algebra,
+    readouts,
+    exact,
+    analysis,
+    discrete,
+    integrate,
+    diffeq,
+    series,
+    special,
+    transforms,
+    optimize,
+    symbolic,
+    combopt,
+    interval,
+    stats,
+    geometry,
+    crypto,
+    hilbert,
+    hilbert_open,
+    parse as _parse,
+    rcp,
+    solve as _solve,
+)
 
 # top-level convenience surface
 solve = _solve.solve
 kinds = _solve.kinds
-parse = _parse.parse                     # world-language → structured problem (or HOLD)
-parse_and_solve = _parse.parse_and_solve  # translate, then solve
+parse = _parse.parse
+parse_and_solve = _parse.parse_and_solve
 
-# typed result + one-call convenience wrappers (Track B — programmer developer-experience)
+# typed result + one-call convenience wrappers
 from .results import Result, SolveHold
-from .convenience import (factorize, gcd, solve_integral, integrate_rational, solve_matrix,
-                          eigenvalues, solve_roots, solve_ode)
-# schema/kind discovery in Python (same introspection as `python -m idm`, returning structured data)
+from .convenience import (
+    factorize,
+    gcd,
+    solve_integral,
+    integrate_rational,
+    solve_matrix,
+    eigenvalues,
+    solve_roots,
+    solve_ode,
+)
 from .discovery import describe, schema, example
-# AI Gateway (Track C): a small deterministic entrance over the full solver — idm.ai.run/route/plan,
-# plus idm.ai_bench (Phase C: a synthetic tool-use dataset + benchmark harness for a router/model).
 from . import ai, ai_bench
 
 # finite elementary + calculus
-exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,
-                                        functions.erf, functions.gamma, functions.sqrt)
+exp, log, sin, cos, erf, gamma, sqrt = (
+    functions.exp,
+    functions.log,
+    functions.sin,
+    functions.cos,
+    functions.erf,
+    functions.gamma,
+    functions.sqrt,
+)
 pi, e, ln2 = functions.pi, functions.e, functions.ln2
-derivative, integral, limit, ode, evaluate = (functions.derivative, functions.integral,
-                                              functions.limit, functions.ode, functions.evaluate)
+derivative, integral, limit, ode, evaluate = (
+    functions.derivative,
+    functions.integral,
+    functions.limit,
+    functions.ode,
+    functions.evaluate,
+)
 
-# certified
-Readout, CERTIFIED, HOLD = certified.Readout, certified.CERTIFIED, certified.HOLD
+# evidence-qualified readouts
+Readout = certified.Readout
+CERTIFIED, STABLE, HOLD = certified.CERTIFIED, certified.STABLE, certified.HOLD
+Decision = certified.Decision
+DecimalReadout = certified.DecimalReadout
+Enclosure = certified.Enclosure
+parse_decimal_readout = certified.parse_decimal_readout
+certify_threshold = certified.certify_threshold
 
 # optimization
-shortest_path, critical_path, widest_path = (algebra.shortest_path, algebra.critical_path,
-                                             algebra.widest_path)
-minimax_path, reachability, path_count = algebra.minimax_path, algebra.reachability, algebra.path_count
+shortest_path, critical_path, widest_path = (
+    algebra.shortest_path,
+    algebra.critical_path,
+    algebra.widest_path,
+)
+minimax_path, reachability, path_count = (
+    algebra.minimax_path,
+    algebra.reachability,
+    algebra.path_count,
+)
 
 # readouts
 dashboard = readouts.dashboard
 
+
 def serve(host="127.0.0.1", port=8737):
     """Start the zero-dependency REST solver API (POST /solve, GET /health)."""
+
     from .server import run
+
     run(host, port)
 
-__all__ = ["__version__", "solve", "serve", "functions", "certified", "algebra", "readouts", "rcp",
-           "exp", "log", "sin", "cos", "erf", "gamma", "sqrt", "pi", "e", "ln2",
-           "derivative", "integral", "limit", "ode", "evaluate",
-           "Readout", "CERTIFIED", "HOLD",
-           "shortest_path", "critical_path", "widest_path", "minimax_path", "reachability",
-           "path_count", "dashboard",
-           "kinds", "parse", "parse_and_solve",
-           "Result", "SolveHold",
-           "factorize", "gcd", "solve_integral", "integrate_rational", "solve_matrix",
-           "eigenvalues", "solve_roots", "solve_ode",
-           "describe", "schema", "example", "ai", "ai_bench"]
+
+__all__ = [
+    "__version__",
+    "solve",
+    "serve",
+    "functions",
+    "certified",
+    "readout_boundary",
+    "algebra",
+    "readouts",
+    "rcp",
+    "exp",
+    "log",
+    "sin",
+    "cos",
+    "erf",
+    "gamma",
+    "sqrt",
+    "pi",
+    "e",
+    "ln2",
+    "derivative",
+    "integral",
+    "limit",
+    "ode",
+    "evaluate",
+    "Readout",
+    "CERTIFIED",
+    "STABLE",
+    "HOLD",
+    "Decision",
+    "DecimalReadout",
+    "Enclosure",
+    "parse_decimal_readout",
+    "certify_threshold",
+    "shortest_path",
+    "critical_path",
+    "widest_path",
+    "minimax_path",
+    "reachability",
+    "path_count",
+    "dashboard",
+    "kinds",
+    "parse",
+    "parse_and_solve",
+    "Result",
+    "SolveHold",
+    "factorize",
+    "gcd",
+    "solve_integral",
+    "integrate_rational",
+    "solve_matrix",
+    "eigenvalues",
+    "solve_roots",
+    "solve_ode",
+    "describe",
+    "schema",
+    "example",
+    "ai",
+    "ai_bench",
+]

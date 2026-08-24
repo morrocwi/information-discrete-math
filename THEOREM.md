@@ -1,426 +1,281 @@
-# The Certified Finite-Readout Theorem
-
-The `prove_it*` suites establish a `finite_diagnostic`: finite procedures *agree* with the standard
-continuum value to many digits. This document states the stronger target the project is built toward —
-turning "it computes the right number" into "**it computes a number with a proven error bound, or it
-refuses**" — and records what is proved today versus what is still open.
-
-## Statement (schema)
-
-> **Certified Finite-Readout.** Fix a class of inputs `𝒞` (with a named stability hypothesis `H`) and a
-> target functional `T` (a derivative, an integral, a limit, a series sum, …). There is a finite
-> algorithm `A` such that for every input `x ∈ 𝒞` and every rational tolerance `ε > 0`, `A(x, ε)`
-> **terminates** and returns either
->
-> - `CERTIFIED (q, B)` with `q, B ∈ ℚ` (or arbitrary-precision), a finite expression in `x`, and a
->   **proof that** `|q − T(x)| ≤ B ≤ ε`; or
-> - `HOLD`, when the hypothesis `H` fails — it returns **no number** rather than a fabricated one.
->
-> No completed limit is formed: `q` and `B` are finite readouts of the input.
-
-The contract is realized in code by `tools/certified_readout.py` (`Readout(q, bound, status, reason)`)
-and probed adversarially by `validation/negative_controls.py`.
-
-## The Five Core Theorems (the spine)
-
-Everything downstream — the 263-kind solver, the certified-readout contract above, the
-retained-spectral physics — rests on five statements. Each is given at the precision a referee
-checks: an exact statement, its machine-checked witness (run `bash formal/verify.sh`;
-`Print Assumptions` = *Closed under the global context* on every `Th_coqc` line), and an honest tier.
-**Every finite claim in the spine has a witness in THIS repository's `formal/`** — the section proves
-itself from the repository's own formal system; the one external pointer (the heavier *optional*
-apparatus of §I) is explicitly marked optional and is not what the spine rests on.
-
-The stance, stated once so nothing is overclaimed: **every quantity a reader ever obtains is a finite
-rational *readout* of a retained difference; the continuum (`ℝ`, `+∞`, the point of zero extent) is a
-*non-readout* — admissible as a boundary/limit object under an explicit hypothesis, never as a root
-primitive.** The five theorems make that stance precise and, where the content is finite,
-machine-check it.
-
-### I · The primitive `δ_R` exists — and the discrete floor
-
-**Statement.** A first distinction exists: `∃ a b, a ≠ b`, realized by `succ 0 ≠ 0`. The engine `D`
-(ground `0`, successor `succ` = "retain one more distinction") carries a **discrete floor**
-`¬∃z, 0 ≺ z ≺ succ 0`. Hence density is provably absent at the root: a continuum can enter only as a
-later readout, never as a primitive.
-
-**Witnesses (all local, this repository).** The existence of `δ_R` and the discrete floor are
-*exhibited*, not postulated, in `formal/IDM_Genesis.v`: `primordial_difference_exists`
-(`∃ a b : ℕ, a ≠ b`), `succ_ground_distinct` (`succ 0 ≠ 0`), and `discrete_floor`
-(`¬∃z, 0 < z < succ 0`) — all `Th_coqc`, `Print Assumptions` = *Closed under the global context*.
-`D` is modelled as `ℕ` (`0`/`succ` = `0`/`S`), so `D ≅ ℕ` is definitional; `D`-semiring
-distributivity is `formal/IDM_FiniteWitnesses.v: semiring_distrib` and the finiteness of every readout
-is `formal/IDM_FiniteWitnesses2.v: no_infinite_readout`. **Tier `Th_coqc`.**
-*(Optional, not load-bearing: the heavier `D⊨PA` / second-order categoricity apparatus is developed
-in the sister repo `research_universal_solver`; the spine's claim needs only the four local genesis
-theorems above.)*
-
-**Why it cannot be disputed.** Nothing below `δ_R` is assumed; the object claimed to exist is
-*exhibited* (`succ 0`) and machine-checked here, the discrete floor is a one-line `lia` fact over `ℕ`,
-and every structural property is an ordinary theorem of a free commutative semiring — not a postulate
-about the continuum.
-
-### II · The number tower is a chain of readouts: `D → ℤ → ℚ → ℝ`
-
-**Statement.** `ℤ := (D×D)/∼` with `(a,b)∼(c,d) ⟺ a⊕d = c⊕b` is a commutative ring; `ℚ` is its
-field of fractions; each rung is *defined from* and maps homomorphically onto the previous one. `ℝ`
-is the **readout rung** — a completion introduced only where a stability (A8) hypothesis licenses it,
-and honestly tagged `+ℝ-axioms` (it imports `Coq.Reals`), never `axiom-free`.
-
-**Witnesses.** `ℤ`-ring distributivity is local (`formal/IDM_FiniteWitnesses3.v: ring_distrib_Z`,
-`Th_coqc`, axiom-free). The Grothendieck `(D×D)/∼` and the fraction field are the standard elementary
-quotient/localization constructions over the local semiring of §I. The `ℝ` rung is the *only* place
-axioms enter — imported `Coq.Reals`, tiered `+ℝ-axioms` by construction, never `axiom-free`.
-
-**Why it cannot be disputed.** The ring/field constructions are the standard Grothendieck and
-fraction-field completions; the only place axioms enter (`Coq.Reals`) is *named and tiered*, so no
-real-analysis assumption is ever passed off as finite.
-
-### III · READOUT (A1): every appearance is `r = O_ε(X) ∈ ℚ` at a declared resolution `ε ≻ 0`
-
-**Statement (definitional substrate, `Dr`).** A reading is a map `O_ε` from an object `X` and a
-rational resolution `ε ≻ 0` to a rational `r ∈ ℚ`. `ℝ`, `+∞`, and the point of zero extent are *not*
-in the range of any `O_ε`. Realized in code as `Readout(q, bound, status, reason)`
-(`tools/certified_readout.py`); its behavioural contract is the Certified-Finite-Readout theorem at
-the head of this document — return `CERTIFIED (q,B)` with `|q − T| ≤ B ≤ ε`, or `HOLD`.
-
-**Tier `Dr`.** This is a *definition*, not a theorem — it is what the `Th_coqc` results are theorems
-*about*. Declared as such: no proof is claimed for a definition, and it does no illicit work beyond
-fixing the type of "a reading".
-
-### IV · The KEYSTONE (A4 · Th 5.1): `B(Φ,Φ) = I(Φ)` — Dirichlet energy **is** retained information
-
-**Statement (`Th_coqc`, axiom-free).** For a weighted graph `g` (edges `(i,j,w)`) and any field
-`Φ : ℕ → ℚ`, the assembled Laplacian quadratic form equals the retained-information functional, edge
-by edge and in total:
-
-  `Φᵀ L_R Φ  =  Σ_{(i,j,w) ∈ g} w · (Φ_i − Φ_j)²`,   with   `L_R = D_W − W`.
-
-**Proof.** Per edge the identity is `w·Φ_i² + w·Φ_j² − 2w·Φ_iΦ_j = w·(Φ_i − Φ_j)²`, an elementary ring
-identity (closed by `ring`); assembly over the edge list is a one-line induction. Positivity: with
-`w ≥ 0` on each edge, `Φᵀ L_R Φ ≥ 0` (`keystone_nonneg`) — `L_R` is PSD and the retained metric is a
-genuine seminorm.
-
-**Witness.** `formal/IDM_Keystone.v: keystone_B_eq_I`, `keystone_nonneg` — `Th_coqc`,
-`Print Assumptions` = *Closed under the global context* over `ℚ` (no `Reals`, no `classic`).
-
-**Why it cannot be disputed.** It is a one-line elementary algebraic fact over an ordered field,
-checked by a proof assistant with no axioms; the only definitional input is `L_R = D_W − W`, the
-standard graph Laplacian. The interpretive reading — *information*, not length or energy, is the
-central invariant, with distances/spectra/mass-ratios read out of `L_R` — is stated *separately* from
-the theorem and labelled as interpretation.
-
-**Published companion — the zero fibre + the HOLD floor.** The local witness above proves the keystone
-*identity* and PSD-ness. The **zero fibre** of the same operator — `I(Φ)=0 ⟺ Φ constant on every
-connected component` (positive weights) — together with the typed **reader-state** separation that
-backs this repo's HOLD discipline (a resolved `0` is provably a distinct object from an unresolved
-HOLD, and a HOLD is fail-closed), is machine-checked and *published* in the sibling artifact
-`zero-readout-certifies` (Coq 8.20 / Rocq 9.2, 38 audited results, all *Closed under the global
-context*, DOI [`10.5281/zenodo.21665100`](https://doi.org/10.5281/zenodo.21665100)). The full
-code-to-proof mapping is [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md).
-
-### V · FOLD + DECISION (A2/A3) and the exact FTCC: `I_ε(D_ε f)[N] = f[N] − f[0]`
-
-**Statement (`Th_coqc`, axiom-free).** With the causal difference `D_ε f[n] := (f[n] ⊖ f[n−1]) / ε`
-and its accumulation `I_ε`, accumulation inverts differencing **exactly**, with no limit taken:
-
-  `I_ε(D_ε f)[N] = f[N] − f[0]`  (FTCC),   and   `Σ_{n<N} (f(n+1)·Δg(n) + g(n)·Δf(n)) = f_N g_N − f_0 g_0`.
-
-**Proof.** Telescoping induction on `N` (`ring` at each step).
-
-**Role.** FOLD (A2) is accumulation over a monoid; DECISION (A3) is search-and-certify; the KEYSTONE
-(IV) is exactly what lifts FOLD's difference operator `D_W` into `L_R`. The structural claim "*each
-solver branch's kernel is an instance of FOLD or DECISION*" is itself machine-checked
-(`formal/IDM_Reduction.v`: `ftcc_Z`, `sum_is_fold`, `dot_is_fold`, `foldmin_le_*`, `foldmax_ge_*`, …),
-so the 263-kind surface is not a menu of programs but instances of two certified schemata bridged by
-one identity.
-
-**Witnesses.** `formal/IDM_Calculus.v: FTCC_telescope, summation_by_parts`; `formal/IDM_Bridge.v:
-FTCC_exact`; the reductions in `formal/IDM_Reduction.v` — all `Th_coqc`, *Closed under the global
-context*.
-
-**Why it cannot be disputed.** FTCC is the discrete fundamental theorem of calculus — a telescoping
-sum, exact by construction, with no `h → 0`. A referee can only agree that
-`Σ_{n<N}(f(n+1) − f(n)) = f(N) − f(0)`.
-
-### What these five do NOT claim (the fence)
-
-- They do **not** dissolve real analysis, topology, or the continuum. `ℝ` remains available as a
-  tiered readout (`+ℝ-axioms`); the manifold/PDE frontier is explicitly `+ℝ-Open` (Part XXI). No
-  completed-limit theorem is asserted without its stability hypothesis and its tier.
-- They do **not** claim physical truth. `L_R`-spectra reproduce physical numbers as `finite_diagnostic`
-  readouts to a declared tolerance; the standing law is *correct output ≠ true theory*.
-- They make **no** appeal to external authority. Every finite claim is checkable by
-  `bash formal/verify.sh` on the reader's own machine (`Print Assumptions` = *Closed under the global
-  context*) — the only warrant offered, and the only one needed.
-
-The whole spine: a primitive (I) that forbids the continuum at the root, a number tower (II) that
-recovers it only as a tiered readout, a reading contract (III), one exact operator identity (IV)
-whose interpretive reading makes *information* the central invariant, and one exact accumulation law
-(V) that — bridged by (IV) — generates the solver. The solver surface and the certified-readout
-contract above are built as instances and corollaries of these five.
-
-## The readout rule in practice: inertia is the spectral readout
-
-The five theorems have an operational face in numerical linear algebra, stated as one rule:
-
-> **Do not construct an object the requested readout does not require.**
-
-This is the READOUT axiom (§III) turned into an algorithm-design law, and it has a canonical
-instance — **spectral counting by inertia**. For a symmetric pencil `(K, M)` with `M` positive
-definite and a shift `σ`, the *position of a level in the spectrum* is a readout obtained without ever
-forming an eigenvector or the spectrum:
-
-  `#{eigenvalues of (K, M) below σ}  =  #{negative pivots of an LDLᵀ factorization of K − σM}`
-  — Sylvester's law of inertia; the count costs one factorization, **independent of the answer**.
-
-Two classical identities carry it, and both are read as retained-information statements:
-
-- **Sylvester inertia** — the sign-count of the `LDLᵀ` pivots *is* the count; the object retained is a
-  running inertia, not the modes. This is exactly the Sturm sign-count the repository already uses (the
-  native Retained Multilevel Sturm kernel in `retained_spectral/`, the three-layer correctness
-  certificate, and the fooling family of the Declaration Bound above).
-- **Haynsworth inertia additivity** — inertia is additive across a Schur complement, so *inertia is
-  additive across a graph separator*: **the object that must be retained is the boundary, not the
-  volume.** Recursive separator counting (nested dissection) replaces the band; the fill a poor
-  elimination order creates is "volume the readout never asked for."
-
-This unifies four things under one operator. Reading a level's position (`retained_spectral`), reading
-it for a *banded generalized pencil* (transform-free inertia bisection — dropping the split-Cholesky /
-congruence / tridiagonalization that only amplify `κ(M)`), reading a *count over an unstructured mesh*
-(boundary-recursive Schur counting), and the Declaration Bound's **lower** twin (when the query is
-deferred you *cannot* avoid retaining the whole object — `Θ(n log q)` bits) are all the same readout:
-inertia. And inertia over a graph is read off the very operator of the KEYSTONE (§IV) — `L_R` and its
-separators are that graph's structure.
-
-**Tier, stated honestly.** Sylvester's and Haynsworth's identities are classical (cited as such, not
-claimed here). The transform-free and boundary-recursive methods *report* large speedups on
-narrow-band / slender-mesh problems — order 10¹–10² in the source packages — *together with* their own
-honest limits (a crossover to sparse shift-invert once the bandwidth is no longer narrow; 2-D and 3-D
-solid domains not competitive; single host; no eigenvectors). Those figures are **absorbed observations
-from the source packages, not reproduced in this repository** (this repo's own machine-checked and
-`finite_diagnostic` numbers are elsewhere and are for different problem classes), so they are cited as
-the sources' measurements, **not** a machine-checked theorem here and **not** a universal-superiority
-claim. What is ours — and what a reader can verify in-repo — is the reading: inertia is the spectral
-readout, and the retained object is the boundary/count, never the volume/modes; the Declaration Bound
-above (its q-ary core machine-checked in `formal/IDM_DeclarationBound.v`) is its exact lower twin.
-
-**Approximate deferred counting — an honest `Ω(log(n/r))`, not the conjectured `Θ(n/r)`.** The brief's
-P7 asks the retained-bit cost of a deferred count correct to within `±r`, conjecturing `Θ(n/r)`.
-`formal/IDM_ApproxCount.v` machine-checks (axiom-free) the tractable *kernel* that a full P7 argument
-would need — a pigeonhole bit-bound (`pigeonhole_bits_needed`, generalizing `deferred_record_bits` to
-any `NoDup` list of size `≥ 2^L`), a concrete weight-ladder family spaced `(2r+1)` apart (`fam_nodup`),
-the interval-separation fact that an `r`-correct answer cannot collapse two far-apart weights
-(`r_correct_far_apart_False`), and their composition `approx_count_deferred_lower_bound`: any
-deterministic deferred record that fixes an `r`-correct count must retain `≥ L` bits for some string
-whenever `2^L ≤ S(n/(2r+1))` — an `Ω(log(n/r))` bound. This is **strictly weaker** than P7's linear
-`Θ(n/r)` (which needs an exponential `r`-tolerant fooling family, an adversary/communication-complexity
-argument not constructed here); **P7 and P8 (the randomized two-sided-error survival) stay `Open`**, not
-dressed as theorems.
-
-### The value-set the sign readout is forced to have — machine-checked (`Th_coqc`)
-
-The inertia readout reports *signs*, and there is a lower bound on how many symbols that takes. A
-readout that is **total** (defined on every object), **equivariant** under the sign-involution
-`x ↦ −x` (`r(−x) = ¬ r(x)`), and **non-degenerate** (separates some object from its negative) **cannot
-be two-valued**: the self-negative object `x₀ = −x₀` forces `r(x₀) = ¬ r(x₀)`, a fixed point of the
-involution, distinct from both members of the `+ / −` two-cycle. So **three values are forced, and the
-third is a neutral** — a two-valued signed readout would have to report a genuinely balanced (or a null)
-direction as strictly positive or strictly negative, and either report is false. This is
-`minimal_three_values` / `third_value_is_neutral` in `formal/IDM_ReadoutMinimality.v`, proved over an
-abstract source involution (no reals, no continuum — just the counting an equivariant map must satisfy),
-axiom-free.
-
-**The general group (P1) — the necessary condition, machine-checked.** The same mechanism holds for any
-group `G` of admissible re-descriptions, not only `Z₂`. `formal/IDM_EquivariantReadout.v` proves,
-axiom-free and for an abstract action (no finiteness assumed), that **every symmetry fixing an object
-fixes its readout**: `Stab_X(x) ⊆ Stab_V(r x)` (`equivariant_stabilizer_containment`), and that when the
-readout is **faithful** on `x`'s orbit (it separates the re-descriptions of `x`) the containment is an
-**equality** `Stab_V(r x) = Stab_X(x)` (`faithful_stabilizer_equality`) — so a faithful readout copies
-each orbit type exactly, its image orbit being `G/Stab_X(x)` of size `[G : Stab_X(x)]`. This is the
-per-type input to the minimal-cardinality question, and it recovers Theorem 1's mechanism (a moved
-object cannot be read as a fixed/neutral value: `nondegenerate_value_moves`). The full **cardinality
-formula** `|V|_min = Σ_{[H]} [G:H]` (one orbit per realised stabiliser type; Theorem 1 is the case
-`2 + 1 = 3`) is the brief's **Conjecture P1** — it additionally needs disjointness of types plus an
-orbit-stabiliser/Lagrange count, orbit combinatorics not formalised here — and is stated as a fenced
-**conjecture (`Open`)**, never as a theorem.
-
-The fourth value is not decoration. The neutral splits into **two distinct fixed points on two
-different axes**: `0` — *determinately balanced*, a fact about the **object**, incomparable in the
-information order — and `⊥` — *unresolved*, a fact about the **instrument's** declared resolution, the
-least element of that order. `formal/IDM_ReadoutMinimality.v` machine-checks that these are distinct
-(`neutral_distinct_from_bottom`), that `⊥` is the unique order-bottom (`bottom_unique`), and that `0` is
-**not** a bottom (`neutral_is_not_bottom`) — it carries information, it is not "no information."
-
-**What `0` means here, precisely (information semantics).** In this framework every reading is a readout
-of a retained difference `δ_R` (information = retained distinction). The neutral `0` is **not** nothing,
-**not** the void, and **not** the continuum's point of zero extent (a non-readout). It is a *positive,
-determinate* reading — a `δ_R` that is genuinely present and whose signed content cancels **exactly** (a
-null direction; the invariant rank-deficiency `n₀` of Sylvester's law). That is why `0` is
-order-incomparable to `±`, never the bottom. `⊥` is the opposite kind of thing entirely: it is the
-**instrument** reporting that its declared resolution cannot decide the sign — never a property of the
-object. `formal/IDM_ResolvedCount.v` makes the asymmetry exact and axiom-free over `ℚ`:
-`bot_needs_positive_resolution` — a `⊥` reading can arise **only** from a strictly positive declared
-resolution (it is always instrumental); `classify_zero_iff` — a `0` reading is emitted **only** at exact
-resolution and **exactly** when the value is a true balance (it is always intrinsic).
-
-**Shipped (P4).** `retained_spectral/inertia.py` now exposes `resolved_count_below` /
-`ResolvedInertia`: the same one-pass banded `LDLᵀ`, but classifying each pivot as a certain `+` /
-certain `−` / unresolved `⊥` instead of folding the floor band into the count. The true count is
-returned as an honest interval `[certain_below, certain_below + unresolved]`, and the classic single
-integer `count_below_banded` is exactly its **upper** end — proved for the discrete model in
-`IDM_ResolvedCount.v` (`signedfloor_is_certain_plus_unresolved`, `certain_le_signedfloor`) and checked
-numerically in `tests/test_resolved_inertia.py` (a diagonal-annihilating shift is now reported as
-`0 certain, n unresolved`, honestly bracketing the truth, instead of a silently-wrong point count). The
-full analytic statements P4 also raises — monotonicity in `σ`, and `ν_ε` = the exact count of some `Ã`
-within `ε‖A‖` — are real-matrix backward-error results kept at their honest tier (measured + classical
-Sturm backward-stability), **not** claimed as machine-checked here.
-
-## What is proved today
-
-### 1. Geometric series — machine-checked, axiom-free (`Th_coqc`)
-
-Class: `r ∈ ℚ`, hypothesis `H : 0 ≤ r < 1`. Algorithm: `S_N = Σ_{k<N} r^k`. Target: `1/(1−r)`.
-
-- **Exact identity** (`formal/IDM_Certified.v : geom_certified_identity`):
-  `(1 − r) · S_N = 1 − r^N`.
-- **Exact defect** (`geom_certified_defect`): `1 − (1 − r)·S_N = r^N`, hence on paper
-  `1/(1−r) − S_N = r^N/(1−r)` — the shipped error certificate.
-- **Termination + tolerance selection**: `r^N/(1−r) → 0`, so the least `N` with `r^N/(1−r) ≤ ε` exists
-  and is found by a terminating loop (`geom_series_certified`). Outside `0 ≤ r < 1` the tool returns
-  `HOLD`.
-
-Both Coq theorems report `Closed under the global context` under `Print Assumptions` (run
-`bash formal/verify.sh`).
-
-### 2. Finite exponential, Simpson quadrature, Richardson limit — derived certificates (`finite_diagnostic`)
-
-Implemented with proven-on-paper bounds in `tools/certified_readout.py`:
-
-| tool | class / hypothesis `H` | error bound `B` | HOLD when |
-|---|---|---|---|
-| `exp_certified` | `|x| ≤ ½` | `|x|^{N+1} / ((N+1)! (1−|x|))` | `|x| > ½` (range-reduction cert. not yet formalized) |
-| `simpson_certified` | `f ∈ C⁴`, bound `M₄ ≥ max|f⁗|` given | `(b−a)⁵ M₄ / (180 N⁴)` | no `M₄` supplied |
-| `integral_stable_certified` | refinement gaps contract (ρ<1) | `g_last/(1−ρ)` (see §7, Coq-backed) | gaps don't contract (pole / non-integrable / oscillatory) |
-| `integral_nd_stable_certified` | tensor-grid gaps contract (ρ<1), any dimension | `g_last/(1−ρ)` (§7, same Coq theorem) | gaps don't contract, or a singular integrand |
-| `richardson_certified` | sequence has a `1/n` asymptotic expansion | a-posteriori: the contracted diagonal gap | diagonal fails to contract (e.g. `1/log n`, oscillatory, divergent) |
-| `richardson_apriori_certified` | method **order** `p` known | a-priori: `g/(1−2⁻ᵖ)` from one gap (§8, Coq-backed) | `order < 1` (no contraction guaranteed) |
-
-`simpson_certified`/`richardson_certified` are `finite_diagnostic`/`Dr`; `integral_stable_certified` is
-backed by the Coq theorem in §7. **A note on the integral, on principle:** the classic Simpson bound is
-stated as a distance to the *true continuum integral* `∫f`. Under readout-first there is **no** completed
-`∫f` to be the target — demanding that distance would smuggle the continuum back in as the primitive. So
-`integral_stable_certified` does **not** target `∫f`; it certifies that our *own* readout has stabilized
-(§7). The `M₄`-based `simpson_certified` is kept only as an optional continuum-comparator convenience.
-
-### 3. Geometric-majorant tail bound — machine-checked, axiom-free (`Th_coqc`)
-
-The *mechanism* behind the `exp`/Simpson-tail certificates is Coq-checked
-(`formal/IDM_Certified.v : geom_majorant_tail`): for any run of nonnegative terms that contracts by a
-ratio ρ (`t_{k+1} ≤ ρ·t_k`), every finite tail obeys `(1 − ρ)·Σ_{j<M} t_{N+j} ≤ t_N`, i.e. the tail is
-`≤ t_N/(1 − ρ)` — a finite, division-free stability certificate, `Closed under the global context`.
-
-### 4. Finite exponential's Taylor tail — machine-checked, axiom-free (`Th_coqc`)
-
-The exp instance is now fully closed in Coq (`exp_tail_certified`): with the terms
-`exp_term x k = x^k/k!` built by the standard recurrence `t_{k+1} = t_k·x/(k+1)`, the lemmas
-`exp_term_nonneg` (`0 ≤ x ⇒ 0 ≤ t_k`) and `exp_term_ratio` (`0 ≤ x ⇒ t_{k+1} ≤ x·t_k`, since
-`x/(k+1) ≤ x`) discharge the hypotheses of `geom_majorant_tail`, giving
-
-    0 ≤ x  ⇒  (1 − x) · Σ_{j<M} exp_term x (N+j)  ≤  exp_term x N,
-
-i.e. the M-term Taylor tail from index N is `≤ (x^N/N!)/(1 − x)` — the certified remainder of the
-finite exponential, machine-checked and axiom-free. This is the second end-to-end certified algorithm
-(after the geometric series).
-
-### 5. Range-reduction propagation — machine-checked, axiom-free (`Th_coqc`)
-
-`exp(x) = exp(x/2)²`, so a readout for a large argument is the *square* of a readout for the halved one;
-the only question is how error propagates through squaring. Proved in Coq (`sq_error_propagation`),
-axiom-free over ℚ:
-
-    |p − v| ≤ e   ⇒   |p² − v²| ≤ (2|v| + e)·e.
-
-Halving `m` times (until the reduced argument is `≤ ½`, where `exp_tail_certified` applies) and squaring
-back `m` times therefore keeps a controlled, finite error — the mechanism that extends the exponential's
-certificate from `|x| ≤ ½` to any `x`.
-
-### 6. Iterated-squaring assembly — machine-checked, axiom-free (`Th_coqc`)
-
-The `m`-fold range reduction is now a single Coq theorem (`iter_sq_certified`): with `iter_sq p m` =
-`p^(2^m)`, if `|p − v| ≤ e` and `|v| ≤ a`, then after `m` squarings
-
-    |iter_sq p m − iter_sq v m| ≤ errbound a e m,
-
-where `errbound` is the finite, computable bound obtained by iterating `sq_error_propagation` `m` times
-(`errbound a e (S k) = (2·valbound a k + errbound a e k)·errbound a e k`). Composed with
-`exp_tail_certified` at the halved argument (`|x/2^m| ≤ ½`) and the halving identity `exp(x)=exp(x/2)²`,
-this carries the finite exponential's certificate from `|x|≤½` to **any** `x`, with a fully finite error
-bound — machine-checked, axiom-free.
-
-### 7. Integral by finite stability — machine-checked, axiom-free (`Th_coqc`)
-
-The readout-first way to certify a quadrature — **without ever naming a completed `∫f`**. Refine the
-panel count (`N, 2N, 4N, …`); the successive readouts differ by gaps `s_k`. Two Coq theorems
-(`formal/IDM_Certified.v`) make the stability rigorous over ℚ:
-
-- `abs_tailsum_le`: `|Σ gaps| ≤ Σ |gaps|` (triangle over a finite tail);
-- `refine_stable`: if the gaps contract (`|s_{k+1}| ≤ ρ|s_k|`, `ρ ≤ 1`), then the difference between any
-  two refined readouts `M` steps apart obeys `(1 − ρ)·|Σ_{j<M} s_{N+j}| ≤ |s_N|` — i.e. every further
-  refinement agrees within `|s_N|/(1 − ρ)`, a **computable rational** (proved by combining
-  `abs_tailsum_le` with `geom_majorant_tail` on `|s|`).
-
-So when the refinement gaps contract, the readout has a certified stable plateau; when they do not
-(pole, non-integrable, oscillatory), there is no plateau and the tool returns `HOLD`
-(`integral_stable_certified`, with the pole/singular cases in `validation/negative_controls.py`). We
-never claim a distance to `∫f`; we certify that *our own* finite readout has stopped moving. Both
-theorems `Closed under the global context`.
-
-**Dimension-agnostic — multi-D quadrature reuses the same theorem, no new one needed.** `refine_stable`
-is a statement about a *scalar* gap sequence `s : ℕ → ℚ`; nothing in it mentions dimension. So a
-tensor-product trapezoid on a box `[a₁,b₁]×⋯×[a_d,b_d]`, refined `n → 2n` on every axis, produces
-exactly such a sequence and inherits the identical certificate — shipped as `integral_nd_stable_certified`
-(`tools/certified_readout.py`, re-exported `idm.certified.integral_nd`). For a smooth integrand the
-tensor trapezoid is order-2 per axis, so halving all axes contracts the gaps by `ρ → 1/4` — the very
-a-priori ratio of §8 (order 2) — confirmed numerically in `tests/test_multidim_quadrature.py` (2-D/3-D
-readouts certify to the exact value; a form whose observed refinement gaps vanish certifies with bound
-`0` — the `ρ=0` case of the same a-posteriori stability reading, exact in fact for a per-axis-affine
-integrand; a singular integrand `HOLD`s; the observed ratio sits at the `1/4` envelope). The remaining open
-refinement family is genuinely *adaptive* grids (non-uniform refinement), where the gap sequence is no
-longer produced by uniform halving — the same scalar-stability theorem still applies whenever the global
-gaps contract, but choosing *where* to refine is the open engineering.
-
-### 8. Richardson **a-priori** stability certificate — machine-checked, axiom-free (`Th_coqc`)
-
-`refine_stable` (§7) is *a-posteriori*: it assumes the contraction hypothesis `|s_{k+1}| ≤ ρ·|s_k|`,
-which `richardson_certified` / `integral_stable_certified` establish by watching the actual gaps. The
-*a-priori* certificate (`formal/IDM_Apriori.v`) discharges that hypothesis from the **form** of the
-sequence instead, once, by structure: if the gaps are a multiplier form `s_{k+1} = m_k·s_k` with every
-`|m_k| ≤ ρ` (`apriori_multiplicative_contracts`), or the geometric leading-term form `s_k = a·qᵏ` with
-`|q| ≤ ρ` (`apriori_geometric_contracts`), the contraction holds for **all** `k` and feeds
-`refine_stable` directly (`apriori_stable`). The Richardson specialisation reads the ratio off the
-method **order**: an order-`p` method under step halving has column-gap ratio `ρ = 2⁻ᵖ`, a constant
-known before any refinement is run — so order `p ⇒ ρ = 2⁻ᵖ ≤ 1 ⇒ certified-stable`, up front
-(`richardson_ratio`, `richardson_apriori_contracts`, `richardson_apriori_stable`; all `Closed under the
-global context`). Shipped in `tools/certified_readout.py` as `richardson_apriori_ratio` /
-`richardson_apriori_bound` / `richardson_apriori_certified`, with `tests/test_richardson_apriori.py`
-confirming the a-priori `ρ` genuinely **envelopes** a real order-2 (trapezoid) method — the observed
-asymptotic gap ratio never exceeds `2⁻ᵖ`, and the single-gap a-priori bound contains the true remaining
-disagreement. *Honest fence:* a real Richardson tableau's gaps are geometric-**dominated** by this
-envelope (higher-order terms only contract faster); the mapping "method order `p ⇒ ρ = 2⁻ᵖ`" is the
-standard Richardson fact — the machine-checked content is the ℚ-algebra `form ⇒ contraction ⇒ bound`.
-
-## What is still open (`+ℝ-Open` / next work)
-
-- Extend the finite-stability certificate to genuinely **adaptive** grids (non-uniform refinement) —
-  the scalar `refine_stable` theorem still applies whenever the global gaps contract; the open part is
-  the refinement *strategy* (where to subdivide). Multi-dimensional (uniform tensor) quadrature is now
-  shipped (§7, `integral_nd_stable_certified`).
-
-*(Note: we do **not** list "prove the Simpson/Euler–Maclaurin bound against the true `∫f`" as open work.
-That is a continuum-first obligation the framework does not accept: the certified object is the stability
-of the finite readout, §7, not its distance to a completed integral.)*
-
-The honest position: the **geometric-series certified readout is proved end-to-end and axiom-free**; the
-other tools **carry derived certificates and a working HOLD discipline**, and their formalization is the
-declared next step. This is the lever from "computes the right number" to "certified computation."
+# Finite Readout and Decision Certification Theorems
+
+This document is the canonical claim boundary for Information Discrete Mathematics. It separates exact source semantics, target certification, finite stability, formal proof mappings, numerical diagnostics, and interpretation.
+
+## 1. Claim taxonomy
+
+A public result belongs to one or more explicitly named classes:
+
+- **exact:** finite \(\mathbb Z/\mathbb Q\) evaluation, exact relative to the declared source values;
+- **CERTIFIED:** a named target lies in a proved enclosure under named hypotheses;
+- **STABLE:** a finite refinement sequence passed a disclosed stability test, without a target-distance theorem;
+- **Th_coqc:** the named abstract theorem has a machine-checked proof mapping;
+- **finite_diagnostic:** reproducible finite numerical evidence or comparator agreement;
+- **Dr:** design or interpretation;
+- **+ℝ-Open:** a continuum-level statement deliberately left unresolved;
+- **HOLD:** the hypotheses, enclosure, or resources required for a stronger conclusion are absent.
+
+No class is silently promoted into another.
+
+## 2. Source readouts
+
+### Definition 2.1 — finite decimal readout
+
+A finite decimal readout is a pair
+
+\[
+r=(n,k)\in\mathbb Z\times\mathbb N,
+\qquad
+\operatorname{val}(r)=n10^{-k}\in\mathbb Q.
+\]
+
+The scale \(k\) records the decimal form of the source token. It is not, without an acquisition contract, a measurement-uncertainty model.
+
+Addition and multiplication are
+
+\[
+(n,k)\oplus(m,j)=
+\left(n10^{p-k}+m10^{p-j},p\right),
+\qquad p=\max(k,j),
+\]
+
+\[
+(n,k)\otimes(m,j)=(nm,k+j).
+\]
+
+### Theorem 2.2 — exact rational evaluation
+
+Let a finite expression tree have finite decimal readouts at its leaves and operations \(+,-,\times,\div\), with nonzero denominators. If every node is evaluated using arbitrary-precision integer numerators and denominators, the returned rational equals the mathematical value of the expression in \(\mathbb Q\).
+
+**Proof.** Integers are closed under addition and multiplication. Scale alignment multiplies numerators by integer powers of ten. Rational division appends a nonzero integer denominator. Structural induction over the finite expression tree gives the result. \(\square\)
+
+### Boundary
+
+The theorem eliminates conversion and arithmetic rounding relative to the declared source record. It does not eliminate measurement uncertainty, model error, discretization error, or an incorrect specification.
+
+## 3. A precision-parametric direct-evaluation collision
+
+### Theorem 3.1 — direct determinant collision
+
+Consider a normalized radix-2 format with precision \(p\ge3\), round-to-nearest ties-to-even, correctly rounded multiplication and subtraction, and sufficient exponent range. Let
+
+\[
+N=2^{p-1},
+\qquad
+A_p=\begin{pmatrix}N&N-1\\N+1&N\end{pmatrix}.
+\]
+
+Every matrix entry is exactly representable, and
+
+\[
+\det A_p=N^2-(N-1)(N+1)=1.
+\]
+
+If the determinant expression is evaluated by rounding the two products separately and then subtracting, the computed result is zero.
+
+**Proof.** The first product is exactly \(N^2\). The second exact product is \(N^2-1\). At the binade containing \(N^2\), the precision-\(p\) spacing is large enough that \(N^2-1\) rounds to \(N^2\) under ties-to-even. The subtraction therefore receives equal representable operands and returns zero. \(\square\)
+
+### Corollary 3.2
+
+Direct rounded evaluation of \(ad-bc\) is not a universally correct exact-singularity predicate over unrestricted exactly representable integer inputs.
+
+### Scope of the corollary
+
+This is a limitation of the stated evaluation path. It is not a proof that every algorithm using fixed-size floating-point words must fail. Multiword expansions, exact integer arithmetic, interval methods, source-token inspection, and symbolic preprocessing are different computational models.
+
+A fused multiply-add removes one intermediate rounding. A single FMA does not, in general, evaluate a difference of two products with only one rounding; it may repair special witnesses when the other product is exactly available.
+
+## 4. Certified discrete decisions
+
+Let \(Q\) be a scalar target and \(\tau\) a decision threshold.
+
+### Definition 4.1 — proved enclosure
+
+An algorithm supplies a target certificate when it proves
+
+\[
+Q\in[L,U].
+\]
+
+A symmetric certificate may be written
+
+\[
+Q\in[\widehat Q-E,\widehat Q+E],\qquad E\ge0.
+\]
+
+### Theorem 4.2 — operational threshold certificate
+
+The enclosure determines the threshold decision exactly when
+
+\[
+[L,U]\cap\{\tau\}=\varnothing,
+\]
+
+or when \(L=U=\tau\), which certifies equality.
+
+For a symmetric enclosure, strict-side certification is equivalent to
+
+\[
+|\widehat Q-\tau|>E.
+\]
+
+**Proof.** If \(U<\tau\), every admissible target lies below the threshold. If \(L>\tau\), every admissible target lies above it. If \(L=U=\tau\), equality is exact. In all other cases the enclosure contains values on, or potentially on both sides of, the threshold, so the evidence does not determine a unique decision. \(\square\)
+
+### Corollary 4.3 — normalized sufficient condition
+
+If a rigorous forward error bound has the form
+
+\[
+E\le c_A\kappa uS
+\]
+
+and the computed estimate satisfies
+
+\[
+c_A\kappa uS<|\widehat Q-\tau|,
+\]
+
+the decision is certified. A formulation \(c_A\kappa u<\delta\) is therefore a sufficient certification condition after normalization.
+
+It is not an iff statement about actual floating-point correctness. When the inequality fails, the result is unresolved by that bound, not necessarily wrong.
+
+## 5. Target certification versus finite stability
+
+### 5.1 Target certificate
+
+A routine may return `CERTIFIED(q,B)` only when it establishes
+
+\[
+|q-T(x)|\le B
+\]
+
+under named hypotheses and includes every error source used by the implementation. A truncation theorem alone is insufficient if arithmetic error is ignored.
+
+### 5.2 Stability result
+
+Suppose finite refinements \(q_0,q_1,\ldots,q_N\) have contracting observed gaps. This is evidence of finite stability. Without an independently justified contraction theorem or target enclosure, it does not prove that:
+
+- the pattern continues for all future refinements;
+- the sequence converges;
+- the limit equals a named target; or
+- the last observed gap bounds target error.
+
+Such routines return `STABLE`, not `CERTIFIED`.
+
+### 5.3 Equality and termination
+
+For \(Q\ne\tau\), a convergent certified enclosure process may eventually separate from the boundary. For \(Q=\tau\), interval refinement alone may not terminate with equality. Exact algebra, a symbolic identity, or a domain-specific separation theorem is required to certify equality in finite time.
+
+## 6. Current certified-readout API
+
+The public API in `idm.certified` follows this table:
+
+| Routine | Status on success | Evidence |
+|---|---|---|
+| `geom_series` | `CERTIFIED` | exact rational partial sum and exact geometric tail |
+| `exp` | `CERTIFIED` | exact rational Taylor sum and a proved geometric majorant of the remaining terms |
+| `simpson` | `CERTIFIED` | exact rational node arithmetic plus caller-supplied fourth-derivative bound |
+| `richardson` | `STABLE` | observed Richardson-diagonal contraction |
+| `richardson_apriori_certified` | `STABLE` | conditional order-model envelope; asymptotic entry is not proved |
+| `integral` | `STABLE` | observed finite trapezoid refinement contraction |
+| `integral_nd` | `STABLE` | observed finite tensor-trapezoid refinement contraction |
+
+A missing derivative bound, inexact quadrature node arithmetic, failed contraction test, invalid domain, or exhausted resource budget produces `HOLD`.
+
+## 7. Formal spine and what it proves
+
+The repository's formal layer contains machine-checked finite laws. The proof tier attaches only to the named statement.
+
+### 7.1 Genesis and discrete floor
+
+`formal/IDM_Genesis.v` exhibits a first distinction over \(\mathbb N\) and the absence of an integer strictly between \(0\) and \(1\). This is an axiom-free theorem about the chosen discrete model. The philosophical claim that it is ontologically primitive remains `Dr`.
+
+### 7.2 Number construction
+
+Integer ring identities and rational field constructions are finite algebraic mathematics. Any use of `Coq.Reals` or a completed real-number construction must be labelled separately with its imported assumptions.
+
+### 7.3 Graph-Laplacian identity
+
+`formal/IDM_Keystone.v` proves the algebraic identity
+
+\[
+\Phi^T L\Phi=\sum_{(i,j,w)}w(\Phi_i-\Phi_j)^2
+\]
+
+under the declared graph definitions, together with nonnegativity for nonnegative weights. Calling this quantity retained information is an interpretation layered over the identity.
+
+### 7.4 Exact finite calculus
+
+`formal/IDM_Calculus.v` and `formal/IDM_Bridge.v` prove telescoping and summation-by-parts identities, including
+
+\[
+\sum_{n=0}^{N-1}(f_{n+1}-f_n)=f_N-f_0.
+\]
+
+These are exact finite identities. They do not, without additional hypotheses, prove convergence to a continuum derivative or integral.
+
+### 7.5 Certified geometric tail
+
+`formal/IDM_Certified.v` supplies the machine-checked finite law used by the rational geometric-series certificate. Code-to-proof mapping must identify the exact theorem and all implementation assumptions.
+
+## 8. Numerical linear algebra boundary
+
+Exact algebraic singularity, backward-stable solution of a nearby system, and numerical rank under a tolerance are different targets.
+
+- Exact determinant predicates may require exact or adaptive arithmetic.
+- Numerical solvers should use factorization, residuals, backward error, condition estimates, and rank-revealing methods rather than branching on a naively computed determinant.
+- A finite operator spectrum is exact only relative to that declared operator and arithmetic; approximation to a continuum operator requires a separate discretization theorem or diagnostic tier.
+
+## 9. Measurement boundary
+
+The exact value of a recorded token is not the exact value of a physical quantity. A measurement claim requires separate information about calibration, quantization, uncertainty, and decision risk. Decimal scale alone cannot supply these.
+
+## 10. Recommended implementation architecture
+
+```text
+exact source parse
+    -> fast numerical evaluation
+    -> rigorous enclosure
+        -> enclosure excludes boundary: return certified decision
+        -> enclosure intersects boundary: escalate
+    -> interval / increased precision / expansion / exact arithmetic
+        -> certified decision
+        -> HOLD if hypothesis or budget fails
+```
+
+This is a division of labour, not a claim that exact rational arithmetic replaces floating point generally.
+
+## 11. Novelty boundary
+
+The following are classical and are not claimed as new:
+
+- catastrophic cancellation;
+- floating-point condition and stability analysis;
+- interval decision certification;
+- exact and adaptive geometric predicates;
+- fixed-point, decimal, rational, and arbitrary-precision arithmetic;
+- measurement guard bands and conformity decisions.
+
+The project contribution is the readout-first synthesis: exact source-record semantics, explicit evidence tiers, fail-closed decision APIs, formal finite laws, and executable finite methods within one framework.
+
+## 12. Reproducibility
+
+Run:
+
+```bash
+pytest -q
+python3 tools/certified_readout.py
+bash formal/verify.sh
+```
+
+The precision-parametric determinant test is implemented in `idm/readout_boundary.py` and exercised by `tests/test_readout_boundary.py`. The test simulates ties-to-even significand rounding at each declared precision rather than checking only the underlying integer identity.
+
+## 13. Canonical standard
+
+The normative engineering contract, status vocabulary, and required result fields are in:
+
+- `docs/READOUT_CERTIFICATION_STANDARD.md`
+- `METHOD.md`
+- `AGENTS.md`
+
+Where older prose conflicts with these documents, this theorem boundary and the certification standard govern.

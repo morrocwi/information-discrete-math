@@ -1,15 +1,15 @@
 """idm.solve — the finite-discrete SOLVER: one entry point, a registry of finite methods, tier-honest.
 
-`solve(problem)` takes a STRUCTURED problem (translate-first: the caller declares the `kind`, honoring
-the rule that a world-language request is translated into the information language before any math is
-done) and dispatches to the matching finite method. It always returns a normalized result with the
-value, an error bound where one is proven, a `status` (CERTIFIED / HOLD / ok), and a tier — one of
-`Th_coqc` (a named theorem in formal/ governs the result; a `coq_theorem` reference is attached),
-`exact` (exact, finite, decidable ℤ/ℚ computation — no floating point in the result, but no individual
-Coq proof of the implementation), or `finite_diagnostic` (numeric to a declared tolerance). The
-`Th_coqc` label is applied only where a proof mapping exists — exact-but-unproven handlers are `exact`,
-never inflated. No continuum library call ever produces the answer; an unknown kind or a failure
-returns HOLD, never a crash.
+`solve(problem)` takes a STRUCTURED problem and dispatches to the matching finite method. It returns a
+normalized result with value, an error bound where one is available, a public solver `status`
+(`CERTIFIED` / `HOLD` / `ok`), and an evidence tier. Low-level refinement routines may return `STABLE`;
+the unified solver preserves its historical status vocabulary by emitting `status="ok"` together with
+`evidence_status="STABLE"`. Thus compatibility does not require promoting stability into a target
+certificate.
+
+The tier is one of `Th_coqc` (a named theorem in formal/ governs the result), `exact` (exact finite
+ℤ/ℚ computation, without an individual implementation proof), or `finite_diagnostic` (finite numerical
+evidence). Unknown kinds and handler failures return HOLD, never an uncaught exception.
 
     solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e-8})
     solve({"kind": "eigenvalues", "matrix": [[2, 0], [0, 3]]})
@@ -27,8 +27,6 @@ except Exception:  # pragma: no cover
 # One canonical working precision for the whole solver. Every kind is dispatched under
 # ``mp.workdps(_CANON_DPS)`` so a numeric readout depends ONLY on its own method, never on the
 # ambient global mpmath precision a sibling module's import or a prior call happened to leave.
-# Without this the mpmath global (mp.mp.dps) is shared process-wide state that different modules set
-# to different values, making dps-sensitive readouts (e.g. E1) order-dependent across a test suite.
 _CANON_DPS = 40
 
 _REG = {}
@@ -69,9 +67,18 @@ def _seq(expr):
 def _ok(kindname, value, method, **extra):
     d = {"kind": kindname, "status": "ok", "value": _norm(value), "method": method}; d.update(extra); return d
 def _readout(kindname, r, method):
-    return {"kind": kindname, "status": r.status, "value": _norm(r.q), "bound": _norm(r.bound),
-            "method": method, "reason": r.reason}
+    """Normalize a low-level evidence-bearing readout without tier inflation.
 
+    `CERTIFIED` and `HOLD` retain their public solver status. `STABLE` is a successful finite diagnostic,
+    so the legacy solver status is `ok` and the stronger evidence qualifier is carried separately.
+    """
+    low_status = r.status
+    public_status = "ok" if low_status == getattr(C, "STABLE", "STABLE") else low_status
+    out = {"kind": kindname, "status": public_status, "value": _norm(r.q), "bound": _norm(r.bound),
+           "method": method, "reason": r.reason}
+    if low_status != public_status:
+        out["evidence_status"] = low_status
+    return out
 
 
 # ---- hoisted shared helpers (used across domains) ----
@@ -111,7 +118,7 @@ def _hb(name, fn, *argnames, tier="exact"):
             return {"kind": name, "status": r["status"], **{k: v for k, v in r.items() if k != "status"},
                     "tier": r.get("tier", "finite_diagnostic")}
         out = {"kind": name, "status": "ok", "value": r["value"], "method": r["method"]}
-        if "tier" in r: out["tier"] = r["tier"]                 # per-instance tier wins over the registry default
+        if "tier" in r: out["tier"] = r["tier"]
         if "error_bound" in r: out["error_bound"] = r["error_bound"]
         return out
     return _h
