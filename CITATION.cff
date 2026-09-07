@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this work, cite the treatise record (concept DOI 10.5281/zenodo.22644130; v1.6.0 = 10.5281/zenodo.22644131) and the Toledo equation codes it carries."
+title: "Information Discrete Mathematics: the readout-first mathematical foundation"
+type: software
+version: "1.6.0"
+date-released: "2026-09-08"
+license: MIT
+doi: 10.5281/zenodo.22644131
+repository-code: "https://github.com/morrocwi/information-discrete-math"
+authors:
+  - family-names: Lahtee
+    given-names: Yaoharee
+    orcid: "https://orcid.org/0009-0005-3861-0626"
+    affiliation: "Open Civil Science Initiative"

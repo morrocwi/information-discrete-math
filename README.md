@@ -15,6 +15,8 @@
 
 </div>
 
+> **Deposited record.** Treatise v1.6.0: DOI 10.5281/zenodo.22644131 (concept DOI 10.5281/zenodo.22644130). Equation codes: Toledo, concept DOI 10.5281/zenodo.22537318 — see `docs/TOLEDO_CODES.md`.
+
 ## Capability map
 
 ```
