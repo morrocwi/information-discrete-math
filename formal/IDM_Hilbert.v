@@ -17,6 +17,27 @@
 (*   projection_idempotent / projection_self_adjoint                          *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     Qsq_nonneg -> Keystone/P.01.v1
+     Sum_scale -> Keystone/P.02.v1
+     Sum_nonneg -> Keystone/P.03.v1
+     inner_sym -> Keystone/P.04.v1
+     inner_linear_l -> Keystone/P.05.v1
+     inner_pos -> Keystone/P.06.v1
+     parallelogram_law -> Keystone/P.07.v1
+     pythagoras_orthogonal -> Keystone/P.08.v1
+     cauchy_schwarz_2 -> Keystone/P.09.v1
+     adjoint_involutive -> Keystone/P.10.v1
+     adjoint_of_product -> Keystone/P.11.v1
+     hermitian_2x2_discriminant_nonneg -> Keystone/P.12.v1
+     hermitian_2x2_gap_is_discriminant -> Keystone/P.13.v1
+     projection_idempotent -> Keystone/P.14.v1
+     projection_self_adjoint -> Keystone/P.15.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith Lqa.
 Require Import IDM_Matrix.
 Open Scope Q_scope.

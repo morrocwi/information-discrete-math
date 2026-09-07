@@ -24,6 +24,22 @@
 (*   orient_collinear_aff  any affine combination on line a,b ⇒ exactly 0    *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     orient_swap_bc -> L_R/M.03.v1
+     orient_swap_ab -> L_R/M.04.v1
+     orient_cyclic -> L_R/M.05.v1
+     orient_coincident_ab -> L_R/M.06.v1
+     orient_coincident_ac -> L_R/M.07.v1
+     orient_coincident_bc -> L_R/M.08.v1
+     orient_translation -> L_R/M.09.v1
+     orient_scale -> L_R/M.10.v1
+     orient_collinear_mid -> L_R/M.11.v1
+     orient_collinear_aff -> L_R/M.12.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Open Scope Q_scope.
 

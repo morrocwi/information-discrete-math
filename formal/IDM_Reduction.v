@@ -26,6 +26,54 @@
 (*    witness_composite_sound  a found divisor PROVES compositeness           *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     op_swap -> A2/M.01.v1
+     fold_right_perm -> A2/M.02.v1
+     ftcc_Z -> A2/M.03.v1
+     foldmin_le_init -> A2/M.04.v1
+     foldmin_le_elem -> A2/M.05.v1
+     sum_is_fold -> A2/M.06.v1
+     path_is_fold -> A2/M.07.v1
+     pivot_preserves -> A2/M.08.v1
+     fold_ext -> A2/M.09.v1
+     fold_linear -> A2/M.10.v1
+     fold_add_split -> A2/M.11.v1
+     foldmax_ge_init -> A2/M.12.v1
+     foldmax_ge_elem -> A2/M.13.v1
+     foldmax_in -> A2/M.14.v1
+     sum_list_perm -> A2/M.15.v1
+     prod_list_perm -> A2/M.16.v1
+     dot_is_fold -> A2/M.17.v1
+     dot_scale -> A2/M.18.v1
+     horner_scaled -> A2/M.19.v1
+     horner_is_poly -> A2/M.20.v1
+     foldmin_in -> A2/M.21.v1
+     fold_add_app -> A2/M.22.v1
+     factorial_is_fold -> A2/M.23.v1
+     relax_nonincreasing -> A2/M.24.v1
+     relax_idempotent -> A2/M.25.v1
+     weak_duality_2 -> A2/M.26.v1
+     fold_split_even_odd -> A2/M.27.v1
+     modpow_is_fold -> A2/M.28.v1
+     witness_sound -> A3/M.01.v1
+     witness_complete -> A3/M.02.v1
+     decide_dec -> A3/M.03.v1
+     witness_composite_sound -> A3/M.04.v1
+     composite_has_factor -> A3/M.05.v1
+     decide_reflect -> A3/M.06.v1
+     witness_power_sound -> A3/M.07.v1
+     witness_qr_sound -> A3/M.08.v1
+     witness_dlog_sound -> A3/M.09.v1
+     sat_reduces_to_decision -> A3/M.10.v1
+     sat_model_sound -> A3/M.11.v1
+     tautology_sound -> A3/M.12.v1
+     cnf_tautology_sound -> A3/M.13.v1
+     witness_crt_sound -> A3/M.14.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import ZArith Arith Lia List Bool Factorial Permutation.
 Import ListNotations.
 

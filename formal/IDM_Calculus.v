@@ -12,6 +12,21 @@
 (*   FTCC_telescope I_ε(D_ε f) = f[N] − f[0]  (exact accumulation)           *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     delta_sum -> Z/M.01.v1
+     delta_scalar -> Z/M.02.v1
+     delta_product -> Z/M.03.v1
+     Deps_sum -> Z/M.04.v1
+     Deps_product -> Z/M.05.v1
+     FTCC_telescope -> Z/M.06.v1
+     PSum_ext -> Z/M.07.v1
+     PSum_delta_telescope -> Z/M.08.v1
+     summation_by_parts -> Z/M.09.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Open Scope Q_scope.
 

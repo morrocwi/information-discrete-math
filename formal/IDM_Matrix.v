@@ -16,6 +16,33 @@
 (*                                 the connectivity kernel of §15.2)         *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     laplacian_symmetric -> L_R/M.20.v1
+     laplacian_rowsum_zero -> L_R/M.21.v1
+     laplacian_ones_in_kernel -> L_R/M.22.v1
+     Sum_plus -> Q/M.02.v1
+     Sum_opp -> Q/M.03.v1
+     Sum_zero -> Q/M.04.v1
+     Sum_ext -> Q/M.05.v1
+     Sum_ext_lt -> Q/M.06.v1
+     Sum_delta -> Q/M.07.v1
+     madd_comm -> Q/M.08.v1
+     madd_assoc -> Q/M.09.v1
+     transpose_involutive -> Q/M.10.v1
+     transpose_mmul -> Q/M.11.v1
+     mid_left -> Q/M.12.v1
+     twirl_image_scalar -> Q/M.13.v1
+     Sum_const -> Q/M.14.v1
+     trace_scalarM -> Q/M.15.v1
+     inject_nat_nonzero -> Q/M.16.v1
+     trace_twirl -> Q/M.17.v1
+     twirl_idempotent -> Q/M.18.v1
+     scalar_line_one_dim -> Q/M.19.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith Lia.
 Open Scope Q_scope.
 

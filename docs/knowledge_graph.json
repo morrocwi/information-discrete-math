@@ -149,7 +149,7 @@
         "prover": "Coq 8.20 / Rocq 9.2, all Closed under the global context",
         "backs_idm_section": "THEOREM.md#IV keystone; docs/FORMAL_COMPANIONS.md"
       },
-      "research_universal_solver": "spine PDE + retained-difference root delta_R arc",
+      "solver-arc-private": "spine PDE + retained-difference root delta_R arc",
       "readout_genesis": "English Genesis number ladder D->Z->Q->R (readout-not-truth)",
       "readout_universe": "Philosophy & Logic textbook, RDL/logic floor (C1-C7)"
     },

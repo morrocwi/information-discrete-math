@@ -12,6 +12,33 @@
     below it (done in tools/certified_readout.py). Coq checks the mathematics; `Print Assumptions` shows
     it rests on nothing. *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     geom_certified_identity -> R/M.12.v1
+     geom_certified_defect -> R/M.13.v1
+     geom_majorant_tail -> R/M.14.v1
+     one_le_Sk -> R/M.15.v1
+     q01 -> R/M.16.v1
+     q01_le -> R/M.17.v1
+     pos_Sk -> R/M.18.v1
+     div_le_self -> R/M.19.v1
+     exp_term_nonneg -> R/M.20.v1
+     exp_term_ratio -> R/M.21.v1
+     exp_tail_certified -> R/M.22.v1
+     two_nonneg -> R/M.23.v1
+     sq_error_propagation -> R/M.24.v1
+     mono_step -> R/M.25.v1
+     valbound_nonneg -> R/M.26.v1
+     errbound_nonneg -> R/M.27.v1
+     iter_sq_valbound -> R/M.28.v1
+     iter_sq_certified -> R/M.29.v1
+     Qmult_le_l_nonneg -> R/M.30.v1
+     abs_tailsum_le -> R/M.31.v1
+     refine_stable -> R/M.32.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Open Scope Q_scope.
 

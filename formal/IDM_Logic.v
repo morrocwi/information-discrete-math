@@ -10,6 +10,16 @@
 (*  Coq 8.20, Closed under the global context. Developed by Yaoharee Lahtee. *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     sat_dec -> D/M.57.v1
+     finite_satisfaction_dec -> D/M.58.v1
+     rdl_non_explosion -> delta_R/M.04.v1
+     classical_would_explode -> delta_R/M.05.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List Bool.
 Import ListNotations.
 

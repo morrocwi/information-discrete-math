@@ -14,6 +14,19 @@
 (*                              pointwise self-pairing carries no load)       *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     repeated_event_zero -> L_R/M.13.v1
+     odd_from_cyclic_closure -> L_R/M.14.v1
+     least_nontrivial_odd_is_three -> L_R/M.15.v1
+     sym_skew_reconstruct -> L_R/M.16.v1
+     sympart_self_adjoint -> L_R/M.17.v1
+     skew_antisym -> L_R/M.18.v1
+     skew_diag_zero -> L_R/M.19.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith ZArith Lia.
 Require Import Coq.micromega.Lqa.
 

@@ -27,6 +27,24 @@
 (* ---------------------------------------------------------------------- *)
 (*  The four-element value algebra  S4 = { Sp (+), Sm (-), Sz (0), Sbot }. *)
 (* ---------------------------------------------------------------------- *)
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     neg_involution -> D/M.59.v1
+     neg_fixed_iff -> D/M.60.v1
+     neg_moves_iff -> D/M.61.v1
+     readout_of_selfneg_is_neutral -> D/M.62.v1
+     minimal_three_values -> D/M.63.v1
+     third_value_is_neutral -> D/M.64.v1
+     neutral_distinct_from_bottom -> D/M.65.v1
+     two_distinct_neutrals -> D/M.66.v1
+     bottom_is_least -> D/M.67.v1
+     bottom_unique -> D/M.68.v1
+     neutral_is_not_below_sign -> D/M.69.v1
+     neutral_is_not_bottom -> D/M.70.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Inductive S4 : Type := Sp | Sm | Sz | Sbot.
 
 (* the sign-involution ¬ : + <-> -, and it FIXES both neutral 0 and bottom. *)

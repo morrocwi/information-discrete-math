@@ -13,6 +13,24 @@
     tropical +∞/−∞; under readout-first that is NOT a completed infinity but a discrete "unreached"
     sentinel, handled symbolically in tools/aggregate.py — so nothing here needs it. Axiom-free. *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     tmin_assoc -> Z/M.12.v1
+     tmin_comm -> Z/M.13.v1
+     tmin_idem -> Z/M.14.v1
+     tmax_assoc -> Z/M.15.v1
+     tmax_comm -> Z/M.16.v1
+     tmax_idem -> Z/M.17.v1
+     tadd_assoc -> Z/M.18.v1
+     tadd_comm -> Z/M.19.v1
+     tadd_0_l -> Z/M.20.v1
+     minplus_distrib -> Z/M.21.v1
+     maxplus_distrib -> Z/M.22.v1
+     bottleneck_distrib -> Z/M.23.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import ZArith.
 Require Import Lia.
 Open Scope Z_scope.

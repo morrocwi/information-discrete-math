@@ -7,6 +7,32 @@ never dressed as a theorem.
 
 ## [Unreleased]
 
+- **Toledo equation codes.** Every axiom, definition, and machine-checked theorem in this
+  repository now carries a code from **Toledo** ([`github.com/morrocwi/toledo`](https://github.com/morrocwi/toledo),
+  concept DOI `10.5281/zenodo.22537318`), the permanent, public, coded equation library that is
+  this project's equation source of record (founder rulings BBL-205/209, BBL-2026-09-08). Toledo
+  registered 18 Layer-0 roots (this repo's own identifiers, verbatim, never re-prefixed:
+  `delta_R`, `RD1`–`RD9`, `D`, `Z`, `Q`, `R`, `L_R`, `Keystone`, `A2`, `A3`) and 274 Layer-1
+  readings — one per Coq identifier in the 274/274-closed `formal/*.v` + case-study mirror, all
+  tier `Th_coqc` — under its own root-extension mechanism (`registry/GENESIS_CODE_SCHEME.md`,
+  "Root registry extension R2, 2026-09-08, information-discrete-math"). This repo now cites those
+  codes back: `[Toledo: <code>]` tags next to the theorem/definition citations in
+  `textbook/INFORMATION_DISCRETE_MATHEMATICS.md` and `THEOREM.md`, a Toledo-codes header comment
+  block in every `formal/*.v` file and the case study (comments only, no proof text changed), a
+  new "Equation codes (Toledo)" section + root table in `README.md`, a matching section in the
+  Claude Code skill (`plugins/.../SKILL.md`), and a full, regenerable table at
+  `docs/TOLEDO_CODES.md` (built by the new `tools/toledo_codes.py` from `docs/toledo/idm_roots.json`
+  / `docs/toledo/idm_readings.json`, copied from Toledo's own merge output — never hand-edited).
+  Only 3 of the 18 roots carry a stated connection to Readout Genesis (`delta_R`→`EQ-001`,
+  `L_R`→`EQ-008`, `Keystone`→`EQ-008`), found by quoted textual match; the founder's own
+  `RD1`–`RD9` shorthand is confirmed **not** the same object as Genesis's `E00.1`–`E00.7` root
+  axioms (Toledo's own `rd_root_map.json`, `NOT_SAME_OBJECT`). Added a **Core Epistemic
+  Structure** block to `README.md` (Core Respondent: Yaoharee Lahtee; Interactional Expert: None;
+  AI Model(s) Used: Claude Fable 5.1 via Claude Code, for Toledo code registration and
+  documentation of codes — founder rulings BBL-215/216). No equation, tier, root, or Coq result
+  was changed, added, or reproved by this pass — codes only, added to existing, unchanged
+  statements. Baseline `python3 -m pytest -q`: 806 passed, unchanged from before this pass.
+
 - New **`case_studies/double_pendulum_readout/`** — a worked, end-to-end application of the
   contaminated-concept table + operator-first + never-take-the-infinite-limit discipline to a
   real chaotic system (angle-free exact-rational reformulation, a bounded-truncation fix for an

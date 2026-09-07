@@ -15,6 +15,22 @@
 (*                                   ∘, id, and inverse)                     *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     measure_additive -> D/M.46.v1
+     aut_assoc -> D/M.47.v1
+     aut_id_left -> D/M.48.v1
+     aut_id_right -> D/M.49.v1
+     aut_inv_left -> D/M.50.v1
+     aut_inv_right -> D/M.51.v1
+     cauchy_schwarz_2 -> Keystone/M.01.v1
+     no_fibonacci_integer_dim -> L_R/M.02.v1
+     Qsq_nonneg3 -> Q/M.01.v1
+     ring_distrib_Z -> Z/M.11.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List ZArith QArith Lia.
 Import ListNotations.
 

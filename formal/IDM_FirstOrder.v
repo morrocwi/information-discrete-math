@@ -18,6 +18,15 @@
 (*  with NO appeal to a completed model — the honest content of "⊨_λ decidable".*)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     eval_correct -> D/M.52.v1
+     sat_fo_decidable -> D/M.53.v1
+     models_decidable -> D/M.54.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import Bool.
 Import ListNotations.

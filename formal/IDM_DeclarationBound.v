@@ -50,6 +50,33 @@
 (*  and proves the information-theoretic consequences exactly.             *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     b2n_inj -> D/M.14.v1
+     bit_extraction_exact -> D/M.15.v1
+     profile_injective -> D/M.16.v1
+     bcube_length -> D/M.17.v1
+     two_pow_pos -> D/M.18.v1
+     bcube_all_len -> D/M.19.v1
+     bcube_complete -> D/M.20.v1
+     bcube_halves_disjoint -> D/M.21.v1
+     NoDup_app_disjoint -> D/M.22.v1
+     NoDup_map_cons -> D/M.23.v1
+     bcube_nodup -> D/M.24.v1
+     short_records_length -> D/M.25.v1
+     short_records_complete -> D/M.26.v1
+     NoDup_map_inj_on -> D/M.27.v1
+     deferred_record_bits -> D/M.28.v1
+     declared_forgets_tail -> D/M.29.v1
+     declaration_separation -> D/M.30.v1
+     qary_symbol_injective -> D/M.31.v1
+     flat_map_cons_length -> D/M.32.v1
+     qcube_length -> D/M.33.v1
+     qcube_all_len -> D/M.34.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import PeanoNat.
 Require Import Lia.

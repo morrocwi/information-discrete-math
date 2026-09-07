@@ -9,6 +9,15 @@
 (*  (Print Assumptions = "Closed under the global context").               *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     FTCC_exact -> R/M.09.v1
+     FTCC_eps_exact -> R/M.10.v1
+     bridge_faithful_exact_core -> R/M.11.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import QArith.
 Import ListNotations.

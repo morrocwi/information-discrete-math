@@ -37,7 +37,7 @@ rational *readout* of a retained difference; the continuum (`ℝ`, `+∞`, the p
 primitive.** The five theorems make that stance precise and, where the content is finite,
 machine-check it.
 
-### I · The primitive `δ_R` exists — and the discrete floor
+### I · The primitive `δ_R` exists — and the discrete floor [Toledo: delta_R]
 
 **Statement.** A first distinction exists: `∃ a b, a ≠ b`, realized by `succ 0 ≠ 0`. The engine `D`
 (ground `0`, successor `succ` = "retain one more distinction") carries a **discrete floor**
@@ -45,14 +45,14 @@ machine-check it.
 later readout, never as a primitive.
 
 **Witnesses (all local, this repository).** The existence of `δ_R` and the discrete floor are
-*exhibited*, not postulated, in `formal/IDM_Genesis.v`: `primordial_difference_exists`
-(`∃ a b : ℕ, a ≠ b`), `succ_ground_distinct` (`succ 0 ≠ 0`), and `discrete_floor`
+*exhibited*, not postulated, in `formal/IDM_Genesis.v`: `primordial_difference_exists` [Toledo: delta_R/M.03.v1]
+(`∃ a b : ℕ, a ≠ b`), `succ_ground_distinct` [Toledo: RD3/M.01.v1] (`succ 0 ≠ 0`), and `discrete_floor` [Toledo: D/M.55.v1]
 (`¬∃z, 0 < z < succ 0`) — all `Th_coqc`, `Print Assumptions` = *Closed under the global context*.
 `D` is modelled as `ℕ` (`0`/`succ` = `0`/`S`), so `D ≅ ℕ` is definitional; `D`-semiring
 distributivity is `formal/IDM_FiniteWitnesses.v: semiring_distrib` and the finiteness of every readout
 is `formal/IDM_FiniteWitnesses2.v: no_infinite_readout`. **Tier `Th_coqc`.**
 *(Optional, not load-bearing: the heavier `D⊨PA` / second-order categoricity apparatus is developed
-in the sister repo `research_universal_solver`; the spine's claim needs only the four local genesis
+in the sister repo `solver-arc-private`; the spine's claim needs only the four local genesis
 theorems above.)*
 
 **Why it cannot be disputed.** Nothing below `δ_R` is assumed; the object claimed to exist is
@@ -60,7 +60,7 @@ theorems above.)*
 and every structural property is an ordinary theorem of a free commutative semiring — not a postulate
 about the continuum.
 
-### II · The number tower is a chain of readouts: `D → ℤ → ℚ → ℝ`
+### II · The number tower is a chain of readouts: `D → ℤ → ℚ → ℝ` [Toledo: D, Z, Q, R]
 
 **Statement.** `ℤ := (D×D)/∼` with `(a,b)∼(c,d) ⟺ a⊕d = c⊕b` is a commutative ring; `ℚ` is its
 field of fractions; each rung is *defined from* and maps homomorphically onto the previous one. `ℝ`
@@ -88,7 +88,7 @@ the head of this document — return `CERTIFIED (q,B)` with `|q − T| ≤ B ≤
 *about*. Declared as such: no proof is claimed for a definition, and it does no illicit work beyond
 fixing the type of "a reading".
 
-### IV · The KEYSTONE (A4 · Th 5.1): `B(Φ,Φ) = I(Φ)` — Dirichlet energy **is** retained information
+### IV · The KEYSTONE (A4 · Th 5.1): `B(Φ,Φ) = I(Φ)` — Dirichlet energy **is** retained information [Toledo: Keystone]
 
 **Statement (`Th_coqc`, axiom-free).** For a weighted graph `g` (edges `(i,j,w)`) and any field
 `Φ : ℕ → ℚ`, the assembled Laplacian quadratic form equals the retained-information functional, edge
@@ -98,10 +98,10 @@ by edge and in total:
 
 **Proof.** Per edge the identity is `w·Φ_i² + w·Φ_j² − 2w·Φ_iΦ_j = w·(Φ_i − Φ_j)²`, an elementary ring
 identity (closed by `ring`); assembly over the edge list is a one-line induction. Positivity: with
-`w ≥ 0` on each edge, `Φᵀ L_R Φ ≥ 0` (`keystone_nonneg`) — `L_R` is PSD and the retained metric is a
+`w ≥ 0` on each edge, `Φᵀ L_R Φ ≥ 0` (`keystone_nonneg` [Toledo: Keystone/M.07.v1]) — `L_R` is PSD and the retained metric is a
 genuine seminorm.
 
-**Witness.** `formal/IDM_Keystone.v: keystone_B_eq_I`, `keystone_nonneg` — `Th_coqc`,
+**Witness.** `formal/IDM_Keystone.v: keystone_B_eq_I`, `keystone_nonneg` [Toledo: Keystone/M.07.v1] — `Th_coqc`,
 `Print Assumptions` = *Closed under the global context* over `ℚ` (no `Reals`, no `classic`).
 
 **Why it cannot be disputed.** It is a one-line elementary algebraic fact over an ordered field,
@@ -119,7 +119,7 @@ HOLD, and a HOLD is fail-closed), is machine-checked and *published* in the sibl
 context*, DOI [`10.5281/zenodo.21665100`](https://doi.org/10.5281/zenodo.21665100)). The full
 code-to-proof mapping is [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md).
 
-### V · FOLD + DECISION (A2/A3) and the exact FTCC: `I_ε(D_ε f)[N] = f[N] − f[0]`
+### V · FOLD + DECISION (A2/A3) and the exact FTCC: `I_ε(D_ε f)[N] = f[N] − f[0]` [Toledo: A2, A3]
 
 **Statement (`Th_coqc`, axiom-free).** With the causal difference `D_ε f[n] := (f[n] ⊖ f[n−1]) / ε`
 and its accumulation `I_ε`, accumulation inverts differencing **exactly**, with no limit taken:
@@ -131,7 +131,7 @@ and its accumulation `I_ε`, accumulation inverts differencing **exactly**, with
 **Role.** FOLD (A2) is accumulation over a monoid; DECISION (A3) is search-and-certify; the KEYSTONE
 (IV) is exactly what lifts FOLD's difference operator `D_W` into `L_R`. The structural claim "*each
 solver branch's kernel is an instance of FOLD or DECISION*" is itself machine-checked
-(`formal/IDM_Reduction.v`: `ftcc_Z`, `sum_is_fold`, `dot_is_fold`, `foldmin_le_*`, `foldmax_ge_*`, …),
+(`formal/IDM_Reduction.v`: `ftcc_Z` [Toledo: A2/M.03.v1], `sum_is_fold` [Toledo: A2/M.06.v1], `dot_is_fold` [Toledo: A2/M.17.v1], `foldmin_le_*`, `foldmax_ge_*`, …),
 so the 263-kind surface is not a menu of programs but instances of two certified schemata bridged by
 one identity.
 
@@ -208,10 +208,10 @@ above (its q-ary core machine-checked in `formal/IDM_DeclarationBound.v`) is its
 **Approximate deferred counting — an honest `Ω(log(n/r))`, not the conjectured `Θ(n/r)`.** The brief's
 P7 asks the retained-bit cost of a deferred count correct to within `±r`, conjecturing `Θ(n/r)`.
 `formal/IDM_ApproxCount.v` machine-checks (axiom-free) the tractable *kernel* that a full P7 argument
-would need — a pigeonhole bit-bound (`pigeonhole_bits_needed`, generalizing `deferred_record_bits` to
-any `NoDup` list of size `≥ 2^L`), a concrete weight-ladder family spaced `(2r+1)` apart (`fam_nodup`),
+would need — a pigeonhole bit-bound (`pigeonhole_bits_needed` [Toledo: D/M.01.v1], generalizing `deferred_record_bits` [Toledo: D/M.28.v1] to
+any `NoDup` list of size `≥ 2^L`), a concrete weight-ladder family spaced `(2r+1)` apart (`fam_nodup` [Toledo: D/M.11.v1]),
 the interval-separation fact that an `r`-correct answer cannot collapse two far-apart weights
-(`r_correct_far_apart_False`), and their composition `approx_count_deferred_lower_bound`: any
+(`r_correct_far_apart_False` [Toledo: D/M.12.v1]), and their composition `approx_count_deferred_lower_bound` [Toledo: D/M.13.v1]: any
 deterministic deferred record that fixes an `r`-correct count must retain `≥ L` bits for some string
 whenever `2^L ≤ S(n/(2r+1))` — an `Ω(log(n/r))` bound. This is **strictly weaker** than P7's linear
 `Θ(n/r)` (which needs an exponential `r`-tolerant fooling family, an adversary/communication-complexity
@@ -227,19 +227,19 @@ be two-valued**: the self-negative object `x₀ = −x₀` forces `r(x₀) = ¬ 
 involution, distinct from both members of the `+ / −` two-cycle. So **three values are forced, and the
 third is a neutral** — a two-valued signed readout would have to report a genuinely balanced (or a null)
 direction as strictly positive or strictly negative, and either report is false. This is
-`minimal_three_values` / `third_value_is_neutral` in `formal/IDM_ReadoutMinimality.v`, proved over an
+`minimal_three_values` [Toledo: D/M.63.v1] / `third_value_is_neutral` [Toledo: D/M.64.v1] in `formal/IDM_ReadoutMinimality.v`, proved over an
 abstract source involution (no reals, no continuum — just the counting an equivariant map must satisfy),
 axiom-free.
 
 **The general group (P1) — the necessary condition, machine-checked.** The same mechanism holds for any
 group `G` of admissible re-descriptions, not only `Z₂`. `formal/IDM_EquivariantReadout.v` proves,
 axiom-free and for an abstract action (no finiteness assumed), that **every symmetry fixing an object
-fixes its readout**: `Stab_X(x) ⊆ Stab_V(r x)` (`equivariant_stabilizer_containment`), and that when the
+fixes its readout**: `Stab_X(x) ⊆ Stab_V(r x)` (`equivariant_stabilizer_containment` [Toledo: D/M.35.v1]), and that when the
 readout is **faithful** on `x`'s orbit (it separates the re-descriptions of `x`) the containment is an
-**equality** `Stab_V(r x) = Stab_X(x)` (`faithful_stabilizer_equality`) — so a faithful readout copies
+**equality** `Stab_V(r x) = Stab_X(x)` (`faithful_stabilizer_equality` [Toledo: D/M.36.v1]) — so a faithful readout copies
 each orbit type exactly, its image orbit being `G/Stab_X(x)` of size `[G : Stab_X(x)]`. This is the
 per-type input to the minimal-cardinality question, and it recovers Theorem 1's mechanism (a moved
-object cannot be read as a fixed/neutral value: `nondegenerate_value_moves`). The full **cardinality
+object cannot be read as a fixed/neutral value: `nondegenerate_value_moves` [Toledo: D/M.38.v1]). The full **cardinality
 formula** `|V|_min = Σ_{[H]} [G:H]` (one orbit per realised stabiliser type; Theorem 1 is the case
 `2 + 1 = 3`) is the brief's **Conjecture P1** — it additionally needs disjointness of types plus an
 orbit-stabiliser/Lagrange count, orbit combinatorics not formalised here — and is stated as a fenced
@@ -249,8 +249,8 @@ The fourth value is not decoration. The neutral splits into **two distinct fixed
 different axes**: `0` — *determinately balanced*, a fact about the **object**, incomparable in the
 information order — and `⊥` — *unresolved*, a fact about the **instrument's** declared resolution, the
 least element of that order. `formal/IDM_ReadoutMinimality.v` machine-checks that these are distinct
-(`neutral_distinct_from_bottom`), that `⊥` is the unique order-bottom (`bottom_unique`), and that `0` is
-**not** a bottom (`neutral_is_not_bottom`) — it carries information, it is not "no information."
+(`neutral_distinct_from_bottom` [Toledo: D/M.65.v1]), that `⊥` is the unique order-bottom (`bottom_unique` [Toledo: D/M.68.v1]), and that `0` is
+**not** a bottom (`neutral_is_not_bottom` [Toledo: D/M.70.v1]) — it carries information, it is not "no information."
 
 **What `0` means here, precisely (information semantics).** In this framework every reading is a readout
 of a retained difference `δ_R` (information = retained distinction). The neutral `0` is **not** nothing,
@@ -260,8 +260,8 @@ null direction; the invariant rank-deficiency `n₀` of Sylvester's law). That i
 order-incomparable to `±`, never the bottom. `⊥` is the opposite kind of thing entirely: it is the
 **instrument** reporting that its declared resolution cannot decide the sign — never a property of the
 object. `formal/IDM_ResolvedCount.v` makes the asymmetry exact and axiom-free over `ℚ`:
-`bot_needs_positive_resolution` — a `⊥` reading can arise **only** from a strictly positive declared
-resolution (it is always instrumental); `classify_zero_iff` — a `0` reading is emitted **only** at exact
+`bot_needs_positive_resolution` [Toledo: D/M.72.v1] — a `⊥` reading can arise **only** from a strictly positive declared
+resolution (it is always instrumental); `classify_zero_iff` [Toledo: D/M.73.v1] — a `0` reading is emitted **only** at exact
 resolution and **exactly** when the value is a true balance (it is always intrinsic).
 
 **Shipped (P4).** `retained_spectral/inertia.py` now exposes `resolved_count_below` /
@@ -269,7 +269,7 @@ resolution and **exactly** when the value is a true balance (it is always intrin
 certain `−` / unresolved `⊥` instead of folding the floor band into the count. The true count is
 returned as an honest interval `[certain_below, certain_below + unresolved]`, and the classic single
 integer `count_below_banded` is exactly its **upper** end — proved for the discrete model in
-`IDM_ResolvedCount.v` (`signedfloor_is_certain_plus_unresolved`, `certain_le_signedfloor`) and checked
+`IDM_ResolvedCount.v` (`signedfloor_is_certain_plus_unresolved` [Toledo: D/M.79.v1], `certain_le_signedfloor` [Toledo: D/M.80.v1]) and checked
 numerically in `tests/test_resolved_inertia.py` (a diagonal-annihilating shift is now reported as
 `0 certain, n unresolved`, honestly bracketing the truth, instead of a silently-wrong point count). The
 full analytic statements P4 also raises — monotonicity in `σ`, and `ν_ε` = the exact count of some `Ã`
@@ -284,7 +284,7 @@ Class: `r ∈ ℚ`, hypothesis `H : 0 ≤ r < 1`. Algorithm: `S_N = Σ_{k<N} r^k
 
 - **Exact identity** (`formal/IDM_Certified.v : geom_certified_identity`):
   `(1 − r) · S_N = 1 − r^N`.
-- **Exact defect** (`geom_certified_defect`): `1 − (1 − r)·S_N = r^N`, hence on paper
+- **Exact defect** (`geom_certified_defect` [Toledo: R/M.13.v1]): `1 − (1 − r)·S_N = r^N`, hence on paper
   `1/(1−r) − S_N = r^N/(1−r)` — the shipped error certificate.
 - **Termination + tolerance selection**: `r^N/(1−r) → 0`, so the least `N` with `r^N/(1−r) ≤ ε` exists
   and is found by a terminating loop (`geom_series_certified`). Outside `0 ≤ r < 1` the tool returns
@@ -322,10 +322,10 @@ ratio ρ (`t_{k+1} ≤ ρ·t_k`), every finite tail obeys `(1 − ρ)·Σ_{j<M} 
 
 ### 4. Finite exponential's Taylor tail — machine-checked, axiom-free (`Th_coqc`)
 
-The exp instance is now fully closed in Coq (`exp_tail_certified`): with the terms
+The exp instance is now fully closed in Coq (`exp_tail_certified` [Toledo: R/M.22.v1]): with the terms
 `exp_term x k = x^k/k!` built by the standard recurrence `t_{k+1} = t_k·x/(k+1)`, the lemmas
-`exp_term_nonneg` (`0 ≤ x ⇒ 0 ≤ t_k`) and `exp_term_ratio` (`0 ≤ x ⇒ t_{k+1} ≤ x·t_k`, since
-`x/(k+1) ≤ x`) discharge the hypotheses of `geom_majorant_tail`, giving
+`exp_term_nonneg` [Toledo: R/M.20.v1] (`0 ≤ x ⇒ 0 ≤ t_k`) and `exp_term_ratio` [Toledo: R/M.21.v1] (`0 ≤ x ⇒ t_{k+1} ≤ x·t_k`, since
+`x/(k+1) ≤ x`) discharge the hypotheses of `geom_majorant_tail` [Toledo: R/M.14.v1], giving
 
     0 ≤ x  ⇒  (1 − x) · Σ_{j<M} exp_term x (N+j)  ≤  exp_term x N,
 
@@ -336,25 +336,25 @@ finite exponential, machine-checked and axiom-free. This is the second end-to-en
 ### 5. Range-reduction propagation — machine-checked, axiom-free (`Th_coqc`)
 
 `exp(x) = exp(x/2)²`, so a readout for a large argument is the *square* of a readout for the halved one;
-the only question is how error propagates through squaring. Proved in Coq (`sq_error_propagation`),
+the only question is how error propagates through squaring. Proved in Coq (`sq_error_propagation` [Toledo: R/M.24.v1]),
 axiom-free over ℚ:
 
     |p − v| ≤ e   ⇒   |p² − v²| ≤ (2|v| + e)·e.
 
-Halving `m` times (until the reduced argument is `≤ ½`, where `exp_tail_certified` applies) and squaring
+Halving `m` times (until the reduced argument is `≤ ½`, where `exp_tail_certified` [Toledo: R/M.22.v1] applies) and squaring
 back `m` times therefore keeps a controlled, finite error — the mechanism that extends the exponential's
 certificate from `|x| ≤ ½` to any `x`.
 
 ### 6. Iterated-squaring assembly — machine-checked, axiom-free (`Th_coqc`)
 
-The `m`-fold range reduction is now a single Coq theorem (`iter_sq_certified`): with `iter_sq p m` =
+The `m`-fold range reduction is now a single Coq theorem (`iter_sq_certified` [Toledo: R/M.29.v1]): with `iter_sq p m` =
 `p^(2^m)`, if `|p − v| ≤ e` and `|v| ≤ a`, then after `m` squarings
 
     |iter_sq p m − iter_sq v m| ≤ errbound a e m,
 
-where `errbound` is the finite, computable bound obtained by iterating `sq_error_propagation` `m` times
+where `errbound` is the finite, computable bound obtained by iterating `sq_error_propagation` [Toledo: R/M.24.v1] `m` times
 (`errbound a e (S k) = (2·valbound a k + errbound a e k)·errbound a e k`). Composed with
-`exp_tail_certified` at the halved argument (`|x/2^m| ≤ ½`) and the halving identity `exp(x)=exp(x/2)²`,
+`exp_tail_certified` [Toledo: R/M.22.v1] at the halved argument (`|x/2^m| ≤ ½`) and the halving identity `exp(x)=exp(x/2)²`,
 this carries the finite exponential's certificate from `|x|≤½` to **any** `x`, with a fully finite error
 bound — machine-checked, axiom-free.
 
@@ -364,11 +364,11 @@ The readout-first way to certify a quadrature — **without ever naming a comple
 panel count (`N, 2N, 4N, …`); the successive readouts differ by gaps `s_k`. Two Coq theorems
 (`formal/IDM_Certified.v`) make the stability rigorous over ℚ:
 
-- `abs_tailsum_le`: `|Σ gaps| ≤ Σ |gaps|` (triangle over a finite tail);
-- `refine_stable`: if the gaps contract (`|s_{k+1}| ≤ ρ|s_k|`, `ρ ≤ 1`), then the difference between any
+- `abs_tailsum_le` [Toledo: R/M.31.v1]: `|Σ gaps| ≤ Σ |gaps|` (triangle over a finite tail);
+- `refine_stable` [Toledo: R/M.32.v1]: if the gaps contract (`|s_{k+1}| ≤ ρ|s_k|`, `ρ ≤ 1`), then the difference between any
   two refined readouts `M` steps apart obeys `(1 − ρ)·|Σ_{j<M} s_{N+j}| ≤ |s_N|` — i.e. every further
   refinement agrees within `|s_N|/(1 − ρ)`, a **computable rational** (proved by combining
-  `abs_tailsum_le` with `geom_majorant_tail` on `|s|`).
+  `abs_tailsum_le` [Toledo: R/M.31.v1] with `geom_majorant_tail` [Toledo: R/M.14.v1] on `|s|`).
 
 So when the refinement gaps contract, the readout has a certified stable plateau; when they do not
 (pole, non-integrable, oscillatory), there is no plateau and the tool returns `HOLD`
@@ -376,7 +376,7 @@ So when the refinement gaps contract, the readout has a certified stable plateau
 never claim a distance to `∫f`; we certify that *our own* finite readout has stopped moving. Both
 theorems `Closed under the global context`.
 
-**Dimension-agnostic — multi-D quadrature reuses the same theorem, no new one needed.** `refine_stable`
+**Dimension-agnostic — multi-D quadrature reuses the same theorem, no new one needed.** `refine_stable` [Toledo: R/M.32.v1]
 is a statement about a *scalar* gap sequence `s : ℕ → ℚ`; nothing in it mentions dimension. So a
 tensor-product trapezoid on a box `[a₁,b₁]×⋯×[a_d,b_d]`, refined `n → 2n` on every axis, produces
 exactly such a sequence and inherits the identical certificate — shipped as `integral_nd_stable_certified`
@@ -392,16 +392,16 @@ gaps contract, but choosing *where* to refine is the open engineering.
 
 ### 8. Richardson **a-priori** stability certificate — machine-checked, axiom-free (`Th_coqc`)
 
-`refine_stable` (§7) is *a-posteriori*: it assumes the contraction hypothesis `|s_{k+1}| ≤ ρ·|s_k|`,
+`refine_stable` [Toledo: R/M.32.v1] (§7) is *a-posteriori*: it assumes the contraction hypothesis `|s_{k+1}| ≤ ρ·|s_k|`,
 which `richardson_certified` / `integral_stable_certified` establish by watching the actual gaps. The
 *a-priori* certificate (`formal/IDM_Apriori.v`) discharges that hypothesis from the **form** of the
 sequence instead, once, by structure: if the gaps are a multiplier form `s_{k+1} = m_k·s_k` with every
-`|m_k| ≤ ρ` (`apriori_multiplicative_contracts`), or the geometric leading-term form `s_k = a·qᵏ` with
-`|q| ≤ ρ` (`apriori_geometric_contracts`), the contraction holds for **all** `k` and feeds
-`refine_stable` directly (`apriori_stable`). The Richardson specialisation reads the ratio off the
+`|m_k| ≤ ρ` (`apriori_multiplicative_contracts` [Toledo: R/M.01.v1]), or the geometric leading-term form `s_k = a·qᵏ` with
+`|q| ≤ ρ` (`apriori_geometric_contracts` [Toledo: R/M.02.v1]), the contraction holds for **all** `k` and feeds
+`refine_stable` [Toledo: R/M.32.v1] directly (`apriori_stable` [Toledo: R/M.03.v1]). The Richardson specialisation reads the ratio off the
 method **order**: an order-`p` method under step halving has column-gap ratio `ρ = 2⁻ᵖ`, a constant
 known before any refinement is run — so order `p ⇒ ρ = 2⁻ᵖ ≤ 1 ⇒ certified-stable`, up front
-(`richardson_ratio`, `richardson_apriori_contracts`, `richardson_apriori_stable`; all `Closed under the
+(`richardson_ratio`, `richardson_apriori_contracts` [Toledo: R/M.07.v1], `richardson_apriori_stable` [Toledo: R/M.08.v1]; all `Closed under the
 global context`). Shipped in `tools/certified_readout.py` as `richardson_apriori_ratio` /
 `richardson_apriori_bound` / `richardson_apriori_certified`, with `tests/test_richardson_apriori.py`
 confirming the a-priori `ρ` genuinely **envelopes** a real order-2 (trapezoid) method — the observed
@@ -413,7 +413,7 @@ standard Richardson fact — the machine-checked content is the ℚ-algebra `for
 ## What is still open (`+ℝ-Open` / next work)
 
 - Extend the finite-stability certificate to genuinely **adaptive** grids (non-uniform refinement) —
-  the scalar `refine_stable` theorem still applies whenever the global gaps contract; the open part is
+  the scalar `refine_stable` [Toledo: R/M.32.v1] theorem still applies whenever the global gaps contract; the open part is
   the refinement *strategy* (where to subdivide). Multi-dimensional (uniform tensor) quadrature is now
   shipped (§7, `integral_nd_stable_certified`).
 

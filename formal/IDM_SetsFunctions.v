@@ -17,6 +17,18 @@
 (*  the "≅" of Th 10.2, now `Th_coqc`.                                       *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     lookup_graph_in -> delta_R/M.06.v1
+     graph_total -> delta_R/M.07.v1
+     graph_single_valued -> delta_R/M.08.v1
+     graph_faithful -> delta_R/M.09.v1
+     graph_faithful_converse -> delta_R/M.10.v1
+     functional_relation_has_map -> delta_R/M.11.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Import ListNotations.
 

@@ -14,6 +14,18 @@
 (*   W5 semiring_distrib       → §12.2  (ring/field distributive identity)    *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     finite_yoneda -> D/M.39.v1
+     pigeonhole -> D/M.40.v1
+     semiring_distrib -> D/M.41.v1
+     handshake_lemma -> L_R/M.01.v1
+     sing_eq_iff -> delta_R/M.01.v1
+     kuratowski_pair_inj -> delta_R/M.02.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import PeanoNat.
 Require Import Lia.

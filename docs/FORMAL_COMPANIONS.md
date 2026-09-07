@@ -15,7 +15,7 @@ the IDM kernel *runs on*, exactly how the code and the proof line up.
 
 | Sibling repo | Machine-checks | Relation to IDM |
 |---|---|---|
-| **`research_universal_solver`** (`anse-spine`) | the spine PDE theorems, the retained-difference root `δ_R` arc | the universal solver backbone IDM's philosophy floor is stated against |
+| **`solver-arc-private`** (`anse-spine`) | the spine PDE theorems, the retained-difference root `δ_R` arc | the universal solver backbone IDM's philosophy floor is stated against |
 | **`readout_genesis`** | the English Genesis core (number ladder `D→ℤ→ℚ→ℝ`, readout-not-truth) | the genesis of number IDM chapters II–III restate |
 | **`readout_universe`** | the Philosophy & Logic textbook (C1–C7 verified) | the RDL / logic floor IDM chapter I restates |
 | **`zero-readout-certifies`** | the **zero-fibre** of the retained-difference operator + the **typed reader-state** separation | see below — the published companion to IDM's own keystone (§IV) and the machine-checked floor under IDM's **HOLD discipline** |

@@ -16,6 +16,19 @@
    tail Σ_{k>N} (a limit / a non-readout) stays open. This is the two-tier (continuum-maya, Part XX)
    split made machine-checked: the readout is closed on ℚ; only the non-readout remains open. *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     Qsq_nonneg -> Keystone/P.16.v1
+     Qadd_nonneg -> Keystone/P.17.v1
+     partial_energy_nonneg -> Keystone/P.18.v1
+     partial_energy_app -> Keystone/P.19.v1
+     partial_energy_monotone -> Keystone/P.20.v1
+     weighted_energy_nonneg -> Keystone/P.21.v1
+     weighted_energy_app -> Keystone/P.22.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Require Import List.
 Import ListNotations.

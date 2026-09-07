@@ -16,6 +16,19 @@
 (*  from −W), and prove it equals the retained-information sum edge by edge. *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     keystone_edge -> Keystone/M.02.v1
+     keystone_B_eq_I -> Keystone/M.03.v1
+     Qsq_nonneg -> Keystone/M.04.v1
+     Qadd_nonneg -> Keystone/M.05.v1
+     I_edge_nonneg -> Keystone/M.06.v1
+     keystone_nonneg -> Keystone/M.07.v1
+     relaxation_dissipation -> Keystone/M.08.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import QArith.
 Import ListNotations.

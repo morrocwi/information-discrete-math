@@ -1,7 +1,7 @@
 # formal/ — local machine-checked witnesses (Coq 8.20)
 
 Axiom-free Coq proofs of the finite (`Th_coqc`) claims that live natively in this repository (the rest
-of the `Th_coqc` corpus is external: `research_universal_solver`, `readout_genesis`, `readout_universe`,
+of the `Th_coqc` corpus is external: `solver-arc-private`, `readout_genesis`, `readout_universe`,
 and `zero-readout-certifies` — the published, DOI-archived companion that machine-checks the keystone
 operator's **zero fibre** and the **typed reader-state** floor under this repo's HOLD discipline; the
 full ecosystem map + code-to-proof mapping is [`../docs/FORMAL_COMPANIONS.md`](../docs/FORMAL_COMPANIONS.md)).
@@ -35,7 +35,7 @@ file during iteration, `cd formal && coqc -q <file>.v` plus a scratch `Print Ass
 above).
 
 **The module's LIMITS.** This is the *local* `Th_coqc` corpus only — the rest of the framework's
-`Th_coqc` claims live in sibling repositories (`research_universal_solver`, `readout_genesis`,
+`Th_coqc` claims live in sibling repositories (`solver-arc-private`, `readout_genesis`,
 `readout_universe`), not here. Coverage inside this repo is partial by design: `Th_coqc` is "reserved
 for the handful of kinds with a real proof mapping" (root README) — most of `idm`'s 269 registered
 kinds are `exact` or `finite_diagnostic`, not machine-checked. The one spectral ingredient behind the

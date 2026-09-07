@@ -13,6 +13,17 @@
 (*                                     group order n in ℤ_n)                  *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     no_infinite_readout -> D/M.42.v1
+     tape_count_succ -> D/M.43.v1
+     tape_no_terminal -> D/M.44.v1
+     same_set_same_size -> D/M.45.v1
+     lagrange_order_div -> Z/M.10.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import PeanoNat.
 Require Import Lia.

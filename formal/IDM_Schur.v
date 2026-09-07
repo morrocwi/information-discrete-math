@@ -32,6 +32,18 @@
 (*  steps (see docs/P46_P5_lower_bound_analysis.md §6).                      *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     schur_congruence_00 -> L_R/M.23.v1
+     schur_congruence_01 -> L_R/M.24.v1
+     schur_congruence_10 -> L_R/M.25.v1
+     schur_congruence_11 -> L_R/M.26.v1
+     diag_inertia_additive -> L_R/M.27.v1
+     schur_pivots_are_boundary_and_complement -> L_R/M.28.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 
 Local Open Scope Q_scope.

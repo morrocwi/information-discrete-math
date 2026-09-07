@@ -16,6 +16,17 @@
    Founder principle (2026-07-29): if the ℝ-rung is computable, it is computable on ℚ — here the whole
    continuum-LIKE object is a ℚ primitive, and its algebra is a machine-checked ℚ theorem, not a stance. *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     radd_at -> R/M.33.v1
+     rmul_at -> R/M.34.v1
+     radd_comm -> R/M.35.v1
+     const_gap_zero -> R/M.36.v1
+     gap_subadditive -> R/M.37.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Require Import Qabs.
 

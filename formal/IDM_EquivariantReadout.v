@@ -37,6 +37,16 @@
 (*         (neutral) value.                                                   *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     equivariant_stabilizer_containment -> D/M.35.v1
+     faithful_stabilizer_equality -> D/M.36.v1
+     fixed_value_reads_equal -> D/M.37.v1
+     nondegenerate_value_moves -> D/M.38.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Section EquivariantReadout.
   (* the group of admissible re-descriptions, given only as a carrier with a  *)
   (* distinguished identity — no group axioms are needed for the necessary    *)

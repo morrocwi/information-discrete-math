@@ -34,6 +34,20 @@
 (*  form ⇒ contraction ⇒ refine_stable bound implication, axiom-free.          *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     apriori_multiplicative_contracts -> R/M.01.v1
+     apriori_geometric_contracts -> R/M.02.v1
+     apriori_stable -> R/M.03.v1
+     half_nonneg -> R/M.04.v1
+     richardson_ratio_nonneg -> R/M.05.v1
+     richardson_ratio_le_one -> R/M.06.v1
+     richardson_apriori_contracts -> R/M.07.v1
+     richardson_apriori_stable -> R/M.08.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Require Import Qabs.
 Require Import Setoid.

@@ -16,6 +16,16 @@
 (*                                      density is ABSENT at the root.        *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     discrete_floor -> D/M.55.v1
+     no_density_at_root -> D/M.56.v1
+     succ_ground_distinct -> RD3/M.01.v1
+     primordial_difference_exists -> delta_R/M.03.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import PeanoNat.
 Require Import Lia.
 

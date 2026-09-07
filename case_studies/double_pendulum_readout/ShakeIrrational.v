@@ -15,6 +15,15 @@
    d = r1 - r0 (the SHAKE bond direction), r1free = r1 + v1*tau + (1/2)*(0,-g)*tau^2.
    See the journal for the full derivation.
 *)
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     s_val -> R/P.01.v1
+     squeeze -> R/P.02.v1
+     delta_num_not_perfect_square -> R/P.03.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import ZArith.
 Require Import Lia.
 Open Scope Z_scope.

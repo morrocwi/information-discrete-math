@@ -25,6 +25,22 @@
 (*                                            (certain_le_signedfloor)         *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     classify_bot_iff -> D/M.71.v1
+     bot_needs_positive_resolution -> D/M.72.v1
+     classify_zero_iff -> D/M.73.v1
+     classify_plus_sound -> D/M.74.v1
+     classify_minus_sound -> D/M.75.v1
+     classify_not_bot_is_determinate -> D/M.76.v1
+     bot_monotone_in_floor -> D/M.77.v1
+     count_if_split -> D/M.78.v1
+     signedfloor_is_certain_plus_unresolved -> D/M.79.v1
+     certain_le_signedfloor -> D/M.80.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import QArith.
 Require Import Setoid.                   (* setoid rewriting under Qeq (adds no axioms) *)
 Require Import Lia.

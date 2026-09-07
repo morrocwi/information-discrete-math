@@ -80,24 +80,34 @@ Before you use any concept in the LEFT column, stop — it injects the continuum
 
 ## The discrete number ladder (machine-checked, axiom-free over ℚ)
 
-`δ_R` (difference exists) → **D** (ℕ as a commutative semiring, `D≅ℕ`, models Peano Arithmetic) →
-**ℤ** (Grothendieck completion of D) → **ℚ** (field of fractions of ℤ, with multiplicative inverse)
-→ **ℝ** (Bishop regular Cauchy sequences of ℚ — an ordered field up to `Req`, Cauchy-complete,
+`δ_R` [Toledo: delta_R] (difference exists) → **D** [Toledo: D] (ℕ as a commutative semiring, `D≅ℕ`, models Peano Arithmetic) →
+**ℤ** [Toledo: Z] (Grothendieck completion of D) → **ℚ** [Toledo: Q] (field of fractions of ℤ, with multiplicative inverse)
+→ **ℝ** [Toledo: R] (Bishop regular Cauchy sequences of ℚ — an ordered field up to `Req`, Cauchy-complete,
 cotransitive, a lattice, with ε–δ continuity as *derived rungs*). The continuum point is literally
 **read off the discrete rational approximants**. Discrete calculus (`Δ`, `Σ`, discrete FTC, Leibniz)
 needs no reals. This repo's formal core is **194 machine-checked theorems, all axiom-free over ℚ**
 (`Print Assumptions` = *Closed under the global context* on every one — run `bash formal/verify.sh`;
 nothing in the arc uses `classic`/excluded middle). *(The heavier `D⊨PA` / second-order apparatus,
 which does isolate a `classic` axiom to its classical layer, lives in the sister repo
-`research_universal_solver`, not here.)*
+`solver-arc-private`, not here.)*
 
 ## Operator-first: information is the central axis
 
-Put the operator early. The retained-information operator is the **graph Laplacian `L_R`** on a
+Put the operator early. The retained-information operator is the **graph Laplacian `L_R`** [Toledo: L_R] on a
 ℚ-valued field over the discrete graph: `B(Φ,Φ)` (its Dirichlet energy) *is* the retained-information
-functional `I(Φ)` — information, not length or energy, is the central quantity; geometry, distance,
+functional `I(Φ)` [Toledo: Keystone] — information, not length or energy, is the central quantity; geometry, distance,
 and "energy" are readouts OF it. Mass ratios, spectra, and mixings are read from `L_R`'s spectrum
 and from Born-rule overlap ratios — never from continuum angles or coordinates.
+
+## Equation codes (Toledo)
+
+Every axiom, definition, and machine-checked theorem in this skill's treatise carries a code
+from **Toledo** ([`github.com/morrocwi/toledo`](https://github.com/morrocwi/toledo), concept DOI
+`10.5281/zenodo.22537318`) — the permanent, public, coded equation library that is this
+project's equation source of record. This skill's own 18 Toledo roots: `delta_R`, `RD1`–`RD9`,
+`D`, `Z`, `Q`, `R`, `L_R`, `Keystone`, `A2`, `A3` — each the treatise's own verbatim identifier,
+never re-prefixed. Full table (roots, the 274 machine-checked readings, tiers, Coq identifiers):
+`docs/TOLEDO_CODES.md` in this repo.
 
 ## What this is NOT (scope, honest)
 

@@ -48,6 +48,25 @@
 (*  lists only AC1-AC4, never P7/P8.                                        *)
 (* ===================================================================== *)
 
+(* Toledo equation codes (https://github.com/morrocwi/toledo).
+   Every theorem/lemma in this file is registered as a Toledo reading (root
+   `information-discrete-math`, R2 extension, 2026-09-08). Identifier -> code:
+     pigeonhole_bits_needed -> D/M.01.v1
+     weight_cons -> D/M.02.v1
+     weight_app -> D/M.03.v1
+     weight_repeat_true -> D/M.04.v1
+     weight_repeat_false -> D/M.05.v1
+     fam_elem_weight -> D/M.06.v1
+     k_bound -> D/M.07.v1
+     fam_elem_length -> D/M.08.v1
+     fam_length -> D/M.09.v1
+     fam_in -> D/M.10.v1
+     fam_nodup -> D/M.11.v1
+     r_correct_far_apart_False -> D/M.12.v1
+     approx_count_deferred_lower_bound -> D/M.13.v1
+   Full table: docs/TOLEDO_CODES.md 
+*)
+
 Require Import List.
 Require Import PeanoNat.
 Require Import Lia.
