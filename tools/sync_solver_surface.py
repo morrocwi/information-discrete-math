@@ -6,7 +6,7 @@ Source of truth:
 - `pyproject.toml` for package version.
 
 This tool updates the surfaces whose drift is guarded by CI:
-1. tests/test_properties.py valid-input fixtures for the NS retained kinds;
+1. tests/test_properties.py valid-input fixtures for the NS retained/turbulence kinds;
 2. idm/__init__.py __version__;
 3. documented TOTAL registered-kind counts;
 4. capabilities.json through tools/gen_capabilities.py;
@@ -47,6 +47,10 @@ NS_FIXTURES = {
     "ns_retained_harmonic_probe": {
         "K": 1, "nu": 0.005, "dt": 0.0025, "horizon": 1,
         "wavevector": [1, 1, 1], "phase": 0.3, "verify": True,
+    },
+    "ns_turbulence_energy_flux": {
+        "K": 1, "nu": 0.005, "dt": 0.0025, "horizon": 1,
+        "cutoff": 1.0, "verify": True,
     },
 }
 
