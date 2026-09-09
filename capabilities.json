@@ -1,9 +1,9 @@
 {
   "project": {
     "name": "information-discrete-math",
-    "version": "1.5.1",
+    "version": "1.6.0",
     "primary_api": "idm.solve",
-    "total_problem_kinds": 269
+    "total_problem_kinds": 273
   },
   "interfaces": {
     "python": "idm.solve",
@@ -319,6 +319,10 @@
         "mst",
         "multiple_regression",
         "normal",
+        "ns_retained_harmonic_probe",
+        "ns_retained_physical",
+        "ns_retained_plane_average",
+        "ns_retained_rk4",
         "path_count",
         "poisson",
         "reachability",
@@ -333,7 +337,7 @@
         "widest_path",
         "z_test"
       ],
-      "count": 38
+      "count": 42
     }
   },
   "verification": {

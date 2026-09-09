@@ -182,6 +182,11 @@ FIXTURES = {
     "certified_min": {"expr": "(x-3)**2+1", "var": "x", "a": 0, "b": 6},
     # readouts
     "readouts": {"data": [3, -1, 4, 1, -5, 9]},
+    # finite Navier--Stokes retained/readout API fixtures
+    "ns_retained_rk4": {"K": 1, "nu": 0.005, "dt": 0.0025, "horizon": 1, "target_mode": [1, 0, 0], "verify": True},
+    "ns_retained_physical": {"K": 1, "nu": 0.005, "dt": 0.0025, "horizon": 1, "point": [0.1, 0.2, 0.3], "readout": "velocity"},
+    "ns_retained_plane_average": {"K": 1, "nu": 0.005, "dt": 0.0025, "horizon": 1, "axis": "x", "coordinate": 0.2, "verify": True},
+    "ns_retained_harmonic_probe": {"K": 1, "nu": 0.005, "dt": 0.0025, "horizon": 1, "wavevector": [1, 1, 1], "phase": 0.3, "verify": True},
     # H1 · Hilbert-space mathematical core (finite-dim exact / finite_diagnostic)
     "inner_product": {"u": [1, 2, 3], "v": [4, 5, 6]},
     "norm_squared": {"v": [3, 4]},

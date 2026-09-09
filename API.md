@@ -48,7 +48,7 @@ idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e
 #    "bound":{…},"method":"trapezoid refinement stability (refine_stable)"}
 ```
 
-**269 registered problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python) — the 230-kind
+**273 registered problem kinds** (`GET /kinds` lists them live; `idm.kinds()` in Python) — the 230-kind
 A2/A3 branch map, the 28-kind Hilbert-space core (Part XXI.5), and the `polynomial_positivity`
 certificate solver. One `solve(problem)` entry routes by
 `kind` through a registry, so related kinds share a computational core rather than being 269 disjoint
