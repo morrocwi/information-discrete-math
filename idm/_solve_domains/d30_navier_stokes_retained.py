@@ -2,6 +2,7 @@
 from idm._solve_core import *  # noqa: F401,F403
 from idm import ns_retained as NSR
 from idm import ns_retained_physical as NSP
+from idm import ns_retained_plane as NSPN
 
 
 def _resolve_horizon(p, dt):
@@ -122,6 +123,68 @@ def _ns_retained_physical(p):
         "compression_status": r["compression_status"],
         "verification": r["verification"],
         "readout_obstruction": r["readout_obstruction"],
+        "claim_scope": r["claim_scope"],
+        "backend": r["backend"],
+    }
+
+
+@kind("ns_retained_plane_average", "finite_diagnostic")
+def _ns_retained_plane_average(p):
+    K = int(p.get("K", 2))
+    nu = float(p.get("nu", 0.005))
+    dt = float(p.get("dt", 0.0025))
+    horizon = _resolve_horizon(p, dt)
+    axis = str(p.get("axis", "x")).strip().lower()
+    coordinate = float(p.get("coordinate", 0.0))
+    seed = int(p.get("seed", 20260909))
+    target_energy = float(p.get("target_energy", 0.125))
+    initial_state = p.get("initial_state")
+    verify = bool(p.get("verify", True))
+
+    r = NSPN.solve_plane_average_velocity(
+        K=K,
+        nu=nu,
+        dt=dt,
+        horizon=horizon,
+        axis=axis,
+        coordinate=coordinate,
+        seed=seed,
+        target_energy=target_energy,
+        initial_state=initial_state,
+        verify=verify,
+    )
+
+    verification = r.get("verification")
+    if verification is not None and verification.get("status") != "PASS":
+        return {
+            "kind": "ns_retained_plane_average",
+            "status": "HOLD",
+            "reason": "retained/full finite-RK4 plane-readout verification gate failed",
+            "verification": verification,
+            "tier": "finite_diagnostic",
+        }
+
+    return {
+        "kind": "ns_retained_plane_average",
+        "status": "ok",
+        "value": _norm(r["value"]),
+        "method": "exact sparse plane-average velocity readout with triad pullback through portable RK4",
+        "readout": "plane_average_velocity",
+        "axis": r["axis"],
+        "coordinate": r["coordinate"],
+        "mode_count": r["mode_count"],
+        "terminal_mode_count": r["terminal_mode_count"],
+        "readout_density": r["readout_density"],
+        "horizon": r["horizon"],
+        "rk4_stage_ledger": r["rk4_stage_ledger"],
+        "retained_triad_work": r["retained_triad_work"],
+        "full_triad_work": r["full_triad_work"],
+        "structural_work_reduction": r["structural_work_reduction"],
+        "compression_status": r["compression_status"],
+        "verification": verification,
+        "imaginary_residual": r["imaginary_residual"],
+        "longitudinal_residual": r["longitudinal_residual"],
+        "readout_identity": r["readout_identity"],
         "claim_scope": r["claim_scope"],
         "backend": r["backend"],
     }
