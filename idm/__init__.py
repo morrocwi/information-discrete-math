@@ -2,6 +2,7 @@
 
     import idm
     idm.solve({"kind": "integral", "f": "exp(-x**2)", "a": "-6", "b": "6", "eps": 1e-8})
+    idm.physics.solve(model="navier_stokes", readout="harmonic_probe", K=2, horizon=1)
     idm.pi()                         # π as a finite readout
     idm.certified.geom_series(1/3, 1e-12)      # (value, proven bound, ACCEPT/HOLD)
     idm.shortest_path(W)             # min-plus all-pairs
@@ -12,7 +13,7 @@ This package is a clean facade over the repository's verified modules — same c
 
 Submodules: functions · certified · algebra · readouts · exact · analysis · discrete · integrate ·
 diffeq · series · special · transforms · optimize · symbolic · combopt · interval · stats · geometry ·
-crypto · parse · rcp · solve · server.
+crypto · parse · rcp · solve · physics · server.
 """
 # Single source of truth is pyproject.toml; kept in sync by tests/test_version_consistency.py
 # (a CI gate that fails if this string, pyproject, and capabilities.json ever diverge).
@@ -35,6 +36,8 @@ from .discovery import describe, schema, example
 # AI Gateway (Track C): a small deterministic entrance over the full solver — idm.ai.run/route/plan,
 # plus idm.ai_bench (Phase C: a synthetic tool-use dataset + benchmark harness for a router/model).
 from . import ai, ai_bench
+# Physics Gateway: lineage-preserving finite/discrete adapters over idm.solve.
+from . import physics
 
 # finite elementary + calculus
 exp, log, sin, cos, erf, gamma, sqrt = (functions.exp, functions.log, functions.sin, functions.cos,
@@ -59,7 +62,7 @@ def serve(host="127.0.0.1", port=8737):
     from .server import run
     run(host, port)
 
-__all__ = ["__version__", "solve", "serve", "functions", "certified", "algebra", "readouts", "rcp",
+__all__ = ["__version__", "solve", "serve", "functions", "certified", "algebra", "readouts", "rcp", "physics",
            "exp", "log", "sin", "cos", "erf", "gamma", "sqrt", "pi", "e", "ln2",
            "derivative", "integral", "limit", "ode", "evaluate",
            "Readout", "CERTIFIED", "HOLD",
