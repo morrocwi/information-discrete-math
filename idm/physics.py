@@ -21,11 +21,13 @@ Current model
 ``navier_stokes`` is the first physics model.  Its finite Fourier-Galerkin dynamics are
 derived from Navier--Stokes itself.  Toledo supplies the retained-operator structural
 lineage; Toledo is *not* claimed to be the source of the Navier--Stokes dynamics.
+Turbulence observables are registered as readouts of those same nonlinear finite
+dynamics, not as separate closure laws.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from typing import Any, Dict, Iterable, Mapping, Optional, Tuple
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 from .results import Result
 
@@ -82,6 +84,10 @@ _READOUT_ALIASES = {
     "harmonic": "harmonic_probe",
     "harmonic_probe": "harmonic_probe",
     "harmonic_velocity_correlation": "harmonic_probe",
+    "flux": "turbulence_energy_flux",
+    "energy_flux": "turbulence_energy_flux",
+    "turbulence_flux": "turbulence_energy_flux",
+    "turbulence_energy_flux": "turbulence_energy_flux",
 }
 
 
@@ -96,11 +102,7 @@ def _norm_readout(readout: str) -> str:
 
 
 def register_adapter(adapter: PhysicsAdapter) -> PhysicsAdapter:
-    """Register one physics adapter after validating mandatory equation lineage.
-
-    Duplicate ``(model, readout)`` registrations are rejected rather than silently
-    overwritten; the equation river must have one explicit active route per readout.
-    """
+    """Register one physics adapter after validating mandatory equation lineage."""
     if not isinstance(adapter, PhysicsAdapter):
         raise TypeError("adapter must be a PhysicsAdapter")
     key = (_norm_model(adapter.model), _norm_readout(adapter.readout))
@@ -111,12 +113,10 @@ def register_adapter(adapter: PhysicsAdapter) -> PhysicsAdapter:
 
 
 def adapters() -> tuple:
-    """Return immutable metadata records for all registered physics adapters."""
     return tuple(_REGISTRY[k].metadata() for k in sorted(_REGISTRY))
 
 
 def models() -> dict:
-    """Return ``{model: [readouts...]}`` for the admitted physics surface."""
     out: Dict[str, list] = {}
     for model, readout in sorted(_REGISTRY):
         out.setdefault(model, []).append(readout)
@@ -124,7 +124,6 @@ def models() -> dict:
 
 
 def describe(model: str, readout: Optional[str] = None):
-    """Describe one model or one concrete readout adapter."""
     m = _norm_model(model)
     if readout is None:
         rows = [a.metadata() for (mm, _), a in sorted(_REGISTRY.items()) if mm == m]
@@ -142,16 +141,7 @@ def describe(model: str, readout: Optional[str] = None):
 def solve(problem: Optional[Mapping[str, Any]] = None, /, *, model: Optional[str] = None,
           readout: Optional[str] = None, state: Any = None, horizon: Optional[int] = None,
           **params) -> Result:
-    """Solve a physics readout through a lineage-preserving adapter.
-
-    Accepted forms::
-
-        physics.solve({"model": "navier_stokes", "readout": "fourier_mode", ...})
-        physics.solve(model="navier_stokes", readout="harmonic_probe", K=3, ...)
-
-    ``state`` is forwarded as ``initial_state``.  The selected adapter dispatches to the
-    already-registered ``idm.solve`` kind; this layer does not duplicate the solver.
-    """
+    """Solve a physics readout through a lineage-preserving adapter."""
     data: Dict[str, Any] = {}
     if problem is not None:
         if not isinstance(problem, Mapping):
@@ -185,11 +175,9 @@ def solve(problem: Optional[Mapping[str, Any]] = None, /, *, model: Optional[str
                        "known_readouts": models().get(m, []),
                        "known_models": sorted(models())})
 
-    # The physics facade owns the kind; callers cannot route around its registered lineage.
     data.pop("kind", None)
     data["kind"] = adapter.kind
 
-    # Lazy import avoids a package-initialization cycle while keeping idm.solve the one engine.
     from .solve import solve as idm_solve
     raw = idm_solve(data)
     out = Result(dict(raw))
@@ -225,8 +213,8 @@ _NS_COMMON = dict(
     source_equation="periodic incompressible Navier-Stokes -> declared finite Fourier-Galerkin dynamics",
     lineage_note=(
         "Navier-Stokes supplies the physical dynamics. Toledo root/EQ-008 and PROP-URCF-01 supply "
-        "the retained-operator structural lineage; this is a structural adapter, not a claim that "
-        "Navier-Stokes was derived from Toledo."
+        "the retained-operator structural lineage; turbulence quantities are readouts of the same "
+        "finite nonlinear dynamics, not independently posited closure laws."
     ),
 )
 
@@ -234,6 +222,7 @@ register_adapter(PhysicsAdapter(readout="fourier_mode", kind="ns_retained_rk4", 
 register_adapter(PhysicsAdapter(readout="point_velocity", kind="ns_retained_physical", **_NS_COMMON))
 register_adapter(PhysicsAdapter(readout="plane_average_velocity", kind="ns_retained_plane_average", **_NS_COMMON))
 register_adapter(PhysicsAdapter(readout="harmonic_probe", kind="ns_retained_harmonic_probe", **_NS_COMMON))
+register_adapter(PhysicsAdapter(readout="turbulence_energy_flux", kind="ns_turbulence_energy_flux", **_NS_COMMON))
 
 
 __all__ = ["PhysicsAdapter", "register_adapter", "adapters", "models", "describe", "solve"]
