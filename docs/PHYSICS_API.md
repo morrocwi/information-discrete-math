@@ -105,9 +105,21 @@ the finite Fourier--Galerkin system used by the existing retained RK4 solvers.
 | `point_velocity` | `ns_retained_physical` |
 | `plane_average_velocity` | `ns_retained_plane_average` |
 | `harmonic_probe` | `ns_retained_harmonic_probe` |
+| `turbulence_energy_flux` | `ns_turbulence_energy_flux` |
 
-Aliases such as `model="ns"`, `readout="mode"`, `readout="plane_average"`, and
-`readout="harmonic"` normalize to the registered names.
+The turbulence readout is downstream of the same finite nonlinear Navier--Stokes
+dynamics.  It evaluates
+
+\[
+\Pi(\kappa)=-\sum_{|k|\le\kappa}
+\operatorname{Re}\!\left(\overline{\hat u_k}\cdot N_k(\hat u)\right),
+\]
+
+with positive flux meaning nonlinear energy leaves the low-mode set.  See
+`docs/NS_TURBULENCE_API.md` for its retained-dependency and verification contract.
+
+Aliases such as `model="ns"`, `readout="mode"`, `readout="plane_average"`,
+`readout="harmonic"`, and `readout="flux"` normalize to the registered names.
 
 ## Discovery
 
@@ -115,7 +127,7 @@ Aliases such as `model="ns"`, `readout="mode"`, `readout="plane_average"`, and
 idm.physics.models()
 idm.physics.adapters()
 idm.physics.describe("navier_stokes")
-idm.physics.describe("navier_stokes", "harmonic_probe")
+idm.physics.describe("navier_stokes", "turbulence_energy_flux")
 ```
 
 ## Result lineage
@@ -142,8 +154,8 @@ still honestly labelled `finite_diagnostic`.
 
 ## Claim boundary
 
-`idm.physics` currently provides one physics model: finite Fourier--Galerkin periodic
-incompressible Navier--Stokes.  It is not a continuum-exact Navier--Stokes solver, not a
-Millennium-problem claim, and not a general-purpose physics engine yet.  The registry is
-intended to admit future finite/discrete adapters for other physical models without losing
-their Toledo/equation lineage.
+`idm.physics` currently provides one physical dynamics model: finite Fourier--Galerkin
+periodic incompressible Navier--Stokes, with direct field readouts and a first turbulence
+readout.  It is not a continuum-exact Navier--Stokes solver, not a Millennium-problem
+claim, and not a general-purpose physics engine yet.  The registry is intended to admit
+future finite/discrete adapters without losing their Toledo/equation lineage.
