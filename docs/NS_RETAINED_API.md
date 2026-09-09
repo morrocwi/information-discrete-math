@@ -92,3 +92,7 @@ The core IDM package deliberately remains standard-library-only for this solver.
 ```
 
 Requests beyond that boundary return `HOLD`. The NumPy/FFT hybrid performance benchmark remains in the separate `readout-problem-navier-stokes` reproduction repository; its timing claims are not silently transferred to this portable API backend.
+
+## Registry consistency
+
+The live `idm.solve()` registry is the source of truth for solver kinds. `tools/sync_solver_surface.py` synchronizes registry-derived fixtures, documented total-kind counts, `capabilities.json`, the package version facade, and the migration golden snapshot. `.github/workflows/sync-solver-surface.yml` runs that synchronization when solver registrations change, preventing a newly registered kind from remaining outside the repository-wide adversarial and migration gates.
