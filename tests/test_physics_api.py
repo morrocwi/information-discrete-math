@@ -12,6 +12,7 @@ def test_physics_surface_is_public():
         "point_velocity",
         "plane_average_velocity",
         "harmonic_probe",
+        "turbulence_energy_flux",
     }
 
 
@@ -101,6 +102,26 @@ def test_harmonic_alias_dispatches_to_same_registered_adapter():
     assert r["physics_readout"] == "harmonic_probe"
     assert r["physics_adapter_kind"] == "ns_retained_harmonic_probe"
     assert r["continuum_primitive"] is False
+
+
+def test_turbulence_flux_alias_dispatches_with_same_ns_lineage():
+    r = physics.solve(
+        model="ns",
+        readout="flux",
+        K=1,
+        nu=0.005,
+        dt=0.0025,
+        horizon=1,
+        cutoff=1.0,
+        verify=True,
+    )
+    assert r.status == "ok"
+    assert r["physics_readout"] == "turbulence_energy_flux"
+    assert r["physics_adapter_kind"] == "ns_turbulence_energy_flux"
+    assert r["toledo_root"] == "root/EQ-008"
+    assert r["equation_parent"] == "PROP-URCF-01"
+    assert r["continuum_primitive"] is False
+    assert r["verification"]["status"] == "PASS"
 
 
 def test_unknown_physics_adapter_holds():
