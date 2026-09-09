@@ -1,0 +1,56 @@
+name: sync-solver-surface
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'idm/_solve_domains/**'
+      - 'idm/ns_retained*.py'
+      - 'pyproject.toml'
+      - 'tools/gen_capabilities.py'
+      - 'tools/sync_solver_surface.py'
+      - '.github/workflows/sync-solver-surface.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install solver dependencies
+        run: pip install -r requirements.txt
+
+      - name: Synchronize fixtures, version, docs, manifest, and golden snapshot
+        run: python tools/sync_solver_surface.py
+
+      - name: Check generated capability manifest
+        run: python tools/gen_capabilities.py --check
+
+      - name: Commit synchronized surfaces if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tests/test_properties.py \
+            tests/golden/kind_outputs.json \
+            idm/__init__.py \
+            capabilities.json \
+            README.md SOLVER.md API.md AI_START_HERE.md \
+            idm/README.md formal/README.md retained_spectral/README.md \
+            docs/CAS_CLOSURE_CHECKLIST.md docs/roadmap/README.md
+          if git diff --cached --quiet; then
+            echo "Solver surface already current."
+          else
+            git commit -m "synchronize solver registry surfaces"
+            git push
+          fi
