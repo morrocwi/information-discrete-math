@@ -30,3 +30,4 @@ from . import d27_p2_computational_geometry_exact  # noqa: F401
 from . import d28_p2_cryptographic_number_theory  # noqa: F401
 from . import d29_h1_hilbert_space_mathematical_c  # noqa: F401
 from . import d30_navier_stokes_retained  # noqa: F401
+from . import d31_navier_stokes_turbulence  # noqa: F401
