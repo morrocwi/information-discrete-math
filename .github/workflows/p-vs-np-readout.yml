@@ -29,6 +29,8 @@ jobs:
         run: python3 research/p_vs_np_readout/sat_intervention_quotient.py --max-m 10
       - name: future-readout residual-width exact fixture
         run: python3 research/p_vs_np_readout/future_readout_width.py --max-m 6
+      - name: weak-rank exact finite fixture
+        run: python3 research/p_vs_np_readout/weak_rank_principle.py
       - name: earlier SAT collision fixture
         run: python3 research/p_vs_np_readout/readout_sat_frontier.py
       - name: AC0 reduction baseline
