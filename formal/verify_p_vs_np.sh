@@ -13,6 +13,7 @@ clean() {
         IDM_CircuitGenesisBridge.vo IDM_CircuitGenesisBridge.glob .IDM_CircuitGenesisBridge.aux \
         IDM_RetainRecomputeResolve.vo IDM_RetainRecomputeResolve.glob .IDM_RetainRecomputeResolve.aux \
         IDM_CircuitLedgerTransfer.vo IDM_CircuitLedgerTransfer.glob .IDM_CircuitLedgerTransfer.aux \
+        IDM_RRRCostLowerBound.vo IDM_RRRCostLowerBound.glob .IDM_RRRCostLowerBound.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -73,6 +74,14 @@ printf '%s\n' "$out_transfer"
 count_transfer=$(printf '%s\n' "$out_transfer" | grep -c "Closed under the global context" || true)
 if [ "$count_transfer" -lt 3 ]; then
   echo "Expected three axiom-free transfer Print Assumptions results; got $count_transfer" >&2
+  exit 1
+fi
+
+out_rrr_cost=$(coqc -q IDM_RRRCostLowerBound.v)
+printf '%s\n' "$out_rrr_cost"
+count_rrr_cost=$(printf '%s\n' "$out_rrr_cost" | grep -c "Closed under the global context" || true)
+if [ "$count_rrr_cost" -lt 3 ]; then
+  echo "Expected three axiom-free RRR-cost Print Assumptions results; got $count_rrr_cost" >&2
   exit 1
 fi
 
