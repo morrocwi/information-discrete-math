@@ -84,8 +84,49 @@ Section Closure.
 
 End Closure.
 
+(* --------------------------------------------------------------------- *)
+(* Oracle-leaf guard.                                                     *)
+(*                                                                       *)
+(* If a purported local rejector is allowed to call the target semantics  *)
+(* [sat] itself, every negative state becomes a one-step leaf by          *)
+(* definition.  Therefore any asymptotic lower bound must charge/restrict  *)
+(* the rejector and require independent soundness evidence.               *)
+(* --------------------------------------------------------------------- *)
+Section OracleLeafGuard.
+
+  Variable State : Type.
+  Variable sat : State -> bool.
+
+  Definition semantic_oracle_reject (s : State) : bool := negb (sat s).
+
+  Theorem semantic_oracle_reject_sound :
+    forall s,
+      semantic_oracle_reject s = true ->
+      sat s = false.
+  Proof.
+    intros s H.
+    unfold semantic_oracle_reject in H.
+    apply Bool.negb_true_iff in H.
+    exact H.
+  Qed.
+
+  Theorem every_false_state_is_oracle_leaf :
+    forall s,
+      sat s = false ->
+      semantic_oracle_reject s = true.
+  Proof.
+    intros s H.
+    unfold semantic_oracle_reject.
+    rewrite H.
+    reflexivity.
+  Qed.
+
+End OracleLeafGuard.
+
 Print Assumptions neg_cert_sound.
 Print Assumptions true_state_has_no_negative_certificate.
 Print Assumptions shared_child_reuse.
+Print Assumptions semantic_oracle_reject_sound.
+Print Assumptions every_false_state_is_oracle_leaf.
 
 End CompressedNegativeClosure.
