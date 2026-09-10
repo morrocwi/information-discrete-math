@@ -33,6 +33,8 @@ jobs:
         run: python3 research/p_vs_np_readout/future_readout_width.py --max-m 6
       - name: transform-potential exhaustive negative control
         run: python3 research/p_vs_np_readout/transform_potential_audit.py
+      - name: exact fusion-Horn cover diagnostic
+        run: python3 research/p_vs_np_readout/fusion_horn_exact.py
       - name: weak-rank exact finite fixture
         run: python3 research/p_vs_np_readout/weak_rank_principle.py
       - name: recomputation pebbling exact finite fixture
