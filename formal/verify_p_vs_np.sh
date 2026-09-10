@@ -9,6 +9,7 @@ clean() {
         IDM_SATIntervention.vo IDM_SATIntervention.glob .IDM_SATIntervention.aux \
         IDM_FutureReadoutWidth.vo IDM_FutureReadoutWidth.glob .IDM_FutureReadoutWidth.aux \
         IDM_TransformPotential.vo IDM_TransformPotential.glob .IDM_TransformPotential.aux \
+        IDM_FusionDual.vo IDM_FusionDual.glob .IDM_FusionDual.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -37,6 +38,14 @@ printf '%s\n' "$out_potential"
 count_potential=$(printf '%s\n' "$out_potential" | grep -c "Closed under the global context" || true)
 if [ "$count_potential" -lt 3 ]; then
   echo "Expected three axiom-free transform-potential Print Assumptions results; got $count_potential" >&2
+  exit 1
+fi
+
+out_dual=$(coqc -q IDM_FusionDual.v)
+printf '%s\n' "$out_dual"
+count_dual=$(printf '%s\n' "$out_dual" | grep -c "Closed under the global context" || true)
+if [ "$count_dual" -lt 4 ]; then
+  echo "Expected four axiom-free fusion-dual Print Assumptions results; got $count_dual" >&2
   exit 1
 fi
 
