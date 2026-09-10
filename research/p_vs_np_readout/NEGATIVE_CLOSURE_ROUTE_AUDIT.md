@@ -65,6 +65,8 @@ instead of
 
 A deliberately corrupted leaf is rejected by the independent verifier.
 
+This immediately kills leaf-count/assignment-count lower bounds: exponential unfolded path count need not imply exponential serialized certificate size.
+
 ## 4. Readout / EPSC-style quantitative placement
 
 The restriction-defect kernel already gives a partial-tree inequality
@@ -85,13 +87,45 @@ Thus the imported quantitative architecture is used directly:
 \text{global output control}.
 \]
 
-## 5. Critical route closure
+## 5. Two mandatory anti-cheating guards
+
+### 5.1 Semantic-oracle leaf guard
+
+If a leaf rule is allowed to call the target predicate itself,
+
+\[
+leaf\_reject(s)=\neg sat(s),
+\]
+
+then every false state closes in one leaf.  `IDM_CompressedNegativeClosure.v` records this explicitly with `semantic_oracle_reject`.
+
+Therefore a useful closure lower bound must specify and charge the leaf-rule language.  A rule is admissible only when its soundness is independently checkable without SAT/UNSAT/equivalence oracles.  Otherwise the target answer has merely been hidden inside the certificate interface.
+
+### 5.2 Raw lineage-signature guard
+
+Memoizing by the complete internal gate-value vector also does not imply polynomial compression.  A size-`s` family of copy gates
+
+\[
+g_i=x_i\wedge x_i
+\]
+
+realizes every vector in \(\{0,1\}^s\), hence
+
+\[
+\boxed{2^s\text{ distinct internal signatures}.}
+\]
+
+`lineage_signature_guard.py` checks this exactly for finite `s`.  This matches the Declaration-Bound cube counting already present in IDM.
+
+So the next invariant cannot be raw signature cardinality.  It must use **relations among signatures under the declared SAT restriction operators and shared lineage**.
+
+## 6. Critical route closure
 
 The soundness theorem is not the missing P-vs-NP lower bound.  The hard statement would be one of the following.
 
 ### Route A: negative-closure lower bound
 
-Exhibit an explicit UNSAT family `F_n` such that every valid closure DAG has superpolynomial size.
+Exhibit an explicit UNSAT family `F_n` such that every valid closure DAG over a fixed independently checkable rule language has superpolynomial size.
 
 This is a lower bound for a concrete branching/closure proof system.  By itself it does **not** rule out an unrestricted SAT circuit, because an arbitrary circuit is not required to emit this certificate system.
 
@@ -105,32 +139,31 @@ poly(s,|F|).
 
 Then a superpolynomial closure lower bound would imply a circuit lower bound.
 
-This bridge is **not** currently proved.  The naive audit does not give it: even with a small reusable candidate circuit, recursively validating a negative claim may visit exponentially many distinct restriction states.
+This bridge is **not** currently proved.  The naive audit does not give it: even with a small reusable candidate circuit, recursively validating a negative claim may visit exponentially many distinct restriction states, and raw gate signatures themselves permit \(2^s\) states.
 
-## 6. Why this is a genuine new premise, not bookkeeping
+## 7. Universal bridge discipline
 
-A polynomial-size, polynomial-time-checkable negative certificate for every UNSAT formula would make UNSAT admit short NP-style certificates.  Therefore a universal polynomial closure theorem is a major proof-complexity statement, not an automatic consequence of Readout Genesis, RRR, or circuit sharing.
+The existing Fusion/Horn route remains the current bridge that is known to preserve unrestricted DeMorgan circuit sharing.  Negative closure therefore should not silently replace fusion.  Its proper role is operational:
 
-Accordingly, the P-vs-NP lane must not claim
+1. expose local restriction defects without a SAT oracle;
+2. construct independently certified negative regions / frontier obligations;
+3. search for a candidate-adaptive, lineage-aware obstruction;
+4. transfer an actual obstruction to unrestricted circuits only through a proved bridge.
 
-\[
-small\ circuit\Rightarrow small\ negative\ closure
-\]
+Any proposed new bridge must preserve fanout/sharing and cannot charge provenance-only distinctions.
 
-without an explicit theorem that preserves unrestricted circuit power.
-
-## 7. Current load-bearing target
+## 8. Current load-bearing target
 
 The strongest faithful target is now candidate-adaptive and lineage-aware:
 
-> Given a small candidate circuit `C` making a negative claim on `F`, use only the circuit DAG, local restriction evaluations, and sound syntax-level closure rules to either
+> Given a small candidate circuit `C` making a negative claim on `F`, use only the circuit DAG, local restriction evaluations, and independently sound syntax-level closure rules to either
 >
 > 1. produce a concrete local/leaf defect, or
-> 2. produce a compressed negative certificate whose size is bounded in terms of the actual reusable lineage of `C`.
+> 2. produce a compressed negative certificate whose size is bounded in terms of a **structural relation among restriction transitions and shared circuit lineage**, not merely the number of branches or gate-value signatures.
 
-The missing theorem is a nontrivial **lineage-compression bound**.  If no such polynomial bound exists, the alternative is to exploit the failure itself to construct a refuting restriction/input.
+The missing theorem is a nontrivial **lineage-transition compression bound**.  If no such polynomial bound exists, the alternative is to exploit that failure itself to construct a refuting restriction/input.
 
-## 8. Claim boundary
+## 9. Claim boundary
 
 Proved / executable in this lane:
 
@@ -139,11 +172,14 @@ Proved / executable in this lane:
 - negative closure certificates are sound;
 - identical restricted states can be shared in a DAG;
 - corrupted certificates are rejected;
+- semantic-oracle leaf rules trivialize the problem and are forbidden;
+- raw internal gate signatures may realize all `2^s` states and do not give polynomial compression;
 - uncertified frontier obligations remain `HOLD`.
 
 Still OPEN:
 
-- polynomial-size negative closure for arbitrary negative SAT instances;
-- polynomial circuit-to-negative-closure compression;
+- a non-oracular lineage-transition compression theorem;
+- polynomial-size negative closure for arbitrary negative SAT instances under a fixed rule language;
+- polynomial unrestricted-circuit-to-negative-closure transfer;
 - superpolynomial lower bound for the unrestricted SAT target;
 - `SAT notin P/poly` and `P != NP`.
