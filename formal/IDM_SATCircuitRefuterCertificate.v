@@ -2,16 +2,13 @@
 (* IDM_SATCircuitRefuterCertificate.v                                     *)
 (* Two-sided finite refuter-certificate kernel for SAT-style recursion.    *)
 (*                                                                       *)
-(* A candidate can be refuted in either direction:                         *)
-(*  - false negative: candidate root=false but target root=true;            *)
-(*  - false positive: candidate root=true but target root=false.            *)
+(* A candidate can be refuted in either direction. On a complete finite    *)
+(* restriction tree, any root disagreement with the target forces either   *)
+(* a local OR-recursion defect or a terminal boundary defect somewhere.    *)
 (*                                                                       *)
-(* The generic finite theorem below packages root disagreement as a        *)
-(* checkable defect witness on a complete restriction tree.  Concrete      *)
-(* SAT instantiation supplies restriction syntax and direct leaf truth.     *)
-(*                                                                       *)
-(* This proves certificate semantics only.  It does NOT construct a        *)
-(* certificate for every small circuit, nor prove a circuit lower bound.    *)
+(* Concrete SAT instantiation supplies restriction syntax and direct leaf  *)
+(* truth. This proves certificate semantics only. It does NOT construct a   *)
+(* refuter for every small circuit or prove a circuit lower bound.          *)
 (* ===================================================================== *)
 
 From Coq Require Import Bool.Bool.
@@ -53,22 +50,6 @@ Inductive defect_witness : RTree -> Prop :=
     forall c l r,
       defect_witness r ->
       defect_witness (RNode c l r).
-
-Theorem defect_witness_implies_not_globally_consistent :
-  forall t,
-    defect_witness t ->
-    ~ (
-      (candidate_root t = target_value t) /\
-      (forall c l r,
-         t = RNode c l r ->
-         c = orb (candidate_root l) (candidate_root r))
-    ) \/ True.
-Proof.
-  (* This theorem is intentionally weak as a structural packaging lemma; the
-     load-bearing localization theorem is [wrong_root_has_defect] below. *)
-  intros t H.
-  right. exact I.
-Qed.
 
 Fixpoint has_defect (t : RTree) : bool :=
   match t with
