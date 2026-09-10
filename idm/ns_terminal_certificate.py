@@ -127,11 +127,21 @@ def energy_defect_floor(
 
     Under energy equality the defect is zero.  The asymptotic floor of the
     energy-budget beta^2 is this defect when exact projections are used.
+
+    Floating-point inputs that satisfy energy equality algebraically can leave
+    a few ulps of positive or negative cancellation residue.  We therefore use
+    the same scale-aware consistency tolerance on both sides of zero: a defect
+    whose magnitude is at most ``1e-12 * scale`` is returned as exact ``0.0``.
+    This is numerical hygiene only; a materially negative budget still raises.
     """
     u0 = _nonnegative("initial_l2_norm", initial_l2_norm)
     uT = _nonnegative("terminal_l2_norm", terminal_l2_norm)
     D = _nonnegative("total_viscous_dissipation", total_viscous_dissipation)
     defect = u0 * u0 - uT * uT - 2.0 * D
-    if defect < -1e-12 * max(1.0, u0 * u0, uT * uT, 2.0 * D):
+    scale = max(1.0, u0 * u0, uT * uT, 2.0 * D)
+    tol = 1e-12 * scale
+    if defect < -tol:
         raise ValueError("inputs violate the unforced energy-inequality budget")
-    return max(0.0, defect)
+    if abs(defect) <= tol:
+        return 0.0
+    return defect
