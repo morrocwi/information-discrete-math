@@ -27,6 +27,7 @@ clean() {
         IDM_SATCircuitRefuterCertificate.vo IDM_SATCircuitRefuterCertificate.glob .IDM_SATCircuitRefuterCertificate.aux \
         IDM_AdaptiveDefectCapture.vo IDM_AdaptiveDefectCapture.glob .IDM_AdaptiveDefectCapture.aux \
         IDM_DefectHittingSupport.vo IDM_DefectHittingSupport.glob .IDM_DefectHittingSupport.aux \
+        IDM_BackdoorSupportBudget.vo IDM_BackdoorSupportBudget.glob .IDM_BackdoorSupportBudget.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -70,5 +71,6 @@ check_closed IDM_SATFixedPointDefect.v 2 SAT-fixed-point-defect
 check_closed IDM_SATCircuitRefuterCertificate.v 4 SAT-circuit-refuter-certificate
 check_closed IDM_AdaptiveDefectCapture.v 4 adaptive-defect-capture
 check_closed IDM_DefectHittingSupport.v 4 defect-hitting-support
+check_closed IDM_BackdoorSupportBudget.v 4 backdoor-support-budget
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
