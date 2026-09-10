@@ -35,7 +35,8 @@ Section Cover.
   Proof.
     induction xs as [|x xs IH]; intros ys u; simpl.
     - reflexivity.
-    - rewrite IH. now rewrite orb_assoc.
+    - rewrite IH.
+      destruct (hit x u), (coveredb xs u), (coveredb ys u); reflexivity.
   Qed.
 
   Definition covers_remaining (prefix tail : list Rule) : Prop :=
