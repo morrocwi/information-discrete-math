@@ -57,6 +57,6 @@ check_closed IDM_FreeRereadGuard.v 3 free-reread-guard
 check_closed IDM_ExistentialProjection.v 3 existential-projection
 check_closed IDM_ResidualCoverCapacity.v 3 residual-cover-capacity
 check_closed IDM_ProjectionCollapseGuard.v 2 projection-collapse-guard
-check_closed IDM_SATRestrictionDefect.v 5 SAT-restriction-defect
+check_closed IDM_SATRestrictionDefect.v 7 SAT-restriction-defect
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
