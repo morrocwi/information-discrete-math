@@ -45,7 +45,6 @@ Section Survivor.
   Variable Retained : (X -> bool) -> Prop.
   Variable a : X.
 
-  (* Fusion "above a" seed condition for literal/input generators. *)
   Hypothesis literal_above :
     forall f,
       f a = true ->
@@ -57,16 +56,12 @@ Section Survivor.
       subsetb p q ->
       Retained q.
 
-  (* One premise per AND-lineage operation.  In the concrete fusion model
-     this follows from preservation of the corresponding pair. *)
   Hypothesis and_preserved :
     forall l r,
       Retained (neg_slice l) ->
       Retained (neg_slice r) ->
       Retained (neg_slice (CAnd l r)).
 
-  (* Equivalent to the semi-filter prohibition of the empty set, stated in
-     an extraction-friendly form. *)
   Hypothesis retained_nonempty :
     forall p,
       Retained p ->
@@ -76,8 +71,10 @@ Section Survivor.
     forall l r,
       subsetb (neg_slice l) (neg_slice (COr l r)).
   Proof.
-    intros l r x H.
-    unfold neg_slice, subsetb in *.
+    intros l r.
+    unfold subsetb.
+    intros x H.
+    unfold neg_slice in *.
     simpl in *.
     destruct (eval l x), (eval r x), (target x); simpl in *;
       try discriminate; reflexivity.
@@ -87,8 +84,10 @@ Section Survivor.
     forall l r,
       subsetb (neg_slice r) (neg_slice (COr l r)).
   Proof.
-    intros l r x H.
-    unfold neg_slice, subsetb in *.
+    intros l r.
+    unfold subsetb.
+    intros x H.
+    unfold neg_slice in *.
     simpl in *.
     destruct (eval l x), (eval r x), (target x); simpl in *;
       try discriminate; reflexivity.
@@ -124,7 +123,7 @@ Section Survivor.
           target u = false /\
           eval c u = true).
   Proof.
-    intros c Ha.
+    intros c _.
     destruct (eval c a) eqn:Hca.
     - right.
       pose proof (true_gate_retains_negative_slice c Hca) as Hret.
