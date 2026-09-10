@@ -16,6 +16,7 @@ clean() {
         IDM_RRRCostLowerBound.vo IDM_RRRCostLowerBound.glob .IDM_RRRCostLowerBound.aux \
         IDM_DemandCircuitDominance.vo IDM_DemandCircuitDominance.glob .IDM_DemandCircuitDominance.aux \
         IDM_ReadoutUniverseAccessibleCompletion.vo IDM_ReadoutUniverseAccessibleCompletion.glob .IDM_ReadoutUniverseAccessibleCompletion.aux \
+        IDM_FreeRereadGuard.vo IDM_FreeRereadGuard.glob .IDM_FreeRereadGuard.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -100,6 +101,14 @@ printf '%s\n' "$out_ru_completion"
 count_ru_completion=$(printf '%s\n' "$out_ru_completion" | grep -c "Closed under the global context" || true)
 if [ "$count_ru_completion" -lt 4 ]; then
   echo "Expected four axiom-free Readout-Universe completion Print Assumptions results; got $count_ru_completion" >&2
+  exit 1
+fi
+
+out_free_reread=$(coqc -q IDM_FreeRereadGuard.v)
+printf '%s\n' "$out_free_reread"
+count_free_reread=$(printf '%s\n' "$out_free_reread" | grep -c "Closed under the global context" || true)
+if [ "$count_free_reread" -lt 3 ]; then
+  echo "Expected three axiom-free free-reread guard Print Assumptions results; got $count_free_reread" >&2
   exit 1
 fi
 
