@@ -1,32 +1,37 @@
 """Relative-energy adapter from a finite Fourier path to a Leray-Hopf solution.
 
 This module supplies the analytic form of the bridge isolated as PROP-EPSC-12.
-It does NOT certify a raw RK4 tape by itself.  It consumes certified upper
-bounds on two finite-path quantities:
+It consumes certified upper bounds on two finite-path quantities:
 
     A = 2 * int_0^T ||grad v(t)||_infinity dt
     B = int_0^T ||r(t)||_{H^{-1}}^2 dt
 
-where the smooth divergence-free comparison path v satisfies
+where a divergence-free comparison path v satisfies, in the weak/a.e. sense
+required by the standard relative-energy argument,
 
     v_t + P[(v.grad)v] - nu Delta v = P f + r.
 
-For any Leray-Hopf solution u of the same forced problem, the standard relative
-energy inequality gives
+For any Leray-Hopf solution u of the same declared problem, the standard
+relative-energy inequality gives
 
     ||u(T)-v(T)||_2^2
       <= exp(A) * ( ||u0-v(0)||_2^2 + B/nu ).
 
-If v(T) is supported in the retained Fourier cube, this is immediately also an
-upper bound on ||(I-P_K)u(T)||_2.
+If v(T) is supported in the retained Fourier cube, this is also an upper bound
+on ||(I-P_K)u(T)||_2.
 
-Thus the *mathematical adapter theorem* is finite/computable once A and B are
-certified.  What remains for a concrete numerical RK4 run is to construct a
-continuous-time interpolation and rigorously bound A and B over every time
-cell.  That numerical enclosure step remains fail-closed.
+A raw RK4 node tape still does not enter this module directly.  The companion
+``idm.ns_rk4_path_certificate`` module now supplies PROP-EPSC-15: it captures
+the stored binary64 coefficients as exact dyadic rationals, Leray-projects
+nodes exactly, joins them by a continuous piecewise-linear finite Fourier path,
+and computes rigorous A/B summaries over the entire time interval.  Those
+summaries can be consumed here (or by the same analytic formula evaluated with
+an upper-rounded arithmetic layer).
 
-Claim tier: Dr (standard relative-energy / weak-strong-stability argument),
-until separately formalised.  No global regularity, uniqueness, or Clay claim.
+Claim tier of the continuum transfer: Dr (standard relative-energy /
+weak-strong-stability argument), until separately formalised.  Finite tape
+certification is a separate finite_diagnostic claim.  No global regularity,
+uniqueness, DNS-adequacy, or Clay claim.
 """
 from __future__ import annotations
 
@@ -90,6 +95,11 @@ def relative_energy_adapter_bounds(
 
         nu int ||grad(u-v)||_2^2
             <= e0^2 + A E_inf^2 + B/nu.
+
+    This helper evaluates the formula in ordinary floating arithmetic. When a
+    rigorously upward-rounded final exponential is required, prefer the exact
+    result already returned by ``ns_rk4_path_certificate`` or add an interval
+    layer around this evaluation.
     """
     nu = _positive("nu", nu)
     e0 = _nonnegative("initial_l2_error_upper", initial_l2_error_upper)
@@ -227,8 +237,9 @@ def finite_galerkin_nonlinear_residual_hminus1(
     outside K.  Their Leray-projected convolution is exactly the semidiscrete
     residual r_K=(I-P_K)P[(v.grad)v] for the unforced exact Galerkin path.
 
-    This function computes that finite snapshot residual.  A trajectory-level
-    adapter still needs a certified upper bound on its time integral.
+    This function computes that finite snapshot residual. For a complete
+    continuous-time certificate from stored RK4 nodes use
+    ``idm.ns_rk4_path_certificate.certify_piecewise_linear_fourier_tape``.
     """
     K = int(K)
     if K < 1:
