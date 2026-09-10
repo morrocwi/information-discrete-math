@@ -1,17 +1,17 @@
 # Discrete Epsilon-Completion Programme
 
-Status: **partially closed by target/readout refinement**. Rigorous computable omitted-tail certificates now exist for (i) a Leray-Hopf spacetime norm and (ii) a prescribed terminal time when a certified retained energy tape is available. A certified adapter from the project's finite Galerkin trajectory to the actual continuum projected tape remains open.
+Status: **partially closed by target/readout refinement**. Rigorous computable omitted-tail certificates exist for a Leray-Hopf spacetime norm and for several conditional/a-posteriori terminal settings. The current end-to-end finite-RK4-to-continuum bridge is isolated as one explicit validated-numerics obligation: `PROP-EPSC-15`.
 
 ## Repository roles
 
-- **Information Discrete Mathematics:** algorithm, finite refinement, fail-closed gates, reusable certificate code.
-- **Toledo:** proposal/equation provenance and tier status.
-- **Readout-Problem-Navier-Stokes:** NS-specific analytic derivations, finite witnesses, reproduction and claim boundary.
-- **Readout Genesis:** interpretation only; no automatic promotion to root ontology.
+- **Information Discrete Mathematics:** algorithm, finite refinement, fail-closed gates, reusable certificate code and finite residual machinery.
+- **Toledo:** proposal/equation provenance and tier/status.
+- **Readout-Problem-Navier-Stokes:** NS-specific analytic derivations, finite witnesses, reproduction, standalone EPSC manuscript and claim boundary.
+- **Readout Genesis:** interpretation/application map only; no automatic promotion to root ontology.
 
 ## 1. General EPSC object
 
-The certificate target must name a target space/readout `Y` and assumptions `A`:
+The certificate target must name a target space/readout `Y`, retained record `R_K`, and assumptions `A`:
 
 \[
 \|(I-P_K)x\|_Y\le\beta_{K,Y}(\mathcal R_K;\mathcal A),
@@ -25,17 +25,15 @@ Nested agreement
 \delta_K=\|R_Kx_{K+1}-x_K\|
 \]
 
-is useful evidence but does not by itself bound what remains outside the represented state.
-
-The fail-closed rule remains:
+is useful evidence but does not by itself bound what remains outside the represented state. The fail-closed rule is
 
 \[
-\delta_K+\beta_K\le\varepsilon
+\delta_K+\beta_{K,Y}\le\varepsilon
 \Longrightarrow
-\mathrm{ACCEPT}_\varepsilon,
+\mathrm{CERTIFIED}_\varepsilon(Y),
 \]
 
-and if the required `beta_K` or adapter hypothesis is missing, return `HOLD`.
+and if the required `beta`, target assumptions, or adapter certificate is missing, return `HOLD`.
 
 ## 2. Terminal finite-record no-go
 
@@ -45,9 +43,7 @@ For a finite Fourier cube `P_K`, terminal retained coefficients alone do not ide
 q=(K+1,0,0),
 \]
 
-entirely outside the retained cube. Its amplitude may be scaled arbitrarily while `P_Ku` is unchanged.
-
-Thus a useful universal terminal `beta_K` cannot be a function of retained terminal coefficients alone without additional admissible-class information.
+entirely outside the retained cube. Its amplitude may be scaled arbitrarily while `P_Ku` is unchanged. A useful universal terminal `beta_K` therefore cannot be a function of retained terminal coefficients alone without additional admissible-class or dynamical information.
 
 ## 3. Unconditional spacetime Leray-Hopf certificate
 
@@ -68,9 +64,7 @@ and the energy inequality gives
 }.
 \]
 
-This `beta_K` is explicit, computable and tends to zero without a global-smoothness assumption.
-
-For `f in L2(0,T;H^{-1})`, a conservative forced analogue is
+This `beta_K` is explicit, computable and tends to zero without a global-smoothness assumption. For `f in L2(0,T;H^{-1})`, a conservative forced analogue is
 
 \[
 \boxed{
@@ -111,25 +105,21 @@ then
 
 The Fourier-tail step is elementary; obtaining a globally valid pointwise `H^s` bound in 3-D is the difficult part.
 
-## 5. Prescribed terminal-time energy-budget certificate
+## 5. Terminal energy-budget certificate
 
-The terminal no-go concerns low-mode terminal coefficients alone. Navier-Stokes supplies a richer finite record: retained terminal energy plus accumulated retained viscous dissipation.
-
-For the **actual** unforced Leray-Hopf projection,
+The terminal no-go concerns low-mode coefficients alone. Navier-Stokes supplies a richer retained record: retained terminal energy plus accumulated retained viscous dissipation. For the **actual** unforced Leray-Hopf projection,
 
 \[
 \boxed{
 \|(I-P_K)u(T)\|_2^2
 \le
 \|u_0\|_2^2
--
-\|P_Ku(T)\|_2^2
--
-2\nu\int_0^T\|\nabla P_Ku(t)\|_2^2dt
+-\|P_Ku(T)\|_2^2
+-2\nu\int_0^T\|\nabla P_Ku(t)\|_2^2dt
 }.
 \]
 
-A fail-closed directional-bound version takes
+A fail-closed directional-bound version uses
 
 \[
 U_0\ge\|u_0\|_2,
@@ -149,7 +139,7 @@ and returns
 }.
 \]
 
-If the radicand is materially negative, the inputs are mutually inconsistent and the verdict is `HOLD`; never clamp such a result to zero.
+A materially negative radicand means the directional certificates are inconsistent and the verdict is `HOLD`; it is not clamped into a false zero bound.
 
 For exact projections,
 
@@ -168,81 +158,146 @@ where
 =
 \|u_0\|_2^2-\|u(T)\|_2^2
 -2\nu\int_0^T\|\nabla u\|_2^2dt
-\ge0
+\ge0.
 \]
 
-is the energy-inequality slack. Hence
+Thus `lim beta_K^2 = D_E(T)` for this particular budget. Under independently justified energy equality the floor vanishes.
+
+## 6. Residual-based Galerkin-to-continuum adapter
+
+The energy-budget theorem concerns the actual continuum projection, not a raw Galerkin output. To avoid silently identifying them, EPSC now uses a standard relative-energy adapter.
+
+Let `v(t)` be a smooth divergence-free finite Fourier comparison path and define
 
 \[
-\lim_{K\to\infty}(\beta_K^{EB})^2=\mathcal D_E(T).
+r=\partial_t v+P[(v\cdot\nabla)v]-\nu\Delta v-Pf,
 \]
 
-If energy equality is independently justified, `D_E(T)=0` and this terminal certificate tends to zero.
+\[
+A_T=2\int_0^T\|\nabla v\|_\infty dt,
+\qquad
+B_T=\int_0^T\|r\|_{H^{-1}}^2dt.
+\]
 
-## 6. Implementation
+For a Leray-Hopf solution `u`, the standard relative-energy/Gronwall estimate gives
+
+\[
+\boxed{
+\sup_{0\le t\le T}\|u(t)-v(t)\|_2^2
+\le
+e^{A_T}\left(e_0^2+\frac{B_T}{\nu}\right)
+}.
+\]
+
+If `v(T)` is supported in the retained cube, then `(I-P_K)v(T)=0`, hence
+
+\[
+\boxed{
+\|(I-P_K)u(T)\|_2
+\le
+e^{A_T/2}\sqrt{e_0^2+B_T/\nu}
+}.
+\]
+
+This supplies a terminal continuum `beta_K` from a **certified comparison path plus certified residual summaries**, without assuming that the numerical trajectory equals `P_Ku`.
+
+## 7. Finite unresolved residual tape
+
+For an exact `K`-supported Fourier-Galerkin path, the retained Galerkin equations cancel the projected part of the full-equation residual. The unresolved nonlinear output is supported inside the finite `2K` cube. For omitted mode `q`,
+
+\[
+\widehat r_q
+=P_q\left[i\sum_{p+s=q}(s\cdot\widehat v_p)\widehat v_s\right],
+\qquad \|q\|_\infty>K,
+\]
+
+and
+
+\[
+\|r\|_{H^{-1}}^2
+=\sum_{q\ne0}\frac{|\widehat r_q|^2}{|q|^2}.
+\]
+
+Both are finite computations for fixed cutoff. A conservative finite Fourier bound also gives
+
+\[
+\|\nabla v\|_\infty\le\sum_k |k|\,|\widehat v_k|.
+\]
+
+Therefore the analytic adapter reduces the remaining numerical problem to certified continuous-time enclosure of finite quantities.
+
+## 8. Implementation
 
 Existing evolution code is reused; no second NS solver is introduced.
 
 ```text
-idm/ns_retained.py              finite Fourier-Galerkin evolution
-idm/ns_epsilon.py               nested defect + fail-closed epsilon gate
-idm/ns_tail_certificate.py      spacetime / H^s / readout tail certificates
-idm/ns_terminal_certificate.py  terminal energy-budget certificate
+idm/ns_retained.py                 finite Fourier-Galerkin evolution
+idm/ns_epsilon.py                  nested defect + fail-closed epsilon gate
+idm/ns_tail_certificate.py         spacetime / H^s / readout tail certificates
+idm/ns_terminal_certificate.py     terminal energy-budget certificate
+idm/ns_relative_energy_adapter.py  finite residual + relative-energy helper layer
 ```
 
-Tests:
+Tests include:
 
 ```text
 tests/test_ns_tail_certificate.py
 tests/test_ns_terminal_certificate.py
+tests/test_ns_relative_energy_adapter.py
 ```
 
-The terminal API intentionally accepts **certified directional bounds**, not raw numerical fields, because the theorem concerns the actual continuum projection.
+The terminal APIs intentionally accept certified directional bounds or certified residual summaries, not unqualified raw numerical fields.
 
-## 7. Toledo lineage
+## 9. Toledo lineage
 
-- `PROP-EPSC-01..09`: `morrocwi/toledo/registry/proposals/discrete_epsilon_completion.json`
-- `PROP-EPSC-10`: terminal Leray-Hopf energy-budget certificate
-- `PROP-EPSC-11`: energy-defect floor / energy-equality closure
-- `PROP-EPSC-12`: **OPEN** finite-Galerkin -> continuum retained-energy-tape adapter
+The live proposal family now runs through `PROP-EPSC-15`:
 
-The latter three are in `registry/proposals/discrete_epsilon_completion_terminal_energy.json`.
+- `PROP-EPSC-01..09` — nested defect, target-indexed tail, spectral/spacetime/readout family;
+- `PROP-EPSC-10` — terminal Leray-Hopf energy-budget certificate;
+- `PROP-EPSC-11` — energy-defect floor / energy-equality closure;
+- `PROP-EPSC-12` — Galerkin-to-continuum retained-record adapter obligation;
+- `PROP-EPSC-13` — residual-based Leray relative-energy adapter;
+- `PROP-EPSC-14` — finite Fourier unresolved residual tape;
+- `PROP-EPSC-15` — **OPEN** validated RK4 continuous-time residual enclosure.
 
-## 8. Current frontier
+These are proposal identifiers and tier/provenance records, not automatically canonical verified Toledo theorem codes.
 
-The main problem has moved from “invent some `beta_K`” to a much sharper bridge:
+## 10. Current frontier: validated RK4 continuous-time enclosure
+
+The current production solver stores floating-point RK4 node/stage data. Nodewise residual samples cannot certify the time integrals appearing in `A_T` and `B_T`. The remaining end-to-end numerical bridge is therefore
 
 ```text
-project finite Galerkin trajectory
+floating-point RK4 tape
         |
-        | PROP-EPSC-12: certified directional adapter error (OPEN)
+        | PROP-EPSC-15 (OPEN)
         v
-actual continuum projected terminal energy/dissipation tape
+validated continuous-time finite Fourier interpolation v_h(t)
         |
-        | PROP-EPSC-10
+        | certified A_T <= A_bar_T, B_T <= B_bar_T
         v
-rigorous terminal beta_K
+PROP-EPSC-13 relative-energy adapter
+        |
+        v
+terminal continuum L2 beta_K
+        |
+        v
+fail-closed epsilon certificate
 ```
 
-Nested-cutoff stability can help diagnose this adapter, but it is not itself the adapter theorem.
+A practical validated implementation may use a piecewise-polynomial RK4 continuous extension, outward-rounded interval coefficient enclosures, interval evaluation of finite triad residuals on each time cell, and certified integration of resulting nonnegative upper majorants. That validated interval layer is **not yet claimed complete**.
+
+## Paper and NS evidence
+
+The NS repository contains the standalone manuscript
+
+`paper/EPSC_NAVIER_STOKES_CERTIFICATES.tex`
+
+plus focused proof notes, reproduction checkers and the generated Volume-7 ledger. The manuscript deliberately separates standard analytic ingredients from project-specific EPSC architecture and finite diagnostics.
 
 ## Claim boundary
 
-Supported at standard analytic (`Dr`) tier:
+Supported at standard analytic (`Dr`) tier are the terminal non-identifiability obstruction, spectral tail inequality, explicit Leray-Hopf spacetime tail certificate, Lipschitz readout lift, conditional terminal `H^s` certificate, terminal energy-budget certificate, its energy-defect-floor analysis, and the relative-energy adapter under its stated hypotheses. Finite code checks validate only the finite algebra/instances they execute.
 
-- terminal low-mode records alone are non-identifying over an unrestricted divergence-free `L2` class;
-- the spectral `H^s -> L2` tail inequality;
-- explicit Leray-Hopf `L2_tL2_x` tail certificates;
-- Lipschitz readout lifts;
-- a terminal tail certificate conditional on a pointwise `H^s` bound;
-- a prescribed terminal-time a-posteriori energy-budget bound from certified retained energy/dissipation data;
-- asymptotic closure of that energy-budget certificate under energy equality.
+Still open are the validated continuous-time RK4 enclosure required for an end-to-end certificate from the current floating-point solver, unconditional pointwise global regularity in 3-D, physical/DNS adequacy of coarse cutoffs, and the global smoothness-versus-blow-up question itself.
 
-Still open:
-
-- the certified Galerkin-to-continuum adapter needed to feed the current finite solver into the terminal continuum theorem;
-- unconditional pointwise global regularity in 3-D;
-- physical/DNS adequacy of coarse cutoffs;
-- global smoothness versus finite-time singularity of full 3-D Navier-Stokes.
-
-`PROP-EPSC-04` is therefore **partially resolved, not universally solved**.
+`PROP-EPSC-04` is therefore **partially resolved by target/record refinement, not universally solved**, and `PROP-EPSC-15` is the sharp current implementation frontier.
