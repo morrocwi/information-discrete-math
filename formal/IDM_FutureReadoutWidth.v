@@ -10,6 +10,7 @@
 
 Require Import List.
 Require Import Bool.
+Require Import PeanoNat.
 Require Import IDM_DeclarationBound.
 Import ListNotations.
 
