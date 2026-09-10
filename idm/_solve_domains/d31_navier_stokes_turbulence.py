@@ -1,4 +1,7 @@
 # finite Navier--Stokes turbulence readouts
+# Solver-surface owner: this registered kind is intentionally included in the
+# generated fixture/capability/golden manifests; the sync workflow keeps those
+# public surfaces single-sourced from the live registry.
 from idm._solve_core import *  # noqa: F401,F403
 from idm import ns_turbulence as NST
 
