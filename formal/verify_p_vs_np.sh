@@ -20,6 +20,7 @@ clean() {
         IDM_ExistentialProjection.vo IDM_ExistentialProjection.glob .IDM_ExistentialProjection.aux \
         IDM_ResidualCoverCapacity.vo IDM_ResidualCoverCapacity.glob .IDM_ResidualCoverCapacity.aux \
         IDM_ProjectionCollapseGuard.vo IDM_ProjectionCollapseGuard.glob .IDM_ProjectionCollapseGuard.aux \
+        IDM_SATRestrictionDefect.vo IDM_SATRestrictionDefect.glob .IDM_SATRestrictionDefect.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -56,5 +57,6 @@ check_closed IDM_FreeRereadGuard.v 3 free-reread-guard
 check_closed IDM_ExistentialProjection.v 3 existential-projection
 check_closed IDM_ResidualCoverCapacity.v 3 residual-cover-capacity
 check_closed IDM_ProjectionCollapseGuard.v 2 projection-collapse-guard
+check_closed IDM_SATRestrictionDefect.v 5 SAT-restriction-defect
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
