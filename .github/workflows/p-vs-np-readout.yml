@@ -37,6 +37,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: install IDM runtime dependencies
+        run: python3 -m pip install -e .
       - name: intervention signature exact fixture
         run: python3 research/p_vs_np_readout/sat_intervention_quotient.py --max-m 10
       - name: future-readout residual-width exact fixture
