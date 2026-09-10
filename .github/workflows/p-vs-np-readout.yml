@@ -27,6 +27,7 @@ on:
       - "formal/IDM_AdaptiveDefectCapture.v"
       - "formal/IDM_DefectHittingSupport.v"
       - "formal/IDM_BackdoorSupportBudget.v"
+      - "formal/IDM_OuterHittingSeparation.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
   pull_request:
@@ -54,6 +55,7 @@ on:
       - "formal/IDM_AdaptiveDefectCapture.v"
       - "formal/IDM_DefectHittingSupport.v"
       - "formal/IDM_BackdoorSupportBudget.v"
+      - "formal/IDM_OuterHittingSeparation.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
 
@@ -109,6 +111,8 @@ jobs:
         run: python3 research/p_vs_np_readout/closure_guided_hitting_support.py
       - name: certified tractable frontier support
         run: python3 research/p_vs_np_readout/tractable_frontier_support.py
+      - name: finite outer hitting synthesis
+        run: python3 research/p_vs_np_readout/outer_hitting_finite_dsl.py
       - name: RRR equality sharing negative control
         run: python3 research/p_vs_np_readout/rrr_circuit_audit.py
       - name: Readout-Universe accessible-completion fixture
