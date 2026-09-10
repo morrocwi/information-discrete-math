@@ -1,13 +1,14 @@
 (* ===================================================================== *)
 (* IDM_SATRestrictionDefect.v                                             *)
-(* Quantitative local-to-global kernel for Boolean restriction trees.      *)
+(* Quantitative local-to-global kernels for Boolean restriction trees.     *)
 (*                                                                       *)
-(* A candidate label at an internal node should equal OR of its two child  *)
-(* labels; a leaf candidate should equal the declared terminal truth.      *)
-(* The root disagreement is bounded by the sum of all local defects.       *)
+(* Full tree: root disagreement is bounded by all local OR defects plus    *)
+(* exact leaf errors.                                                      *)
+(* Partial tree: exact leaf errors may be replaced by separately certified *)
+(* frontier budgets.  Unknown frontier error must not be silently set to 0. *)
 (*                                                                       *)
-(* This is the finite Boolean analogue of propagating certified local      *)
-(* discrepancy through a declared reader.  It does NOT prove a circuit     *)
+(* These are finite Boolean analogues of propagating certified local        *)
+(* discrepancy through a declared reader.  They do NOT prove a circuit     *)
 (* lower bound or P <> NP.                                                 *)
 (* ===================================================================== *)
 
@@ -33,6 +34,10 @@ Proof.
   intros a b c d.
   destruct a, b, c, d; simpl; lia.
 Qed.
+
+(* --------------------------------------------------------------------- *)
+(* Full restriction tree.                                                *)
+(* --------------------------------------------------------------------- *)
 
 Inductive LTree : Type :=
 | LLeaf : bool -> bool -> LTree
@@ -104,10 +109,84 @@ Proof.
   - simpl in H. exact H.
 Qed.
 
+(* --------------------------------------------------------------------- *)
+(* Partial restriction tree with frontier error budgets.                  *)
+(* --------------------------------------------------------------------- *)
+
+Inductive PTree : Type :=
+| PLeaf : bool -> bool -> nat -> PTree
+(* [PLeaf target candidate certified_budget] *)
+| PNode : bool -> PTree -> PTree -> PTree.
+(* [PNode candidate left right] *)
+
+Fixpoint pcandidate_root (t : PTree) : bool :=
+  match t with
+  | PLeaf _ c _ => c
+  | PNode c _ _ => c
+  end.
+
+Fixpoint ptarget_value (t : PTree) : bool :=
+  match t with
+  | PLeaf target _ _ => target
+  | PNode _ l r => orb (ptarget_value l) (ptarget_value r)
+  end.
+
+Fixpoint frontier_budget_sum (t : PTree) : nat :=
+  match t with
+  | PLeaf _ _ budget => budget
+  | PNode c l r =>
+      bdist c (orb (pcandidate_root l) (pcandidate_root r))
+      + frontier_budget_sum l + frontier_budget_sum r
+  end.
+
+Fixpoint frontier_budgets_valid (t : PTree) : Prop :=
+  match t with
+  | PLeaf target c budget => bdist c target <= budget
+  | PNode _ l r => frontier_budgets_valid l /\ frontier_budgets_valid r
+  end.
+
+Theorem partial_root_error_bounded_by_frontier :
+  forall t,
+    frontier_budgets_valid t ->
+    bdist (pcandidate_root t) (ptarget_value t)
+      <= frontier_budget_sum t.
+Proof.
+  induction t as [target c budget|c l IHl r IHr].
+  - simpl. intros H. exact H.
+  - simpl. intros [Hl Hr].
+    specialize (IHl Hl).
+    specialize (IHr Hr).
+    pose proof (bdist_triangle
+      c
+      (orb (pcandidate_root l) (pcandidate_root r))
+      (orb (ptarget_value l) (ptarget_value r))) as Htri.
+    pose proof (orb_lipschitz_l1
+      (pcandidate_root l) (pcandidate_root r)
+      (ptarget_value l) (ptarget_value r)) as Hor.
+    lia.
+Qed.
+
+Theorem zero_partial_budget_implies_exact_root :
+  forall t,
+    frontier_budgets_valid t ->
+    frontier_budget_sum t = 0 ->
+    pcandidate_root t = ptarget_value t.
+Proof.
+  intros t Hvalid Hz.
+  pose proof (partial_root_error_bounded_by_frontier t Hvalid) as H.
+  rewrite Hz in H.
+  unfold bdist in H.
+  destruct (Bool.eqb (pcandidate_root t) (ptarget_value t)) eqn:Heq.
+  - now apply Bool.eqb_true_iff in Heq.
+  - simpl in H. lia.
+Qed.
+
 Print Assumptions bdist_triangle.
 Print Assumptions orb_lipschitz_l1.
 Print Assumptions root_error_bounded_by_defects.
 Print Assumptions zero_defect_implies_exact_root.
 Print Assumptions wrong_root_forces_positive_defect.
+Print Assumptions partial_root_error_bounded_by_frontier.
+Print Assumptions zero_partial_budget_implies_exact_root.
 
 End SATRestrictionDefect.
