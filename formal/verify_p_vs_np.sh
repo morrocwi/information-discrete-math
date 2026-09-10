@@ -10,6 +10,8 @@ clean() {
         IDM_FutureReadoutWidth.vo IDM_FutureReadoutWidth.glob .IDM_FutureReadoutWidth.aux \
         IDM_TransformPotential.vo IDM_TransformPotential.glob .IDM_TransformPotential.aux \
         IDM_FusionDual.vo IDM_FusionDual.glob .IDM_FusionDual.aux \
+        IDM_CircuitGenesisBridge.vo IDM_CircuitGenesisBridge.glob .IDM_CircuitGenesisBridge.aux \
+        IDM_RetainRecomputeResolve.vo IDM_RetainRecomputeResolve.glob .IDM_RetainRecomputeResolve.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -46,6 +48,22 @@ printf '%s\n' "$out_dual"
 count_dual=$(printf '%s\n' "$out_dual" | grep -c "Closed under the global context" || true)
 if [ "$count_dual" -lt 4 ]; then
   echo "Expected four axiom-free fusion-dual Print Assumptions results; got $count_dual" >&2
+  exit 1
+fi
+
+out_cgsl=$(coqc -q IDM_CircuitGenesisBridge.v)
+printf '%s\n' "$out_cgsl"
+count_cgsl=$(printf '%s\n' "$out_cgsl" | grep -c "Closed under the global context" || true)
+if [ "$count_cgsl" -lt 6 ]; then
+  echo "Expected six axiom-free CGSL Print Assumptions results; got $count_cgsl" >&2
+  exit 1
+fi
+
+out_rrr=$(coqc -q IDM_RetainRecomputeResolve.v)
+printf '%s\n' "$out_rrr"
+count_rrr=$(printf '%s\n' "$out_rrr" | grep -c "Closed under the global context" || true)
+if [ "$count_rrr" -lt 5 ]; then
+  echo "Expected five axiom-free RRR Print Assumptions results; got $count_rrr" >&2
   exit 1
 fi
 
