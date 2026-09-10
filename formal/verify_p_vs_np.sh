@@ -15,6 +15,7 @@ clean() {
         IDM_CircuitLedgerTransfer.vo IDM_CircuitLedgerTransfer.glob .IDM_CircuitLedgerTransfer.aux \
         IDM_RRRCostLowerBound.vo IDM_RRRCostLowerBound.glob .IDM_RRRCostLowerBound.aux \
         IDM_DemandCircuitDominance.vo IDM_DemandCircuitDominance.glob .IDM_DemandCircuitDominance.aux \
+        IDM_ReadoutUniverseAccessibleCompletion.vo IDM_ReadoutUniverseAccessibleCompletion.glob .IDM_ReadoutUniverseAccessibleCompletion.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -91,6 +92,14 @@ printf '%s\n' "$out_dominance"
 count_dominance=$(printf '%s\n' "$out_dominance" | grep -c "Closed under the global context" || true)
 if [ "$count_dominance" -lt 3 ]; then
   echo "Expected three axiom-free demand-dominance Print Assumptions results; got $count_dominance" >&2
+  exit 1
+fi
+
+out_ru_completion=$(coqc -q IDM_ReadoutUniverseAccessibleCompletion.v)
+printf '%s\n' "$out_ru_completion"
+count_ru_completion=$(printf '%s\n' "$out_ru_completion" | grep -c "Closed under the global context" || true)
+if [ "$count_ru_completion" -lt 4 ]; then
+  echo "Expected four axiom-free Readout-Universe completion Print Assumptions results; got $count_ru_completion" >&2
   exit 1
 fi
 
