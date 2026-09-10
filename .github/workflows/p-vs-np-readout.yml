@@ -6,12 +6,14 @@ on:
     paths:
       - "research/p_vs_np_readout/**"
       - "formal/IDM_SATIntervention.v"
+      - "formal/IDM_FutureReadoutWidth.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
   pull_request:
     paths:
       - "research/p_vs_np_readout/**"
       - "formal/IDM_SATIntervention.v"
+      - "formal/IDM_FutureReadoutWidth.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
 
@@ -25,6 +27,8 @@ jobs:
           python-version: "3.11"
       - name: intervention signature exact fixture
         run: python3 research/p_vs_np_readout/sat_intervention_quotient.py --max-m 10
+      - name: future-readout residual-width exact fixture
+        run: python3 research/p_vs_np_readout/future_readout_width.py --max-m 6
       - name: earlier SAT collision fixture
         run: python3 research/p_vs_np_readout/readout_sat_frontier.py
       - name: AC0 reduction baseline
@@ -39,7 +43,7 @@ jobs:
           coq_version: "8.20"
           ocaml_version: "default"
           custom_script: |
-            startGroup "verify P-vs-NP intervention witnesses"
+            startGroup "verify P-vs-NP readout witnesses"
               sudo chown -R "$(whoami)" .
               bash formal/verify_p_vs_np.sh
             endGroup
