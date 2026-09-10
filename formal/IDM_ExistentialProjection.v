@@ -52,10 +52,10 @@ Section Projection.
   Proof.
     intros x Hall.
     unfold exists_readout.
-    apply existsb_forallb.
-    induction witnesses as [|w ws IH]; simpl.
+    induction witnesses as [|w ws IH].
     - reflexivity.
-    - rewrite Hall by (left; reflexivity).
+    - simpl.
+      rewrite Hall by (left; reflexivity).
       simpl.
       apply IH.
       intros w' Hin.
