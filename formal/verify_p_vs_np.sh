@@ -23,6 +23,7 @@ clean() {
         IDM_SATRestrictionDefect.vo IDM_SATRestrictionDefect.glob .IDM_SATRestrictionDefect.aux \
         IDM_SATOneSidedAudit.vo IDM_SATOneSidedAudit.glob .IDM_SATOneSidedAudit.aux \
         IDM_CompressedNegativeClosure.vo IDM_CompressedNegativeClosure.glob .IDM_CompressedNegativeClosure.aux \
+        IDM_SATFixedPointDefect.vo IDM_SATFixedPointDefect.glob .IDM_SATFixedPointDefect.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -62,5 +63,6 @@ check_closed IDM_ProjectionCollapseGuard.v 2 projection-collapse-guard
 check_closed IDM_SATRestrictionDefect.v 7 SAT-restriction-defect
 check_closed IDM_SATOneSidedAudit.v 2 SAT-one-sided-audit
 check_closed IDM_CompressedNegativeClosure.v 5 compressed-negative-closure
+check_closed IDM_SATFixedPointDefect.v 2 SAT-fixed-point-defect
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
