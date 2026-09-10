@@ -4,7 +4,8 @@
 (*                                                                        *)
 (* Scope: exact finite/logical content. This file does NOT prove P <> NP. *)
 (* It formalizes the NoEarlyCollapse consequence for an explicitly typed  *)
-(* three-channel decoder and the finite aggregation bound for obligations. *)
+(* three-channel decoder, a finite aggregation bound for obligations, and *)
+(* the full-seed degeneracy showing why recomputation COST must be charged. *)
 (* ===================================================================== *)
 
 Require Import List.
@@ -75,6 +76,33 @@ Section SemanticNoEarlyCollapse.
 
 End SemanticNoEarlyCollapse.
 
+(* --------------------------------------------------------------------- *)
+(* No-go / calibration theorem.  If recomputation is allowed to keep the   *)
+(* complete source history and the decoder has uncharged access to the     *)
+(* target readout function, every future-readout problem is trivially exact. *)
+(* Thus RRR becomes complexity-relevant only after the construction/decoder *)
+(* work of the recompute channel is resource-bounded.                       *)
+(* --------------------------------------------------------------------- *)
+Section FullSeedDegeneracy.
+
+  Variables History Future Output : Type.
+  Variable target_readout : History -> Future -> Output.
+
+  Definition seed_identity (h : History) : History := h.
+
+  Definition decode_from_full_seed
+    (_ : unit) (h : History) (_ : unit) (u : Future) : Output :=
+    target_readout h u.
+
+  Theorem full_history_recompute_seed_is_exact :
+    forall (h : History) (u : Future),
+      decode_from_full_seed tt (seed_identity h) tt u = target_readout h u.
+  Proof.
+    intros h u. reflexivity.
+  Qed.
+
+End FullSeedDegeneracy.
+
 Section FiniteObligationLedger.
 
   Variable Obligation : Type.
@@ -136,6 +164,7 @@ End FiniteObligationLedger.
 
 Print Assumptions no_free_collapse_three_channels.
 Print Assumptions retain_recompute_resolve_trichotomy.
+Print Assumptions full_history_recompute_seed_is_exact.
 Print Assumptions rrr_cover_count.
 Print Assumptions rrr_budget_bound.
 Print Assumptions rrr_gap_blocks_complete_cover.
