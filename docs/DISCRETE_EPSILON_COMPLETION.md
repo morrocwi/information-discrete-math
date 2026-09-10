@@ -1,6 +1,6 @@
 # Discrete Epsilon-Completion Programme
 
-Status: **partially closed by target/readout refinement**. Rigorous computable omitted-tail certificates exist for a Leray-Hopf spacetime norm and for several conditional/a-posteriori terminal settings. The current end-to-end finite-RK4-to-continuum bridge is isolated as one explicit validated-numerics obligation: `PROP-EPSC-15`.
+Status: **end-to-end finite-tape adapter constructed for the declared periodic Fourier setting**. Rigorous computable omitted-tail certificates exist for a Leray-Hopf spacetime norm and for several conditional/a-posteriori terminal settings. `PROP-EPSC-15`, previously the missing numerical bridge, is now supplied by an exact-dyadic piecewise-linear comparison path built from the recorded RK4 node tape. The standard relative-energy transfer remains analytic (`Dr`) rather than machine-checked. High-cutoff tightness and cost are the new engineering frontier (`PROP-EPSC-16`).
 
 ## Repository roles
 
@@ -76,13 +76,7 @@ This `beta_K` is explicit, computable and tends to zero without a global-smoothn
 }.
 \]
 
-A Lipschitz readout `Q` inherits the certified error:
-
-\[
-\|Q(u)-Q(P_Ku)\|\le L_Q\beta_K.
-\]
-
-For the time-average `ubar=(1/T) int_0^T u dt`, the tail is at most `beta_K/sqrt(T)`.
+A Lipschitz readout `Q` inherits the certified error, and a time-average inherits the corresponding `1/sqrt(T)` factor.
 
 ## 4. Conditional terminal Sobolev certificate
 
@@ -107,7 +101,7 @@ The Fourier-tail step is elementary; obtaining a globally valid pointwise `H^s` 
 
 ## 5. Terminal energy-budget certificate
 
-The terminal no-go concerns low-mode coefficients alone. Navier-Stokes supplies a richer retained record: retained terminal energy plus accumulated retained viscous dissipation. For the **actual** unforced Leray-Hopf projection,
+For the **actual** unforced Leray-Hopf projection,
 
 \[
 \boxed{
@@ -139,35 +133,11 @@ and returns
 }.
 \]
 
-A materially negative radicand means the directional certificates are inconsistent and the verdict is `HOLD`; it is not clamped into a false zero bound.
+A materially negative radicand means the directional certificates are inconsistent and the verdict is `HOLD`; it is not clamped into a false zero bound. The asymptotic floor of this particular energy-budget certificate is the energy-inequality defect; under independently justified energy equality that floor vanishes.
 
-For exact projections,
+## 6. Residual-based finite-path-to-continuum adapter
 
-\[
-(\beta_K^{EB})^2
-=
-\|(I-P_K)u(T)\|_2^2
-+2\nu\int_0^T\|\nabla(I-P_K)u\|_2^2dt
-+\mathcal D_E(T),
-\]
-
-where
-
-\[
-\mathcal D_E(T)
-=
-\|u_0\|_2^2-\|u(T)\|_2^2
--2\nu\int_0^T\|\nabla u\|_2^2dt
-\ge0.
-\]
-
-Thus `lim beta_K^2 = D_E(T)` for this particular budget. Under independently justified energy equality the floor vanishes.
-
-## 6. Residual-based Galerkin-to-continuum adapter
-
-The energy-budget theorem concerns the actual continuum projection, not a raw Galerkin output. To avoid silently identifying them, EPSC now uses a standard relative-energy adapter.
-
-Let `v(t)` be a smooth divergence-free finite Fourier comparison path and define
+To avoid silently identifying a Galerkin output with the continuum projection, EPSC uses a standard relative-energy adapter. Let `v(t)` be a divergence-free comparison path with the required regularity and define
 
 \[
 r=\partial_t v+P[(v\cdot\nabla)v]-\nu\Delta v-Pf,
@@ -194,48 +164,89 @@ If `v(T)` is supported in the retained cube, then `(I-P_K)v(T)=0`, hence
 \[
 \boxed{
 \|(I-P_K)u(T)\|_2
-\le
-e^{A_T/2}\sqrt{e_0^2+B_T/\nu}
-}.
+\le e^{A_T/2}\sqrt{e_0^2+B_T/\nu}.
+} 
 \]
 
-This supplies a terminal continuum `beta_K` from a **certified comparison path plus certified residual summaries**, without assuming that the numerical trajectory equals `P_Ku`.
+The continuum implication is analytic (`Dr`). The project-specific numerical obligation is to provide certified `A_T` and `B_T` from the actual recorded finite tape.
 
-## 7. Finite unresolved residual tape
+## 7. PROP-EPSC-15: exact continuous-time enclosure of an RK4 tape
 
-For an exact `K`-supported Fourier-Galerkin path, the retained Galerkin equations cancel the projected part of the full-equation residual. The unresolved nonlinear output is supported inside the finite `2K` cube. For omitted mode `q`,
+The missing numerical bridge can be supplied without pretending that the RK4 recurrence is the exact PDE flow and without reconstructing an unknown continuum trajectory.
+
+For every stored binary64 Fourier coefficient, take its **exact IEEE-754 dyadic rational value**. Apply the Fourier Leray projector in exact rational arithmetic and call the resulting node records `v_n`. Between consecutive nodes define
 
 \[
-\widehat r_q
-=P_q\left[i\sum_{p+s=q}(s\cdot\widehat v_p)\widehat v_s\right],
-\qquad \|q\|_\infty>K,
+v_h(t_n+\theta h)=(1-\theta)v_n+\theta v_{n+1},
+\qquad 0\le\theta\le1.
 \]
 
-and
+This path is continuous, finite Fourier-supported and exactly divergence-free. Its time derivative is piecewise constant. Because every Fourier coefficient is affine in `theta`, the quadratic convection term is degree at most two:
 
 \[
-\|r\|_{H^{-1}}^2
+P[(v_h\cdot\nabla)v_h]
+=C_0+C_1\theta+C_2\theta^2.
+\]
+
+Therefore the full residual on a cell,
+
+\[
+r_h=\partial_t v_h+P[(v_h\cdot\nabla)v_h]-\nu\Delta v_h-Pf,
+\]
+
+is degree at most two in `theta`, supported on a finite Fourier cube, and
+
+\[
+\|r_h\|_{H^{-1}}^2
+\]
+
+is a degree-at-most-four polynomial whose time integral can be evaluated **exactly as a rational number**. For the normalized `2*pi` torus the implementation uses
+
+\[
+\|r_h\|_{H^{-1}}^2
 =\sum_{q\ne0}\frac{|\widehat r_q|^2}{|q|^2}.
 \]
 
-Both are finite computations for fixed cutoff. A conservative finite Fourier bound also gives
+A rigorous gradient majorant is obtained from
 
 \[
-\|\nabla v\|_\infty\le\sum_k |k|\,|\widehat v_k|.
+\|\nabla v_h\|_\infty
+\le \sum_{k,i,j}|k_j|\,|\widehat v_{k,i}|
+\le \sum_{k,i,j}|k_j|
+\left(|\Re\widehat v_{k,i}|+|\Im\widehat v_{k,i}|\right),
 \]
 
-Therefore the analytic adapter reduces the remaining numerical problem to certified continuous-time enclosure of finite quantities.
+and convexity of absolute value gives an exact endpoint-based cell integral for this majorant. Finally, `exp(A_bar)` is enclosed from above with an exact rational Taylor partial sum plus a geometric remainder, and the reported decimal square root is rounded upward by integer arithmetic.
+
+Thus the chain is now
+
+```text
+stored binary64 RK4 node tape
+        |
+        | exact dyadic capture + exact Leray projection
+        v
+continuous piecewise-linear finite Fourier path v_h(t)
+        |
+        | exact rational residual integration + rigorous gradient majorant
+        v
+A_T <= A_bar_T,  B_T <= B_bar_T
+        |
+        | PROP-EPSC-13 (analytic Dr relative-energy theorem)
+        v
+terminal continuum L2 / omitted-tail beta_K
+```
+
+The PDE residual of the comparison path is **not hidden**: interpolation error, time-discretization error, and the difference between the finite path and an exact Navier-Stokes trajectory all enter `B_bar`.
 
 ## 8. Implementation
-
-Existing evolution code is reused; no second NS solver is introduced.
 
 ```text
 idm/ns_retained.py                 finite Fourier-Galerkin evolution
 idm/ns_epsilon.py                  nested defect + fail-closed epsilon gate
 idm/ns_tail_certificate.py         spacetime / H^s / readout tail certificates
 idm/ns_terminal_certificate.py     terminal energy-budget certificate
-idm/ns_relative_energy_adapter.py  finite residual + relative-energy helper layer
+idm/ns_relative_energy_adapter.py  analytic adapter + snapshot residual helpers
+idm/ns_rk4_path_certificate.py     exact-dyadic piecewise-linear A/B enclosure
 ```
 
 Tests include:
@@ -244,60 +255,54 @@ Tests include:
 tests/test_ns_tail_certificate.py
 tests/test_ns_terminal_certificate.py
 tests/test_ns_relative_energy_adapter.py
+tests/test_ns_rk4_path_certificate.py
 ```
 
-The terminal APIs intentionally accept certified directional bounds or certified residual summaries, not unqualified raw numerical fields.
+The path-certificate API returns `CERTIFIED_SUMMARIES` only after exact divergence and zero-mean residual preconditions pass. Its finite arithmetic is separate from the analytic continuum theorem that consumes those summaries.
 
-## 9. Toledo lineage
+## 9. Executed finite witness
 
-The live proposal family now runs through `PROP-EPSC-15`:
+The independent NS reproduction checker executes the same construction on a short Taylor-Green `K=1` RK4 tape (`nu=0.01`, `dt=0.01`, `T=0.05`). In the recorded run it produced exact divergence-free nodes and zero-mean residual, with conservative finite summaries approximately
+
+\[
+\overline A_T=5.9955022941\times10^{-1},
+\qquad
+\overline B_T=9.7363869259\times10^{-5},
+\]
+
+and terminal relative-energy upper radius approximately
+
+\[
+\beta_T\le1.3316484576\times10^{-1}.
+\]
+
+These are **certificate values for that finite short run**, not a claim that `K=1` is a physically adequate turbulence resolution. A shear-decay sanity case independently checks that the certified radius dominates the known analytic terminal error.
+
+## 10. Toledo lineage
+
+The proposal family now runs through `PROP-EPSC-16`:
 
 - `PROP-EPSC-01..09` — nested defect, target-indexed tail, spectral/spacetime/readout family;
 - `PROP-EPSC-10` — terminal Leray-Hopf energy-budget certificate;
 - `PROP-EPSC-11` — energy-defect floor / energy-equality closure;
-- `PROP-EPSC-12` — Galerkin-to-continuum retained-record adapter obligation;
+- `PROP-EPSC-12` — broad Galerkin-to-continuum retained-record adapter obligation;
 - `PROP-EPSC-13` — residual-based Leray relative-energy adapter;
-- `PROP-EPSC-14` — finite Fourier unresolved residual tape;
-- `PROP-EPSC-15` — **OPEN** validated RK4 continuous-time residual enclosure.
+- `PROP-EPSC-14` — finite Fourier residual tape;
+- `PROP-EPSC-15` — exact-dyadic piecewise-linear continuous-time RK4-tape enclosure;
+- `PROP-EPSC-16` — **OPEN** high-cutoff tightness/scaling refinement.
 
-These are proposal identifiers and tier/provenance records, not automatically canonical verified Toledo theorem codes.
+These are proposal identifiers and provenance/tier records, not automatically canonical verified Toledo theorem codes.
 
-## 10. Current frontier: validated RK4 continuous-time enclosure
+## 11. Current frontier
 
-The current production solver stores floating-point RK4 node/stage data. Nodewise residual samples cannot certify the time integrals appearing in `A_T` and `B_T`. The remaining end-to-end numerical bridge is therefore
+The logical missing link identified by EPSC-15 is no longer “how do we turn node samples into a continuous-time certified residual?” A concrete construction now does that for the declared finite periodic Fourier tape.
 
-```text
-floating-point RK4 tape
-        |
-        | PROP-EPSC-15 (OPEN)
-        v
-validated continuous-time finite Fourier interpolation v_h(t)
-        |
-        | certified A_T <= A_bar_T, B_T <= B_bar_T
-        v
-PROP-EPSC-13 relative-energy adapter
-        |
-        v
-terminal continuum L2 beta_K
-        |
-        v
-fail-closed epsilon certificate
-```
-
-A practical validated implementation may use a piecewise-polynomial RK4 continuous extension, outward-rounded interval coefficient enclosures, interval evaluation of finite triad residuals on each time cell, and certified integration of resulting nonnegative upper majorants. That validated interval layer is **not yet claimed complete**.
-
-## Paper and NS evidence
-
-The NS repository contains the standalone manuscript
-
-`paper/EPSC_NAVIER_STOKES_CERTIFICATES.tex`
-
-plus focused proof notes, reproduction checkers and the generated Volume-7 ledger. The manuscript deliberately separates standard analytic ingredients from project-specific EPSC architecture and finite diagnostics.
+The remaining practical research problem is whether the bound can stay computationally affordable and non-vacuous as `K` and `T` grow. The current Fourier `l1` gradient majorant and the relative-energy exponential are deliberately conservative. Improving their tightness, using block/shell structure, interval FFTs, higher-order exact/validated continuous extensions, or retained readouts belongs to `PROP-EPSC-16`; none of those optimisations is required for the correctness of the present small finite certificate.
 
 ## Claim boundary
 
-Supported at standard analytic (`Dr`) tier are the terminal non-identifiability obstruction, spectral tail inequality, explicit Leray-Hopf spacetime tail certificate, Lipschitz readout lift, conditional terminal `H^s` certificate, terminal energy-budget certificate, its energy-defect-floor analysis, and the relative-energy adapter under its stated hypotheses. Finite code checks validate only the finite algebra/instances they execute.
+Supported at standard analytic (`Dr`) tier are the terminal non-identifiability obstruction, spectral tail inequality, explicit Leray-Hopf spacetime tail certificate, Lipschitz readout lift, conditional terminal `H^s` certificate, terminal energy-budget certificate, its energy-defect-floor analysis, and the relative-energy adapter under its stated hypotheses. `PROP-EPSC-15` adds a finite exact-rational construction of the required continuous-time summaries from a recorded Fourier node tape; its executed instances are `finite_diagnostic`.
 
-Still open are the validated continuous-time RK4 enclosure required for an end-to-end certificate from the current floating-point solver, unconditional pointwise global regularity in 3-D, physical/DNS adequacy of coarse cutoffs, and the global smoothness-versus-blow-up question itself.
+Still open are high-cutoff tightness/scaling, unconditional pointwise global regularity in 3-D, physical/DNS adequacy of coarse cutoffs, and the global smoothness-versus-blow-up question itself.
 
-`PROP-EPSC-04` is therefore **partially resolved by target/record refinement, not universally solved**, and `PROP-EPSC-15` is the sharp current implementation frontier.
+`PROP-EPSC-04` is therefore **resolved for several declared reader/record classes, not universally for arbitrary terminal retained coefficients**, and `PROP-EPSC-16` is the current engineering frontier.
