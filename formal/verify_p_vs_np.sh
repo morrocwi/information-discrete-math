@@ -18,6 +18,7 @@ clean() {
         IDM_ReadoutUniverseAccessibleCompletion.vo IDM_ReadoutUniverseAccessibleCompletion.glob .IDM_ReadoutUniverseAccessibleCompletion.aux \
         IDM_FreeRereadGuard.vo IDM_FreeRereadGuard.glob .IDM_FreeRereadGuard.aux \
         IDM_ExistentialProjection.vo IDM_ExistentialProjection.glob .IDM_ExistentialProjection.aux \
+        IDM_ResidualCoverCapacity.vo IDM_ResidualCoverCapacity.glob .IDM_ResidualCoverCapacity.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -28,97 +29,66 @@ coqc -q IDM_DeclarationBound.v >/dev/null
 out_intervention=$(coqc -q IDM_SATIntervention.v)
 printf '%s\n' "$out_intervention"
 count_intervention=$(printf '%s\n' "$out_intervention" | grep -c "Closed under the global context" || true)
-if [ "$count_intervention" -lt 2 ]; then
-  echo "Expected two axiom-free intervention Print Assumptions results; got $count_intervention" >&2
-  exit 1
-fi
+if [ "$count_intervention" -lt 2 ]; then echo "Expected two axiom-free intervention Print Assumptions results; got $count_intervention" >&2; exit 1; fi
 
 out_width=$(coqc -q IDM_FutureReadoutWidth.v)
 printf '%s\n' "$out_width"
 count_width=$(printf '%s\n' "$out_width" | grep -c "Closed under the global context" || true)
-if [ "$count_width" -lt 7 ]; then
-  echo "Expected seven axiom-free width Print Assumptions results; got $count_width" >&2
-  exit 1
-fi
+if [ "$count_width" -lt 7 ]; then echo "Expected seven axiom-free width Print Assumptions results; got $count_width" >&2; exit 1; fi
 
 out_potential=$(coqc -q IDM_TransformPotential.v)
 printf '%s\n' "$out_potential"
 count_potential=$(printf '%s\n' "$out_potential" | grep -c "Closed under the global context" || true)
-if [ "$count_potential" -lt 3 ]; then
-  echo "Expected three axiom-free transform-potential Print Assumptions results; got $count_potential" >&2
-  exit 1
-fi
+if [ "$count_potential" -lt 3 ]; then echo "Expected three axiom-free transform-potential Print Assumptions results; got $count_potential" >&2; exit 1; fi
 
 out_dual=$(coqc -q IDM_FusionDual.v)
 printf '%s\n' "$out_dual"
 count_dual=$(printf '%s\n' "$out_dual" | grep -c "Closed under the global context" || true)
-if [ "$count_dual" -lt 4 ]; then
-  echo "Expected four axiom-free fusion-dual Print Assumptions results; got $count_dual" >&2
-  exit 1
-fi
+if [ "$count_dual" -lt 4 ]; then echo "Expected four axiom-free fusion-dual Print Assumptions results; got $count_dual" >&2; exit 1; fi
 
 out_cgsl=$(coqc -q IDM_CircuitGenesisBridge.v)
 printf '%s\n' "$out_cgsl"
 count_cgsl=$(printf '%s\n' "$out_cgsl" | grep -c "Closed under the global context" || true)
-if [ "$count_cgsl" -lt 6 ]; then
-  echo "Expected six axiom-free CGSL Print Assumptions results; got $count_cgsl" >&2
-  exit 1
-fi
+if [ "$count_cgsl" -lt 6 ]; then echo "Expected six axiom-free CGSL Print Assumptions results; got $count_cgsl" >&2; exit 1; fi
 
 out_rrr=$(coqc -q IDM_RetainRecomputeResolve.v)
 printf '%s\n' "$out_rrr"
 count_rrr=$(printf '%s\n' "$out_rrr" | grep -c "Closed under the global context" || true)
-if [ "$count_rrr" -lt 6 ]; then
-  echo "Expected six axiom-free RRR Print Assumptions results; got $count_rrr" >&2
-  exit 1
-fi
+if [ "$count_rrr" -lt 6 ]; then echo "Expected six axiom-free RRR Print Assumptions results; got $count_rrr" >&2; exit 1; fi
 
 out_transfer=$(coqc -q IDM_CircuitLedgerTransfer.v)
 printf '%s\n' "$out_transfer"
 count_transfer=$(printf '%s\n' "$out_transfer" | grep -c "Closed under the global context" || true)
-if [ "$count_transfer" -lt 3 ]; then
-  echo "Expected three axiom-free transfer Print Assumptions results; got $count_transfer" >&2
-  exit 1
-fi
+if [ "$count_transfer" -lt 3 ]; then echo "Expected three axiom-free transfer Print Assumptions results; got $count_transfer" >&2; exit 1; fi
 
 out_rrr_cost=$(coqc -q IDM_RRRCostLowerBound.v)
 printf '%s\n' "$out_rrr_cost"
 count_rrr_cost=$(printf '%s\n' "$out_rrr_cost" | grep -c "Closed under the global context" || true)
-if [ "$count_rrr_cost" -lt 3 ]; then
-  echo "Expected three axiom-free RRR-cost Print Assumptions results; got $count_rrr_cost" >&2
-  exit 1
-fi
+if [ "$count_rrr_cost" -lt 3 ]; then echo "Expected three axiom-free RRR-cost Print Assumptions results; got $count_rrr_cost" >&2; exit 1; fi
 
 out_dominance=$(coqc -q IDM_DemandCircuitDominance.v)
 printf '%s\n' "$out_dominance"
 count_dominance=$(printf '%s\n' "$out_dominance" | grep -c "Closed under the global context" || true)
-if [ "$count_dominance" -lt 3 ]; then
-  echo "Expected three axiom-free demand-dominance Print Assumptions results; got $count_dominance" >&2
-  exit 1
-fi
+if [ "$count_dominance" -lt 3 ]; then echo "Expected three axiom-free demand-dominance Print Assumptions results; got $count_dominance" >&2; exit 1; fi
 
 out_ru_completion=$(coqc -q IDM_ReadoutUniverseAccessibleCompletion.v)
 printf '%s\n' "$out_ru_completion"
 count_ru_completion=$(printf '%s\n' "$out_ru_completion" | grep -c "Closed under the global context" || true)
-if [ "$count_ru_completion" -lt 4 ]; then
-  echo "Expected four axiom-free Readout-Universe completion Print Assumptions results; got $count_ru_completion" >&2
-  exit 1
-fi
+if [ "$count_ru_completion" -lt 4 ]; then echo "Expected four axiom-free Readout-Universe completion Print Assumptions results; got $count_ru_completion" >&2; exit 1; fi
 
 out_free_reread=$(coqc -q IDM_FreeRereadGuard.v)
 printf '%s\n' "$out_free_reread"
 count_free_reread=$(printf '%s\n' "$out_free_reread" | grep -c "Closed under the global context" || true)
-if [ "$count_free_reread" -lt 3 ]; then
-  echo "Expected three axiom-free free-reread guard Print Assumptions results; got $count_free_reread" >&2
-  exit 1
-fi
+if [ "$count_free_reread" -lt 3 ]; then echo "Expected three axiom-free free-reread guard Print Assumptions results; got $count_free_reread" >&2; exit 1; fi
 
 out_projection=$(coqc -q IDM_ExistentialProjection.v)
 printf '%s\n' "$out_projection"
 count_projection=$(printf '%s\n' "$out_projection" | grep -c "Closed under the global context" || true)
-if [ "$count_projection" -lt 3 ]; then
-  echo "Expected three axiom-free existential-projection Print Assumptions results; got $count_projection" >&2
-  exit 1
-fi
+if [ "$count_projection" -lt 3 ]; then echo "Expected three axiom-free existential-projection Print Assumptions results; got $count_projection" >&2; exit 1; fi
+
+out_cover_capacity=$(coqc -q IDM_ResidualCoverCapacity.v)
+printf '%s\n' "$out_cover_capacity"
+count_cover_capacity=$(printf '%s\n' "$out_cover_capacity" | grep -c "Closed under the global context" || true)
+if [ "$count_cover_capacity" -lt 3 ]; then echo "Expected three axiom-free residual-cover-capacity Print Assumptions results; got $count_cover_capacity" >&2; exit 1; fi
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
