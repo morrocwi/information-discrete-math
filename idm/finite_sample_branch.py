@@ -1,37 +1,37 @@
-"""Fail-closed finite direct-sample branch certificate.
+"""Fail-closed finite direct-sample inequality gate.
 
-This module contains only finite-dimensional inequalities.  It is intended for a
-square observation map S:B(z,r)->R^d on a convex infinity-norm ball.  A caller must
-supply a fixed preconditioner A and a certified branch-wide defect
+This module deliberately stops at finite rational inequalities.  It does **not**
+promote Banach fixed-point existence, uniqueness of a real root, or membership of an
+unknown real state in a branch to a native finite theorem.
+
+For a declared square observation map S on a branch B(z,r), a caller supplies a square
+preconditioner A and a certified defect bound
 
     q >= sup_{x in B} ||I - A DS(x)||_inf.
 
-Suppose raw data are centered at y_obs with sensor radius sigma, while y_model is a
-finite certified approximation to S(z) with model radius tau.  Put
+For raw data centered at y_obs with sensor radius sigma and a finite approximation
+y_model to S(z) with model radius tau, put
 
     delta = ||y_obs-y_model||_inf + sigma + tau.
 
-If
+The finite gate checks
 
-    q < 1
-    and
-    ||A||_inf * delta + q r <= r,
+    q < 1,
+    ||A||_inf * delta + q r <= r.
 
-then, for every exact data vector y in the declared raw-data box, the Newton-like map
+These are exact finite/rational statements and yield the finite budgets
 
-    T_y(x) = x - A(S(x)-y)
+    data_budget = (1-q) r / ||A||_inf,
+    conditional_radius = ||A||_inf/(1-q) * delta.
 
-is a contraction that maps B into itself.  Banach's theorem therefore supplies one
-unique root of S(x)=y *inside that declared local branch*.  No prior assumption that
-the unknown state already belongs to B is used.
+Interpreting those inequalities as proving that a real contraction has an attained
+fixed point requires additional +R assumptions (in particular completeness/real
+existence).  The API therefore returns ``FINITE_GATE_PASS`` rather than ``CERTIFIED``
+and does not set ``branch_certified`` or ``local_uniqueness`` to true.
 
-The same inequalities give
-
-    ||x-z||_inf <= ||A||_inf/(1-q) * delta.
-
-The theorem is local: it does not exclude additional roots outside B.  It also does
-not manufacture the defect q, the forward-model radius tau, or a sensor model.  If any
-required gate is absent or fails, the API returns HOLD.
+A finite-native caller may instead combine this gate with a separately supplied finite
+witness/exclusion certificate over a declared finite state set.  A continuum/real-
+analysis caller may attach Banach's theorem explicitly as a different tier.
 """
 from __future__ import annotations
 
@@ -43,13 +43,18 @@ def _q(x) -> Fraction:
     return x if isinstance(x, Fraction) else Fraction(x)
 
 
-def matrix_inf_norm(matrix: Sequence[Sequence[object]]) -> Fraction:
+def _rows(matrix: Sequence[Sequence[object]]) -> list[list[Fraction]]:
     rows = [[_q(v) for v in row] for row in matrix]
     if not rows or not rows[0]:
         raise ValueError("nonempty matrix required")
     width = len(rows[0])
     if any(len(row) != width for row in rows):
         raise ValueError("rectangular matrix required")
+    return rows
+
+
+def matrix_inf_norm(matrix: Sequence[Sequence[object]]) -> Fraction:
+    rows = _rows(matrix)
     return max(sum((abs(v) for v in row), Fraction(0)) for row in rows)
 
 
@@ -62,12 +67,16 @@ def certified_direct_sample_branch(
     sensor_radius: object,
     forward_model_radius: object,
 ) -> dict:
-    """Certify a raw-data local branch and its retained-state radius.
+    """Evaluate the finite direct-sample self-map/contraction inequalities.
 
-    Parameters are exact or rationalizable finite quantities.  The discrepancy is
-    ``||y_obs-y_model||_inf``; ``sensor_radius`` encloses exact data around ``y_obs``;
-    ``forward_model_radius`` encloses ``S(z)`` around ``y_model``.
+    Despite the historical function name, a passing result is *not* itself a native
+    finite proof that a real root exists in the branch.  It returns a finite gate plus
+    the radius that would follow after a separately justified existence/branch premise.
     """
+    rows = _rows(preconditioner)
+    if len(rows) != len(rows[0]):
+        raise ValueError("preconditioner must be square")
+
     q = _q(jacobian_defect_bound)
     r = _q(branch_radius)
     d = _q(sample_center_discrepancy)
@@ -78,13 +87,15 @@ def certified_direct_sample_branch(
     if any(v < 0 for v in (q, d, sigma, tau)):
         raise ValueError("defect and uncertainty quantities must be nonnegative")
 
-    a_norm = matrix_inf_norm(preconditioner)
+    a_norm = matrix_inf_norm(rows)
     image_radius = d + sigma + tau
 
     if q >= 1:
         return {
             "status": "HOLD",
+            "finite_gate_pass": False,
             "branch_certified": False,
+            "local_uniqueness": False,
             "state_radius": None,
             "q": q,
             "reason": "branch-wide preconditioned Jacobian defect is not below one",
@@ -93,40 +104,44 @@ def certified_direct_sample_branch(
     self_map_lhs = a_norm * image_radius + q * r
     self_map_ok = self_map_lhs <= r
     inverse_factor = a_norm / (1 - q)
-    state_radius = inverse_factor * image_radius
+    conditional_state_radius = inverse_factor * image_radius
     data_budget = (1 - q) * r / a_norm if a_norm > 0 else None
 
-    if not self_map_ok:
-        return {
-            "status": "HOLD",
-            "branch_certified": False,
-            "state_radius": None,
-            "q": q,
-            "preconditioner_norm": a_norm,
-            "image_radius": image_radius,
-            "branch_radius": r,
-            "self_map_lhs": self_map_lhs,
-            "data_budget": data_budget,
-            "reason": "raw-data uncertainty does not map the declared branch into itself",
-        }
-
-    return {
-        "status": "CERTIFIED",
-        "branch_certified": True,
-        "local_uniqueness": True,
+    common = {
         "q": q,
         "preconditioner_norm": a_norm,
-        "inverse_factor": inverse_factor,
-        "sample_center_discrepancy": d,
-        "sensor_radius": sigma,
-        "forward_model_radius": tau,
         "image_radius": image_radius,
         "branch_radius": r,
         "self_map_lhs": self_map_lhs,
         "data_budget": data_budget,
-        "state_radius": state_radius,
-        "reason": (
-            "Banach contraction/self-map gates certify one unique solution inside the "
-            "declared finite local sample branch for every data vector in the raw-data box"
+        "inverse_factor": inverse_factor,
+        "conditional_state_radius": conditional_state_radius,
+        "branch_certified": False,
+        "local_uniqueness": False,
+        "state_radius": None,
+    }
+
+    if not self_map_ok:
+        return {
+            **common,
+            "status": "HOLD",
+            "finite_gate_pass": False,
+            "reason": "raw-data uncertainty does not satisfy the declared finite self-map inequality",
+        }
+
+    return {
+        **common,
+        "status": "FINITE_GATE_PASS",
+        "finite_gate_pass": True,
+        "sample_center_discrepancy": d,
+        "sensor_radius": sigma,
+        "forward_model_radius": tau,
+        "real_analysis_tier": "+R-Open",
+        "real_analysis_implication": (
+            "If a complete real metric-space interpretation of the declared map/branch is separately "
+            "granted and the derivative defect bound applies there, Banach's theorem would imply one "
+            "local root and the displayed conditional_state_radius. This implication is not promoted "
+            "to a native finite theorem by this helper."
         ),
+        "reason": "exact finite q<1 and self-map budget inequalities pass; real root existence remains separately tiered",
     }
