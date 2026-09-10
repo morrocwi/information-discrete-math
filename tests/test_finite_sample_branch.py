@@ -10,9 +10,10 @@ def test_matrix_inf_norm_exact():
     assert matrix_inf_norm(A) == Fraction(3, 2)
 
 
-def test_direct_sample_branch_certifies_contraction_self_map():
-    # ||A||_inf=1, q=1/4, r=1.  Total raw image uncertainty=1/2, so
-    # 1*(1/2)+(1/4)*1=3/4 <= 1 and the branch is certified.
+def test_direct_sample_gate_passes_without_promoting_real_existence():
+    # ||A||_inf=1, q=1/4, r=1. Total image uncertainty=1/2, so
+    # 1*(1/2)+(1/4)*1=3/4 <= 1. The finite inequalities pass, but the helper
+    # must not claim a real fixed point or branch membership as a native theorem.
     out = certified_direct_sample_branch(
         preconditioner=[[1, 0], [0, 1]],
         jacobian_defect_bound=Fraction(1, 4),
@@ -21,12 +22,14 @@ def test_direct_sample_branch_certifies_contraction_self_map():
         sensor_radius=Fraction(1, 8),
         forward_model_radius=Fraction(1, 4),
     )
-    assert out["status"] == "CERTIFIED"
-    assert out["branch_certified"] is True
-    assert out["local_uniqueness"] is True
+    assert out["status"] == "FINITE_GATE_PASS"
+    assert out["finite_gate_pass"] is True
+    assert out["branch_certified"] is False
+    assert out["local_uniqueness"] is False
+    assert out["state_radius"] is None
+    assert out["real_analysis_tier"] == "+R-Open"
     assert out["inverse_factor"] == Fraction(4, 3)
-    assert out["state_radius"] == Fraction(2, 3)
-    assert out["state_radius"] <= out["branch_radius"]
+    assert out["conditional_state_radius"] == Fraction(2, 3)
 
 
 def test_direct_sample_branch_holds_when_q_not_below_one():
@@ -39,7 +42,7 @@ def test_direct_sample_branch_holds_when_q_not_below_one():
         forward_model_radius=0,
     )
     assert out["status"] == "HOLD"
-    assert out["branch_certified"] is False
+    assert out["finite_gate_pass"] is False
 
 
 def test_direct_sample_branch_holds_when_data_box_too_large():
@@ -52,8 +55,20 @@ def test_direct_sample_branch_holds_when_data_box_too_large():
         forward_model_radius=0,
     )
     assert out["status"] == "HOLD"
-    assert out["branch_certified"] is False
+    assert out["finite_gate_pass"] is False
     assert out["self_map_lhs"] > out["branch_radius"]
+
+
+def test_nonsquare_preconditioner_is_rejected():
+    with pytest.raises(ValueError, match="square"):
+        certified_direct_sample_branch(
+            preconditioner=[[1, 0]],
+            jacobian_defect_bound=0,
+            branch_radius=1,
+            sample_center_discrepancy=0,
+            sensor_radius=0,
+            forward_model_radius=0,
+        )
 
 
 def test_invalid_negative_uncertainty_fails_closed():
