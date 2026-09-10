@@ -26,6 +26,7 @@ on:
       - "formal/IDM_SATCircuitRefuterCertificate.v"
       - "formal/IDM_AdaptiveDefectCapture.v"
       - "formal/IDM_DefectHittingSupport.v"
+      - "formal/IDM_BackdoorSupportBudget.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
   pull_request:
@@ -52,6 +53,7 @@ on:
       - "formal/IDM_SATCircuitRefuterCertificate.v"
       - "formal/IDM_AdaptiveDefectCapture.v"
       - "formal/IDM_DefectHittingSupport.v"
+      - "formal/IDM_BackdoorSupportBudget.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
 
@@ -103,6 +105,10 @@ jobs:
         run: python3 research/p_vs_np_readout/adaptive_defect_capture.py
       - name: defect signature support search-cost guard
         run: python3 research/p_vs_np_readout/defect_signature_support.py
+      - name: closure-guided hitting support
+        run: python3 research/p_vs_np_readout/closure_guided_hitting_support.py
+      - name: certified tractable frontier support
+        run: python3 research/p_vs_np_readout/tractable_frontier_support.py
       - name: RRR equality sharing negative control
         run: python3 research/p_vs_np_readout/rrr_circuit_audit.py
       - name: Readout-Universe accessible-completion fixture
