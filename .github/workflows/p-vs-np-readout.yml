@@ -13,6 +13,7 @@ on:
       - "formal/IDM_RetainRecomputeResolve.v"
       - "formal/IDM_CircuitLedgerTransfer.v"
       - "formal/IDM_RRRCostLowerBound.v"
+      - "formal/IDM_DemandCircuitDominance.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
   pull_request:
@@ -26,6 +27,7 @@ on:
       - "formal/IDM_RetainRecomputeResolve.v"
       - "formal/IDM_CircuitLedgerTransfer.v"
       - "formal/IDM_RRRCostLowerBound.v"
+      - "formal/IDM_DemandCircuitDominance.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
 
