@@ -17,6 +17,7 @@ clean() {
         IDM_DemandCircuitDominance.vo IDM_DemandCircuitDominance.glob .IDM_DemandCircuitDominance.aux \
         IDM_ReadoutUniverseAccessibleCompletion.vo IDM_ReadoutUniverseAccessibleCompletion.glob .IDM_ReadoutUniverseAccessibleCompletion.aux \
         IDM_FreeRereadGuard.vo IDM_FreeRereadGuard.glob .IDM_FreeRereadGuard.aux \
+        IDM_ExistentialProjection.vo IDM_ExistentialProjection.glob .IDM_ExistentialProjection.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -109,6 +110,14 @@ printf '%s\n' "$out_free_reread"
 count_free_reread=$(printf '%s\n' "$out_free_reread" | grep -c "Closed under the global context" || true)
 if [ "$count_free_reread" -lt 3 ]; then
   echo "Expected three axiom-free free-reread guard Print Assumptions results; got $count_free_reread" >&2
+  exit 1
+fi
+
+out_projection=$(coqc -q IDM_ExistentialProjection.v)
+printf '%s\n' "$out_projection"
+count_projection=$(printf '%s\n' "$out_projection" | grep -c "Closed under the global context" || true)
+if [ "$count_projection" -lt 3 ]; then
+  echo "Expected three axiom-free existential-projection Print Assumptions results; got $count_projection" >&2
   exit 1
 fi
 
