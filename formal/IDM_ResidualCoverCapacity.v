@@ -3,12 +3,12 @@
 (* Exact finite one-rule capacity kernel for residual cover debt.          *)
 (*                                                                       *)
 (* A prefix of selected cover rules may already cover some universe        *)
-(* elements.  If, after appending one new rule [r], a tail covers every    *)
+(* elements. If, after appending one new rule [r], a tail covers every     *)
 (* still-uncovered element, then before appending [r] the enlarged tail    *)
 (* [r :: tail] covers every still-uncovered element.                       *)
 (*                                                                       *)
 (* Therefore one newly selected rule can reduce the minimum number of      *)
-(* additional cover rules required by at most one.  The file proves the    *)
+(* additional cover rules required by at most one. The file proves the     *)
 (* certificate-transfer kernel, not existence/growth of a hard SAT cover.  *)
 (* No circuit lower bound or P <> NP claim is made here.                   *)
 (* ===================================================================== *)
@@ -44,7 +44,7 @@ Section Cover.
       coveredb prefix u = false ->
       coveredb tail u = true.
 
-  (** One-rule capacity theorem at the certificate level.  If [tail]
+  (** One-rule capacity theorem at the certificate level. If [tail]
       suffices after adding [r] to the prefix, then [r::tail] suffices
       before adding it. *)
   Theorem one_rule_capacity :
@@ -57,10 +57,11 @@ Section Cover.
     simpl.
     destruct (hit r u) eqn:Hr.
     - reflexivity.
-    - simpl.
-      apply Hafter.
+    - apply Hafter.
       rewrite coveredb_app.
-      rewrite Hprefix. simpl. exact Hr.
+      rewrite Hprefix.
+      simpl.
+      now rewrite Hr.
   Qed.
 
   (** The length of the before-tail certificate is exactly one larger. *)
