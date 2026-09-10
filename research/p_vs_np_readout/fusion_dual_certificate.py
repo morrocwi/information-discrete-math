@@ -18,6 +18,16 @@ Tier: exact finite certificate.  No asymptotic P-vs-NP claim.
 
 from fractions import Fraction as Q
 from itertools import combinations_with_replacement
+from pathlib import Path
+import sys
+
+# When executed as `python3 research/p_vs_np_readout/fusion_dual_certificate.py`,
+# Python places this script directory, not necessarily the repository root, at
+# sys.path[0].  Insert the root explicitly so the test always exercises the
+# checked-out `idm` package rather than relying on an installed copy.
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from idm.combopt import linear_program
 from fusion_horn_exact import (
