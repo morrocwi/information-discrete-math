@@ -61,6 +61,6 @@ check_closed IDM_ResidualCoverCapacity.v 3 residual-cover-capacity
 check_closed IDM_ProjectionCollapseGuard.v 2 projection-collapse-guard
 check_closed IDM_SATRestrictionDefect.v 7 SAT-restriction-defect
 check_closed IDM_SATOneSidedAudit.v 2 SAT-one-sided-audit
-check_closed IDM_CompressedNegativeClosure.v 3 compressed-negative-closure
+check_closed IDM_CompressedNegativeClosure.v 5 compressed-negative-closure
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
