@@ -28,6 +28,7 @@ on:
       - "formal/IDM_DefectHittingSupport.v"
       - "formal/IDM_BackdoorSupportBudget.v"
       - "formal/IDM_OuterHittingSeparation.v"
+      - "formal/IDM_FusionSurvivorRefuter.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
   pull_request:
@@ -56,6 +57,7 @@ on:
       - "formal/IDM_DefectHittingSupport.v"
       - "formal/IDM_BackdoorSupportBudget.v"
       - "formal/IDM_OuterHittingSeparation.v"
+      - "formal/IDM_FusionSurvivorRefuter.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
 
@@ -81,6 +83,8 @@ jobs:
         run: python3 research/p_vs_np_readout/fusion_dual_certificate.py
       - name: circuit-lineage to fusion exact diagnostic
         run: python3 research/p_vs_np_readout/circuit_lineage_fusion_diagnostic.py
+      - name: fusion survivor to concrete mismatch
+        run: python3 research/p_vs_np_readout/fusion_survivor_refuter.py
       - name: adaptive semantic-generation survivor audit
         run: python3 research/p_vs_np_readout/adaptive_semantic_generation_adversary.py
       - name: residual fusion-cover debt capacity audit
