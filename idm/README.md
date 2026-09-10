@@ -30,15 +30,28 @@ domain modules — `algebra`, `analysis`, `combopt`, `crypto`, `diffeq`, `discre
 - `from idm.kernel import poly` — the exact rational polynomial tower (see `idm/kernel/`, no
   top-level README of its own; treat `idm.kernel.poly.__init__.py`'s `__all__` as its contract).
 
-### Navier–Stokes discrete epsilon-completion lane
+### Navier–Stokes discrete epsilon-completion and observability lane
 
-`idm.ns_epsilon` adds a **fail-closed refinement/certification layer** on top of the existing
-`idm.ns_retained` finite Fourier-Galerkin RK4 substrate; it is not a second NS solver. It exposes
-nested-cutoff disagreement, the NS outer-shell boundary-energy diagnostic, and a certification gate
-that returns `HOLD` whenever no separately proved omitted-information bound is supplied. The Toledo
-proposal lineage is `PROP-EPSC-01` through `PROP-EPSC-04`; `PROP-EPSC-04` (the computable tail bound)
-is explicitly **Open**. See `docs/DISCRETE_EPSILON_COMPLETION.md` and the first NS application record
-in `github.com/morrocwi/readout-problem-navier-stokes/reproduction/NS_DISCRETE_EPSILON_COMPLETION.md`.
+The NS research lane reuses the existing finite Fourier-Galerkin substrate rather than introducing a
+second solver. The current modules are intentionally separated by proof obligation:
+
+- `idm.ns_retained` — finite Fourier-Galerkin/RK4 evolution and retained dependency logic;
+- `idm.ns_epsilon` — nested-cutoff defect and fail-closed epsilon gate;
+- `idm.ns_tail_certificate` — spacetime / Sobolev / readout tail certificates;
+- `idm.ns_terminal_certificate` — terminal energy-budget certificate;
+- `idm.ns_relative_energy_adapter` — residual-based finite-path to Leray-Hopf adapter helpers;
+- `idm.ns_rk4_path_certificate` — exact-dyadic piecewise-linear continuous-time certificate from a stored RK4 tape;
+- `idm.ns_observable_to_continuum` — finite energy-observability bookkeeping plus fail-closed orthogonal composition of a certified retained-state radius `rho_N` with an EPSC tail radius `beta_N`.
+
+The current Toledo EPSC lineage runs through `PROP-EPSC-19`. `PROP-EPSC-15` supplies the declared finite-tape continuous-time enclosure construction; `PROP-EPSC-16` remains the open tightness/scaling problem. `PROP-EPSC-17` is the observable-to-continuum composition
+
+\[
+\inf_g\|u-g\widehat x_N\|_2\le\sqrt{\rho_N^2+\beta_N^2},
+\]
+
+while `PROP-EPSC-18` (certified energy-jet inversion radius) and `PROP-EPSC-19` (noise-stable measurement-to-continuum propagation) remain **Open**. The NS energy-observability proposal family is `PROP-NSOBS-01..08`, with the all-resolution earliest-saturation assertion `PROP-NSOBS-07` explicitly Open.
+
+See `docs/DISCRETE_EPSILON_COMPLETION.md`, `docs/OBSERVABLE_TO_CONTINUUM_CERTIFICATE.md`, and the NS application records in `github.com/morrocwi/readout-problem-navier-stokes`.
 
 **What NOT to import directly.** Do not import `idm/_bridge.py` or reach into `idm/solve.py`'s
 private helpers (anything prefixed `_`, e.g. `_ok`, `_readout`, `_fn`) — they are registry wiring,
@@ -51,7 +64,9 @@ verdict. `idm.certified` is itself a re-export of `tools/certified_readout.py` �
 **How to test it.** `pytest -q tests/test_idm_api.py tests/test_smoke.py` for the dispatch surface;
 the full suite (`pytest -q`) also exercises `idm.kernel.poly` via `tests/test_kernel_*.py` and runs
 the differential + adversarial harness (`tests/harness.py`) against every registered kind. The
-new epsilon-completion lane has a focused test at `tests/test_ns_epsilon.py`.
+NS certificate lane has focused tests in `tests/test_ns_epsilon.py`, `tests/test_ns_tail_certificate.py`,
+`tests/test_ns_terminal_certificate.py`, `tests/test_ns_relative_energy_adapter.py`,
+`tests/test_ns_rk4_path_certificate.py`, and `tests/test_ns_observable_to_continuum.py`.
 
 **Limits.** The registry currently reports 274 registered kinds, but only a named subset carries a
 `Th_coqc` (`coq_theorem`) tag pointing into `formal/` — most exact handlers are `exact` (finite ℤ/ℚ
