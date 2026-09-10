@@ -12,6 +12,7 @@ clean() {
         IDM_FusionDual.vo IDM_FusionDual.glob .IDM_FusionDual.aux \
         IDM_CircuitGenesisBridge.vo IDM_CircuitGenesisBridge.glob .IDM_CircuitGenesisBridge.aux \
         IDM_RetainRecomputeResolve.vo IDM_RetainRecomputeResolve.glob .IDM_RetainRecomputeResolve.aux \
+        IDM_CircuitLedgerTransfer.vo IDM_CircuitLedgerTransfer.glob .IDM_CircuitLedgerTransfer.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -64,6 +65,14 @@ printf '%s\n' "$out_rrr"
 count_rrr=$(printf '%s\n' "$out_rrr" | grep -c "Closed under the global context" || true)
 if [ "$count_rrr" -lt 6 ]; then
   echo "Expected six axiom-free RRR Print Assumptions results; got $count_rrr" >&2
+  exit 1
+fi
+
+out_transfer=$(coqc -q IDM_CircuitLedgerTransfer.v)
+printf '%s\n' "$out_transfer"
+count_transfer=$(printf '%s\n' "$out_transfer" | grep -c "Closed under the global context" || true)
+if [ "$count_transfer" -lt 3 ]; then
+  echo "Expected three axiom-free transfer Print Assumptions results; got $count_transfer" >&2
   exit 1
 fi
 
