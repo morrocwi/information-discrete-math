@@ -1,6 +1,6 @@
 from fractions import Fraction
 
-from idm.finite_interval_inverse import preconditioned_row_variation_radius
+from idm.preconditioned_row_variation import preconditioned_row_variation_radius
 
 
 def test_exact_preconditioner_row_variation_radius():
