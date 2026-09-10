@@ -62,8 +62,8 @@ fi
 out_rrr=$(coqc -q IDM_RetainRecomputeResolve.v)
 printf '%s\n' "$out_rrr"
 count_rrr=$(printf '%s\n' "$out_rrr" | grep -c "Closed under the global context" || true)
-if [ "$count_rrr" -lt 5 ]; then
-  echo "Expected five axiom-free RRR Print Assumptions results; got $count_rrr" >&2
+if [ "$count_rrr" -lt 6 ]; then
+  echo "Expected six axiom-free RRR Print Assumptions results; got $count_rrr" >&2
   exit 1
 fi
 
