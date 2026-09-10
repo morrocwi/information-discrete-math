@@ -30,6 +30,16 @@ domain modules — `algebra`, `analysis`, `combopt`, `crypto`, `diffeq`, `discre
 - `from idm.kernel import poly` — the exact rational polynomial tower (see `idm/kernel/`, no
   top-level README of its own; treat `idm.kernel.poly.__init__.py`'s `__all__` as its contract).
 
+### Navier–Stokes discrete epsilon-completion lane
+
+`idm.ns_epsilon` adds a **fail-closed refinement/certification layer** on top of the existing
+`idm.ns_retained` finite Fourier-Galerkin RK4 substrate; it is not a second NS solver. It exposes
+nested-cutoff disagreement, the NS outer-shell boundary-energy diagnostic, and a certification gate
+that returns `HOLD` whenever no separately proved omitted-information bound is supplied. The Toledo
+proposal lineage is `PROP-EPSC-01` through `PROP-EPSC-04`; `PROP-EPSC-04` (the computable tail bound)
+is explicitly **Open**. See `docs/DISCRETE_EPSILON_COMPLETION.md` and the first NS application record
+in `github.com/morrocwi/readout-problem-navier-stokes/reproduction/NS_DISCRETE_EPSILON_COMPLETION.md`.
+
 **What NOT to import directly.** Do not import `idm/_bridge.py` or reach into `idm/solve.py`'s
 private helpers (anything prefixed `_`, e.g. `_ok`, `_readout`, `_fn`) — they are registry wiring,
 not a stable surface. Prefer `idm.solve({"kind": ...})` over calling a domain module's internal
@@ -40,7 +50,8 @@ verdict. `idm.certified` is itself a re-export of `tools/certified_readout.py` �
 
 **How to test it.** `pytest -q tests/test_idm_api.py tests/test_smoke.py` for the dispatch surface;
 the full suite (`pytest -q`) also exercises `idm.kernel.poly` via `tests/test_kernel_*.py` and runs
-the differential + adversarial harness (`tests/harness.py`) against every registered kind.
+the differential + adversarial harness (`tests/harness.py`) against every registered kind. The
+new epsilon-completion lane has a focused test at `tests/test_ns_epsilon.py`.
 
 **Limits.** The registry currently reports 273 registered kinds, but only a named subset carries a
 `Th_coqc` (`coq_theorem`) tag pointing into `formal/` — most exact handlers are `exact` (finite ℤ/ℚ
