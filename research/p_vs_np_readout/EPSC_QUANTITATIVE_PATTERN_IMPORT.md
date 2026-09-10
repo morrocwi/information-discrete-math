@@ -49,7 +49,7 @@ D_t-D_{t+1}\le 1.
 
 `IDM_ResidualCoverCapacity.v` proves the certificate-transfer kernel.
 
-## 3. Quantitative certificate: dual mass
+## 3. Quantitative certificate: finite dual mass
 
 For a projected target, assign nonnegative adversarial weights `y_F` subject to
 
@@ -111,26 +111,80 @@ has `2^m` distinct witness slices but
 
 so its projected residual debt and dual mass are zero. Any candidate that charges the pre-projection `2^m` diversity fails the declared readout.
 
-## 5. The remaining load-bearing theorem
+## 5. Critical asymptotic fence: a fixed global dual cannot be the final theorem
 
-The quantitative half now has a concrete exact form. What remains is not another bookkeeping identity but an **explicit projected SAT family plus dual weights** whose certified mass beats every polynomial while every admissible gate/rule has bounded load.
-
-A sufficient target would be a family of projected SAT instances with exact certificates
+The exact finite dual is useful, but the branch already contains the stronger no-go in `FUSION_DUAL_RESISTANCE.md`: for the general non-monotone fusion setting, a **single fixed distribution / fractional dual** has only linear asymptotic power. In normalized form,
 
 \[
-y^{(n)}_F\ge0,
-\qquad
-\sup_p\sum_{F\text{ hit by }p}y_F^{(n)}\le B_n,
+\frac{1}{\sup_p\operatorname{kill}_{\mu}(p)}\le 8n+8.
 \]
 
-and
+Therefore the programme
 
 \[
-\forall c\;\forall N\;\exists n\ge N:
-\qquad
-\frac{\sum_F y_F^{(n)}}{B_n}>n^c.
+\text{one target-only global dual }y^{(n)}
+\quad\Longrightarrow\quad
+\text{superpolynomial circuit lower bound}
 \]
 
-If, in addition, the fusion/semantic-generation bridge applies to every unrestricted circuit gate with constant or polynomially controlled overhead, then the dual mass becomes a genuine circuit lower-bound certificate.
+is not the correct unrestricted route. The finite dual remains a regression/certificate tool, but its fixed-distribution objective cannot be promoted into the missing SAT theorem.
 
-That final asymptotic SAT dual construction and unrestricted-gate bridge remain **OPEN**. The present corpus does not prove `SAT notin P/poly` or `P != NP`.
+This is important for the EPSC analogy: the quantitative certificate must be attached to the **actual admissible branch / candidate object**, not frozen globally in advance.
+
+## 6. Correct imported quantitative target: candidate-adaptive certificate
+
+After a candidate circuit `C` is exposed, let `Gamma_C` be the actual fusion/semantic-generation rules induced by that circuit. The candidate-adaptive analogue is to construct
+
+\[
+\mu_C
+\]
+
+from the declared circuit DAG / lineage, without a SAT oracle or equivalence oracle, such that
+
+\[
+\boxed{
+\forall p\in\Gamma_C:
+\operatorname{kill}_{\mu_C}(p)<\frac1{|\Gamma_C|}.
+}
+\]
+
+Then the union bound gives positive probability that a semi-filter survives every rule in `Gamma_C`; hence the candidate family is not a cover.
+
+In dual language, instead of one global feasible vector against **all** rules, we seek a candidate-conditioned certificate whose load is small against the rules that the exposed circuit actually generated.
+
+The EPSC-style pattern is now:
+
+```text
+candidate circuit C declared
+        -> structural lineage / projection gate
+        -> construct candidate-specific certificate mu_C
+        -> certify all local loads on Gamma_C
+        -> derive a surviving semantic obstruction
+        -> otherwise HOLD
+```
+
+This is directly analogous to using a separately certified finite branch before applying the quantitative inverse inequality.
+
+## 7. Remaining load-bearing theorem
+
+The preferred frontier is therefore an **Adaptive Lineage Readout Adversary** / **Adaptive Semantic Generation Adversary**:
+
+\[
+C\longmapsto \mu_C
+\]
+
+constructed transparently from `C` such that, for every polynomial-size incorrect candidate family in the target SAT sequence,
+
+\[
+\max_{p\in\Gamma_C}\operatorname{kill}_{\mu_C}(p)<1/|\Gamma_C|.
+\]
+
+The construction must satisfy all of the following:
+
+1. use the existentially projected target, not pre-projection witness diversity;
+2. use actual candidate lineage / sharing information;
+3. not call SAT, target equivalence, minimum circuit size, or a known survivor oracle;
+4. remain valid for unrestricted fanout/sharing in the declared Boolean basis;
+5. provide a locally checkable quantitative certificate, with HOLD on failed gates.
+
+This adaptive construction is **OPEN**. The current corpus does not prove `SAT notin P/poly` or `P != NP`.
