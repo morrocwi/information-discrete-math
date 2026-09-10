@@ -3112,6 +3112,63 @@
    "target_abs_error": 0.0
   }
  },
+ "ns_turbulence_energy_flux": {
+  "backend": "portable_direct_retained_then_nonlinear_transfer",
+  "claim_scope": "finite Fourier-Galerkin turbulence readout; flux is exact relative to the same fixed finite RK4 recurrence, not continuum turbulence",
+  "cutoff": 1.0,
+  "cutoff_squared": 1.0,
+  "full_triad_work": 1056,
+  "horizon": 1,
+  "included_mode_count": 6,
+  "initial_state_constraints": {
+   "conjugate_symmetry_max": 0.0,
+   "divergence_max": 1.5515838457795457e-17
+  },
+  "kind": "ns_turbulence_energy_flux",
+  "method": "finite Fourier-Galerkin nonlinear-transfer energy-flux readout",
+  "mode_count": 26,
+  "readout": "turbulence_energy_flux",
+  "readout_density": 0.23076923076923078,
+  "readout_identity": "Pi(cutoff) = -sum_{|k|<=cutoff} Re(conj(u_k) dot N_k(u))",
+  "required_state_density": 1.0,
+  "required_terminal_state_modes": 26,
+  "retained_triad_work": 1056,
+  "rk4_stage_ledger": [
+   {
+    "input_modes": 26,
+    "stage_modes": [
+     26,
+     26,
+     26,
+     26
+    ],
+    "triad_work": 1056
+   }
+  ],
+  "shells": [
+   {
+    "cumulative_flux": -0.0028606060378790557,
+    "dissipation": 0.00019192883861885856,
+    "energy": 0.019192883861885855,
+    "energy_rate": 0.0026686771992601973,
+    "mode_count": 6,
+    "q": 1,
+    "transfer": 0.0028606060378790557
+   }
+  ],
+  "sign_convention": "positive = nonlinear energy leaves modes with |k| <= cutoff",
+  "status": "ok",
+  "structural_work_reduction": 1.0,
+  "tier": "finite_diagnostic",
+  "transfer_sum_low": 0.0028606060378790557,
+  "value": -0.0028606060378790557,
+  "verification": {
+   "gate": 1e-12,
+   "nonlinear_total_transfer_abs": 3.2526065174565133e-19,
+   "retained_full_flux_abs_error": 0.0,
+   "status": "PASS"
+  }
+ },
  "null_space": {
   "kind": "null_space",
   "method": "kernel basis from RREF (exact \u211a)",
