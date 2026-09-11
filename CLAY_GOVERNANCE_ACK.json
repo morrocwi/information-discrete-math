@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "reviewed_at": "2026-09-11",
+  "scope": "Bootstrap Clay research governance CI; no theorem or claim status changed.",
+  "todo": {
+    "status": "reviewed-no-change",
+    "evidence": "Cross-repo CLAY_RESEARCH_TODO.md reviewed; IDM priorities remain issue #124 and P-vs-NP PR #117."
+  },
+  "toledo": {
+    "status": "not-required",
+    "evidence": "Governance infrastructure only; no theorem statement, proof tier, proposal status, or provenance claim changed."
+  },
+  "claim_effect": "none"
+}
