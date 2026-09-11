@@ -16,6 +16,22 @@ For Clay work, always distinguish:
 finite theorem != uniform theorem != global semantic bridge != Clay conclusion
 ```
 
+## Mandatory PR governance gate for Clay-sensitive work
+
+Future Clay-sensitive changes must go through a pull request to `main` so `.github/workflows/clay-governance.yml` can evaluate them before merge.
+
+If the PR touches formal sources, P-vs-NP/bridge claim surfaces, or shared finite-bridge specifications, it must update `CLAY_GOVERNANCE_ACK.json` in the same PR.
+
+The acknowledgement must record:
+
+- `todo.status`: `updated` or `reviewed-no-change`, with evidence referring to the shared research TODO;
+- `toledo.status`: `updated`, `issue-open`, or `not-required`, with evidence;
+- `claim_effect`: the actual effect on status/statement/formal proof/provenance.
+
+For high-impact formal/bridge changes, `toledo.status=not-required` is forbidden, and `claim_effect=none` or `documentation-only` is forbidden. Missing or inconsistent acknowledgement causes `CLAY GOVERNANCE HOLD`.
+
+Do not bypass this preventive check with a direct push for future Clay-sensitive work.
+
 The existing review protocol below remains fully in force.
 
 ---
