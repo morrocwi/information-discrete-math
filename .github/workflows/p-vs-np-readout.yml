@@ -31,6 +31,7 @@ on:
       - "formal/IDM_OuterHittingSeparation.v"
       - "formal/IDM_FusionSurvivorRefuter.v"
       - "formal/IDM_SATNotInPpolyImpliesPneqNP.v"
+      - "formal/IDM_ADCSeparationChain.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
   pull_request:
@@ -62,6 +63,7 @@ on:
       - "formal/IDM_OuterHittingSeparation.v"
       - "formal/IDM_FusionSurvivorRefuter.v"
       - "formal/IDM_SATNotInPpolyImpliesPneqNP.v"
+      - "formal/IDM_ADCSeparationChain.v"
       - "formal/verify_p_vs_np.sh"
       - ".github/workflows/p-vs-np-readout.yml"
 
