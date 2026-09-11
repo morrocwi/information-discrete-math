@@ -35,6 +35,15 @@ Proof.
   destruct a, b, c, d; cbv [bdist]; repeat constructor.
 Qed.
 
+(* Coq-version-robust zero-distance elimination. *)
+Lemma bdist_zero_eq :
+  forall a b,
+    bdist a b = 0 -> a = b.
+Proof.
+  intros a b H.
+  destruct a, b; cbv [bdist] in H; try reflexivity; discriminate.
+Qed.
+
 (* --------------------------------------------------------------------- *)
 (* Full restriction tree.                                                *)
 (* --------------------------------------------------------------------- *)
@@ -90,10 +99,8 @@ Proof.
   intros t Hz.
   pose proof (root_error_bounded_by_defects t) as H.
   rewrite Hz in H.
-  unfold bdist in H.
-  destruct (Bool.eqb (candidate_root t) (target_value t)) eqn:Heq.
-  - now apply Bool.eqb_true_iff in Heq.
-  - simpl in H. lia.
+  apply bdist_zero_eq.
+  lia.
 Qed.
 
 Theorem wrong_root_forces_positive_defect :
@@ -175,10 +182,8 @@ Proof.
   intros t Hvalid Hz.
   pose proof (partial_root_error_bounded_by_frontier t Hvalid) as H.
   rewrite Hz in H.
-  unfold bdist in H.
-  destruct (Bool.eqb (pcandidate_root t) (ptarget_value t)) eqn:Heq.
-  - now apply Bool.eqb_true_iff in Heq.
-  - simpl in H. lia.
+  apply bdist_zero_eq.
+  lia.
 Qed.
 
 Print Assumptions bdist_triangle.
