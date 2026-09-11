@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "reviewed_at": "2026-09-11",
-  "scope": "P1 shared finite-obstruction safe-core formalization. Eleven finite kernels are now Coq 8.20 machine-checked and axiom-free at dedicated CI run 34563300185. No Clay-bearing bridge theorem is promoted.",
+  "scope": "P2 adversarial negative controls for naive finite-obstruction, constructive-capture, and cross-resolution bridge claims. The work narrows PROP-FUB-03/04/05 and adds formal/exact counterexample controls; no strengthened Clay-bearing bridge is promoted.",
   "todo": {
     "status": "reviewed-no-change",
-    "evidence": "Cross-repo CLAY_RESEARCH_TODO.md reviewed. This PR executes the P1 safe-core task tracked by IDM issue #124; NS #25 and P-vs-NP PR #117 remain separate load-bearing OPEN lanes."
+    "evidence": "Cross-repo CLAY_RESEARCH_TODO.md reviewed. This PR executes P2 falsification as tracked by IDM issue #126; the next direct load-bearing tasks remain NS-FUB-A1/A2 and PNP-FUB-A1."
   },
   "toledo": {
     "status": "issue-open",
-    "evidence": "morrocwi/toledo#11 remains the canonicalization/provenance gate. PR #125 has green Coq evidence for the safe-core theorem identifiers; no PROP-FUB-03/04/05 Clay-bearing proposal is promoted by that evidence."
+    "evidence": "morrocwi/toledo#11 remains the provenance/canonicalization gate. P2 narrows the admissible wording of PROP-FUB-03/04/05 but does not prove the strengthened proposals or any Clay conclusion."
   },
-  "claim_effect": "formal-proof-change"
+  "claim_effect": "statement-change"
 }
