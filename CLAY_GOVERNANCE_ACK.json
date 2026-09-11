@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "reviewed_at": "2026-09-11",
-  "scope": "Bootstrap Clay research governance CI; no theorem or claim status changed.",
+  "scope": "P1 shared finite-obstruction safe-core formalization: strict margin/HOLD semantics, finite error and compatibility composition, symmetry-respecting certificate transport, and local defect-checker soundness. No Clay-bearing bridge theorem is promoted.",
   "todo": {
     "status": "reviewed-no-change",
-    "evidence": "Cross-repo CLAY_RESEARCH_TODO.md reviewed; IDM priorities remain issue #124 and P-vs-NP PR #117."
+    "evidence": "Cross-repo CLAY_RESEARCH_TODO.md reviewed. This PR directly executes P1 and IDM issue #124; NS #25 and P-vs-NP PR #117 remain separate load-bearing OPEN lanes."
   },
   "toledo": {
-    "status": "not-required",
-    "evidence": "Governance infrastructure only; no theorem statement, proof tier, proposal status, or provenance claim changed."
+    "status": "issue-open",
+    "evidence": "morrocwi/toledo#11 remains the canonicalization/provenance gate. New theorem identifiers must not be assigned canonical Toledo codes until CI and statement review stabilize this safe core."
   },
-  "claim_effect": "none"
+  "claim_effect": "formal-proof-change"
 }
