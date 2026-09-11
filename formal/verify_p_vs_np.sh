@@ -26,10 +26,12 @@ clean() {
         IDM_SATFixedPointDefect.vo IDM_SATFixedPointDefect.glob .IDM_SATFixedPointDefect.aux \
         IDM_SATCircuitRefuterCertificate.vo IDM_SATCircuitRefuterCertificate.glob .IDM_SATCircuitRefuterCertificate.aux \
         IDM_AdaptiveDefectCapture.vo IDM_AdaptiveDefectCapture.glob .IDM_AdaptiveDefectCapture.aux \
+        IDM_RobustDefectCapture.vo IDM_RobustDefectCapture.glob .IDM_RobustDefectCapture.aux \
         IDM_DefectHittingSupport.vo IDM_DefectHittingSupport.glob .IDM_DefectHittingSupport.aux \
         IDM_BackdoorSupportBudget.vo IDM_BackdoorSupportBudget.glob .IDM_BackdoorSupportBudget.aux \
         IDM_OuterHittingSeparation.vo IDM_OuterHittingSeparation.glob .IDM_OuterHittingSeparation.aux \
         IDM_FusionSurvivorRefuter.vo IDM_FusionSurvivorRefuter.glob .IDM_FusionSurvivorRefuter.aux \
+        IDM_SATNotInPpolyImpliesPneqNP.vo IDM_SATNotInPpolyImpliesPneqNP.glob .IDM_SATNotInPpolyImpliesPneqNP.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -72,9 +74,11 @@ check_closed IDM_CompressedNegativeClosure.v 5 compressed-negative-closure
 check_closed IDM_SATFixedPointDefect.v 2 SAT-fixed-point-defect
 check_closed IDM_SATCircuitRefuterCertificate.v 4 SAT-circuit-refuter-certificate
 check_closed IDM_AdaptiveDefectCapture.v 4 adaptive-defect-capture
+check_closed IDM_RobustDefectCapture.v 3 robust-defect-capture
 check_closed IDM_DefectHittingSupport.v 4 defect-hitting-support
 check_closed IDM_BackdoorSupportBudget.v 4 backdoor-support-budget
 check_closed IDM_OuterHittingSeparation.v 2 outer-hitting-separation
 check_closed IDM_FusionSurvivorRefuter.v 4 fusion-survivor-refuter
+check_closed IDM_SATNotInPpolyImpliesPneqNP.v 2 SAT-notin-Ppoly-implies-PneqNP
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
