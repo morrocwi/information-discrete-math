@@ -31,6 +31,15 @@ all finite objects     -/->  global/continuum theorem
 
 These are tracked separately as the **Finite Uniformity Bridge** and the **Global Semantic Bridge**.
 
+P2 adds a third mandatory distinction:
+
+```text
+small local/adjacent discrepancy  -/->  all-refinement Cauchy control
+finite defect existence            -/->  efficient constructive capture
+```
+
+These failures are recorded in `docs/CLAY_P2_NEGATIVE_CONTROLS.md`.
+
 ---
 
 ## 2. Generic finite object
@@ -55,6 +64,8 @@ Interpretation:
 
 No field is assumed to exist automatically. A domain adapter must state which fields are meaningful and which are absent.
 
+After P2, a domain using cross-resolution control must additionally distinguish a local budget such as `eta_{n,n+1}` from an **all-refinement tail/Cauchy modulus**. The former does not imply the latter.
+
 ---
 
 ## 3. Proposal identifiers
@@ -71,7 +82,7 @@ No global conclusion follows from this definition alone.
 
 ### PROP-FUB-02 — Robust certified margin gate
 
-**Tier:** generic target, with domain-specific finite instances already present elsewhere.
+**Tier:** generic finite core partly **PASS / `Th_coqc`**; domain instantiation remains separate.
 
 Target form:
 
@@ -83,45 +94,78 @@ M_n \le E_n \Longrightarrow \mathrm{HOLD},
 
 where `E_n` is the total certified uncertainty/remainder budget.
 
-The generic theorem must make all composition assumptions explicit; no numerical evidence may be silently promoted to a theorem.
+The P1 artifact `formal/IDM_FiniteObstructionSafeCore.v` machine-checks the finite strict-margin, fail-closed, finite error-composition, finite-chain composition, invariant certificate-transport, and local-checker-soundness kernels. Dedicated Coq 8.20 CI verifies the promoted theorems are closed under the global context.
+
+This does not supply any domain-specific error bound, witness, uniform theorem, or global bridge automatically.
 
 ### PROP-FUB-03 — Finite obstruction principle
 
-**Tier:** OPEN.
+**Tier:** OPEN; naive unrestricted form rejected by P2.
 
-Target schema:
+The unrestricted schema
 
 \[
 \mathsf{GlobalFailure}
 \Longrightarrow
-\exists n<\infty\;\exists w_n:\mathsf{FiniteWitness}(n,w_n).
+\exists n<\infty\;\exists w_n:\mathsf{FiniteWitness}(n,w_n)
 \]
 
-This is not expected to hold without domain hypotheses. The research task is to identify minimal sufficient hypotheses and counterexamples.
+is false for arbitrary global properties. P2 gives the elementary counterexample `a_n=n`: global boundedness fails while every finite prefix is bounded.
+
+A viable domain theorem must therefore expose a finite-detectability hypothesis:
+
+\[
+\boxed{
+\mathsf{GlobalFailure}
++\mathsf{FiniteDetectabilityHypotheses}
+\Longrightarrow
+\exists n<\infty\;\exists w_n:\mathsf{VerifiedFiniteWitness}(n,w_n).
+}
+\]
+
+Possible forms include a safety/separation theorem, quantitative blow-up alternative, compactness/closedness mechanism, or another domain-specific theorem proving that target failure cannot remain invisible at every finite stage.
+
+The finite-detectability premise is load-bearing and must pass `PROP-FUB-06`; it may not merely restate the target failure in different notation.
 
 ### PROP-FUB-04 — Constructive uniform capture principle
 
-**Tier:** OPEN.
+**Tier:** OPEN; defect-existence-only form rejected in the generic black-box model by P2.
 
-Target schema:
+The target cannot be merely
 
 \[
-\forall X\in\mathcal C_n,
-\quad
-D_n(X)\ne0
-\Longrightarrow
-\mathsf{Capture}_n(X)
+D_n(X)\ne0\Longrightarrow\mathsf{EfficientCapture}_n(X).
 \]
 
-with an explicit resource bound on constructing or sampling a verifiable witness.
+A single hidden defect in a black-box universe of size `2^n` already shows why: a polynomial-size generic support may have exponentially small hit probability.
+
+A viable constructive target must declare the access model and the structure used by the constructor or sampler:
+
+\[
+\boxed{
+D_n(X)\ne0
++\mathsf{StructuredAccess}_n(X)
++\mathsf{ResourceBoundedConstructor}_n
+\Longrightarrow
+\mathsf{CaptureMargin}_n(X).
+}
+\]
+
+For the P-vs-NP lane, the required margin remains of inverse-polynomial scale, for example
+
+\[
+1-q_X\ge 1/\operatorname{poly}(n),
+\]
+
+with no SAT/equivalence/MCSP oracle or hidden exponential enumeration.
 
 This proposal is load-bearing for the P-vs-NP direct-sample lane and may have analogues in finite singularity-witness programs.
 
 ### PROP-FUB-05 — Cross-resolution compatibility / extension principle
 
-**Tier:** OPEN generic schema.
+**Tier:** OPEN generic schema; adjacent/local-only form rejected by P2.
 
-Target finite statements:
+Finite local statements may include
 
 \[
 \|R_{n,m}X_m-X_n\|\le\eta_{n,m}
@@ -130,12 +174,23 @@ Target finite statements:
 and
 
 \[
-\Delta_{n,m}\le\beta_{n,m},
+\Delta_{n,m}\le\beta_{n,m}.
 \]
 
-with constructive control strong enough for arbitrary requested finite tolerance.
+But `eta_{n,n+1}->0` alone is not enough. Harmonic partial sums have adjacent differences tending to zero while cumulative drift is unbounded. The P1/P2 formal finite-chain kernels likewise make explicit that local budgets add along a chain and can grow without a tail bound.
 
-No completed infinite object is assumed inside the finite proof core.
+A viable all-resolution target therefore needs an explicit uniform modulus, for example
+
+\[
+\boxed{
+\forall\varepsilon>0\;\exists N_\varepsilon\;\forall M\ge N\ge N_\varepsilon:
+\|R_{N,M}X_M-X_N\|<\varepsilon,
+}
+\]
+
+or a summable extension envelope with arbitrarily small remaining tail. The exact formulation is domain-dependent.
+
+No completed infinite object is assumed inside the finite proof core. A separate global semantic bridge must still prove what the uniform finite control implies about the target object or target theorem.
 
 ### PROP-FUB-06 — Non-vacuity / hidden-target audit
 
@@ -144,6 +199,11 @@ No completed infinite object is assumed inside the finite proof core.
 For every bridge premise `A` used to imply a Clay target `T`, audit whether establishing `A` is genuinely more structured than proving `T` directly.
 
 A bridge is placed on HOLD if it merely renames the target difficulty, hides an oracle, assumes the desired continuum regularity, or embeds an equivalent unrestricted lower bound without providing a new route to prove it.
+
+P2 adds two explicit non-vacuity checks:
+
+1. a finite-witness theorem must identify why the target failure is finitely detectable;
+2. a constructive-capture theorem must identify the candidate access model and the resource-bounded mechanism producing non-negligible coverage.
 
 ---
 
@@ -162,6 +222,8 @@ beta_{n,m}      -> scale-extension / omitted-information certificate
 D_n             -> regularity-sensitive finite obstruction
 ```
 
+P2 warning: neither small adjacent cross-resolution error nor compatibility in a weak state norm is automatically a regularity theorem. A useful NS obstruction must be tied by a proved PDE argument to the regularity class required by the Clay statement.
+
 ### Load-bearing target NS-FUB-A1
 
 \[
@@ -174,7 +236,14 @@ D_n             -> regularity-sensitive finite obstruction
 
 **Status:** OPEN.
 
-The finite failure must be a PDE-relevant obstruction, not merely sensor/readout non-identifiability.
+The finite failure must be a PDE-relevant, regularity-sensitive obstruction, not merely sensor/readout non-identifiability or failure of one inverse chart.
+
+A promising strengthened route is to identify a finite certificate family whose uniform success gives both:
+
+1. an all-refinement Cauchy/tail modulus; and
+2. a regularity-sensitive uniform bound or criterion strong enough, through a separate proved adapter, to yield classical regularity on the requested interval.
+
+Only then does the contrapositive become a meaningful singularity-witness theorem.
 
 ### Load-bearing target NS-FUB-A2
 
@@ -206,6 +275,8 @@ C(F)\oplus\left(C(F|_{x=0})\lor C(F|_{x=1})\right),
 with terminal-boundary conditions.
 
 The existing P-vs-NP research lane already separates local defect existence from the hard problem of constructive capture.
+
+P2 sharpens that separation: a local defect may exist while generic black-box capture is exponentially rare. Any successful constructor must exploit transparent SAT/circuit structure and certify its resource bound.
 
 ### Load-bearing target PNP-FUB-A1
 
@@ -243,8 +314,9 @@ Required before promotion to a direct lane:
 2. exact gauge-quotient treatment;
 3. scale-refinement maps;
 4. finite spectral-gap certificate;
-5. uniform positive lower-gap theorem candidate;
-6. explicit continuum Yang--Mills bridge.
+5. all-refinement Cauchy/tail control rather than adjacent refinement agreement only;
+6. uniform positive lower-gap theorem candidate;
+7. explicit continuum Yang--Mills bridge.
 
 A nonzero finite-lattice numerical gap is not a Clay mass-gap theorem.
 
@@ -270,10 +342,10 @@ Ask whether non-representability or representability admits a finite obstruction
 
 ## 8. Research order
 
-1. Audit existing finite lemmas and counterexamples.
-2. Formalize the smallest sound version of PROP-FUB-01/02/06.
+1. Audit existing finite lemmas and counterexamples. **P0 completed.**
+2. Formalize the smallest sound version of PROP-FUB-01/02/06. **P1 safe finite core completed at machine-checked tier.**
 3. Stress-test the abstractions on both NS and P vs NP.
-4. Search aggressively for counterexamples to PROP-FUB-03/04/05 before proving stronger versions.
+4. Search aggressively for counterexamples to PROP-FUB-03/04/05 before proving stronger versions. **P2 active; naive forms narrowed by explicit controls.**
 5. Isolate one load-bearing domain lemma per direct lane: NS-FUB-A1/A2 and PNP-FUB-A1.
 6. Only after the shared kernel survives both lanes, build a precise Yang--Mills adapter.
 7. Use RH/BSD/Hodge as negative/positive transfer probes, not as narrative analogies.
@@ -287,7 +359,8 @@ Use only:
 - `PASS` — executable finite verification passed;
 - `DERIVED` — proved from declared assumptions;
 - `OPEN` — theorem not proved;
-- `HOLD` — evidence/assumptions insufficient.
+- `HOLD` — evidence/assumptions insufficient;
+- `REFUTED` — a precisely stated candidate implication has a valid counterexample in its declared model.
 
 Every Clay-level implication requires all of:
 
@@ -300,17 +373,33 @@ domain theorem
 
 If any link is missing, Clay status remains OPEN.
 
+A counterexample to a naive generic schema narrows the programme; it does not refute a strengthened domain theorem with additional hypotheses.
+
 ---
 
-## 10. Immediate formalization backlog
+## 10. Formal evidence and current backlog
 
-The first formal artifact should be deliberately modest. It should encode finite records and prove only composition/logic lemmas that do not presuppose a Clay theorem, for example:
+### P1 safe finite core — PASS / `Th_coqc`
 
-1. strict-margin soundness;
-2. error-budget monotonicity;
-3. quotient-respecting certificate transport;
-4. finite local-defect checker soundness under declared laws;
-5. finite compatibility-budget composition across a chain of resolutions;
-6. explicit `HOLD` behavior when a premise is absent.
+`formal/IDM_FiniteObstructionSafeCore.v` contains machine-checked finite kernels for:
 
-`PROP-FUB-03`, `PROP-FUB-04`, and domain Clay bridges remain OPEN until separately proved.
+1. strict-margin PASS soundness/completeness;
+2. fail-closed HOLD behavior when a certificate or strict margin is absent;
+3. finite error-budget monotonicity and additive composition;
+4. finite compatibility-budget composition across a finite chain;
+5. certificate transport under an explicitly declared verifier-invariance hypothesis;
+6. local finite-defect checker soundness under an explicitly declared checker-soundness hypothesis.
+
+See `docs/CLAY_P1_SAFE_CORE_FORMAL.md`.
+
+### P2 negative controls — evidence tracked separately
+
+`formal/IDM_FiniteObstructionNegativeControls.v` and `research/clay_bridge/negative_controls.py` test why the missing hypotheses above are necessary and why naive FUB-03/04/05 forms are too broad. See `docs/CLAY_P2_NEGATIVE_CONTROLS.md`.
+
+### Remaining load-bearing OPEN work
+
+- strengthened `PROP-FUB-03`: prove finite detectability in a concrete domain;
+- strengthened `PROP-FUB-04`: construct efficient structure-aware capture, especially for PNP;
+- strengthened `PROP-FUB-05`: prove a true all-refinement Cauchy/tail modulus in a concrete domain;
+- `NS-FUB-A1/A2`;
+- `PNP-FUB-A1`.
