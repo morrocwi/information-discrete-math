@@ -33,6 +33,7 @@ clean() {
         IDM_FusionSurvivorRefuter.vo IDM_FusionSurvivorRefuter.glob .IDM_FusionSurvivorRefuter.aux \
         IDM_SATNotInPpolyImpliesPneqNP.vo IDM_SATNotInPpolyImpliesPneqNP.glob .IDM_SATNotInPpolyImpliesPneqNP.aux \
         IDM_ADCSeparationChain.vo IDM_ADCSeparationChain.glob .IDM_ADCSeparationChain.aux \
+        IDM_EssentialInputDAGBound.vo IDM_EssentialInputDAGBound.glob .IDM_EssentialInputDAGBound.aux \
         2>/dev/null || true
 }
 trap clean EXIT
@@ -82,5 +83,6 @@ check_closed IDM_OuterHittingSeparation.v 2 outer-hitting-separation
 check_closed IDM_FusionSurvivorRefuter.v 4 fusion-survivor-refuter
 check_closed IDM_SATNotInPpolyImpliesPneqNP.v 2 SAT-notin-Ppoly-implies-PneqNP
 check_closed IDM_ADCSeparationChain.v 2 ADC-separation-chain
+check_closed IDM_EssentialInputDAGBound.v 6 essential-input-DAG-bound
 
 echo "P-vs-NP readout witnesses: compiled + axiom-free"
