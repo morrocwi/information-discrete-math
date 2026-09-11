@@ -24,7 +24,7 @@ Lemma bdist_triangle :
     bdist a c <= bdist a b + bdist b c.
 Proof.
   intros a b c.
-  destruct a, b, c; simpl; lia.
+  destruct a, b, c; cbv [bdist]; repeat constructor.
 Qed.
 
 Lemma orb_lipschitz_l1 :
@@ -32,7 +32,7 @@ Lemma orb_lipschitz_l1 :
     bdist (orb a b) (orb c d) <= bdist a c + bdist b d.
 Proof.
   intros a b c d.
-  destruct a, b, c, d; simpl; lia.
+  destruct a, b, c, d; cbv [bdist]; repeat constructor.
 Qed.
 
 (* --------------------------------------------------------------------- *)
