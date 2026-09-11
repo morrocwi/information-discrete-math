@@ -1,0 +1,30 @@
+name: clay-safe-core
+
+on:
+  push:
+    branches: ["main", "research/clay-p1-safe-core-2026-09-11"]
+    paths:
+      - "formal/IDM_FiniteObstructionSafeCore.v"
+      - "formal/verify_clay_safe_core.sh"
+      - ".github/workflows/clay-safe-core.yml"
+  pull_request:
+    paths:
+      - "formal/IDM_FiniteObstructionSafeCore.v"
+      - "formal/verify_clay_safe_core.sh"
+      - ".github/workflows/clay-safe-core.yml"
+      - "docs/UNIVERSAL_FINITE_OBSTRUCTION_UNIFORM_BRIDGE_KERNEL.md"
+
+jobs:
+  coq-safe-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: coq-community/docker-coq-action@v1
+        with:
+          coq_version: "8.20"
+          ocaml_version: "default"
+          custom_script: |
+            startGroup "verify Clay finite-obstruction safe core"
+              sudo chown -R "$(whoami)" .
+              bash formal/verify_clay_safe_core.sh
+            endGroup
