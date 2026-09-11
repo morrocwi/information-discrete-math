@@ -1,0 +1,43 @@
+name: clay-negative-controls
+
+on:
+  push:
+    branches: ["main", "research/clay-p2-negative-controls-2026-09-11"]
+    paths:
+      - "formal/IDM_FiniteObstructionNegativeControls.v"
+      - "formal/verify_clay_negative_controls.sh"
+      - "research/clay_bridge/negative_controls.py"
+      - ".github/workflows/clay-negative-controls.yml"
+  pull_request:
+    paths:
+      - "formal/IDM_FiniteObstructionNegativeControls.v"
+      - "formal/verify_clay_negative_controls.sh"
+      - "research/clay_bridge/negative_controls.py"
+      - "docs/CLAY_P2_NEGATIVE_CONTROLS.md"
+      - "docs/UNIVERSAL_FINITE_OBSTRUCTION_UNIFORM_BRIDGE_KERNEL.md"
+      - ".github/workflows/clay-negative-controls.yml"
+
+jobs:
+  exact-negative-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: run exact finite negative controls
+        run: python3 research/clay_bridge/negative_controls.py
+
+  coq-negative-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: coq-community/docker-coq-action@v1
+        with:
+          coq_version: "8.20"
+          ocaml_version: "default"
+          custom_script: |
+            startGroup "verify Clay P2 negative controls"
+              sudo chown -R "$(whoami)" .
+              bash formal/verify_clay_negative_controls.sh
+            endGroup
