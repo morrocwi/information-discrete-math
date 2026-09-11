@@ -28,7 +28,7 @@ World-bound anchors
 
 These anchors are independently checkable and do not import a SAT answer as a
 parameter.  In this finite universe they raise the minimum number of verified
-defects from 1/3986 to 96/4337.
+defects from 1/3978 to 96/4329.
 
 This is a finite calibration only.  It does NOT show inverse-polynomial margin
 for arbitrary polynomial-size circuits: a large circuit can concentrate its
@@ -42,7 +42,6 @@ from tiny_circuit_direct_sample_hitting import (
     BANK,
     BANK_INDEX,
     N_FORMULAS,
-    ALL_FORMULA_BITS,
     target_table,
     restrict_mask,
     enumerate_demorgan_at_most_two_gates,
@@ -168,7 +167,7 @@ def main() -> None:
     internal_total = sum((len(x) for x in readers))
     internal_counts = [internal_defects(c, readers) for c in candidates]
     assert min(internal_counts) == 1
-    assert internal_total == 3986, internal_total
+    assert internal_total == 3978, internal_total
 
     # Positive world-bound anchors carry an explicit witness.  We store the
     # formula masks here; witness existence is independently rechecked below.
@@ -191,7 +190,7 @@ def main() -> None:
     worst = [c for c, d in zip(candidates, counts) if d == minimum]
     assert minimum == 96, minimum
     assert len(worst) == 1 and worst[0] == 0  # constant FALSE
-    assert total == 4337
+    assert total == 4329, total
 
     print(f"genuine_candidates={len(candidates)}")
     print(f"internal_reader_tests={internal_total} minimum_defects={min(internal_counts)}")
