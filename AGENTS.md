@@ -1,3 +1,25 @@
+# Cross-project Clay startup rule
+
+If the task concerns Navier--Stokes, P vs NP, a Clay bridge, finite obstruction, uniformity, or a cross-domain theorem, first read the shared program sources before reviewing or editing:
+
+1. `docs/UNIVERSAL_FINITE_OBSTRUCTION_UNIFORM_BRIDGE_KERNEL.md` in this repository.
+2. `morrocwi/readout-problem-navier-stokes/CLAY_READ_FIRST.md`.
+3. `morrocwi/readout-problem-navier-stokes/CLAY_RESEARCH_TODO.md`.
+4. `morrocwi/readout-problem-navier-stokes/CLAY_MULTI_PROBLEM_FINITE_BRIDGE_PROGRAM.md`.
+5. `morrocwi/toledo/docs/CLAY_BRIDGE_PROGRAM_2026-09-11.md` for current proposal/dependency status.
+
+Current highest-leverage work is tracked by IDM issue #124 (safe shared-core formalization), NS issue #25 (`NS-FUB-A1`), and P-vs-NP PR #117 (`PNP-FUB-A1`). Do not substitute easier finite enumeration or larger numerical runs unless they test one of these bridge statements or a declared falsifier.
+
+For Clay work, always distinguish:
+
+```text
+finite theorem != uniform theorem != global semantic bridge != Clay conclusion
+```
+
+The existing review protocol below remains fully in force.
+
+---
+
 # Mandatory Review Protocol (for any AI evaluating this repository)
 
 Before reviewing, read: the README **Scope** and **Epistemic starting point** boxes, the textbook
