@@ -303,7 +303,7 @@ Proof.
   revert s t Hn.
   induction w as [|u ws IH]; intros s t Hn.
   - simpl.
-    pose proof (depth_immediate Hn) as Himm.
+    pose proof (depth_immediate n Hn) as Himm.
     exact (Himm r).
   - simpl.
     apply IH.
