@@ -93,7 +93,10 @@ Theorem T2_closure_monotone (A B : Family) :
 Proof.
   intros HAB e He s t Hst.
   apply He.
-  exact (EqOf_antitone HAB s t Hst).
+  intros e0 He0.
+  apply Hst.
+  apply HAB.
+  exact He0.
 Qed.
 
 (* Saturation does not alter the induced indistinguishability relation. *)
@@ -102,7 +105,9 @@ Theorem T2_eq_closure_invariant (E : Family) :
 Proof.
   intros s t; split.
   - intros H e He.
-    exact (H e (T2_closure_extensive E e He)).
+    apply H.
+    intros x y Hxy.
+    exact (Hxy e He).
   - intros H e He.
     exact (He s t H).
 Qed.
@@ -114,10 +119,14 @@ Proof.
   intro e; split.
   - intros H s t Hst.
     apply H.
-    apply (proj2 (T2_eq_closure_invariant E s t)).
-    exact Hst.
-  - intros H.
-    exact (T2_closure_extensive (Cl E) e H).
+    intros e0 He0.
+    exact (He0 s t Hst).
+  - intros H s t Hst.
+    apply H.
+    intros e0 He0.
+    apply Hst.
+    intros x y Hxy.
+    exact (Hxy e0 He0).
 Qed.
 
 Definition family_union (A B : Family) : Family :=
@@ -130,7 +139,10 @@ Definition family_inter (A B : Family) : Family :=
 Theorem T6_question_monotonicity (A B : Family) :
   family_subset A B -> rel_subset (EqOf B) (EqOf A).
 Proof.
-  exact (EqOf_antitone A B).
+  intros HAB s t Hst e He.
+  apply Hst.
+  apply HAB.
+  exact He.
 Qed.
 
 (* T7: the joint question is exactly relation intersection. *)
@@ -151,7 +163,7 @@ Definition ClosedFamily (E : Family) : Prop := family_equiv (Cl E) E.
 
 Theorem closure_is_closed (E : Family) : ClosedFamily (Cl E).
 Proof.
-  exact (T2_closure_idempotent E).
+  apply T2_closure_idempotent.
 Qed.
 
 (* Binary meet of closed reader families is their intersection. *)
@@ -161,16 +173,17 @@ Proof.
   intros HA HB e; split.
   - intro Hcl; split.
     + apply (proj1 (HA e)).
-      apply (T2_closure_monotone (family_inter A B) A).
-      * intros x [Hx _]. exact Hx.
-      * exact Hcl.
+      intros s t HAt.
+      apply Hcl.
+      intros x [Hx _].
+      exact (HAt x Hx).
     + apply (proj1 (HB e)).
-      apply (T2_closure_monotone (family_inter A B) B).
-      * intros x [_ Hx]. exact Hx.
-      * exact Hcl.
-  - intros [HeA HeB].
-    apply T2_closure_extensive.
-    split; assumption.
+      intros s t HBt.
+      apply Hcl.
+      intros x [_ Hx].
+      exact (HBt x Hx).
+  - intros [HeA HeB] s t Hst.
+    exact (Hst e (conj HeA HeB)).
 Qed.
 
 (* Binary join of closed families is closure of their union. *)
@@ -228,7 +241,9 @@ Qed.
 Theorem T4_dynamic_weld_well_defined :
   forall u s t, FutureEq s t -> FutureEq (step u s) (step u t).
 Proof.
-  exact T3_future_equivalence_dynamic_stability.
+  intros u s t H.
+  apply T3_future_equivalence_dynamic_stability.
+  exact H.
 Qed.
 
 Fixpoint DepthEq (n : nat) (s t : State) : Prop :=
@@ -249,12 +264,13 @@ Lemma future_eq_implies_depth :
   forall n s t, FutureEq s t -> DepthEq n s t.
 Proof.
   induction n as [|n IH]; intros s t H.
-  - exact (future_eq_immediate H).
+  - apply future_eq_immediate. exact H.
   - split.
-    + exact (future_eq_immediate H).
+    + apply future_eq_immediate. exact H.
     + intro u.
       apply IH.
-      exact (T3_future_equivalence_dynamic_stability H).
+      apply T3_future_equivalence_dynamic_stability.
+      exact H.
 Qed.
 
 Lemma depth_immediate :
@@ -286,10 +302,14 @@ Proof.
   intros n Hstable s t Hn r w.
   revert s t Hn.
   induction w as [|u ws IH]; intros s t Hn.
-  - simpl. exact (depth_immediate Hn r).
+  - simpl.
+    pose proof (depth_immediate Hn) as Himm.
+    exact (Himm r).
   - simpl.
     apply IH.
-    exact (depth_stable_successor_closed Hstable Hn u).
+    apply depth_stable_successor_closed with (n := n).
+    + exact Hstable.
+    + exact Hn.
 Qed.
 
 (* Exactness at any finite depth that is a fixed point of refinement. *)
@@ -298,8 +318,13 @@ Theorem stable_depth_exact_future :
   forall s t, DepthEq n s t <-> FutureEq s t.
 Proof.
   intros n Hstable s t; split.
-  - apply depth_stable_implies_future; assumption.
-  - apply future_eq_implies_depth.
+  - intro Hn.
+    apply depth_stable_implies_future with (n := n).
+    + exact Hstable.
+    + exact Hn.
+  - intro Hfuture.
+    apply future_eq_implies_depth.
+    exact Hfuture.
 Qed.
 
 End FutureReaderDynamics.
@@ -354,10 +379,10 @@ Proof.
   - simpl.
     assert (Hprev : forall j, j < k -> ~ closed (iterate j P)).
     { intros j Hj. apply Hnone. lia. }
-    specialize (IH P Hprev).
+    pose proof (IH P Hprev) as Hgrow.
     assert (Hnot : ~ closed (iterate k P)).
     { apply Hnone. lia. }
-    specialize (strict_split_growth (iterate k P) Hnot).
+    pose proof (strict_split_growth (iterate k P) Hnot) as Hstrict.
     lia.
 Qed.
 
