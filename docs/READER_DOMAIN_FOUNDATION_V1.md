@@ -476,22 +476,33 @@ section introduces the abstract `Subspace`/`HasCodimLe` pair above and two named
   property neither named Hypothesis grants; adding a third, undisclosed Hypothesis to paper over
   that gap would contradict this section's own two-Hypothesis ledger, so it is deliberately **not**
   done. That extension is left explicitly **OPEN**, not silently assumed.
-- **`RDLB_S2_Ax`** (S1→S2) — one further named Hypothesis: if the joint kernel `InKerAll` is
-  trivial *on the coordinates that matter* (`forall i, i<d -> x i == 0` — see the precision fix
-  below), the ambient dimension `d` is bounded by the sum of bottleneck ranks — the classical
+- **`RDLB_S2_Ax`** (S1→S2) — one further named Hypothesis: if the *listed* bottlenecks' joint
+  kernel `InKerListSub Is` is trivial on the coordinates that matter (`forall i, i<d -> x i == 0`),
+  the ambient dimension `d` is bounded by the sum of those bottlenecks' ranks — the classical
   "injective ⟹ domain-dim ≤ codomain-dim" fact, same missing-theory class as K4.
   **`TOL_RDLB_close`** is its immediate, one-line corollary (`exact (RDLB_S2_Ax Is)`), not a
   further derivation.
 
-**Precision fix (peer review, 2026-09-13):** the S1 premise must be windowed to
-`forall i, i<d -> x i == 0`, not `forall i, x i == 0`. `Vec := nat -> Q` is index-infinite while
-`InKer d ...` only constrains coordinates below `d`, so the unwindowed premise is refutable by
-`x := fun k => if k =? d then 1 else 0` for *every* configuration — making the unwindowed
-`RDLB_S2_Ax` provable from nothing (not a real concession) and `TOL_RDLB_close` never usable
-(vacuously true, uninstantiable). Independently confirmed non-vacuous after windowing: `AA := mid`,
-`mm := fun _ => d` genuinely satisfies the windowed premise for a nonzero-outside-`d` vector. A
-stray, unconnected universally-quantified `dd` was also removed from the Hypothesis — it was
-harmless only while the premise was unsatisfiable.
+**Precision fix, round 1 (peer review, 2026-09-13):** the S1 premise was first windowed to
+`forall i, i<d -> x i == 0`, over `InKerAll` (unrestricted over all `i : I`). This was **itself
+still wrong**, caught by a second independent review: `RDLB_S2_Ax`/`TOL_RDLB_close` both
+universally quantify `Is : list I`, but an `InKerAll`-built premise never mentions `Is` — so at
+`Is := []` the conclusion forces `d <= 0`, making the Hypothesis **false** (not merely unproven)
+whenever the premise holds and `d > 0`. Round 1 relocated the vacuity instead of removing it, and
+its claim that `AA := mid`/`mm := fun _ => d` "confirms non-vacuity" was itself wrong — that exact
+configuration is precisely where the Hypothesis is false.
+
+**Precision fix, round 2 (the one in this file):** the premise now uses `InKerListSub Is` (already
+defined for `K4_codim_bound`) instead of `InKerAll`, properly indexed to the same `Is` as the
+conclusion. Independently confirmed correct: at `Is := []`, `InKerListSub []` reduces to
+`InKer d 0 (fun _ _ => 0)`, satisfied trivially by every vector (zero constraining rows) — so the
+premise now genuinely *requires* "every vector is zero below `d`", which is itself false for
+`d > 0` (witness `x := fun _ => 1`). The premise therefore fails at `Is := []` for `d > 0`, so the
+implication holds vacuously there for the right reason (a false premise), not because the
+Hypothesis is unsound — proved as a standalone scratch lemma before landing this fix, not merely
+asserted. `TOL_RDLB_close` is genuinely usable for any `Is` where a real injectivity fact on the
+listed bottlenecks can be supplied. A stray, unconnected universally-quantified `dd` was also
+removed from the Hypothesis in round 1.
 
 **Honest ledger:** derived as real theorems, no Hypothesis beyond `IDM_Matrix.v`'s own axiom-free
 lemma base — `meqR`, `rank_le`, `TOL2_rank_bound`, `Sum_double_swap`, `Sum_split`, `mv_mmul_assoc`,

@@ -932,20 +932,33 @@ End RDLBAbstractLayer.
 (*  fact -- same missing-theory class as K4, and `TOL_RDLB_close` is its   *)
 (*  immediate corollary (`exact RDLB_S2_Ax`), not a further derivation.    *)
 (*                                                                        *)
-(*  Precision fix (peer review, 2026-09-13): the S1 premise MUST be       *)
-(*  windowed to `forall i, i < d -> x i == 0`, not `forall i, x i == 0`.   *)
-(*  `Vec := nat -> Q` is index-infinite while `InKer d ...` only          *)
-(*  constrains coordinates below `d`, so the unwindowed premise is        *)
-(*  refutable by `x := fun k => if k =? d then 1 else 0` for EVERY        *)
-(*  configuration -- making the unwindowed `RDLB_S2_Ax` provable from     *)
-(*  nothing (not a real concession) and `TOL_RDLB_close` uninstantiable   *)
-(*  (vacuously true, never usable). Independently confirmed non-vacuous   *)
-(*  after windowing: `AA := mid`/`mm := fun _ => d` genuinely satisfies   *)
-(*  the windowed premise for a nonzero-outside-d vector. The stray        *)
-(*  universally-quantified `dd` (unconnected to `d` or any matrix         *)
-(*  dimension) was also removed -- it was harmless only because the      *)
-(*  premise was already unsatisfiable; re-adding it after windowing       *)
-(*  would make the Hypothesis false, not merely unproven.                *)
+(*  Precision fix, round 1 (peer review, 2026-09-13): the S1 premise      *)
+(*  was first windowed to `forall i, i < d -> x i == 0`, quantifying the   *)
+(*  kernel condition over `InKerAll` (all indices `i : I`, unrestricted). *)
+(*  This was ITSELF STILL WRONG, caught by a second independent review:   *)
+(*  `RDLB_S2_Ax`/`TOL_RDLB_close` both universally quantify `Is : list I`,*)
+(*  but a premise built from `InKerAll` never mentions `Is` at all -- so  *)
+(*  at `Is := nil`, the conclusion forces `d <= 0`, making the Hypothesis *)
+(*  itself FALSE (not merely unproven) whenever the premise holds and     *)
+(*  `d > 0`. The round-1 fix relocated the vacuity instead of removing    *)
+(*  it, and the round-1 comment's claim that `AA := mid`/`mm := fun _ =>  *)
+(*  d` "confirms non-vacuity" was itself wrong: that exact configuration  *)
+(*  is precisely where the Hypothesis is false.                          *)
+(*                                                                        *)
+(*  Precision fix, round 2 (the one actually in this file): the premise   *)
+(*  now uses `InKerListSub Is` (already defined above for `K4_codim_     *)
+(*  bound`) instead of `InKerAll`, so it is properly indexed to the same  *)
+(*  `Is` as the conclusion. Independently confirmed correct: at           *)
+(*  `Is := nil`, `InKerListSub nil` is `InKer d 0 (fun _ _ => 0)`, which  *)
+(*  every vector trivially satisfies (there are zero constraining rows),  *)
+(*  so the premise now REQUIRES "every vector is zero below `d`" -- which *)
+(*  is itself false for `d > 0` (witness `x := fun _ => 1`). The premise  *)
+(*  therefore genuinely FAILS at `Is := nil` for `d > 0`, so the          *)
+(*  implication holds vacuously there for the right reason (false        *)
+(*  premise), not because the Hypothesis itself is unsound -- proved as  *)
+(*  a standalone scratch lemma before landing this fix, not merely       *)
+(*  asserted. `TOL_RDLB_close` is genuinely usable for any `Is` where a  *)
+(*  real injectivity-on-the-listed-bottlenecks fact can be supplied.     *)
 (*                                                                        *)
 (*  Honest ledger: derived as real theorems -- `meqR`, `rank_le`,          *)
 (*  `TOL2_rank_bound`, `mv_mmul_assoc`, `K1_kernel_inclusion`,             *)
@@ -1275,11 +1288,11 @@ Proof.
 Qed.
 
 Hypothesis RDLB_S2_Ax : forall (Is : list I),
-  (forall x, InKerAll x -> forall i, (i < d)%nat -> x i == 0) ->
+  (forall x, InKerListSub Is x -> forall i, (i < d)%nat -> x i == 0) ->
   (d <= list_sum (map mm Is))%nat.
 
 Theorem TOL_RDLB_close (Is : list I) :
-  (forall x, InKerAll x -> forall i, (i < d)%nat -> x i == 0) ->
+  (forall x, InKerListSub Is x -> forall i, (i < d)%nat -> x i == 0) ->
   (d <= list_sum (map mm Is))%nat.
 Proof. exact (@RDLB_S2_Ax Is). Qed.
 
@@ -1307,12 +1320,16 @@ End FiniteBottleneckRDLB.
   need `HasCodimLe` to respect logical equivalence of its `Subspace`
   argument, a property neither named Hypothesis grants). `TOL_RDLB_close`
   is a direct corollary of the single named Hypothesis `RDLB_S2_Ax`, not a
-  further derivation. Its premise is windowed to `forall i, i<d -> x i
-  == 0` (peer-review fix, 2026-09-13): the earlier unwindowed form was
-  vacuously refutable over `Vec := nat -> Q`'s index-infinite domain,
-  which would have made `RDLB_S2_Ax` provable from nothing and
-  `TOL_RDLB_close` never usable; independently confirmed non-vacuous
-  after the fix. IMPORTANT: `TOL_RDLB_close`, the RDLB endpoint, rests
+  further derivation. Its premise went through two peer-review rounds
+  (2026-09-13): round 1 windowed it to `forall i, i<d -> x i == 0` over
+  `InKerAll`, but that left `Is` unbound by the premise, making the
+  Hypothesis outright FALSE at `Is := nil` whenever `d > 0` -- a second
+  review caught this. Round 2 (the version in this file) uses
+  `InKerListSub Is` instead of `InKerAll`, properly binding `Is`;
+  independently confirmed (a standalone scratch proof, not just
+  asserted) that the premise now genuinely fails at `Is := nil` for
+  `d > 0`, so the vacuity at that point is a false premise, not an
+  unsound Hypothesis. IMPORTANT: `TOL_RDLB_close`, the RDLB endpoint, rests
   ENTIRELY on `RDLB_S2_Ax` -- none of this section's genuinely-derived
   theorems (`TOL2_rank_bound`, `K1_kernel_inclusion`, `K2_each`,
   `K3_sum`, `TOL3_sum_rank`) is used in reaching it; they establish the

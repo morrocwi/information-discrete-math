@@ -735,7 +735,7 @@
     "kind": "Theorem",
     "deps": [
       "list_sum",
-      "InKerAll"
+      "InKerListSub"
     ]
   }
 }
