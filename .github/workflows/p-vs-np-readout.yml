@@ -1,0 +1,113 @@
+name: p-vs-np-readout
+
+on:
+  push:
+    branches: ["research/p-vs-np-readout"]
+    paths:
+      - "research/p_vs_np_readout/**"
+      - "formal/IDM_*.v"
+      - "formal/verify_p_vs_np.sh"
+      - ".github/workflows/p-vs-np-readout.yml"
+  pull_request:
+    paths:
+      - "research/p_vs_np_readout/**"
+      - "formal/IDM_*.v"
+      - "formal/verify_p_vs_np.sh"
+      - ".github/workflows/p-vs-np-readout.yml"
+
+jobs:
+  finite-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: install IDM runtime dependencies
+        run: python3 -m pip install -e .
+      - name: intervention signature exact fixture
+        run: python3 research/p_vs_np_readout/sat_intervention_quotient.py --max-m 10
+      - name: future-readout residual-width exact fixture
+        run: python3 research/p_vs_np_readout/future_readout_width.py --max-m 6
+      - name: transform-potential exhaustive negative control
+        run: python3 research/p_vs_np_readout/transform_potential_audit.py
+      - name: exact fusion-Horn cover diagnostic
+        run: python3 research/p_vs_np_readout/fusion_horn_exact.py
+      - name: exact fusion-cover LP dual certificate
+        run: python3 research/p_vs_np_readout/fusion_dual_certificate.py
+      - name: circuit-lineage to fusion exact diagnostic
+        run: python3 research/p_vs_np_readout/circuit_lineage_fusion_diagnostic.py
+      - name: fusion survivor to concrete mismatch
+        run: python3 research/p_vs_np_readout/fusion_survivor_refuter.py
+      - name: adaptive semantic-generation survivor audit
+        run: python3 research/p_vs_np_readout/adaptive_semantic_generation_adversary.py
+      - name: residual fusion-cover debt capacity audit
+        run: python3 research/p_vs_np_readout/residual_cover_debt.py
+      - name: SAT minimal-UNSAT-core Fusion probe
+        run: python3 research/p_vs_np_readout/sat_mus_fusion_probe.py
+      - name: existential projection collapse guard
+        run: python3 research/p_vs_np_readout/projection_collapse_guard.py
+      - name: projection-sensitive residual dual diagnostic
+        run: python3 research/p_vs_np_readout/projection_sensitive_dual.py
+      - name: exact three-bit Horn cover family search
+        run: python3 research/p_vs_np_readout/horn_cover_bfs.py
+      - name: SAT restriction-defect finite certificate
+        run: python3 research/p_vs_np_readout/sat_restriction_defect.py
+      - name: one-sided SAT witness-or-defect audit
+        run: python3 research/p_vs_np_readout/sat_one_sided_audit.py
+      - name: compressed negative-closure DAG audit
+        run: python3 research/p_vs_np_readout/compressed_negative_closure.py
+      - name: lineage signature exponential no-go
+        run: python3 research/p_vs_np_readout/lineage_signature_guard.py
+      - name: SAT fixed-point defect localization
+        run: python3 research/p_vs_np_readout/sat_fixed_point_defect.py
+      - name: local SAT circuit refuter certificate
+        run: python3 research/p_vs_np_readout/sat_circuit_refuter_certificate.py
+      - name: adaptive defect capture exact diagnostic
+        run: python3 research/p_vs_np_readout/adaptive_defect_capture.py
+      - name: robust adaptive defect capture margin
+        run: python3 research/p_vs_np_readout/robust_defect_capture.py
+      - name: defect signature support search-cost guard
+        run: python3 research/p_vs_np_readout/defect_signature_support.py
+      - name: closure-guided hitting support
+        run: python3 research/p_vs_np_readout/closure_guided_hitting_support.py
+      - name: certified tractable frontier support
+        run: python3 research/p_vs_np_readout/tractable_frontier_support.py
+      - name: finite outer hitting synthesis
+        run: python3 research/p_vs_np_readout/outer_hitting_finite_dsl.py
+      - name: tiny genuine-circuit direct-sample hitting
+        run: python3 research/p_vs_np_readout/tiny_circuit_direct_sample_hitting.py
+      - name: fixed-reader versus world-bound anchor amplification
+        run: python3 research/p_vs_np_readout/fixed_reader_anchor_amplification.py
+      - name: SAT clause-essentiality lineage refuter
+        run: python3 research/p_vs_np_readout/sat_clause_essentiality_refuter.py
+      - name: oracle-free outer refuter CEGIS baseline
+        run: python3 research/p_vs_np_readout/outer_refuter_cegis.py
+      - name: RRR equality sharing negative control
+        run: python3 research/p_vs_np_readout/rrr_circuit_audit.py
+      - name: Readout-Universe accessible-completion fixture
+        run: python3 research/p_vs_np_readout/readout_universe_sat_completion.py
+      - name: static semantic-capacity exact audit
+        run: python3 research/p_vs_np_readout/semantic_capacity_audit.py
+      - name: weak-rank exact finite fixture
+        run: python3 research/p_vs_np_readout/weak_rank_principle.py
+      - name: recomputation pebbling exact finite fixture
+        run: python3 research/p_vs_np_readout/pebbling_readout_frontier.py
+      - name: earlier SAT collision fixture
+        run: python3 research/p_vs_np_readout/readout_sat_frontier.py
+      - name: AC0 reduction baseline
+        run: python3 research/p_vs_np_readout/parity_to_cnf_baseline.py
+
+  coq-intervention:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: coq-community/docker-coq-action@v1
+        with:
+          coq_version: "8.20"
+          ocaml_version: "default"
+          custom_script: |
+            startGroup "verify P-vs-NP readout witnesses"
+              sudo chown -R "$(whoami)" .
+              bash formal/verify_p_vs_np.sh
+            endGroup
