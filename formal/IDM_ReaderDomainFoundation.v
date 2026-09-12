@@ -19,6 +19,12 @@
   - RDLB v0.1 abstract Demand/Capacity accounting layer (RDLBAbstractLayer:
     RDLB_T1_accumulation_bound, RDLB_T2_round_bound,
     RDLB_W_capacity_deficit_witness)
+  - Finite-Bottleneck RDLB: pure finite Q-matrix linear algebra over
+    IDM_Matrix.v (FiniteBottleneckRDLB: TOL2_rank_bound, K1_kernel_inclusion,
+    TOL4_no_collapse, K2_each, K3_sum, rank_le_add, TOL3_sum_rank,
+    K4_codim_bound, TOL_RDLB_close) -- no Jacobian, no derivative, no
+    continuum object anywhere; see the section header comment for the
+    honest achievable-vs-Hypothesis split.
 
   This file's place in the programme's Master Spine (root-to-Clay architecture
   map, updated separately as new sections land here):
@@ -31,6 +37,17 @@
 *)
 
 From Coq Require Import List Arith Lia.
+Require Import QArith.
+Require Import IDM_Matrix.
+(* Both QArith's and IDM_Matrix.v's own top-level `Open Scope Q_scope` are
+   re-triggered by these `Require Import`s and would otherwise silently
+   reinterpret every bare numeral literal in the REST of this file (nat
+   pattern matches on `0` included) as a `Q` numeral instead of a `nat`
+   one. Close it back down immediately, after both requires; `Section
+   FiniteBottleneckRDLB` below reopens it locally, for exactly the
+   Q-matrix content that needs it, and closes it again at the end of
+   that section. *)
+Close Scope Q_scope.
 Import ListNotations.
 Set Implicit Arguments.
 
@@ -824,4 +841,505 @@ End RDLBAbstractLayer.
   closure ever be established elsewhere, honest reporting of that
   result is required, not suppression; this comment asserts only that
   no such bridge exists in this file.
+*)
+
+(* ===================================================================== *)
+(*  Section FiniteBottleneckRDLB                                          *)
+(*                                                                        *)
+(*  Framing decision (per founder override, superseding two earlier,     *)
+(*  now-discarded Jacobian-based attempts at this section): no Jacobian,  *)
+(*  derivative, tangent space, or continuum object anywhere. Everything   *)
+(*  below is a `nat`-indexed `Q`-matrix or `Q`-vector, built by REUSING   *)
+(*  IDM_Matrix.v's existing `Mat := nat -> nat -> Q`, `Sum`, `mmul`,       *)
+(*  `mid`, `mid_left`, `madd` rather than re-deriving matrix algebra --    *)
+(*  this section's own instance of the reuse pipeline (EPIS-REUSE-        *)
+(*  PIPELINE): parent objects `mmul`, `mid_left`, `Sum_ext_lt`, `Sum_zero`,*)
+(*  `Sum_plus` from IDM_Matrix.v, `Require Import`ed above.               *)
+(*                                                                        *)
+(*  No dependent types for shapes, following IDM_Matrix.v's own           *)
+(*  convention: a matrix's "shape" is never encoded in its type -- it is  *)
+(*  carried as separate `nat` arguments in each lemma statement (a `Mat`  *)
+(*  "is" p x r only in the sense that a lemma quantifies i<p, j<r).       *)
+(*                                                                        *)
+(*  Claim boundary: this section proves finite Q-linear-algebra facts     *)
+(*  only. It contains no Navier-Stokes / energy-observability claim of    *)
+(*  any kind, no NS-specific instantiation of any definition below, and   *)
+(*  no computational-hardness or complexity-class premise or conclusion   *)
+(*  of any kind -- in particular no P-vs-NP-shaped claim. PNP-RDLB stays  *)
+(*  fully OPEN, exactly as in RDLBAbstractLayer above; nothing here        *)
+(*  touches, narrows, or answers it in either direction.                  *)
+(*                                                                        *)
+(*  Reuse-pipeline lookup already run for this design (EPIS-REUSE-        *)
+(*  PIPELINE step 1, Toledo): Toledo `CAN-054` (`EQ-015/H.06.v1`,          *)
+(*  Selective retention as a rank-bounded factorized update (Human        *)
+(*  LoRA) states `rank_Q(B_nA_n) <= m_n` as part of its own root           *)
+(*  statement, and was checked as the nearest candidate parent for        *)
+(*  `TOL2_rank_bound` below. Its own Coq file                             *)
+(*  (`coq/canonical/EQ_015__H_06_v1.v`) was read directly, per the         *)
+(*  "keyword hits are NOT matches" rule: it does NOT prove a general       *)
+(*  rank-of-a-factorization bound in Coq at all -- `CAN_054_finite_       *)
+(*  bottleneck` is only the nat-pair predicate `0 < rank_n < dim_n`, and   *)
+(*  `CAN_054_finite_bottleneck_satisfiable` only exhibits one witness      *)
+(*  pair (1,2); there is no `rank_le`-shaped definition or factorization   *)
+(*  object in that file to reuse. `TOL2_rank_bound` below is therefore     *)
+(*  PROVED FRESH in this section, not reused from CAN-054's Coq -- CAN-054 *)
+(*  is cited as the intellectual motivation for the name finite-bottleneck *)
+(*  rank bound only, never as a `Require`d premise, and this section       *)
+(*  duplicates none of its Coq objects (renamed from the removed line):    *)
+(*  section duplicates none of its Coq objects (`CAN_054_gate_weight_     *)
+(*  valid`, `CAN_054_retained_update`, `CAN_054_finite_bottleneck*`,       *)
+(*  `CAN_054_Open_empirical_programme` are untouched). Genesis             *)
+(*  compatibility (step 2): no existing Readout Genesis gate treats a      *)
+(*  factorization-rank / kernel-inclusion law; this section is new         *)
+(*  infrastructure with no Genesis-side classification yet. `rank_le`,     *)
+(*  `InKer`, TOL-2 through TOL-5, K1-K3 are therefore NEW DERIVATION /      *)
+(*  PROPOSAL, not yet in Toledo.                                          *)
+(*                                                                        *)
+(*  Honest achievable-vs-Hypothesis split (do not read past this without  *)
+(*  noting it): everything through `TOL3_sum_rank` is a REAL, fully        *)
+(*  derived theorem -- no new axiom, no incomplete-proof marker, no        *)
+(*  Hypothesis beyond                                                     *)
+(*  the ordinary IDM_Matrix.v lemmas already `Require Import`ed. From      *)
+(*  `K4_codim_bound` onward, this section is an explicit, clearly-labeled *)
+(*  CONCESSION: proving true subspace codimension (the dimension of an     *)
+(*  intersection of kernels inside Q^d) needs basis/independence theory    *)
+(*  that exists nowhere in Toledo/IDM today. Rather than fake this via     *)
+(*  the genuine-but-misleading-if-misused fact that any p x r matrix has   *)
+(*  `rank_le p r p M` (witness `C := mid, D := M`, from `mid_left` --      *)
+(*  recorded below as `rank_le_trivial_upper`, and NEVER used to justify   *)
+(*  K4: it is a statement about the STACKED CONSTRAINT MATRIX'S OWN SHAPE, *)
+(*  not about the true dimension of its nullspace), this section           *)
+(*  introduces an abstract, explicitly-labeled `Subspace := Vec -> Prop`   *)
+(*  and an uninterpreted relation `HasCodimLe`, exactly as `Sufficient`/    *)
+(*  `Cap` are left abstract in RDLBAbstractLayer above. Two Hypotheses,    *)
+(*  tagged RDLB-K4-Ax (unproven dimension-counting laws, not derived):     *)
+(*  (a) a single kernel cut by m scalar equations has codim <= m; (b)      *)
+(*  codim is subadditive under finite intersection. `K4_codim_bound`'s     *)
+(*  own statement is deliberately about the FINITE, list-scoped            *)
+(*  intersection `InKerListSub Is` it can actually derive from those two   *)
+(*  Hypotheses by structural induction -- NOT about the unrestricted       *)
+(*  `InKerAll` (quantified over the whole, possibly-infinite index type    *)
+(*  `I`). Extending the bound to `InKerAll` for an arbitrary `Is` would    *)
+(*  additionally require `HasCodimLe` to respect logical/extensional       *)
+(*  equivalence of its `Subspace` argument -- a real, very mild, but       *)
+(*  UNSTATED closure property this design's two named Hypotheses do not    *)
+(*  grant; adding a third, undisclosed Hypothesis here to paper over that  *)
+(*  gap would contradict this section's own two-Hypothesis ledger, so it   *)
+(*  is deliberately NOT done -- that extension is left OPEN, flagged, and  *)
+(*  not silently assumed. S1 (triviality hypothesis) to S2 (`d <= sum      *)
+(*  m_i`) is stated as one further Hypothesis, tagged RDLB-S2-Ax, since    *)
+(*  it is the classical injective-implies-domain-dim-le-codomain-dim      *)
+(*  fact -- same missing-theory class as K4, and `TOL_RDLB_close` is its   *)
+(*  immediate corollary (`exact RDLB_S2_Ax`), not a further derivation.    *)
+(*                                                                        *)
+(*  Precision fix, round 1 (peer review, 2026-09-13): the S1 premise      *)
+(*  was first windowed to `forall i, i < d -> x i == 0`, quantifying the   *)
+(*  kernel condition over `InKerAll` (all indices `i : I`, unrestricted). *)
+(*  This was ITSELF STILL WRONG, caught by a second independent review:   *)
+(*  `RDLB_S2_Ax`/`TOL_RDLB_close` both universally quantify `Is : list I`,*)
+(*  but a premise built from `InKerAll` never mentions `Is` at all -- so  *)
+(*  at `Is := nil`, the conclusion forces `d <= 0`, making the Hypothesis *)
+(*  itself FALSE (not merely unproven) whenever the premise holds and     *)
+(*  `d > 0`. The round-1 fix relocated the vacuity instead of removing    *)
+(*  it, and the round-1 comment's claim that `AA := mid`/`mm := fun _ =>  *)
+(*  d` "confirms non-vacuity" was itself wrong: that exact configuration  *)
+(*  is precisely where the Hypothesis is false.                          *)
+(*                                                                        *)
+(*  Precision fix, round 2 (the one actually in this file): the premise   *)
+(*  now uses `InKerListSub Is` (already defined above for `K4_codim_     *)
+(*  bound`) instead of `InKerAll`, so it is properly indexed to the same  *)
+(*  `Is` as the conclusion. Independently confirmed correct: at           *)
+(*  `Is := nil`, `InKerListSub nil` is `InKer d 0 (fun _ _ => 0)`, which  *)
+(*  every vector trivially satisfies (there are zero constraining rows),  *)
+(*  so the premise now REQUIRES "every vector is zero below `d`" -- which *)
+(*  is itself false for `d > 0` (witness `x := fun _ => 1`). The premise  *)
+(*  therefore genuinely FAILS at `Is := nil` for `d > 0`, so the          *)
+(*  implication holds vacuously there for the right reason (false        *)
+(*  premise), not because the Hypothesis itself is unsound -- proved as  *)
+(*  a standalone scratch lemma before landing this fix, not merely       *)
+(*  asserted. `TOL_RDLB_close` is genuinely usable for any `Is` where a  *)
+(*  real injectivity-on-the-listed-bottlenecks fact can be supplied.     *)
+(*                                                                        *)
+(*  Honest ledger: derived as real theorems -- `meqR`, `rank_le`,          *)
+(*  `TOL2_rank_bound`, `mv_mmul_assoc`, `K1_kernel_inclusion`,             *)
+(*  `TOL4_no_collapse`, `K2_each`, `K3_sum`, `Sum_split`/block-stacking,    *)
+(*  `rank_le_add`, `TOL3_sum_rank`, and the list-scoped form of            *)
+(*  `K4_codim_bound`. Assumed as explicit, named Hypotheses --             *)
+(*  `RDLB_K4_Ax_single`/`RDLB_K4_Ax_inter` (the two K4 codimension laws)   *)
+(*  and `RDLB_S2_Ax` (S2's injectivity-bound law); `TOL_RDLB_close` rests  *)
+(*  on the latter alone. IMPORTANT: this means the RDLB endpoint          *)
+(*  (`TOL_RDLB_close`) rests ENTIRELY on the named Hypotheses -- none of   *)
+(*  the genuinely-derived theorems above it (`TOL2_rank_bound`,           *)
+(*  `K1_kernel_inclusion`, `K2_each`, `K3_sum`, `TOL3_sum_rank`) is used   *)
+(*  in reaching it. Those theorems establish the kernel-inclusion and     *)
+(*  rank-accounting chain in its own right; they do not feed the          *)
+(*  codimension closure, which is a separate, still-open concession.      *)
+(* ===================================================================== *)
+Section FiniteBottleneckRDLB.
+Open Scope Q_scope.
+
+Definition Vec := nat -> Q.
+
+(* Rectangular equality: A and B agree entrywise on the p x r window.     *)
+Definition meqR (p r : nat) (A B : Mat) : Prop :=
+  forall i j, (i < p)%nat -> (j < r)%nat -> A i j == B i j.
+
+(* Matrix-vector product, contracting the shared inner dimension n.       *)
+Definition mvmul (n : nat) (A : Mat) (x : Vec) : Vec :=
+  fun i => Sum n (fun k => A i k * x k).
+
+(* x lies in the kernel of the first m rows of the (n-column) matrix A.   *)
+Definition InKer (d m : nat) (A : Mat) (x : Vec) : Prop :=
+  forall i, (i < m)%nat -> mvmul d A x i == 0.
+
+(* Factorization rank: M (p x r) factors through a k-dimensional middle.  *)
+Definition rank_le (p r k : nat) (M : Mat) : Prop :=
+  exists C D : Mat, meqR p r M (mmul k C D).
+
+(* Genuine but NOT used for K4 (see header): any p x r matrix trivially    *)
+(* has rank_le p r p M via mid_left -- a fact about the shape of the       *)
+(* constraint matrix itself, not about the true dimension of its kernel.  *)
+Lemma rank_le_trivial_upper : forall p r (M : Mat), rank_le p r p M.
+Proof.
+  intros p r M. exists mid, M. unfold meqR.
+  intros i j Hi Hj. symmetry. apply mid_left. exact Hi.
+Qed.
+
+(* ---- finite double-sum interchange ---- *)
+Lemma Sum_double_swap : forall n m f,
+  Sum n (fun k => Sum m (fun l => f k l)) == Sum m (fun l => Sum n (fun k => f k l)).
+Proof.
+  induction n as [| n' IH]; intros m f.
+  - assert (Hz : Sum m (fun l => Sum 0 (fun k : nat => f k l)) == Sum m (fun _ : nat => 0)).
+    { apply Sum_ext. intro l. reflexivity. }
+    rewrite Hz. symmetry. apply Sum_zero.
+  - assert (HL : Sum (S n') (fun k => Sum m (fun l => f k l))
+                 == Sum n' (fun k => Sum m (fun l => f k l)) + Sum m (fun l => f n' l)).
+    { reflexivity. }
+    assert (Hstep : Sum m (fun l => Sum (S n') (fun k => f k l))
+                     == Sum m (fun l => Sum n' (fun k => f k l) + f n' l)).
+    { apply Sum_ext. intro l. reflexivity. }
+    rewrite HL, Hstep, Sum_plus, (IH m f).
+    reflexivity.
+Qed.
+
+(* ---- reindexing lemma for splitting a finite sum ---- *)
+Lemma Sum_split : forall (a b : nat) (f : nat -> Q),
+  Sum (a+b) f == Sum a f + Sum b (fun k => f (a+k)%nat).
+Proof.
+  intros a b. revert a. induction b as [| b' IH]; intros a f.
+  - replace (a + 0)%nat with a by lia. simpl. ring.
+  - assert (Ha : (a + S b')%nat = S (a + b')) by lia.
+    rewrite Ha.
+    transitivity (Sum (a+b') f + f (a+b')%nat).
+    + reflexivity.
+    + rewrite (IH a f).
+      transitivity (Sum a f + (Sum b' (fun k => f (a+k)%nat) + f (a+b')%nat)).
+      * ring.
+      * reflexivity.
+Qed.
+
+(* ---- TOL-2: keystone, genuinely derived (proved fresh -- see header    *)
+(*      for why CAN-054's own Coq file does not supply this generally) -- *)
+Theorem TOL2_rank_bound : forall (d m : nat) (A B : Mat),
+  rank_le d d m (mmul m B A).
+Proof. intros d m A B. exists B, A. unfold meqR. reflexivity. Qed.
+
+(* ---- helpers: distributing a Q-constant into/out of a finite sum ---- *)
+Lemma Sum_mul_const_r : forall n f c, Sum n f * c == Sum n (fun k => f k * c).
+Proof. induction n as [| n' IH]; intros f c; simpl; [ ring | rewrite <- IH; ring ]. Qed.
+
+Lemma Sum_mul_const_l : forall n f c, c * Sum n f == Sum n (fun k => c * f k).
+Proof. induction n as [| n' IH]; intros f c; simpl; [ ring | rewrite <- IH; ring ]. Qed.
+
+(* ---- mv/mmul associativity, from Sum_double_swap ---- *)
+Lemma mv_mmul_assoc : forall (p q : nat) (A B : Mat) (x : Vec) i,
+  mvmul q (mmul p A B) x i == mvmul p A (mvmul q B x) i.
+Proof.
+  intros p q A B x i.
+  unfold mvmul, mmul.
+  transitivity (Sum q (fun k => Sum p (fun l => A i l * B l k * x k))).
+  { apply Sum_ext. intro k. apply Sum_mul_const_r. }
+  transitivity (Sum p (fun l => Sum q (fun k => A i l * B l k * x k))).
+  { apply Sum_double_swap. }
+  apply Sum_ext. intro l.
+  transitivity (Sum q (fun k => A i l * (B l k * x k))).
+  { apply Sum_ext. intro k. ring. }
+  symmetry. apply Sum_mul_const_l.
+Qed.
+
+(* pointwise unfolding of mvmul, kept as its own lemma so later `rewrite`s *)
+(* can target one specific mvmul occurrence without disturbing others.    *)
+Lemma mvmul_unfold : forall n A x i, mvmul n A x i == Sum n (fun k => A i k * x k).
+Proof. intros n A x i. reflexivity. Qed.
+
+(* ---- TOL-5/K1: kernel inclusion for one bottleneck, from               *)
+(*      mv_mmul_assoc + Sum_ext_lt + Sum_zero ----                        *)
+Theorem K1_kernel_inclusion : forall (d m : nat) (A B : Mat) (x : Vec),
+  InKer d m A x -> InKer d d (mmul m B A) x.
+Proof.
+  intros d m A B x Hker i Hi.
+  rewrite (mv_mmul_assoc m d B A x i).
+  rewrite (mvmul_unfold m B (mvmul d A x) i).
+  transitivity (Sum m (fun _ : nat => 0)).
+  - apply Sum_ext_lt. intros l Hl. rewrite (Hker l Hl). ring.
+  - apply Sum_zero.
+Qed.
+
+(* generic congruence: matrices agreeing entrywise on [0,d)x[0,d) give     *)
+(* the same mvmul on rows i<d. *)
+Lemma mvmul_meqR : forall (d : nat) (M N : Mat) (x : Vec) (i : nat),
+  meqR d d M N -> (i < d)%nat -> mvmul d M x i == mvmul d N x i.
+Proof.
+  intros d M N x i Hmeq Hi. unfold mvmul.
+  apply Sum_ext_lt. intros k Hk. rewrite (Hmeq i k Hi Hk). reflexivity.
+Qed.
+
+(* ---- TOL-4: no-early-collapse form. The InKer hypothesis is the        *)
+(*      scenario framing (this is meant to be read in a situation where   *)
+(*      A's kernel condition holds); the entrywise hypothesis meqR is     *)
+(*      what the conclusion actually rests on. ----                       *)
+Theorem TOL4_no_collapse : forall (d m : nat) (A B O : Mat) (x : Vec),
+  InKer d m A x ->
+  meqR d d (madd O (mmul m B A)) O ->
+  forall i, (i<d)%nat -> mvmul d (madd O (mmul m B A)) x i == mvmul d O x i.
+Proof.
+  intros d m A B O x _ Hmeq i Hi.
+  exact (@mvmul_meqR d (madd O (mmul m B A)) O x i Hmeq Hi).
+Qed.
+
+Context {I : Type} (AA BB : I -> Mat) (mm : I -> nat) (d : nat).
+Definition InKerAll (x : Vec) : Prop := forall i : I, InKer d (mm i) (AA i) x.
+
+(* ---- K2/K3: N-fold, over an abstract index family sharing ambient dim d --- *)
+Theorem K2_each : forall x, InKerAll x ->
+  forall i, InKer d d (mmul (mm i) (BB i) (AA i)) x.
+Proof.
+  intros x Hall i. exact (@K1_kernel_inclusion d (mm i) (AA i) (BB i) x (Hall i)).
+Qed.
+
+(* mvmul is additive over madd -- the "trivial mvmul-additivity lemma"    *)
+(* the design calls for, used here to push InKer through a fold-sum.      *)
+Lemma mvmul_madd : forall n M N x i, mvmul n (madd M N) x i == mvmul n M x i + mvmul n N x i.
+Proof.
+  intros n M N x i. unfold mvmul, madd.
+  transitivity (Sum n (fun k => M i k * x k + N i k * x k)).
+  - apply Sum_ext. intro k. ring.
+  - apply Sum_plus.
+Qed.
+
+Lemma InKer_madd : forall dd m M N x, InKer dd m M x -> InKer dd m N x -> InKer dd m (madd M N) x.
+Proof.
+  intros dd m M N x HM HN i Hi.
+  rewrite (mvmul_madd dd M N x i), (HM i Hi), (HN i Hi). ring.
+Qed.
+
+Lemma InKer_zero : forall dd m x, InKer dd m (fun _ _ : nat => 0) x.
+Proof.
+  intros dd m x i Hi. unfold mvmul.
+  transitivity (Sum dd (fun _ : nat => 0)).
+  - apply Sum_ext. intro k. ring.
+  - apply Sum_zero.
+Qed.
+
+Lemma K3_fold_general : forall (Is : list I) (Z : Mat) (x : Vec),
+  InKer d d Z x -> InKerAll x ->
+  InKer d d (fold_left madd (map (fun i => mmul (mm i) (BB i) (AA i)) Is) Z) x.
+Proof.
+  induction Is as [| i0 Is' IH]; intros Z x HZ Hall.
+  - simpl. exact HZ.
+  - simpl. apply IH.
+    + apply InKer_madd; [exact HZ | exact (@K2_each x Hall i0)].
+    + exact Hall.
+Qed.
+
+Theorem K3_sum (Is : list I) : forall x, InKerAll x ->
+  InKer d d (fold_left madd (map (fun i => mmul (mm i) (BB i) (AA i)) Is)
+                            (fun _ _ => 0)) x.
+Proof.
+  intros x Hall. apply K3_fold_general; [apply InKer_zero | exact Hall].
+Qed.
+
+(* ---- TOL-3/F2: rank of a finite sum, via hcat/vcat block-stacking + Sum_split --- *)
+
+(* horizontal / vertical block concatenation along the shared middle dim  *)
+Definition hcat (k1 : nat) (C1 C2 : Mat) : Mat :=
+  fun i j => if Nat.ltb j k1 then C1 i j else C2 i (j - k1)%nat.
+
+Definition vcat (k1 : nat) (D1 D2 : Mat) : Mat :=
+  fun i j => if Nat.ltb i k1 then D1 i j else D2 (i - k1)%nat j.
+
+Lemma hcat_left : forall (k1 : nat) (C1 C2 : Mat) (i j : nat), (j < k1)%nat -> hcat k1 C1 C2 i j = C1 i j.
+Proof.
+  intros k1 C1 C2 i j Hj. unfold hcat.
+  destruct (Nat.ltb j k1) eqn:E.
+  - reflexivity.
+  - exfalso. apply Nat.ltb_ge in E. lia.
+Qed.
+
+Lemma hcat_right : forall (k1 : nat) (C1 C2 : Mat) (i t : nat), hcat k1 C1 C2 i (k1+t)%nat = C2 i t.
+Proof.
+  intros k1 C1 C2 i t. unfold hcat.
+  destruct (Nat.ltb (k1+t)%nat k1) eqn:E.
+  - exfalso. apply Nat.ltb_lt in E. lia.
+  - f_equal. lia.
+Qed.
+
+Lemma vcat_left : forall (k1 : nat) (D1 D2 : Mat) (i j : nat), (i < k1)%nat -> vcat k1 D1 D2 i j = D1 i j.
+Proof.
+  intros k1 D1 D2 i j Hi. unfold vcat.
+  destruct (Nat.ltb i k1) eqn:E.
+  - reflexivity.
+  - exfalso. apply Nat.ltb_ge in E. lia.
+Qed.
+
+Lemma vcat_right : forall (k1 : nat) (D1 D2 : Mat) (t j : nat), vcat k1 D1 D2 (k1+t)%nat j = D2 t j.
+Proof.
+  intros k1 D1 D2 t j. unfold vcat.
+  destruct (Nat.ltb (k1+t)%nat k1) eqn:E.
+  - exfalso. apply Nat.ltb_lt in E. lia.
+  - f_equal. lia.
+Qed.
+
+Theorem rank_le_add : forall (p r k1 k2 : nat) (M1 M2 : Mat),
+  rank_le p r k1 M1 -> rank_le p r k2 M2 -> rank_le p r (k1+k2)%nat (madd M1 M2).
+Proof.
+  intros p r k1 k2 M1 M2 [C1 [D1 H1]] [C2 [D2 H2]].
+  exists (hcat k1 C1 C2), (vcat k1 D1 D2).
+  intros i j Hi Hj.
+  unfold madd.
+  rewrite (H1 i j Hi Hj), (H2 i j Hi Hj).
+  unfold mmul.
+  transitivity (Sum k1 (fun k => hcat k1 C1 C2 i k * vcat k1 D1 D2 k j)
+                + Sum k2 (fun t => hcat k1 C1 C2 i (k1+t)%nat * vcat k1 D1 D2 (k1+t)%nat j)).
+  - assert (E1 : Sum k1 (fun k => C1 i k * D1 k j)
+                 == Sum k1 (fun k => hcat k1 C1 C2 i k * vcat k1 D1 D2 k j)).
+    { apply Sum_ext_lt. intros k Hk.
+      rewrite (@hcat_left k1 C1 C2 i k Hk), (@vcat_left k1 D1 D2 k j Hk). reflexivity. }
+    assert (E2 : Sum k2 (fun t => C2 i t * D2 t j)
+                 == Sum k2 (fun t => hcat k1 C1 C2 i (k1+t)%nat * vcat k1 D1 D2 (k1+t)%nat j)).
+    { apply Sum_ext. intro t.
+      rewrite (@hcat_right k1 C1 C2 i t), (@vcat_right k1 D1 D2 t j). reflexivity. }
+    rewrite E1, E2. reflexivity.
+  - symmetry. apply Sum_split.
+Qed.
+
+Lemma rank_le_zero : forall p r : nat, rank_le p r 0 (fun _ _ : nat => 0).
+Proof. intros p r. exists (fun _ _ => 0), (fun _ _ => 0). intros i j Hi Hj. reflexivity. Qed.
+
+Lemma TOL3_fold_general : forall (Is : list I) (r : nat) (Z : Mat) (k0 : nat),
+  rank_le r r k0 Z ->
+  (forall i, In i Is -> rank_le r r (mm i) (mmul (mm i) (BB i) (AA i))) ->
+  rank_le r r (k0 + list_sum (map mm Is))%nat
+    (fold_left madd (map (fun i => mmul (mm i) (BB i) (AA i)) Is) Z).
+Proof.
+  induction Is as [| i0 Is' IH]; intros r Z k0 HZ Hall.
+  - simpl. replace (k0+0)%nat with k0 by lia. exact HZ.
+  - simpl.
+    assert (Hi0 : rank_le r r (mm i0) (mmul (mm i0) (BB i0) (AA i0))).
+    { apply Hall. left. reflexivity. }
+    assert (Hstep : rank_le r r (k0 + mm i0)%nat (madd Z (mmul (mm i0) (BB i0) (AA i0)))).
+    { apply rank_le_add; [exact HZ | exact Hi0]. }
+    specialize (IH r (madd Z (mmul (mm i0) (BB i0) (AA i0))) (k0 + mm i0)%nat Hstep
+                  (fun i Hin => Hall i (or_intror Hin))).
+    replace (k0 + (mm i0 + list_sum (map mm Is')))%nat with (k0 + mm i0 + list_sum (map mm Is'))%nat by lia.
+    exact IH.
+Qed.
+
+Theorem TOL3_sum_rank (Is : list I) (r : nat) :
+  (forall i, In i Is -> rank_le r r (mm i) (mmul (mm i) (BB i) (AA i))) ->
+  rank_le r r (list_sum (map mm Is))%nat
+    (fold_left madd (map (fun i => mmul (mm i) (BB i) (AA i)) Is) (fun _ _ => 0)).
+Proof.
+  intros Hall.
+  pose proof (@TOL3_fold_general Is r (fun _ _ => 0) 0 (@rank_le_zero r r) Hall) as Hgen.
+  simpl in Hgen. exact Hgen.
+Qed.
+
+(* ---- K4 / S1-S2 / TOL-RDLB: abstract dimension-counting, Hypotheses only --- *)
+Definition Subspace := Vec -> Prop.
+Variable HasCodimLe : Subspace -> nat -> Prop.
+
+Hypothesis RDLB_K4_Ax_single : forall (dd m : nat) (A : Mat),
+  HasCodimLe (InKer dd m A) m.
+Hypothesis RDLB_K4_Ax_inter : forall (S1 S2 : Subspace) (c1 c2 : nat),
+  HasCodimLe S1 c1 -> HasCodimLe S2 c2 ->
+  HasCodimLe (fun x => S1 x /\ S2 x) (c1+c2)%nat.
+
+(* The finite, list-scoped intersection this section can actually reason  *)
+(* about (see header for why this is not the unrestricted InKerAll):      *)
+(* the empty case reuses RDLB_K4_Ax_single at m=0 (vacuously true for any  *)
+(* dummy matrix) rather than introducing an un-derivable `True` subspace, *)
+(* so the whole induction stays inside the two given Hypotheses.          *)
+Fixpoint InKerListSub (Is : list I) : Subspace :=
+  match Is with
+  | [] => InKer d 0 (fun _ _ : nat => 0)
+  | i :: Is' => fun x => InKer d (mm i) (AA i) x /\ InKerListSub Is' x
+  end.
+
+Theorem K4_codim_bound (Is : list I) :
+  HasCodimLe (InKerListSub Is) (list_sum (map mm Is))%nat.
+Proof.
+  induction Is as [| i0 Is' IH]; simpl.
+  - apply RDLB_K4_Ax_single.
+  - apply RDLB_K4_Ax_inter.
+    + apply RDLB_K4_Ax_single.
+    + exact IH.
+Qed.
+
+Hypothesis RDLB_S2_Ax : forall (Is : list I),
+  (forall x, InKerListSub Is x -> forall i, (i < d)%nat -> x i == 0) ->
+  (d <= list_sum (map mm Is))%nat.
+
+Theorem TOL_RDLB_close (Is : list I) :
+  (forall x, InKerListSub Is x -> forall i, (i < d)%nat -> x i == 0) ->
+  (d <= list_sum (map mm Is))%nat.
+Proof. exact (@RDLB_S2_Ax Is). Qed.
+
+Close Scope Q_scope.
+End FiniteBottleneckRDLB.
+
+(*
+  Claim boundary for FiniteBottleneckRDLB (section-close form, matching
+  the header discipline used throughout this file): this section proves
+  finite Q-matrix linear algebra only (`meqR`, `rank_le`, `InKer`,
+  `mvmul`), reusing IDM_Matrix.v's `Mat`/`Sum`/`mmul`/`mid`/`madd` rather
+  than re-deriving them. It contains no Jacobian, derivative, tangent
+  space, or continuum object of any kind. It contains no Navier-Stokes /
+  energy-observability claim (no NS-specific instantiation of `AA`, `BB`,
+  `mm`, or `d` is made anywhere), and no computational-hardness or
+  complexity-class premise or conclusion of any kind -- no P-vs-NP-shaped
+  claim; PNP-RDLB stays fully OPEN, exactly as declared in
+  RDLBAbstractLayer above. `TOL2_rank_bound` through `TOL3_sum_rank` are
+  genuinely derived theorems (no Hypothesis beyond IDM_Matrix.v's own
+  axiom-free lemma base). `K4_codim_bound` is genuinely derived for the
+  finite, list-scoped intersection `InKerListSub Is` from the two named
+  Hypotheses `RDLB_K4_Ax_single`/`RDLB_K4_Ax_inter` -- extending it to the
+  unrestricted `InKerAll` over an arbitrary index type `I` is a further,
+  separate obligation this section does not silently assume (it would
+  need `HasCodimLe` to respect logical equivalence of its `Subspace`
+  argument, a property neither named Hypothesis grants). `TOL_RDLB_close`
+  is a direct corollary of the single named Hypothesis `RDLB_S2_Ax`, not a
+  further derivation. Its premise went through two peer-review rounds
+  (2026-09-13): round 1 windowed it to `forall i, i<d -> x i == 0` over
+  `InKerAll`, but that left `Is` unbound by the premise, making the
+  Hypothesis outright FALSE at `Is := nil` whenever `d > 0` -- a second
+  review caught this. Round 2 (the version in this file) uses
+  `InKerListSub Is` instead of `InKerAll`, properly binding `Is`;
+  independently confirmed (a standalone scratch proof, not just
+  asserted) that the premise now genuinely fails at `Is := nil` for
+  `d > 0`, so the vacuity at that point is a false premise, not an
+  unsound Hypothesis. IMPORTANT: `TOL_RDLB_close`, the RDLB endpoint, rests
+  ENTIRELY on `RDLB_S2_Ax` -- none of this section's genuinely-derived
+  theorems (`TOL2_rank_bound`, `K1_kernel_inclusion`, `K2_each`,
+  `K3_sum`, `TOL3_sum_rank`) is used in reaching it; they establish the
+  kernel-inclusion/rank-accounting chain in its own right, not as an
+  input to the codimension closure. This is NEW DERIVATION / PROPOSAL, not yet in
+  Toledo. Toledo `CAN-054` (`EQ-015/H.06.v1`) is cited as the intellectual
+  motivation for `TOL2_rank_bound`'s name only -- its own Coq file proves
+  no general rank bound, so `TOL2_rank_bound` here is fresh, not reused,
+  and none of CAN-054's Coq identifiers are duplicated. No claim, premise
+  or conclusion of Toledo's `PROP-SCA-PNP-03/06/07/08/09` cluster is made,
+  used, restated, or implied here, for the same reasons given for
+  RDLBAbstractLayer above.
 *)

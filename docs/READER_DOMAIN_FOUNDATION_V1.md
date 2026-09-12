@@ -106,8 +106,9 @@ theorems are proved:
   classical axioms, no reference to computability).
 
 Both identifiers are axiom-free (`Print Assumptions`: "Closed under the global context") and are
-included in the promoted theorem list (section 3, now 25 identifiers) and in
-`formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array. **Claim boundary (unchanged in
+included in the promoted theorem list (section 3, 34 identifiers as of the Finite-Bottleneck RDLB
+addition in §5b) and in `formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array. **Claim
+boundary (unchanged in
 scope):** no P-vs-NP-shaped claim, no computational-hardness premise or conclusion — domain
 instantiation of `Constructive` (what actually counts as "constructive" in a given application,
 e.g. polynomial-time decidability or lab-performability) remains a separate obligation.
@@ -165,7 +166,7 @@ Identifiers: `T3_future_equivalence_dynamic_stability`, `T4_dynamic_weld_well_de
 
 **Precision note (peer-review, 2026-09-12):** `T4_dynamic_weld_well_defined` is definitionally identical to `T3_future_equivalence_dynamic_stability` (same statement, same proof by direct application) — it is not a second, independent result. It supplies the *congruence property* that a well-defined quotient map `F_u^#` requires, but on its own does not construct a quotient type, a projection `q`, or `F_u^#`, and does not itself instantiate the equation `q∘F_u = F_u^#∘q`.
 
-**Update (2026-09-13):** that gap is now closed by `T4b_quotient_commuting_square`, added in the same file. It defines the quotient type `QState` (states up to `FutureEq`), the canonical projection `proj` (`q`), the induced transition `Fsharp` (`F^#`), and proves the commuting square `q∘F_u = F^#_u∘q` — stated pointwise on class membership so no functional-extensionality or proof-irrelevance axiom is needed. Axiom-free (`Print Assumptions`: "Closed under the global context"), included in the promoted theorem list (§3 below, 20 identifiers as of this update; 22 after the constructive-firewall addition below; now 25 after the RDLB abstract-layer addition in §5a). This is the first concrete Coq instance of Toledo CAN-006 (`weld/M.02.v1`) supplied by this Foundation — an occurrence, not a new weld object.
+**Update (2026-09-13):** that gap is now closed by `T4b_quotient_commuting_square`, added in the same file. It defines the quotient type `QState` (states up to `FutureEq`), the canonical projection `proj` (`q`), the induced transition `Fsharp` (`F^#`), and proves the commuting square `q∘F_u = F^#_u∘q` — stated pointwise on class membership so no functional-extensionality or proof-irrelevance axiom is needed. Axiom-free (`Print Assumptions`: "Closed under the global context"), included in the promoted theorem list (§3 below, 20 identifiers as of this update; 22 after the constructive-firewall addition below; 25 after the RDLB abstract-layer addition in §5a; now 34 after the Finite-Bottleneck RDLB addition in §5b). This is the first concrete Coq instance of Toledo CAN-006 (`weld/M.02.v1`) supplied by this Foundation — an occurrence, not a new weld object.
 
 ### T5 — Sufficiency kernel inclusion
 
@@ -355,6 +356,170 @@ All three (plus their supporting `Definition`s/`Lemma`s) are axiom-free (`Print 
 ordinary extra function arguments on section close, never global axioms). The three `Theorem`
 identifiers are included in the promoted theorem list (§3) and in
 `formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array, bringing the total to 25.
+
+## 5b. Finite-Bottleneck RDLB — finite ℚ-matrix linear algebra
+
+**Tier: `Th_coqc` — formalized, axiom-free through `TOL3_sum_rank`; explicit-Hypothesis concession
+from `K4_codim_bound` (2026-09-13 addition).** `Section FiniteBottleneckRDLB` in
+`formal/IDM_ReaderDomainFoundation.v` (immediately after `RDLBAbstractLayer`). **Toledo status:**
+`NEW DERIVATION / PROPOSAL, not yet in Toledo`. **Framing (founder override):** this section
+replaces an earlier, discarded Jacobian-based design outright — there is no Jacobian, derivative,
+tangent space, or continuum object anywhere below. Every object is a `nat`-indexed `ℚ`-matrix or
+`ℚ`-vector, reusing `IDM_Matrix.v`'s existing `Mat := nat -> nat -> Q`, `Sum`, `mmul`, `mid`,
+`mid_left`, `madd` rather than re-deriving matrix algebra — the file now carries
+`Require Import IDM_Matrix.` for exactly this reuse. Following `IDM_Matrix.v`'s own convention, a
+matrix's shape is never encoded in its type; it is carried as separate `nat` arguments in each
+lemma statement.
+
+**Definitional-choice note — what "rank", "kernel", and "codimension" mean here, and their scope**
+(read before citing any identifier below):
+
+- **`meqR p r A B`** — rectangular entrywise equality on the `p x r` window (a generalization of
+  `IDM_Matrix.v`'s implicitly-square `meq`).
+- **`rank_le p r k M := exists C D, meqR p r M (mmul k C D)`** — *factorization rank*, not
+  row-reduction/linear-independence rank: "`M` (`p x r`) factors through a `k`-dimensional middle."
+  This is a genuine, non-tautological property for an arbitrary `M` (most `k`-factorizations do not
+  exist); it becomes trivial only for a matrix that already *is* such a factorization by
+  construction (e.g. `mmul m B A`, TOL-2 below) — that triviality is TOL-2's content, not a flaw.
+  A second, *separately genuine but explicitly unused* corollary, `rank_le_trivial_upper`, records
+  that any `p x r` matrix has `rank_le p r p M` (via `mid_left`) — this is a fact about the shape of
+  a constraint matrix, never about the true dimension of its kernel, and it is never invoked to
+  justify `K4_codim_bound`.
+- **`mvmul n A x`** — matrix-vector product contracting over the shared inner dimension `n`.
+  **`InKer d m A x`** — `x` is annihilated by the first `m` rows of the (`d`-column) matrix `A`;
+  this is a kernel-*membership* predicate on a single vector, not a subspace-dimension claim.
+- **`Subspace := Vec -> Prop`** and **`HasCodimLe : Subspace -> nat -> Prop`** (from `K4_codim_bound`
+  onward) — an *uninterpreted* relation, exactly as `Sufficient`/`Cap` are left abstract in
+  `RDLBAbstractLayer`. Nothing below defines what "codimension" *is*; `HasCodimLe S c` is read only
+  as "the two named Hypotheses below license concluding `c` as an upper bound for `S`." No basis,
+  linear independence, or vector-space-dimension machinery exists anywhere in Toledo/IDM today, and
+  none is introduced here.
+
+**Claim boundary (explicit, finite ℚ-linear-algebra math only):**
+
+- No Jacobian, derivative, tangent space, or continuum object of any kind, anywhere in the section.
+- No Navier-Stokes / energy-observability specialization is made here, and no NS-specific
+  instantiation of `AA`, `BB`, `mm`, or `d` is made anywhere — same disclaimer as `RDLBAbstractLayer`
+  §5a, and for the same reason (this is generic infrastructure, not a domain instance).
+- No computational-hardness or complexity-class premise or conclusion of any kind, and in
+  particular **no P-vs-NP-shaped claim of any kind**. **PNP-RDLB remains permanently OPEN**, exactly
+  as declared in §5a; nothing in this section touches, narrows, or answers it in either direction.
+
+**Toledo `CAN-054` disambiguation (EPIS-REUSE-PIPELINE step 1, read directly, not by keyword):**
+`CAN-054` (`EQ-015/H.06.v1`, "Selective retention as a rank-bounded factorized update (Human
+LoRA)") states `rank_Q(B_nA_n) <= m_n` as part of its own root statement, and was checked as the
+nearest candidate parent for `TOL2_rank_bound`. Its own Coq file
+(`coq/canonical/EQ_015__H_06_v1.v`) was read in full: it does **not** prove a general
+factorization-rank bound — `CAN_054_finite_bottleneck` is only the `nat`-pair predicate
+`0 < rank_n < dim_n`, and `CAN_054_finite_bottleneck_satisfiable` only exhibits the single witness
+pair `(1,2)`; there is no `rank_le`-shaped object there to reuse. **`TOL2_rank_bound` below is
+therefore proved fresh in this section, not reused from `CAN-054`'s Coq** — `CAN-054` is cited as
+the intellectual motivation for the *name* "finite-bottleneck rank bound" only, never as a
+`Require`d premise, and none of its Coq identifiers (`CAN_054_gate_weight_valid`,
+`CAN_054_retained_update`, `CAN_054_finite_bottleneck*`, `CAN_054_Open_empirical_programme`) are
+duplicated. **Guardrail:** `CAN-054` is a Human-LoRA-*specific* empirical model (its own tier is
+`definition / theorem (rank bounds, proved in-article) / hypothesis-Open (empirical programme)`);
+the bridge from that specific model to an *arbitrary computation* or *any NS/PNP instantiation* is
+a wholly separate, unproved obligation that this section does not attempt and does not narrow.
+
+**Genesis compatibility** (step 2): no existing Readout Genesis gate or section treats a
+factorization-rank / kernel-inclusion law; this section is new infrastructure with no Genesis-side
+classification yet — not an instantiation of an existing gate.
+
+**Genuinely derived (real theorems, no Hypothesis beyond `IDM_Matrix.v`'s own axiom-free base):**
+
+- **`TOL2_rank_bound`** — `rank_le d d m (mmul m B A)`, the keystone triviality that a matrix
+  already built as a factorization satisfies its own rank bound (`exists B, A`; `reflexivity`).
+- **`mv_mmul_assoc`** — `mvmul q (mmul p A B) x i == mvmul p A (mvmul q B x) i`, via the new finite
+  double-sum-interchange lemma `Sum_double_swap` (induction on the outer sum) plus two constant-
+  factoring helpers `Sum_mul_const_l`/`Sum_mul_const_r`.
+- **`K1_kernel_inclusion`** (TOL-5) — `InKer d m A x -> InKer d d (mmul m B A) x`: kernel inclusion
+  for one bottleneck, from `mv_mmul_assoc` + `Sum_ext_lt` + `Sum_zero`.
+- **`TOL4_no_collapse`** — a no-early-collapse form: given `meqR d d (madd O (mmul m B A)) O`
+  (the `B.A` contribution already agrees entrywise with the zero-shift `O`), the two readers induce
+  the same `mvmul`. The `InKer d m A x` hypothesis is scenario framing, not load-bearing in this
+  particular proof; the entrywise `meqR` hypothesis is what the conclusion rests on.
+- **`K2_each`**, **`K3_sum`** (K2/K3) — the *N*-fold form over an abstract index family `{I : Type}`,
+  `AA BB : I -> Mat`, `mm : I -> nat` sharing ambient dimension `d`: if `x` is in every bottleneck's
+  kernel (`InKerAll x`), it is in the kernel of each `mmul (mm i) (BB i) (AA i)` (K2), and in the
+  kernel of any finite `fold_left madd`-sum of them (K3), via list induction using K2 plus the new
+  `mvmul`-additivity-over-`madd` lemma `mvmul_madd`.
+- **`rank_le_add`** (TOL-3/F2, binary case) — `rank_le p r k1 M1 -> rank_le p r k2 M2 -> rank_le p r
+  (k1+k2) (madd M1 M2)`, via new horizontal/vertical block-concatenation `Definition`s `hcat`/`vcat`
+  and the new reindexing lemma `Sum_split` (`Sum (a+b) f == Sum a f + Sum b (fun k => f (a+k))`).
+- **`TOL3_sum_rank`** (*N*-fold) — the sum of finitely many rank-`mm i` bottleneck matrices has
+  `rank_le` bounded by `list_sum (map mm Is)`, by list induction over `rank_le_add` with a
+  `k=0` base case (`rank_le_zero`, from the zero matrix).
+
+**Honest concession, from `K4_codim_bound` onward:** proving true subspace codimension (the
+dimension of an intersection of kernels inside `ℚ^d`) needs basis/independence theory that exists
+nowhere in Toledo/IDM today (confirmed above). Rather than fake it via `rank_le_trivial_upper`
+(genuine but about the constraint matrix's own shape, never the kernel's true dimension), this
+section introduces the abstract `Subspace`/`HasCodimLe` pair above and two named Hypotheses:
+
+\[
+\mathrm{HasCodimLe}(\mathrm{InKer}\,d\,m\,A,\ m)
+\qquad\text{(RDLB-K4-Ax-single, one bottleneck's codim bound)}
+\]
+\[
+\mathrm{HasCodimLe}(S_1,c_1)\wedge\mathrm{HasCodimLe}(S_2,c_2)\Rightarrow
+\mathrm{HasCodimLe}(S_1\wedge S_2,\,c_1+c_2)
+\qquad\text{(RDLB-K4-Ax-inter, subadditivity)}
+\]
+
+- **`K4_codim_bound`** — is genuinely *derived* from those two Hypotheses by structural list
+  induction, but its statement is deliberately about the **finite, list-scoped intersection**
+  `InKerListSub Is` (a `Fixpoint` on `list I` built with a `RDLB_K4_Ax_single`-at-`m=0` base case),
+  **not** the unrestricted `InKerAll` (quantified over the whole, possibly-infinite index type `I`).
+  Extending the bound to `InKerAll` for an arbitrary `Is` would additionally require `HasCodimLe` to
+  respect logical/extensional equivalence of its `Subspace` argument — a real but *unstated* closure
+  property neither named Hypothesis grants; adding a third, undisclosed Hypothesis to paper over
+  that gap would contradict this section's own two-Hypothesis ledger, so it is deliberately **not**
+  done. That extension is left explicitly **OPEN**, not silently assumed.
+- **`RDLB_S2_Ax`** (S1→S2) — one further named Hypothesis: if the *listed* bottlenecks' joint
+  kernel `InKerListSub Is` is trivial on the coordinates that matter (`forall i, i<d -> x i == 0`),
+  the ambient dimension `d` is bounded by the sum of those bottlenecks' ranks — the classical
+  "injective ⟹ domain-dim ≤ codomain-dim" fact, same missing-theory class as K4.
+  **`TOL_RDLB_close`** is its immediate, one-line corollary (`exact (RDLB_S2_Ax Is)`), not a
+  further derivation.
+
+**Precision fix, round 1 (peer review, 2026-09-13):** the S1 premise was first windowed to
+`forall i, i<d -> x i == 0`, over `InKerAll` (unrestricted over all `i : I`). This was **itself
+still wrong**, caught by a second independent review: `RDLB_S2_Ax`/`TOL_RDLB_close` both
+universally quantify `Is : list I`, but an `InKerAll`-built premise never mentions `Is` — so at
+`Is := []` the conclusion forces `d <= 0`, making the Hypothesis **false** (not merely unproven)
+whenever the premise holds and `d > 0`. Round 1 relocated the vacuity instead of removing it, and
+its claim that `AA := mid`/`mm := fun _ => d` "confirms non-vacuity" was itself wrong — that exact
+configuration is precisely where the Hypothesis is false.
+
+**Precision fix, round 2 (the one in this file):** the premise now uses `InKerListSub Is` (already
+defined for `K4_codim_bound`) instead of `InKerAll`, properly indexed to the same `Is` as the
+conclusion. Independently confirmed correct: at `Is := []`, `InKerListSub []` reduces to
+`InKer d 0 (fun _ _ => 0)`, satisfied trivially by every vector (zero constraining rows) — so the
+premise now genuinely *requires* "every vector is zero below `d`", which is itself false for
+`d > 0` (witness `x := fun _ => 1`). The premise therefore fails at `Is := []` for `d > 0`, so the
+implication holds vacuously there for the right reason (a false premise), not because the
+Hypothesis is unsound — proved as a standalone scratch lemma before landing this fix, not merely
+asserted. `TOL_RDLB_close` is genuinely usable for any `Is` where a real injectivity fact on the
+listed bottlenecks can be supplied. A stray, unconnected universally-quantified `dd` was also
+removed from the Hypothesis in round 1.
+
+**Honest ledger:** derived as real theorems, no Hypothesis beyond `IDM_Matrix.v`'s own axiom-free
+lemma base — `meqR`, `rank_le`, `TOL2_rank_bound`, `Sum_double_swap`, `Sum_split`, `mv_mmul_assoc`,
+`K1_kernel_inclusion`, `TOL4_no_collapse`, `K2_each`, `K3_sum`, `rank_le_add`, `TOL3_sum_rank`, and
+the list-scoped form of `K4_codim_bound`. Assumed as explicit, named Hypotheses —
+`RDLB_K4_Ax_single`/`RDLB_K4_Ax_inter` (the two K4 codimension laws) and `RDLB_S2_Ax` (S2's
+injectivity-bound law); `TOL_RDLB_close` rests on the latter alone. **The RDLB endpoint
+(`TOL_RDLB_close`) therefore rests entirely on the named Hypotheses — none of the genuinely-derived
+theorems above (`TOL2_rank_bound`, `K1_kernel_inclusion`, `K2_each`, `K3_sum`, `TOL3_sum_rank`) is
+used in reaching it.** They establish the kernel-inclusion/rank-accounting chain in its own right,
+not as an input to the codimension closure. All nine promoted `Theorem`
+identifiers (`TOL2_rank_bound`, `K1_kernel_inclusion`, `TOL4_no_collapse`, `K2_each`, `K3_sum`,
+`rank_le_add`, `TOL3_sum_rank`, `K4_codim_bound`, `TOL_RDLB_close`) are axiom-free (`Print
+Assumptions`: "Closed under the global context" — the section's `Hypothesis`es/`Variable`s are
+correctly promoted to ordinary extra function arguments on section close, never global axioms), are
+included in the promoted theorem list (§3) and in
+`formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array, bringing the total to 34.
 
 ## 6. F6 Maker–Checker calibration
 

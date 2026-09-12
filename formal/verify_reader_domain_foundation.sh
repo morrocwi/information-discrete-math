@@ -31,6 +31,15 @@ THEOREMS=(
   RDLB_T1_accumulation_bound
   RDLB_T2_round_bound
   RDLB_W_capacity_deficit_witness
+  TOL2_rank_bound
+  K1_kernel_inclusion
+  TOL4_no_collapse
+  K2_each
+  K3_sum
+  rank_le_add
+  TOL3_sum_rank
+  K4_codim_bound
+  TOL_RDLB_close
 )
 
 rm -f "${FILE}.vo" "${FILE}.glob" "${FILE}.vos" "${FILE}.vok" ".${FILE}.aux" chk_reader_domain_*.v chk_reader_domain_*.vo chk_reader_domain_*.glob .chk_reader_domain_*.aux 2>/dev/null || true
