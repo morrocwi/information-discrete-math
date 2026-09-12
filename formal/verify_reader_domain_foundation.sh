@@ -13,6 +13,7 @@ THEOREMS=(
   T2_closure_idempotent
   T3_future_equivalence_dynamic_stability
   T4_dynamic_weld_well_defined
+  T4b_quotient_commuting_square
   T5_sufficiency_kernel_inclusion
   T6_question_monotonicity
   T7_joint_question_intersection
