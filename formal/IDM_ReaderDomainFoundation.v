@@ -6,12 +6,23 @@
   Scope:
   - reader/indistinguishability correspondence (T1)
   - closure operator and saturation invariance (T2)
-  - future-reader dynamic stability / quotient well-definedness kernel (T3/T4)
+  - semantic/constructive experiment-universe firewall (ConstructiveFirewall:
+    A_con_subseteq_A_sem, constructive_closure_invariant)
+  - future-reader dynamic stability / quotient well-definedness kernel (T3/T4),
+    plus the literal quotient/projection/commuting-square instantiation
+    (T4b_quotient_commuting_square)
   - sufficiency => kernel inclusion (T5; factorisation itself is Toledo CAN-165)
   - question monotonicity and joint-question intersection (T6/T7)
   - binary closure-lattice laws for closed reader families
   - finite strict-refinement termination with explicit hypotheses (safe C.05 replacement kernel)
   - stable finite-depth reader equivalence equals all-future reader equivalence
+  - RDLB v0.1 abstract Demand/Capacity accounting layer (RDLBAbstractLayer:
+    RDLB_T1_accumulation_bound, RDLB_T2_round_bound,
+    RDLB_W_capacity_deficit_witness)
+
+  This file's place in the programme's Master Spine (root-to-Clay architecture
+  map, updated separately as new sections land here):
+  readout_genesis/MASTER_SPINE.md.
 
   Claim boundary:
   This file proves generic finite/discrete mathematics only. It contains no
