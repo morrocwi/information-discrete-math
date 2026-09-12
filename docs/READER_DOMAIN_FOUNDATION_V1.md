@@ -72,6 +72,12 @@ A question/domain is therefore a readout quotient induced by declared future exp
 
 ### Semantic/constructive firewall
 
+**Tier: `[Dr]` — declared discipline, not yet formalized in Coq.** No type, definition, or theorem
+in `formal/IDM_ReaderDomainFoundation.v` corresponds to this subsection; it is not among the 19
+axiom-free identifiers in section 3. It is a required discipline for any application (e.g. a
+P-vs-NP-adjacent constructive lane) built on top of this Foundation, stated here so applications
+inherit it, but it carries no Coq-verified content of its own until someone formalizes it.
+
 Applications must distinguish:
 
 \[
@@ -123,6 +129,8 @@ s\sim_Q t\Longrightarrow F_u(s)\sim_QF_u(t).
 This is the relational well-definedness condition required before the quotient transition `F_u^#` can be named; in ordinary quotient semantics it licenses the CAN-006 commuting square.
 
 Identifiers: `T3_future_equivalence_dynamic_stability`, `T4_dynamic_weld_well_defined`.
+
+**Precision note (peer-review, 2026-09-12):** `T4_dynamic_weld_well_defined` is definitionally identical to `T3_future_equivalence_dynamic_stability` (same statement, same proof by direct application) — it is not a second, independent result. It supplies the *congruence property* that a well-defined quotient map `F_u^#` requires, but this file does not itself construct a quotient type, a projection `q`, or `F_u^#`, and does not literally instantiate or prove the equation `q∘F_u = F_u^#∘q`. The CAN-006 commuting-square correspondence is a standard corollary of congruence, not a separately machine-checked object here. Do not read T4 as formal evidence that the commuting square has been verified for any concrete `q`/`F^#`.
 
 ### T5 — Sufficiency kernel inclusion
 
