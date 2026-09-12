@@ -57,4 +57,7 @@ done
 
 rm -f "${FILE}.vo" "${FILE}.glob" "${FILE}.vos" "${FILE}.vok" ".${FILE}.aux" 2>/dev/null || true
 
+echo "== proof_graph.json freshness =="
+python3 gen_proof_graph.py "${FILE}.v" --check proof_graph.json
+
 echo "READER-DOMAIN FOUNDATION FORMAL KERNEL PASS"
