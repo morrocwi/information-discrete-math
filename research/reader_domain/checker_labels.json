@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "scope": "Checker-only ground-truth class labels, loaded only after maker partitions are frozen.",
+  "labels": {
+    "s3_boundary_4simplex": "S3",
+    "s3_subdivision_control": "S3",
+    "poincare_homology_sphere_a": "PoincareHomologySphere",
+    "poincare_homology_sphere_b": "PoincareHomologySphere",
+    "rp3_lens_2_1": "RP3",
+    "s2xs1_product": "S2xS1",
+    "lens_5_1": "L(5,1)",
+    "lens_5_2": "L(5,2)"
+  }
+}

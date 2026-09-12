@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "reviewed_at": "2026-09-12",
-  "scope": "Governance only: AGENTS.md gains the central Toledo-Genesis reuse-first derivation gate (Toledo lookup -> Genesis compatibility -> reuse existing object -> derive only the missing piece -> PROPOSAL; HOLD/DRIFT outcomes). No theorem, tier, OPEN/HOLD or Clay status is changed; no equation is added or promoted.",
+  "scope": "Genesis Reader-Domain Foundation v1 freeze candidate. Adds a new axiom-free-targeted formal kernel for Eq/Obs closure, future-reader stability, sufficiency kernel inclusion, question monotonicity, joint-question intersection, closure algebra, a safe finite strict-refinement termination theorem, and a fail-able F6 Maker-Checker topology calibration. No Clay conclusion is promoted; domain/global bridges remain separate.",
   "todo": {
     "status": "reviewed-no-change",
-    "evidence": "Policy text only; the research TODO is unchanged by this PR."
+    "evidence": "Shared Clay TODO/program remains unchanged: this work is infrastructure before returning to domain-specific load-bearing lemmas."
   },
   "toledo": {
-    "status": "not-required",
-    "evidence": "No equation is added, cited as new, or promoted; the PR consumes the public gate TG-RFG-01 from morrocwi/toledo."
+    "status": "issue-open",
+    "evidence": "morrocwi/toledo#36 opened under TG-RFG-01. Existing CAN-006/CAN-007/CAN-034/CAN-165 are reused; current EQ-001/C.05.v1 is not force-promoted and its safe repair is proposed for governed review."
   },
-  "claim_effect": "provenance-change"
+  "claim_effect": "formal-proof-change"
 }
