@@ -1,0 +1,45 @@
+name: reader-domain-foundation
+
+on:
+  push:
+    branches: ["main", "foundation/reader-domain-v1"]
+    paths:
+      - "formal/IDM_ReaderDomainFoundation.v"
+      - "formal/verify_reader_domain_foundation.sh"
+      - "research/reader_domain/**"
+      - "docs/READER_DOMAIN_FOUNDATION_V1.md"
+      - ".github/workflows/reader-domain-foundation.yml"
+      - "CLAY_GOVERNANCE_ACK.json"
+  pull_request:
+    paths:
+      - "formal/IDM_ReaderDomainFoundation.v"
+      - "formal/verify_reader_domain_foundation.sh"
+      - "research/reader_domain/**"
+      - "docs/READER_DOMAIN_FOUNDATION_V1.md"
+      - ".github/workflows/reader-domain-foundation.yml"
+      - "CLAY_GOVERNANCE_ACK.json"
+
+jobs:
+  coq-reader-domain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: coq-community/docker-coq-action@v1
+        with:
+          coq_version: "8.20"
+          ocaml_version: "default"
+          custom_script: |
+            startGroup "verify Genesis Reader-Domain formal kernel"
+              sudo chown -R "$(whoami)" .
+              bash formal/verify_reader_domain_foundation.sh
+            endGroup
+
+  f6-maker-checker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run frozen F6 topology calibration
+        run: python research/reader_domain/f6_topology_calibration.py --json
