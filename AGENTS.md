@@ -7,6 +7,7 @@ If the task concerns Navier--Stokes, P vs NP, a Clay bridge, finite obstruction,
 3. `morrocwi/readout-problem-navier-stokes/CLAY_RESEARCH_TODO.md`.
 4. `morrocwi/readout-problem-navier-stokes/CLAY_MULTI_PROBLEM_FINITE_BRIDGE_PROGRAM.md`.
 5. `morrocwi/toledo/docs/CLAY_BRIDGE_PROGRAM_2026-09-11.md` for current proposal/dependency status.
+6. `morrocwi/toledo/EQUATION_SOURCE_POLICY.md`, especially `TG-RFG-01`.
 
 Current highest-leverage work is tracked by IDM issue #124 (safe shared-core formalization), NS issue #25 (`NS-FUB-A1`), and P-vs-NP PR #117 (`PNP-FUB-A1`). Do not substitute easier finite enumeration or larger numerical runs unless they test one of these bridge statements or a declared falsifier.
 
@@ -15,6 +16,29 @@ For Clay work, always distinguish:
 ```text
 finite theorem != uniform theorem != global semantic bridge != Clay conclusion
 ```
+
+## Mandatory Toledo-Genesis reuse-first gate
+
+Before introducing, renaming, strengthening, or cross-domain-reusing a mathematical object, follow the canonical Toledo governance order:
+
+```text
+Toledo lookup
+    -> Genesis compatibility
+    -> reuse existing object
+    -> derive only the missing piece
+    -> mark PROPOSAL
+```
+
+Rules:
+
+- Toledo is the first lookup for existing equation/theorem/constraint/provenance objects;
+- `morrocwi/readout_genesis` is the compatibility lens for ontology, retention, sufficiency, quotient, translation, lineage, and defect meaning;
+- if a usable object exists, reuse its current code/status and do not create a local duplicate;
+- if a statement is genuinely missing, derive only the smallest missing piece required by the active obligation;
+- the new result remains `PROPOSAL` until Toledo registration/review promotes it;
+- ambiguous or conflicting status is `HOLD`; bypassing this order is `DRIFT`.
+
+Passing this gate does not upgrade evidence tier or prove a Clay bridge.
 
 ## Mandatory PR governance gate for Clay-sensitive work
 
