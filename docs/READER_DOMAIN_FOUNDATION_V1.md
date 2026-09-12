@@ -72,19 +72,52 @@ A question/domain is therefore a readout quotient induced by declared future exp
 
 ### Semantic/constructive firewall
 
-**Tier: `[Dr]` — declared discipline, not yet formalized in Coq.** No type, definition, or theorem
-in `formal/IDM_ReaderDomainFoundation.v` corresponds to this subsection; it is not among the 20
-axiom-free identifiers in section 3. It is a required discipline for any application (e.g. a
-P-vs-NP-adjacent constructive lane) built on top of this Foundation, stated here so applications
-inherit it, but it carries no Coq-verified content of its own until someone formalizes it.
+**Tier: `Th_coqc` — formalized, axiom-free (2026-09-13 update).** `Section ConstructiveFirewall`
+in `formal/IDM_ReaderDomainFoundation.v` (immediately after `ReaderDomainCore`) now carries this
+subsection's discipline as real Coq identifiers, among the axiom-free identifiers in section 3.
+**Toledo status:** `NEW DERIVATION / PROPOSAL, not yet in Toledo` — child of `TG-RFG-01` (issue
+`morrocwi/toledo#36`), sitting beside this file's existing Galois-correspondence family, not a
+standalone object.
 
-Applications must distinguish:
+The section reuses `Family`, `Experiment`, `EqOf`, `family_subset`, `rel_equiv` verbatim from
+`ReaderDomainCore` and introduces a single abstract, uninterpreted resource predicate
+`Variable Constructive : Experiment -> Prop` — never instantiated, never given intro/elim rules
+beyond what `Family`/`EqOf` already have. It formalizes, and only formalizes, a bookkeeping fact
+about which sub-family of experiments `EqOf` is allowed to range over once membership is filtered
+by `Constructive`; it says nothing about what `Constructive` means operationally, what it can
+decide, or any separation result:
 
 \[
-\mathcal A_{\rm con}\subseteq\mathcal A_{\rm sem}.
+\mathcal A_{\rm sem} := \mathcal A_{\rm ambient},\qquad
+\mathcal A_{\rm con} := \{\,e\in\mathcal A_{\rm ambient} \mid \mathrm{Constructive}(e)\,\}.
 \]
 
-`A_sem` may define the semantic question; `A_con` is the resource-bounded constructive experiment universe. A constructive proof may not silently call a semantic oracle outside `A_con`.
+`A_sem` may define the semantic question; `A_con` is the resource-bounded constructive experiment
+universe. A constructive proof may not silently call a semantic oracle outside `A_con`. Two
+theorems are proved:
+
+- **`A_con_subseteq_A_sem`** — the trivial inclusion \(\mathcal A_{\rm con}\subseteq\mathcal
+  A_{\rm sem}\), by construction.
+- **`constructive_closure_invariant`** — if two candidate experiment-families are both confined to `A_con` and
+  agree on every constructive experiment, their induced `EqOf` relations are the *same relation*:
+  `EqOf` cannot "see" any experiment outside what `Constructive` already licensed. This is a
+  closure/definitional fact about `EqOf`'s quantifier scope, exactly parallel to
+  `T2_eq_closure_invariant`, proved by plain `intros`/`destruct`/`apply` (no induction, no
+  classical axioms, no reference to computability).
+
+Both identifiers are axiom-free (`Print Assumptions`: "Closed under the global context") and are
+included in the promoted theorem list (section 3, now 22 identifiers) and in
+`formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array. **Claim boundary (unchanged in
+scope):** no P-vs-NP-shaped claim, no computational-hardness premise or conclusion — domain
+instantiation of `Constructive` (what actually counts as "constructive" in a given application,
+e.g. polynomial-time decidability or lab-performability) remains a separate obligation.
+
+**Not to be confused with:** Toledo `registry/proposals/semantic_closure_accounting_p_vs_np_v0_1.json`
+(`PROP-SCA-PNP-01..06`), also gated under `TG-RFG-01`, which is a genuinely different, still-open
+P-vs-NP-adjacent circuit-level result about semantic-channel/oracle bookkeeping. The two share
+vocabulary ("oracle", "semantic universe") by coincidence of domain, not by any shared theorem,
+proof, or object — this subsection's result is a family/`EqOf` congruence fact, unrelated to
+circuit-ledger accounting.
 
 ### Partial actions
 
@@ -132,7 +165,7 @@ Identifiers: `T3_future_equivalence_dynamic_stability`, `T4_dynamic_weld_well_de
 
 **Precision note (peer-review, 2026-09-12):** `T4_dynamic_weld_well_defined` is definitionally identical to `T3_future_equivalence_dynamic_stability` (same statement, same proof by direct application) — it is not a second, independent result. It supplies the *congruence property* that a well-defined quotient map `F_u^#` requires, but on its own does not construct a quotient type, a projection `q`, or `F_u^#`, and does not itself instantiate the equation `q∘F_u = F_u^#∘q`.
 
-**Update (2026-09-13):** that gap is now closed by `T4b_quotient_commuting_square`, added in the same file. It defines the quotient type `QState` (states up to `FutureEq`), the canonical projection `proj` (`q`), the induced transition `Fsharp` (`F^#`), and proves the commuting square `q∘F_u = F^#_u∘q` — stated pointwise on class membership so no functional-extensionality or proof-irrelevance axiom is needed. Axiom-free (`Print Assumptions`: "Closed under the global context"), included in the promoted theorem list (§3 below, now 20 identifiers). This is the first concrete Coq instance of Toledo CAN-006 (`weld/M.02.v1`) supplied by this Foundation — an occurrence, not a new weld object.
+**Update (2026-09-13):** that gap is now closed by `T4b_quotient_commuting_square`, added in the same file. It defines the quotient type `QState` (states up to `FutureEq`), the canonical projection `proj` (`q`), the induced transition `Fsharp` (`F^#`), and proves the commuting square `q∘F_u = F^#_u∘q` — stated pointwise on class membership so no functional-extensionality or proof-irrelevance axiom is needed. Axiom-free (`Print Assumptions`: "Closed under the global context"), included in the promoted theorem list (§3 below, 20 identifiers as of this update; now 22 after the constructive-firewall addition below). This is the first concrete Coq instance of Toledo CAN-006 (`weld/M.02.v1`) supplied by this Foundation — an occurrence, not a new weld object.
 
 ### T5 — Sufficiency kernel inclusion
 

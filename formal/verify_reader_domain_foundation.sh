@@ -26,6 +26,8 @@ THEOREMS=(
   future_eq_implies_depth
   stable_depth_exact_future
   finite_strict_refinement_terminates
+  A_con_subseteq_A_sem
+  constructive_closure_invariant
 )
 
 rm -f "${FILE}.vo" "${FILE}.glob" "${FILE}.vos" "${FILE}.vok" ".${FILE}.aux" chk_reader_domain_*.v chk_reader_domain_*.vo chk_reader_domain_*.glob .chk_reader_domain_*.aux 2>/dev/null || true
@@ -54,5 +56,8 @@ for thm in "${THEOREMS[@]}"; do
 done
 
 rm -f "${FILE}.vo" "${FILE}.glob" "${FILE}.vos" "${FILE}.vok" ".${FILE}.aux" 2>/dev/null || true
+
+echo "== proof_graph.json freshness =="
+python3 gen_proof_graph.py "${FILE}.v" --check proof_graph.json
 
 echo "READER-DOMAIN FOUNDATION FORMAL KERNEL PASS"
