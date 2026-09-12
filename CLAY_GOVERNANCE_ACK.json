@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
-  "reviewed_at": "2026-09-11",
-  "scope": "P2 adversarial negative controls for naive finite-obstruction, constructive-capture, and cross-resolution bridge claims. The work narrows PROP-FUB-03/04/05 and adds formal/exact counterexample controls; no strengthened Clay-bearing bridge is promoted.",
+  "reviewed_at": "2026-09-12",
+  "scope": "Governance only: AGENTS.md gains the central Toledo-Genesis reuse-first derivation gate (Toledo lookup -> Genesis compatibility -> reuse existing object -> derive only the missing piece -> PROPOSAL; HOLD/DRIFT outcomes). No theorem, tier, OPEN/HOLD or Clay status is changed; no equation is added or promoted.",
   "todo": {
     "status": "reviewed-no-change",
-    "evidence": "Cross-repo CLAY_RESEARCH_TODO.md reviewed. This PR executes P2 falsification as tracked by IDM issue #126; the next direct load-bearing tasks remain NS-FUB-A1/A2 and PNP-FUB-A1."
+    "evidence": "Policy text only; the research TODO is unchanged by this PR."
   },
   "toledo": {
-    "status": "issue-open",
-    "evidence": "morrocwi/toledo#11 remains the provenance/canonicalization gate. P2 narrows the admissible wording of PROP-FUB-03/04/05 but does not prove the strengthened proposals or any Clay conclusion."
+    "status": "not-required",
+    "evidence": "No equation is added, cited as new, or promoted; the PR consumes the public gate TG-RFG-01 from morrocwi/toledo."
   },
-  "claim_effect": "statement-change"
+  "claim_effect": "provenance-change"
 }
