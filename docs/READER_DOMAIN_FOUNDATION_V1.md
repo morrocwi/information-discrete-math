@@ -477,17 +477,32 @@ section introduces the abstract `Subspace`/`HasCodimLe` pair above and two named
   that gap would contradict this section's own two-Hypothesis ledger, so it is deliberately **not**
   done. That extension is left explicitly **OPEN**, not silently assumed.
 - **`RDLB_S2_Ax`** (S1→S2) — one further named Hypothesis: if the joint kernel `InKerAll` is
-  trivial (`x == 0`), the ambient dimension `d` is bounded by the sum of bottleneck ranks — the
-  classical "injective ⟹ domain-dim ≤ codomain-dim" fact, same missing-theory class as K4.
-  **`TOL_RDLB_close`** is its immediate, one-line corollary (`exact (RDLB_S2_Ax d Is)`), not a
+  trivial *on the coordinates that matter* (`forall i, i<d -> x i == 0` — see the precision fix
+  below), the ambient dimension `d` is bounded by the sum of bottleneck ranks — the classical
+  "injective ⟹ domain-dim ≤ codomain-dim" fact, same missing-theory class as K4.
+  **`TOL_RDLB_close`** is its immediate, one-line corollary (`exact (RDLB_S2_Ax Is)`), not a
   further derivation.
+
+**Precision fix (peer review, 2026-09-13):** the S1 premise must be windowed to
+`forall i, i<d -> x i == 0`, not `forall i, x i == 0`. `Vec := nat -> Q` is index-infinite while
+`InKer d ...` only constrains coordinates below `d`, so the unwindowed premise is refutable by
+`x := fun k => if k =? d then 1 else 0` for *every* configuration — making the unwindowed
+`RDLB_S2_Ax` provable from nothing (not a real concession) and `TOL_RDLB_close` never usable
+(vacuously true, uninstantiable). Independently confirmed non-vacuous after windowing: `AA := mid`,
+`mm := fun _ => d` genuinely satisfies the windowed premise for a nonzero-outside-`d` vector. A
+stray, unconnected universally-quantified `dd` was also removed from the Hypothesis — it was
+harmless only while the premise was unsatisfiable.
 
 **Honest ledger:** derived as real theorems, no Hypothesis beyond `IDM_Matrix.v`'s own axiom-free
 lemma base — `meqR`, `rank_le`, `TOL2_rank_bound`, `Sum_double_swap`, `Sum_split`, `mv_mmul_assoc`,
 `K1_kernel_inclusion`, `TOL4_no_collapse`, `K2_each`, `K3_sum`, `rank_le_add`, `TOL3_sum_rank`, and
 the list-scoped form of `K4_codim_bound`. Assumed as explicit, named Hypotheses —
 `RDLB_K4_Ax_single`/`RDLB_K4_Ax_inter` (the two K4 codimension laws) and `RDLB_S2_Ax` (S2's
-injectivity-bound law); `TOL_RDLB_close` rests on the latter alone. All nine promoted `Theorem`
+injectivity-bound law); `TOL_RDLB_close` rests on the latter alone. **The RDLB endpoint
+(`TOL_RDLB_close`) therefore rests entirely on the named Hypotheses — none of the genuinely-derived
+theorems above (`TOL2_rank_bound`, `K1_kernel_inclusion`, `K2_each`, `K3_sum`, `TOL3_sum_rank`) is
+used in reaching it.** They establish the kernel-inclusion/rank-accounting chain in its own right,
+not as an input to the codimension closure. All nine promoted `Theorem`
 identifiers (`TOL2_rank_bound`, `K1_kernel_inclusion`, `TOL4_no_collapse`, `K2_each`, `K3_sum`,
 `rank_le_add`, `TOL3_sum_rank`, `K4_codim_bound`, `TOL_RDLB_close`) are axiom-free (`Print
 Assumptions`: "Closed under the global context" — the section's `Hypothesis`es/`Variable`s are

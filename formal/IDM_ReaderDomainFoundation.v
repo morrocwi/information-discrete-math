@@ -926,12 +926,26 @@ End RDLBAbstractLayer.
 (*  grant; adding a third, undisclosed Hypothesis here to paper over that  *)
 (*  gap would contradict this section's own two-Hypothesis ledger, so it   *)
 (*  is deliberately NOT done -- that extension is left OPEN, flagged, and  *)
-(*  not silently assumed. S1 (triviality hypothesis, `InKerAll x -> x=0`)  *)
-(*  to S2 (`d <= sum m_i`) is stated as one further Hypothesis, tagged     *)
-(*  RDLB-S2-Ax, since it is the classical injective-implies-domain-dim-   *)
-(*  le-codomain-dim fact -- same missing-theory class as K4, and `TOL_    *)
-(*  RDLB_close` is its immediate corollary (`exact RDLB_S2_Ax`), not a     *)
-(*  further derivation.                                                   *)
+(*  not silently assumed. S1 (triviality hypothesis) to S2 (`d <= sum      *)
+(*  m_i`) is stated as one further Hypothesis, tagged RDLB-S2-Ax, since    *)
+(*  it is the classical injective-implies-domain-dim-le-codomain-dim      *)
+(*  fact -- same missing-theory class as K4, and `TOL_RDLB_close` is its   *)
+(*  immediate corollary (`exact RDLB_S2_Ax`), not a further derivation.    *)
+(*                                                                        *)
+(*  Precision fix (peer review, 2026-09-13): the S1 premise MUST be       *)
+(*  windowed to `forall i, i < d -> x i == 0`, not `forall i, x i == 0`.   *)
+(*  `Vec := nat -> Q` is index-infinite while `InKer d ...` only          *)
+(*  constrains coordinates below `d`, so the unwindowed premise is        *)
+(*  refutable by `x := fun k => if k =? d then 1 else 0` for EVERY        *)
+(*  configuration -- making the unwindowed `RDLB_S2_Ax` provable from     *)
+(*  nothing (not a real concession) and `TOL_RDLB_close` uninstantiable   *)
+(*  (vacuously true, never usable). Independently confirmed non-vacuous   *)
+(*  after windowing: `AA := mid`/`mm := fun _ => d` genuinely satisfies   *)
+(*  the windowed premise for a nonzero-outside-d vector. The stray        *)
+(*  universally-quantified `dd` (unconnected to `d` or any matrix         *)
+(*  dimension) was also removed -- it was harmless only because the      *)
+(*  premise was already unsatisfiable; re-adding it after windowing       *)
+(*  would make the Hypothesis false, not merely unproven.                *)
 (*                                                                        *)
 (*  Honest ledger: derived as real theorems -- `meqR`, `rank_le`,          *)
 (*  `TOL2_rank_bound`, `mv_mmul_assoc`, `K1_kernel_inclusion`,             *)
@@ -940,7 +954,13 @@ End RDLBAbstractLayer.
 (*  `K4_codim_bound`. Assumed as explicit, named Hypotheses --             *)
 (*  `RDLB_K4_Ax_single`/`RDLB_K4_Ax_inter` (the two K4 codimension laws)   *)
 (*  and `RDLB_S2_Ax` (S2's injectivity-bound law); `TOL_RDLB_close` rests  *)
-(*  on the latter alone.                                                  *)
+(*  on the latter alone. IMPORTANT: this means the RDLB endpoint          *)
+(*  (`TOL_RDLB_close`) rests ENTIRELY on the named Hypotheses -- none of   *)
+(*  the genuinely-derived theorems above it (`TOL2_rank_bound`,           *)
+(*  `K1_kernel_inclusion`, `K2_each`, `K3_sum`, `TOL3_sum_rank`) is used   *)
+(*  in reaching it. Those theorems establish the kernel-inclusion and     *)
+(*  rank-accounting chain in its own right; they do not feed the          *)
+(*  codimension closure, which is a separate, still-open concession.      *)
 (* ===================================================================== *)
 Section FiniteBottleneckRDLB.
 Open Scope Q_scope.
@@ -1254,14 +1274,14 @@ Proof.
     + exact IH.
 Qed.
 
-Hypothesis RDLB_S2_Ax : forall (dd : nat) (Is : list I),
-  (forall x, InKerAll x -> forall i, x i == 0) ->
-  (dd <= list_sum (map mm Is))%nat.
+Hypothesis RDLB_S2_Ax : forall (Is : list I),
+  (forall x, InKerAll x -> forall i, (i < d)%nat -> x i == 0) ->
+  (d <= list_sum (map mm Is))%nat.
 
 Theorem TOL_RDLB_close (Is : list I) :
-  (forall x, InKerAll x -> forall i, x i == 0) ->
+  (forall x, InKerAll x -> forall i, (i < d)%nat -> x i == 0) ->
   (d <= list_sum (map mm Is))%nat.
-Proof. exact (@RDLB_S2_Ax d Is). Qed.
+Proof. exact (@RDLB_S2_Ax Is). Qed.
 
 Close Scope Q_scope.
 End FiniteBottleneckRDLB.
@@ -1287,7 +1307,17 @@ End FiniteBottleneckRDLB.
   need `HasCodimLe` to respect logical equivalence of its `Subspace`
   argument, a property neither named Hypothesis grants). `TOL_RDLB_close`
   is a direct corollary of the single named Hypothesis `RDLB_S2_Ax`, not a
-  further derivation. This is NEW DERIVATION / PROPOSAL, not yet in
+  further derivation. Its premise is windowed to `forall i, i<d -> x i
+  == 0` (peer-review fix, 2026-09-13): the earlier unwindowed form was
+  vacuously refutable over `Vec := nat -> Q`'s index-infinite domain,
+  which would have made `RDLB_S2_Ax` provable from nothing and
+  `TOL_RDLB_close` never usable; independently confirmed non-vacuous
+  after the fix. IMPORTANT: `TOL_RDLB_close`, the RDLB endpoint, rests
+  ENTIRELY on `RDLB_S2_Ax` -- none of this section's genuinely-derived
+  theorems (`TOL2_rank_bound`, `K1_kernel_inclusion`, `K2_each`,
+  `K3_sum`, `TOL3_sum_rank`) is used in reaching it; they establish the
+  kernel-inclusion/rank-accounting chain in its own right, not as an
+  input to the codimension closure. This is NEW DERIVATION / PROPOSAL, not yet in
   Toledo. Toledo `CAN-054` (`EQ-015/H.06.v1`) is cited as the intellectual
   motivation for `TOL2_rank_bound`'s name only -- its own Coq file proves
   no general rank bound, so `TOL2_rank_bound` here is fresh, not reused,
