@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "scope": "Frozen derived-readout records for Reader-Domain F6 calibration. No checker topology labels are present in this file.",
+  "records": [
+    {
+      "id": "s3_boundary_4simplex",
+      "representation_fingerprint": "S3:boundary-4-simplex",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "0", "0", "Z"],
+        "pi1_certificate": "trivial",
+        "linking_form_signature": "none"
+      }
+    },
+    {
+      "id": "s3_subdivision_control",
+      "representation_fingerprint": "S3:independent-subdivision-control",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "0", "0", "Z"],
+        "pi1_certificate": "trivial",
+        "linking_form_signature": "none"
+      }
+    },
+    {
+      "id": "poincare_homology_sphere_a",
+      "representation_fingerprint": "Sigma(2,3,5):presentation-A",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "0", "0", "Z"],
+        "pi1_certificate": "binary_icosahedral_order_120",
+        "linking_form_signature": "none"
+      }
+    },
+    {
+      "id": "poincare_homology_sphere_b",
+      "representation_fingerprint": "Sigma(2,3,5):presentation-B",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "0", "0", "Z"],
+        "pi1_certificate": "binary_icosahedral_order_120",
+        "linking_form_signature": "none"
+      }
+    },
+    {
+      "id": "rp3_lens_2_1",
+      "representation_fingerprint": "L(2,1):control",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "Z/2", "0", "Z"],
+        "pi1_certificate": "C2",
+        "linking_form_signature": "1/2"
+      }
+    },
+    {
+      "id": "s2xs1_product",
+      "representation_fingerprint": "S2xS1:product-control",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "Z", "Z", "Z"],
+        "pi1_certificate": "Z",
+        "linking_form_signature": "none"
+      }
+    },
+    {
+      "id": "lens_5_1",
+      "representation_fingerprint": "L(5,1):control",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "Z/5", "0", "Z"],
+        "pi1_certificate": "C5",
+        "linking_form_signature": "1/5"
+      }
+    },
+    {
+      "id": "lens_5_2",
+      "representation_fingerprint": "L(5,2):control",
+      "readouts": {
+        "dimension": 3,
+        "closed": true,
+        "orientable": true,
+        "homology": ["Z", "Z/5", "0", "Z"],
+        "pi1_certificate": "C5",
+        "linking_form_signature": "2/5"
+      }
+    }
+  ]
+}
