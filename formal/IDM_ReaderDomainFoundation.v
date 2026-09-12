@@ -195,6 +195,93 @@ Qed.
 
 End ReaderDomainCore.
 
+Section ConstructiveFirewall.
+(*
+  NEW DERIVATION / PROPOSAL, not yet in Toledo — child of TG-RFG-01
+  (issue morrocwi/toledo#36). Sits beside this file's existing
+  Galois-correspondence family (ReaderDomainCore above), not a
+  standalone object.
+
+  What this formalizes, and only this: a bookkeeping fact about which
+  sub-family of experiments a derived equivalence relation (EqOf) is
+  allowed to range over, when membership is filtered by an abstract,
+  uninterpreted predicate Constructive. It says nothing about what
+  Constructive means operationally, what it can decide, or any
+  separation result. Constructive stays a free Variable : Experiment
+  -> Prop — never instantiated, never given intro/elim rules beyond
+  what Family/EqOf already have.
+
+  Claim boundary: this section proves generic finite/discrete math
+  only. It contains no computational-hardness premise or conclusion
+  (no P-vs-NP-shaped claim). Domain instantiation of Constructive
+  (e.g. as "decidable in polynomial time", "an actually-performable
+  laboratory experiment", etc.) is a separate obligation left to
+  future work.
+
+  Not to be confused with: Toledo registry/proposals/
+  semantic_closure_accounting_p_vs_np_v0_1.json (PROP-SCA-PNP-01..06,
+  also gated under TG-RFG-01), which is a genuinely different, still-
+  open P-vs-NP-adjacent circuit-level result about semantic-channel/
+  oracle bookkeeping. That cluster and this section share vocabulary
+  ("oracle", "semantic universe") by coincidence of domain, not by any
+  shared theorem, proof, or object; this section's result is a
+  family/EqOf congruence fact, unrelated to circuit-ledger accounting.
+*)
+
+Context {State Value : Type}.
+Variable Constructive : @Experiment State Value -> Prop.
+Variable Ambient : @Family State Value.
+
+Definition A_sem : Family := Ambient.
+
+Definition A_con : Family :=
+  fun e => Ambient e /\ Constructive e.
+
+(* Trivial inclusion, by construction. *)
+Theorem A_con_subseteq_A_sem :
+  family_subset A_con A_sem.
+Proof. intros e [Hamb _]. exact Hamb. Qed.
+
+(* Reading (comment only, not a Coq statement): if two candidate
+   experiment-families are both confined to the constructively-
+   admissible universe A_con and agree on every constructive
+   experiment, their induced indistinguishability relations are
+   identical relations — the definition of EqOf cannot "see" any
+   experiment outside what Constructive already licensed. This is a
+   closure/definitional fact about EqOf's quantifier scope, exactly
+   parallel to T2_eq_closure_invariant above — not a claim about
+   decidability, hardness, or any complexity class. *)
+Theorem constructive_closure_invariant :
+  forall E1 E2 : Family,
+    family_subset E1 A_con ->
+    family_subset E2 A_con ->
+    (forall e, Constructive e -> (E1 e <-> E2 e)) ->
+    rel_equiv (EqOf E1) (EqOf E2).
+Proof.
+  intros E1 E2 H1 H2 Hagree.
+  assert (H12 : family_subset E1 E2).
+  { intros e He1. destruct (H1 e He1) as [_ Hcon]. exact (proj1 (Hagree e Hcon) He1). }
+  assert (H21 : family_subset E2 E1).
+  { intros e He2. destruct (H2 e He2) as [_ Hcon]. exact (proj2 (Hagree e Hcon) He2). }
+  intros s t; split.
+  - exact (@EqOf_antitone State Value E2 E1 H21 s t).
+  - exact (@EqOf_antitone State Value E1 E2 H12 s t).
+Qed.
+
+End ConstructiveFirewall.
+
+(*
+  Claim boundary for ConstructiveFirewall (restated, section-close
+  form matching the header discipline used at the top of this file):
+  this section proves generic finite/discrete math only, about the
+  quantifier scope of EqOf under an abstract admissibility filter. It
+  contains no computational-hardness premise or conclusion — no
+  P-vs-NP-shaped claim, no decidability claim about Constructive.
+  Domain instantiation of Constructive (what actually counts as
+  "constructive" in a given application) is a separate obligation not
+  addressed here.
+*)
+
 Section FutureReaderDynamics.
 
 Context {State Value Action Reader : Type}.
