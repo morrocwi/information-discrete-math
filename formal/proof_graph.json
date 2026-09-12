@@ -1,0 +1,440 @@
+{
+  "Experiment": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "Family": {
+    "kind": "Definition",
+    "deps": [
+      "Experiment"
+    ]
+  },
+  "Rel": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "family_subset": {
+    "kind": "Definition",
+    "deps": [
+      "Family"
+    ]
+  },
+  "rel_subset": {
+    "kind": "Definition",
+    "deps": [
+      "Rel"
+    ]
+  },
+  "family_equiv": {
+    "kind": "Definition",
+    "deps": [
+      "Family"
+    ]
+  },
+  "rel_equiv": {
+    "kind": "Definition",
+    "deps": [
+      "Rel"
+    ]
+  },
+  "kernel": {
+    "kind": "Definition",
+    "deps": [
+      "Experiment",
+      "Rel"
+    ]
+  },
+  "EqOf": {
+    "kind": "Definition",
+    "deps": [
+      "Family",
+      "Rel"
+    ]
+  },
+  "ObsOf": {
+    "kind": "Definition",
+    "deps": [
+      "Family",
+      "Rel"
+    ]
+  },
+  "Cl": {
+    "kind": "Definition",
+    "deps": [
+      "Family",
+      "EqOf",
+      "ObsOf"
+    ]
+  },
+  "T1_eq_obs_correspondence": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "Rel",
+      "family_subset",
+      "rel_subset",
+      "EqOf",
+      "ObsOf"
+    ]
+  },
+  "EqOf_antitone": {
+    "kind": "Lemma",
+    "deps": [
+      "Family",
+      "family_subset",
+      "rel_subset",
+      "EqOf"
+    ]
+  },
+  "ObsOf_antitone": {
+    "kind": "Lemma",
+    "deps": [
+      "Rel",
+      "family_subset",
+      "rel_subset",
+      "ObsOf"
+    ]
+  },
+  "T2_closure_extensive": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "family_subset",
+      "Cl"
+    ]
+  },
+  "T2_closure_monotone": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "family_subset",
+      "Cl"
+    ]
+  },
+  "T2_eq_closure_invariant": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "rel_equiv",
+      "EqOf",
+      "Cl"
+    ]
+  },
+  "T2_closure_idempotent": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "family_equiv",
+      "Cl"
+    ]
+  },
+  "family_union": {
+    "kind": "Definition",
+    "deps": [
+      "Family"
+    ]
+  },
+  "family_inter": {
+    "kind": "Definition",
+    "deps": [
+      "Family"
+    ]
+  },
+  "T6_question_monotonicity": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "family_subset",
+      "rel_subset",
+      "EqOf"
+    ]
+  },
+  "T7_joint_question_intersection": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "rel_equiv",
+      "EqOf",
+      "family_union"
+    ]
+  },
+  "ClosedFamily": {
+    "kind": "Definition",
+    "deps": [
+      "Family",
+      "family_equiv",
+      "Cl"
+    ]
+  },
+  "closure_is_closed": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "Cl",
+      "T2_closure_idempotent",
+      "ClosedFamily"
+    ]
+  },
+  "closed_intersection": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "family_inter",
+      "ClosedFamily"
+    ]
+  },
+  "closed_join": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "Cl",
+      "family_union",
+      "ClosedFamily",
+      "closure_is_closed"
+    ]
+  },
+  "A_sem": {
+    "kind": "Definition",
+    "deps": [
+      "Family"
+    ]
+  },
+  "A_con": {
+    "kind": "Definition",
+    "deps": [
+      "Family"
+    ]
+  },
+  "A_con_subseteq_A_sem": {
+    "kind": "Theorem",
+    "deps": [
+      "family_subset",
+      "A_sem",
+      "A_con"
+    ]
+  },
+  "constructive_closure_invariant": {
+    "kind": "Theorem",
+    "deps": [
+      "Family",
+      "family_subset",
+      "rel_equiv",
+      "EqOf",
+      "EqOf_antitone",
+      "A_con"
+    ]
+  },
+  "run_word": {
+    "kind": "Fixpoint",
+    "deps": []
+  },
+  "FutureEq": {
+    "kind": "Definition",
+    "deps": [
+      "run_word"
+    ]
+  },
+  "ImmediateEq": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "future_eq_refl": {
+    "kind": "Theorem",
+    "deps": [
+      "FutureEq"
+    ]
+  },
+  "future_eq_sym": {
+    "kind": "Theorem",
+    "deps": [
+      "FutureEq"
+    ]
+  },
+  "future_eq_trans": {
+    "kind": "Theorem",
+    "deps": [
+      "run_word",
+      "FutureEq"
+    ]
+  },
+  "T3_future_equivalence_dynamic_stability": {
+    "kind": "Theorem",
+    "deps": [
+      "FutureEq"
+    ]
+  },
+  "T4_dynamic_weld_well_defined": {
+    "kind": "Theorem",
+    "deps": [
+      "FutureEq",
+      "T3_future_equivalence_dynamic_stability"
+    ]
+  },
+  "IsFutureClass": {
+    "kind": "Definition",
+    "deps": [
+      "FutureEq"
+    ]
+  },
+  "QState": {
+    "kind": "Definition",
+    "deps": [
+      "IsFutureClass"
+    ]
+  },
+  "proj": {
+    "kind": "Definition",
+    "deps": [
+      "FutureEq",
+      "IsFutureClass",
+      "QState"
+    ]
+  },
+  "step_class": {
+    "kind": "Definition",
+    "deps": [
+      "FutureEq"
+    ]
+  },
+  "step_class_is_class": {
+    "kind": "Lemma",
+    "deps": [
+      "FutureEq",
+      "future_eq_refl",
+      "future_eq_trans",
+      "T3_future_equivalence_dynamic_stability",
+      "IsFutureClass",
+      "step_class"
+    ]
+  },
+  "Fsharp": {
+    "kind": "Definition",
+    "deps": [
+      "IsFutureClass",
+      "QState",
+      "step_class",
+      "step_class_is_class"
+    ]
+  },
+  "T4b_quotient_commuting_square": {
+    "kind": "Theorem",
+    "deps": [
+      "future_eq_refl",
+      "future_eq_trans",
+      "T3_future_equivalence_dynamic_stability",
+      "proj",
+      "step_class",
+      "Fsharp"
+    ]
+  },
+  "DepthEq": {
+    "kind": "Fixpoint",
+    "deps": [
+      "ImmediateEq"
+    ]
+  },
+  "future_eq_immediate": {
+    "kind": "Lemma",
+    "deps": [
+      "FutureEq",
+      "ImmediateEq"
+    ]
+  },
+  "future_eq_implies_depth": {
+    "kind": "Lemma",
+    "deps": [
+      "FutureEq",
+      "T3_future_equivalence_dynamic_stability",
+      "DepthEq",
+      "future_eq_immediate"
+    ]
+  },
+  "depth_immediate": {
+    "kind": "Lemma",
+    "deps": [
+      "ImmediateEq",
+      "DepthEq"
+    ]
+  },
+  "DepthStable": {
+    "kind": "Definition",
+    "deps": [
+      "DepthEq"
+    ]
+  },
+  "depth_stable_successor_closed": {
+    "kind": "Lemma",
+    "deps": [
+      "DepthEq",
+      "DepthStable"
+    ]
+  },
+  "depth_stable_implies_future": {
+    "kind": "Lemma",
+    "deps": [
+      "FutureEq",
+      "DepthEq",
+      "depth_immediate",
+      "DepthStable",
+      "depth_stable_successor_closed"
+    ]
+  },
+  "stable_depth_exact_future": {
+    "kind": "Theorem",
+    "deps": [
+      "FutureEq",
+      "DepthEq",
+      "future_eq_implies_depth",
+      "DepthStable",
+      "depth_stable_implies_future"
+    ]
+  },
+  "RelS": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "KernelR": {
+    "kind": "Definition",
+    "deps": [
+      "RelS"
+    ]
+  },
+  "SufficientFor": {
+    "kind": "Definition",
+    "deps": [
+      "RelS"
+    ]
+  },
+  "T5_sufficiency_kernel_inclusion": {
+    "kind": "Theorem",
+    "deps": [
+      "RelS",
+      "KernelR",
+      "SufficientFor"
+    ]
+  },
+  "iterate": {
+    "kind": "Fixpoint",
+    "deps": []
+  },
+  "blocks_growth_under_no_closure": {
+    "kind": "Lemma",
+    "deps": [
+      "iterate"
+    ]
+  },
+  "closed_or_none_upto": {
+    "kind": "Lemma",
+    "deps": [
+      "iterate"
+    ]
+  },
+  "finite_strict_refinement_terminates": {
+    "kind": "Theorem",
+    "deps": [
+      "iterate",
+      "blocks_growth_under_no_closure",
+      "closed_or_none_upto"
+    ]
+  }
+}
