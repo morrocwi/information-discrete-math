@@ -106,7 +106,7 @@ theorems are proved:
   classical axioms, no reference to computability).
 
 Both identifiers are axiom-free (`Print Assumptions`: "Closed under the global context") and are
-included in the promoted theorem list (section 3, now 22 identifiers) and in
+included in the promoted theorem list (section 3, now 25 identifiers) and in
 `formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array. **Claim boundary (unchanged in
 scope):** no P-vs-NP-shaped claim, no computational-hardness premise or conclusion — domain
 instantiation of `Constructive` (what actually counts as "constructive" in a given application,
@@ -165,7 +165,7 @@ Identifiers: `T3_future_equivalence_dynamic_stability`, `T4_dynamic_weld_well_de
 
 **Precision note (peer-review, 2026-09-12):** `T4_dynamic_weld_well_defined` is definitionally identical to `T3_future_equivalence_dynamic_stability` (same statement, same proof by direct application) — it is not a second, independent result. It supplies the *congruence property* that a well-defined quotient map `F_u^#` requires, but on its own does not construct a quotient type, a projection `q`, or `F_u^#`, and does not itself instantiate the equation `q∘F_u = F_u^#∘q`.
 
-**Update (2026-09-13):** that gap is now closed by `T4b_quotient_commuting_square`, added in the same file. It defines the quotient type `QState` (states up to `FutureEq`), the canonical projection `proj` (`q`), the induced transition `Fsharp` (`F^#`), and proves the commuting square `q∘F_u = F^#_u∘q` — stated pointwise on class membership so no functional-extensionality or proof-irrelevance axiom is needed. Axiom-free (`Print Assumptions`: "Closed under the global context"), included in the promoted theorem list (§3 below, 20 identifiers as of this update; now 22 after the constructive-firewall addition below). This is the first concrete Coq instance of Toledo CAN-006 (`weld/M.02.v1`) supplied by this Foundation — an occurrence, not a new weld object.
+**Update (2026-09-13):** that gap is now closed by `T4b_quotient_commuting_square`, added in the same file. It defines the quotient type `QState` (states up to `FutureEq`), the canonical projection `proj` (`q`), the induced transition `Fsharp` (`F^#`), and proves the commuting square `q∘F_u = F^#_u∘q` — stated pointwise on class membership so no functional-extensionality or proof-irrelevance axiom is needed. Axiom-free (`Print Assumptions`: "Closed under the global context"), included in the promoted theorem list (§3 below, 20 identifiers as of this update; 22 after the constructive-firewall addition below; now 25 after the RDLB abstract-layer addition in §5a). This is the first concrete Coq instance of Toledo CAN-006 (`weld/M.02.v1`) supplied by this Foundation — an occurrence, not a new weld object.
 
 ### T5 — Sufficiency kernel inclusion
 
@@ -264,6 +264,97 @@ A second formal result connects semantic and constructive readings: if finite-de
 Identifier: `stable_depth_exact_future`.
 
 Toledo issue #36 is the governed place to decide whether the present C.05 row is revised/superseded by this strengthened statement.
+
+## 5a. RDLB v0.1 — abstract accumulated-capacity accounting
+
+**Tier: `Th_coqc` — formalized, axiom-free (2026-09-13 addition).** `Section RDLBAbstractLayer` in
+`formal/IDM_ReaderDomainFoundation.v` (immediately after `FiniteStrictRefinement`). **Toledo
+status:** `NEW DERIVATION / PROPOSAL, not yet in Toledo` — the reuse-pipeline lookup
+(Toledo → Genesis compatibility → reuse → derive-only-the-delta → mark PROPOSAL) found no existing
+Toledo object covering this exact nat-valued Demand/Capacity accounting law, so it is registered
+here as a proposal candidate, not cited as an equation anywhere else.
+
+This is a wholly abstract, generic finite/discrete-math layer: `Question`, `Reader`, `Dem`, `Cap`,
+`Sufficient`, and `combine` are free `Variable`s/`Context` types, never instantiated. All
+quantities are `nat` (`List.length`, `+`, `*`, `<=` only) — no continuum concept appears, so the
+section is IDM-clean by construction and implicates no discrete-replacement-table entry.
+
+**Claim boundary (explicit, generic finite/discrete math only):**
+
+- No linear algebra of any kind (no Jacobian, no rank, no matrix, no norm) is used or implied here.
+- No Navier-Stokes / energy-observability specialization is made here. `readout-problem-navier-stokes`
+  and its `ns_energy_observability.json` artifact are cited by name only, as the motivating future
+  application — their content is never restated or relied on as a premise. Any NS-specific
+  instantiation of `Dem`/`Cap`/`Sufficient`/`combine` remains a wholly separate, unaddressed
+  obligation.
+- No computational-hardness or complexity-class premise or conclusion of any kind, and in
+  particular **no P-vs-NP-shaped claim of any kind**. `Sufficient`, `Dem`, `Cap`, `combine` stay
+  opaque throughout; nothing here decides, bounds, or reasons about time/space complexity, circuit
+  size, or any resource model. **PNP-RDLB remains permanently OPEN**, per the founder's own
+  Finite-Clay Programme rule, and is not touched, narrowed, or answered by anything in this section.
+
+**Disambiguation from Toledo `PROP-SCA-PNP-03/06/07/08/09`** (registry/proposals/
+`semantic_closure_accounting_p_vs_np_v0_1*.json`, the reuse-pipeline lookup's nearest hit): that
+cluster is a distinct, still-open P-vs-NP-adjacent proposal about circuit/oracle-level
+semantic-channel accounting. RDLB v0.1 shares only surface vocabulary with it (Demand, capacity, an
+accumulation bound, a depth/round divergence) by coincidence of subject matter — zero shared
+theorem, zero shared proof, zero shared Coq object. No claim, premise, or conclusion of
+`PROP-SCA-PNP-03/06/07/08/09` is made, used, restated, or implied here.
+
+**Further reuse-pipeline near-hits, checked and ruled out** (statements read directly, not just
+matched by keyword, per EPIS-REUSE-PIPELINE's "keyword hits are NOT matches" rule): Toledo
+`CAN-181` (`A.8/M.08.v1`, `PublicOutputVelocity ≤ VerificationCapacity` in a bottleneck-
+inversion/epistemic-debt economics reading) shares C1's `Dem ≤ Cap` shape but has no
+fold-accumulation law and sits in an unrelated domain — kept only as a same-form-different-theory
+note, not a duplicate. `CAN-054` (`EQ-015/H.06.v1`, rank-bounded LoRA factorization) and `CAN-065`
+(`weld/H.06.v1`, a domain-weld defect vector) were read directly and are unrelated mechanisms.
+`weld/W.04.v1`/`weld/W.11.v1` (validation-capacity-as-a-function objects) share only the word
+"capacity". None of these is reused as a parent; none is duplicated here.
+
+**Genesis compatibility** (EPIS-REUSE-PIPELINE step 2): no existing Readout Genesis gate or section
+was found treating a Demand/Capacity accumulation law, formally or informally (checked via a
+keyword sweep of `READOUT_GENESIS_CORE.md` for "capacity"/"demand"). RDLB v0.1 is therefore new
+infrastructure with no Genesis-side classification yet — not an instantiation of an existing gate.
+
+**Parentage (intellectual only, not a `Require`):** the `Sufficient`/`Dem` shape is motivated by
+this file's own `T5_sufficiency_kernel_inclusion` (§SufficiencyKernel above) and
+`T6_question_monotonicity` (§ReaderDomainCore above) — a sufficient reader must dominate whatever
+the question demands, and adding reading power can only add to what is already settled. Those two
+theorems are cited as intellectual parents only; RDLB v0.1's theorems are self-contained over their
+own local `Hypothesis`es and are not proved from them.
+
+**The accounting law and its consequences.** Two accepted (not derived) accounting hypotheses:
+
+\[
+\mathrm{Sufficient}(R,Q)\Longrightarrow \mathrm{Dem}(Q)\le\mathrm{Cap}(R)
+\qquad\text{(RDLB-C1, sufficiency-capacity law)}
+\]
+\[
+\mathrm{Cap}(\mathrm{combine}(A,B))\le\mathrm{Cap}(A)+\mathrm{Cap}(B)
+\qquad\text{(RDLB-C2, block-accumulation subadditivity)}
+\]
+
+plus a baseline bound `Cap(base) <= c0` and a uniform per-round throughput bound
+`forall r, Cap(r) <= c`. A reader `built blocks` is the left fold `combine` of a list of block
+readers starting from `base`. From these, three real theorems are proved (not assumed):
+
+- **`RDLB_T1_accumulation_bound`** — `Sufficient (built blocks) Q -> Dem Q <= Cap base + list_sum (map Cap blocks)`,
+  via the helper lemmas `cap_fold_bound`/`cap_built_bound` (subadditivity carried through the fold
+  by list induction) composed with RDLB-C1.
+- **`RDLB_T2_round_bound`** — `Sufficient (built blocks) Q -> Dem Q <= c0 + length blocks * c`, the
+  same bound collapsed to a multiplication form under uniform per-round throughput (via the helper
+  lemma `list_sum_caps_le_length_mul`). Read informally as `Dem Q <= c0 + R*c`, i.e. (for `c > 0`
+  and `Dem Q > c0`) equivalent to `R >= ceil((Dem Q - c0)/c)` — stated and proved directly in
+  multiplication form, so no `Nat.div`/ceiling machinery is needed.
+- **`RDLB_W_capacity_deficit_witness`** — the contrapositive corollary of T2: a strict capacity
+  deficit `c0 + length blocks * c < Dem Q` rules out sufficiency for *any* reader built from that
+  many rounds.
+
+All three (plus their supporting `Definition`s/`Lemma`s) are axiom-free (`Print Assumptions`:
+"Closed under the global context" — the section's own `Hypothesis`es are correctly promoted to
+ordinary extra function arguments on section close, never global axioms). The three `Theorem`
+identifiers are included in the promoted theorem list (§3) and in
+`formal/verify_reader_domain_foundation.sh`'s `THEOREMS` array, bringing the total to 25.
 
 ## 6. F6 Maker–Checker calibration
 

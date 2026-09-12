@@ -28,6 +28,9 @@ THEOREMS=(
   finite_strict_refinement_terminates
   A_con_subseteq_A_sem
   constructive_closure_invariant
+  RDLB_T1_accumulation_bound
+  RDLB_T2_round_bound
+  RDLB_W_capacity_deficit_witness
 )
 
 rm -f "${FILE}.vo" "${FILE}.glob" "${FILE}.vos" "${FILE}.vok" ".${FILE}.aux" chk_reader_domain_*.v chk_reader_domain_*.vo chk_reader_domain_*.glob .chk_reader_domain_*.aux 2>/dev/null || true
