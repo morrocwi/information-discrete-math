@@ -487,5 +487,255 @@
       "built",
       "RDLB_T2_round_bound"
     ]
+  },
+  "Vec": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "meqR": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "mvmul": {
+    "kind": "Definition",
+    "deps": [
+      "Vec"
+    ]
+  },
+  "InKer": {
+    "kind": "Definition",
+    "deps": [
+      "Vec",
+      "mvmul"
+    ]
+  },
+  "rank_le": {
+    "kind": "Definition",
+    "deps": [
+      "meqR"
+    ]
+  },
+  "rank_le_trivial_upper": {
+    "kind": "Lemma",
+    "deps": [
+      "meqR",
+      "rank_le"
+    ]
+  },
+  "Sum_double_swap": {
+    "kind": "Lemma",
+    "deps": []
+  },
+  "Sum_split": {
+    "kind": "Lemma",
+    "deps": []
+  },
+  "TOL2_rank_bound": {
+    "kind": "Theorem",
+    "deps": [
+      "meqR",
+      "rank_le"
+    ]
+  },
+  "Sum_mul_const_r": {
+    "kind": "Lemma",
+    "deps": []
+  },
+  "Sum_mul_const_l": {
+    "kind": "Lemma",
+    "deps": []
+  },
+  "mv_mmul_assoc": {
+    "kind": "Lemma",
+    "deps": [
+      "Vec",
+      "mvmul",
+      "Sum_double_swap",
+      "Sum_mul_const_r",
+      "Sum_mul_const_l"
+    ]
+  },
+  "mvmul_unfold": {
+    "kind": "Lemma",
+    "deps": [
+      "mvmul"
+    ]
+  },
+  "K1_kernel_inclusion": {
+    "kind": "Theorem",
+    "deps": [
+      "Vec",
+      "mvmul",
+      "InKer",
+      "mv_mmul_assoc",
+      "mvmul_unfold"
+    ]
+  },
+  "mvmul_meqR": {
+    "kind": "Lemma",
+    "deps": [
+      "Vec",
+      "meqR",
+      "mvmul"
+    ]
+  },
+  "TOL4_no_collapse": {
+    "kind": "Theorem",
+    "deps": [
+      "Vec",
+      "meqR",
+      "mvmul",
+      "InKer",
+      "mvmul_meqR"
+    ]
+  },
+  "InKerAll": {
+    "kind": "Definition",
+    "deps": [
+      "Vec",
+      "InKer"
+    ]
+  },
+  "K2_each": {
+    "kind": "Theorem",
+    "deps": [
+      "InKer",
+      "K1_kernel_inclusion",
+      "InKerAll"
+    ]
+  },
+  "mvmul_madd": {
+    "kind": "Lemma",
+    "deps": [
+      "mvmul"
+    ]
+  },
+  "InKer_madd": {
+    "kind": "Lemma",
+    "deps": [
+      "InKer",
+      "mvmul_madd"
+    ]
+  },
+  "InKer_zero": {
+    "kind": "Lemma",
+    "deps": [
+      "mvmul",
+      "InKer"
+    ]
+  },
+  "K3_fold_general": {
+    "kind": "Lemma",
+    "deps": [
+      "Vec",
+      "InKer",
+      "InKerAll",
+      "K2_each",
+      "InKer_madd"
+    ]
+  },
+  "K3_sum": {
+    "kind": "Theorem",
+    "deps": [
+      "InKer",
+      "InKerAll",
+      "InKer_zero",
+      "K3_fold_general"
+    ]
+  },
+  "hcat": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "vcat": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "hcat_left": {
+    "kind": "Lemma",
+    "deps": [
+      "hcat"
+    ]
+  },
+  "hcat_right": {
+    "kind": "Lemma",
+    "deps": [
+      "hcat"
+    ]
+  },
+  "vcat_left": {
+    "kind": "Lemma",
+    "deps": [
+      "vcat"
+    ]
+  },
+  "vcat_right": {
+    "kind": "Lemma",
+    "deps": [
+      "vcat"
+    ]
+  },
+  "rank_le_add": {
+    "kind": "Theorem",
+    "deps": [
+      "rank_le",
+      "Sum_split",
+      "hcat",
+      "vcat",
+      "hcat_left",
+      "hcat_right",
+      "vcat_left",
+      "vcat_right"
+    ]
+  },
+  "rank_le_zero": {
+    "kind": "Lemma",
+    "deps": [
+      "rank_le"
+    ]
+  },
+  "TOL3_fold_general": {
+    "kind": "Lemma",
+    "deps": [
+      "list_sum",
+      "rank_le",
+      "rank_le_add"
+    ]
+  },
+  "TOL3_sum_rank": {
+    "kind": "Theorem",
+    "deps": [
+      "list_sum",
+      "rank_le",
+      "rank_le_zero",
+      "TOL3_fold_general"
+    ]
+  },
+  "Subspace": {
+    "kind": "Definition",
+    "deps": [
+      "Vec"
+    ]
+  },
+  "InKerListSub": {
+    "kind": "Fixpoint",
+    "deps": [
+      "InKer",
+      "Subspace"
+    ]
+  },
+  "K4_codim_bound": {
+    "kind": "Theorem",
+    "deps": [
+      "list_sum",
+      "InKerListSub"
+    ]
+  },
+  "TOL_RDLB_close": {
+    "kind": "Theorem",
+    "deps": [
+      "list_sum",
+      "InKerAll"
+    ]
   }
 }
