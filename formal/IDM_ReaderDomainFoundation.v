@@ -303,7 +303,7 @@ Proof.
   revert s t Hn.
   induction w as [|u ws IH]; intros s t Hn.
   - simpl.
-    pose proof (depth_immediate n Hn) as Himm.
+    pose proof (@depth_immediate n s t Hn) as Himm.
     exact (Himm r).
   - simpl.
     apply IH.
@@ -382,7 +382,7 @@ Proof.
     pose proof (IH P Hprev) as Hgrow.
     assert (Hnot : ~ closed (iterate k P)).
     { apply Hnone. lia. }
-    pose proof (strict_split_growth (iterate k P) Hnot) as Hstrict.
+    pose proof (@strict_split_growth (iterate k P) Hnot) as Hstrict.
     lia.
 Qed.
 
