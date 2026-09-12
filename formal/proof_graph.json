@@ -436,5 +436,56 @@
       "blocks_growth_under_no_closure",
       "closed_or_none_upto"
     ]
+  },
+  "built": {
+    "kind": "Definition",
+    "deps": []
+  },
+  "list_sum": {
+    "kind": "Fixpoint",
+    "deps": []
+  },
+  "cap_fold_bound": {
+    "kind": "Lemma",
+    "deps": [
+      "list_sum"
+    ]
+  },
+  "cap_built_bound": {
+    "kind": "Lemma",
+    "deps": [
+      "built",
+      "list_sum",
+      "cap_fold_bound"
+    ]
+  },
+  "RDLB_T1_accumulation_bound": {
+    "kind": "Theorem",
+    "deps": [
+      "built",
+      "list_sum",
+      "cap_built_bound"
+    ]
+  },
+  "list_sum_caps_le_length_mul": {
+    "kind": "Lemma",
+    "deps": [
+      "list_sum"
+    ]
+  },
+  "RDLB_T2_round_bound": {
+    "kind": "Theorem",
+    "deps": [
+      "built",
+      "RDLB_T1_accumulation_bound",
+      "list_sum_caps_le_length_mul"
+    ]
+  },
+  "RDLB_W_capacity_deficit_witness": {
+    "kind": "Theorem",
+    "deps": [
+      "built",
+      "RDLB_T2_round_bound"
+    ]
   }
 }

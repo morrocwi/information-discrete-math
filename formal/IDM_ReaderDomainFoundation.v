@@ -573,3 +573,244 @@ Proof.
 Qed.
 
 End FiniteStrictRefinement.
+
+Section RDLBAbstractLayer.
+(*
+  RDLB v0.1 -- abstract Reader-Domain accumulated-capacity accounting.
+
+  NEW DERIVATION / PROPOSAL, not yet in Toledo.
+
+  What this formalizes, and only this: an abstract nat-valued
+  Demand/Capacity accounting law for a reader built by iteratively
+  combining "block" readers, together with the finite-arithmetic
+  consequences of that law (a bound on demand in terms of accumulated
+  capacity, a round/length bound under uniform per-round throughput,
+  and the contrapositive capacity-deficit witness). `Sufficient`,
+  `Dem`, `Cap`, and `combine` are free Variables throughout this
+  section -- never instantiated as circuits, Turing machines,
+  resource-bounded computation models, or any other complexity-
+  theoretic object. Every quantity in this section is a `nat`
+  (`List.length`, `+`, `*`, `<=` only) -- no continuum concept (no
+  real number, no limit, no angle, no zero-extent point) appears
+  anywhere, so this section is IDM-clean by construction; no
+  discrete-replacement table entries are implicated.
+
+  Claim boundary: this section proves generic finite/discrete
+  arithmetic only. It contains:
+    - no linear algebra of any kind (no Jacobian, no rank, no matrix,
+      no norm);
+    - no Navier-Stokes / energy-observability claim of any kind (the
+      `readout-problem-navier-stokes` repository and its
+      `ns_energy_observability.json` artifact are cited here BY NAME
+      ONLY, as the motivating application this abstract layer is
+      eventually meant to serve -- their content is never restated,
+      quoted, or relied on as a premise of anything below);
+    - no computational-hardness or complexity-class premise or
+      conclusion of any kind, and in particular no P-vs-NP-shaped
+      claim of any kind. `combine`, `Sufficient`, `Dem`, and `Cap`
+      stay opaque free Variables from open to close of this section;
+      nothing here decides, bounds, or reasons about time/space
+      complexity, circuit size, or any resource model.
+
+  Disambiguation (required by the reuse-pipeline lookup phase already
+  run for this design; see EPIS-REUSE-PIPELINE): Toledo's
+  `registry/proposals/semantic_closure_accounting_p_vs_np_v0_1*.json`
+  cluster (PROP-SCA-PNP-03/06/07/08/09) is a distinct, still-open
+  P-vs-NP-adjacent proposal about circuit/oracle-level semantic-
+  channel accounting. This section shares only surface vocabulary
+  with that cluster -- Demand, capacity, an accumulation bound, a
+  depth/round divergence -- by coincidence of subject matter: there is
+  zero shared theorem, zero shared proof, and zero shared Coq object
+  between the two. No claim, premise, or conclusion of
+  PROP-SCA-PNP-03/06/07/08/09 is made, used, restated, or implied
+  here, and nothing in this section resolves, narrows, or otherwise
+  bears on the P-vs-NP question in any way.
+
+  Further reuse-pipeline near-hits checked and ruled out (their
+  statements were read, not just their names, per EPIS-REUSE-PIPELINE's
+  "keyword hits are NOT matches" rule): Toledo CAN-181 (A.8/M.08.v1,
+  "PublicOutputVelocity <= VerificationCapacity" in a bottleneck-
+  inversion/epistemic-debt economics reading) shares C1's Dem<=Cap
+  shape but has no fold-accumulation law and lives in an unrelated
+  domain -- not content-equivalent, kept as a same-form-different-
+  theory note only. CAN-054 (EQ-015/H.06.v1, rank-bounded LoRA
+  factorization) and CAN-065 (weld/H.06.v1, a domain-weld defect
+  vector) were checked directly and are unrelated mechanisms (rank-
+  bounded update, weld defect), not a Dem/Cap accounting law.
+  weld/W.04.v1 and weld/W.11.v1 (validation-capacity-as-a-function
+  objects) share the word "capacity" only, different object entirely.
+  None of these is reused as a parent; none is duplicated by this
+  section.
+
+  Genesis compatibility (EPIS-REUSE-PIPELINE step 2): no existing
+  Readout Genesis gate or section was found treating a Demand/Capacity
+  accumulation law formally or informally (checked: READOUT_GENESIS_CORE.md,
+  keyword sweep for "capacity"/"demand"). This section is therefore new
+  infrastructure with no Genesis-side classification yet, not an
+  instantiation of an existing gate -- that classification, if any is
+  warranted, is a separate, later obligation.
+
+  Parentage (intellectual, not a `Require`): the Sufficient/Dem shape
+  used below is directly motivated by this file's own
+  `T5_sufficiency_kernel_inclusion` (Section SufficiencyKernel) and
+  `T6_question_monotonicity` (Section ReaderDomainCore) -- a
+  sufficient reader must dominate whatever the question demands, and
+  adding reading power can only add to what is already settled. Those
+  two theorems are cited here as the intellectual parents motivating
+  the shape of `suff_cap_law` below; they are not `Require`d and are
+  not used as premises of any theorem in this section, which is
+  self-contained over its own local Variables and Hypotheses.
+*)
+
+Context {Question Reader : Type}.
+Variable Dem : Question -> nat.
+Variable Cap : Reader -> nat.
+Variable Sufficient : Reader -> Question -> Prop.
+Variable combine : Reader -> Reader -> Reader.
+Variable base : Reader.
+Variable c0 c : nat.
+
+(* RDLB-C1 -- Sufficiency-Capacity Law (Hypothesis, not derived: this
+   is the abstract accounting law this whole layer accepts as given,
+   exactly as FiniteStrictRefinement above accepts blocks_bounded /
+   strict_split_growth as given rather than derived). *)
+Hypothesis suff_cap_law :
+  forall R Q, Sufficient R Q -> Dem Q <= Cap R.
+
+(* RDLB-C2 -- block-accumulation subadditivity (Hypothesis). *)
+Hypothesis cap_subadditive :
+  forall A B, Cap (combine A B) <= Cap A + Cap B.
+
+(* Baseline / per-round throughput hypotheses, matching the
+   FiniteStrictRefinement pattern (blocks_bounded style). *)
+Hypothesis base_cap_le : Cap base <= c0.
+Hypothesis round_cap_bound : forall r : Reader, Cap r <= c.
+
+Definition built (blocks : list Reader) : Reader :=
+  fold_left combine blocks base.
+
+(* Local finite sum over nat, defined here rather than relied on from
+   the stdlib (portable across Coq versions that may or may not ship
+   List.list_sum). *)
+Fixpoint list_sum (l : list nat) : nat :=
+  match l with
+  | [] => 0
+  | x :: xs => x + list_sum xs
+  end.
+
+(* Generalized fold bound: the accumulated capacity of a left fold
+   started from ANY reader R0 is bounded by Cap R0 plus the sum of
+   per-block capacities. Proved by list induction using
+   cap_subadditive; generalizing over the accumulator R0 is what lets
+   this go through directly on fold_left's own left-to-right
+   recursion, with no `rev` gymnastics needed. *)
+Lemma cap_fold_bound :
+  forall (blocks : list Reader) (R0 : Reader),
+    Cap (fold_left combine blocks R0) <= Cap R0 + list_sum (map Cap blocks).
+Proof.
+  induction blocks as [| r blocks IH]; intros R0.
+  - simpl. lia.
+  - simpl.
+    specialize (IH (combine R0 r)).
+    pose proof (cap_subadditive R0 r) as Hsub.
+    lia.
+Qed.
+
+(* Helper: accumulated capacity of a fold-built reader is bounded by
+   base capacity plus the sum of per-block capacities. Proved from
+   cap_fold_bound (via unfolding `built`) -- NOT restated as a
+   hypothesis. *)
+Lemma cap_built_bound :
+  forall blocks : list Reader,
+    Cap (built blocks) <= Cap base + list_sum (map Cap blocks).
+Proof.
+  intro blocks. unfold built. apply cap_fold_bound.
+Qed.
+
+(* RDLB-T1 -- accumulated-capacity bound on demand. *)
+Theorem RDLB_T1_accumulation_bound :
+  forall (Q : Question) (blocks : list Reader),
+    Sufficient (built blocks) Q ->
+    Dem Q <= Cap base + list_sum (map Cap blocks).
+Proof.
+  intros Q blocks Hsuff.
+  pose proof (@suff_cap_law (built blocks) Q Hsuff) as H1.
+  pose proof (cap_built_bound blocks) as H2.
+  lia.
+Qed.
+
+(* Helper: uniform per-round throughput collapses the sum bound to a
+   multiplication bound. Proved by induction using round_cap_bound. *)
+Lemma list_sum_caps_le_length_mul :
+  forall blocks : list Reader,
+    list_sum (map Cap blocks) <= length blocks * c.
+Proof.
+  induction blocks as [| r blocks IH].
+  - simpl. lia.
+  - simpl.
+    pose proof (round_cap_bound r) as Hr.
+    lia.
+Qed.
+
+(* RDLB-T2 -- depth/round bound, multiplication form. Read informally
+   as: Dem Q <= c0 + R * c, i.e. (when c > 0 and Dem Q > c0) this is
+   equivalent to R >= ceil((Dem Q - c0)/c) -- documented here in this
+   comment only; the theorem itself is stated and proved directly in
+   multiplication form, via RDLB_T1 + list_sum_caps_le_length_mul +
+   base_cap_le, so as to avoid any Nat.div/ceil machinery. *)
+Theorem RDLB_T2_round_bound :
+  forall (Q : Question) (blocks : list Reader),
+    Sufficient (built blocks) Q ->
+    Dem Q <= c0 + length blocks * c.
+Proof.
+  intros Q blocks Hsuff.
+  pose proof (@RDLB_T1_accumulation_bound Q blocks Hsuff) as H1.
+  pose proof (list_sum_caps_le_length_mul blocks) as H2.
+  pose proof base_cap_le as H3.
+  lia.
+Qed.
+
+(* RDLB-W -- capacity-deficit witness: contrapositive corollary of T2.
+   Short and non-vacuous: a strict capacity deficit rules out
+   sufficiency for ANY reader built from that many rounds. *)
+Theorem RDLB_W_capacity_deficit_witness :
+  forall (Q : Question) (blocks : list Reader),
+    c0 + length blocks * c < Dem Q ->
+    ~ Sufficient (built blocks) Q.
+Proof.
+  intros Q blocks Hdeficit Hsuff.
+  apply RDLB_T2_round_bound in Hsuff.
+  lia.
+Qed.
+
+End RDLBAbstractLayer.
+
+(*
+  Claim boundary for RDLBAbstractLayer (restated, section-close form
+  matching the header discipline used at the top of this file, and
+  the ConstructiveFirewall section above): this section proves generic
+  finite/discrete arithmetic only, about nat-valued Demand/Capacity
+  accounting over an abstract fold-built reader. It contains no linear
+  algebra, no Navier-Stokes / energy-observability claim
+  (`readout-problem-navier-stokes` is cited by name only, never
+  restated), and no computational-hardness or complexity-class premise
+  or conclusion of any kind -- no P-vs-NP-shaped claim. Disambiguated
+  above from Toledo's PROP-SCA-PNP-03/06/07/08/09 cluster: shared
+  vocabulary only, zero shared theorem/proof/object.
+  `T5_sufficiency_kernel_inclusion` and `T6_question_monotonicity` are
+  cited as intellectual parents of the Sufficient/Dem shape only, not
+  as `Require`d premises of anything in this section. RDLB v0.1 is a
+  NEW DERIVATION / PROPOSAL, not yet in Toledo. Any Navier-Stokes-
+  specific instantiation of Dem/Cap/Sufficient/combine remains a
+  wholly separate, unaddressed obligation; any PNP-RDLB-shaped
+  question is neither raised, closed, narrowed, nor answered by this
+  section in either direction. This is not a policy of declaring it
+  open regardless of the facts -- it is a statement of what this
+  section actually establishes: nothing here bridges the abstract
+  finite Dem/Cap accounting proved above to any concrete computational-
+  complexity model, so this section supports no claim, positive or
+  negative, about P vs NP. Should a rigorous such bridge and a genuine
+  closure ever be established elsewhere, honest reporting of that
+  result is required, not suppression; this comment asserts only that
+  no such bridge exists in this file.
+*)
