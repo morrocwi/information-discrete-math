@@ -246,6 +246,67 @@ Proof.
   exact H.
 Qed.
 
+(* T4b: the literal quotient, projection, induced map, and commuting square
+   that T4 only licenses as a corollary. This section actually constructs
+   q, F#, and proves q o F = F# o q as a machine-checked object, not just
+   the congruence property. Toledo occurrence: this is the first concrete
+   instantiation of weld/M.02.v1 (CAN-006) supplied by this Foundation, not
+   a new weld object. No functional-extensionality or proof-irrelevance
+   axiom is used: the commuting square is stated pointwise (as an iff on
+   class membership), which is the standard axiom-free way to express
+   equality of Prop-valued quotient classes without those axioms. *)
+
+Definition IsFutureClass (P : State -> Prop) : Prop :=
+  exists s, forall t, P t <-> FutureEq s t.
+
+Definition QState := { P : State -> Prop | IsFutureClass P }.
+
+(* q : the canonical projection of a state to its future-equivalence class. *)
+Definition proj (s : State) : QState :=
+  exist IsFutureClass (FutureEq s) (ex_intro _ s (fun t => iff_refl (FutureEq s t))).
+
+Definition step_class (u : Action) (P : State -> Prop) : State -> Prop :=
+  fun t => exists s, P s /\ FutureEq (step u s) t.
+
+Lemma step_class_is_class :
+  forall u P, IsFutureClass P -> IsFutureClass (step_class u P).
+Proof.
+  intros u P [s0 Hs0].
+  exists (step u s0).
+  intro t; split.
+  - intros [s [HPs Hft]].
+    assert (Hs0s : FutureEq s0 s) by (apply (Hs0 s); exact HPs).
+    apply future_eq_trans with (t := step u s).
+    + apply T3_future_equivalence_dynamic_stability. exact Hs0s.
+    + exact Hft.
+  - intro Hft.
+    exists s0.
+    split.
+    + apply (Hs0 s0). apply future_eq_refl.
+    + exact Hft.
+Qed.
+
+(* F# : the induced transition on quotient classes. *)
+Definition Fsharp (u : Action) (Q : QState) : QState :=
+  exist IsFutureClass (step_class u (proj1_sig Q))
+    (@step_class_is_class u (proj1_sig Q) (proj2_sig Q)).
+
+(* The literal commuting square q o F_u = F#_u o q, stated pointwise on
+   class membership (axiom-free: no funext/proof-irrelevance needed). *)
+Theorem T4b_quotient_commuting_square :
+  forall u s t,
+    proj1_sig (Fsharp u (proj s)) t <-> proj1_sig (proj (step u s)) t.
+Proof.
+  intros u s t. simpl. unfold step_class. split.
+  - intros [s' [Hss' Hft]].
+    apply future_eq_trans with (t := step u s').
+    + apply T3_future_equivalence_dynamic_stability. exact Hss'.
+    + exact Hft.
+  - intro Hft. exists s. split.
+    + apply future_eq_refl.
+    + exact Hft.
+Qed.
+
 Fixpoint DepthEq (n : nat) (s t : State) : Prop :=
   match n with
   | 0 => ImmediateEq s t
