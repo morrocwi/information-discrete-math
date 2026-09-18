@@ -50,6 +50,9 @@ if grep -nE 'Admitted|Axiom |^Axiom|Parameter |\badmit\b' "${FILE}.v"; then
   exit 1
 fi
 
+echo "== compile dependency IDM_Matrix.v (required by ${FILE}.v since the Finite-Bottleneck RDLB section) =="
+coqc -q IDM_Matrix.v
+
 echo "== compile ${FILE}.v =="
 coqc -q "${FILE}.v"
 
