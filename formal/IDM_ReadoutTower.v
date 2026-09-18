@@ -76,7 +76,8 @@
   Toledo -- including: tailsum_delta_telescopes, tailsum_delta_zero_is_Z_M08,
   plateau_certificate (occurrence of R/M.32.v1), plateau_radius, geom_majorant_tail_window,
   refine_stable_window, plateau_certificate_window, gap_is_abs_Delta, qpow_nonneg, qpow_le_1,
-  gap_geometric, inject_nat_nonneg, inject_nat_succ, qpow_bernoulli, bern_transfer, Nidx_from,
+  gap_geometric, inject_nat_nonneg, inject_nat_succ, qpow_bernoulli, qpow_below_eps,
+  bern_transfer, Nidx_from,
   Nidx, Nidx_from_spec, Nidx_spec, Nidx_zero, RR', rseq', rreg', Req', Pi, Pi_certificate,
   Qfrac_pos, Qfrac_nonneg, tol, accept, Nmax, Nmax_accept, N_of, N_of_tol, plateau_pair,
   sigma_reg, sigma_of, sigma_readout_exact, sigma_readout_plateau, sigma_of_constant,
@@ -297,6 +298,25 @@ Proof.
     lra.
 Qed.
 
+(** qpow_below_eps: the readable form of Bernoulli -- once n is large enough that
+    eps * (1 + n (1 - rho)) >= 1, the n-th power is below eps.  Division-free; the
+    reciprocal 1/eps is never formed.  Not yet in Toledo. *)
+Lemma qpow_below_eps : forall (rho eps : Q) (n : nat),
+  0 <= rho -> rho <= 1 -> 0 < eps ->
+  1 <= eps * (1 + inject_Z (Z.of_nat n) * (1 - rho)) ->
+  qpow rho n <= eps.
+Proof.
+  intros rho eps n Hr0 Hr1 He Hn.
+  pose proof (qpow_bernoulli rho n Hr0 Hr1) as HB.
+  pose proof (inject_nat_nonneg n) as Hnq.
+  assert (Hpos : 0 < 1 + inject_Z (Z.of_nat n) * (1 - rho)).
+  { assert (Hx : 0 <= inject_Z (Z.of_nat n) * (1 - rho))
+      by (apply Qmult_le_0_compat; [ assumption | lra ]).
+    lra. }
+  apply (Qmult_le_r _ _ _ Hpos).
+  apply Qle_trans with (y := 1); [ exact HB | exact Hn ].
+Qed.
+
 (** Pure algebra used by Nmax_accept: from the Bernoulli bound and a large enough NQ,
     rho^n * A <= d * e.  Not yet in Toledo. *)
 Lemma bern_transfer : forall (P A NQ d e : Q),
@@ -415,7 +435,10 @@ Section SigmaOf.
   Definition accept (n : positive) (N : nat) : bool := Qle_bool (Qabs (Delta g N)) (tol n).
 
   (** Nmax n: a computable ceiling above which acceptance is guaranteed (Bernoulli +
-      geometric decay); Qarchimedean is stdlib and transparent, so Nmax computes. *)
+      geometric decay); Qarchimedean is stdlib and transparent, so Nmax computes.
+      finite_diagnostic readout 2026-09-18 (scratch Eval vm_compute, geometric tape
+      g := geom_sum (1#2), rho := 1/2): Nmax 4 = 17, N_of 4 = 3, N_of 100 = 8,
+      readout g (N_of 4) = 7/4 with gap 1/8 -- the least index, not the ceiling. *)
   Definition Nmax (n : positive) : nat :=
     Pos.to_nat (proj1_sig (Qarchimedean
       (Qabs (Delta g 0) / ((1 - rho) * (1 - rho) * (1 # n))))).
