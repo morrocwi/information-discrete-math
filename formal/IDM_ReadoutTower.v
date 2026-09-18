@@ -11,7 +11,8 @@
     S1  tailsum(Delta g, N, M) = g(N+M) - g(N)                                  [exact, zero residue]
         rho < 1 /\ (forall k, |Delta g(k+1)| <= rho * |Delta g(k)|)
           ==> (1 - rho) * |g(N+M) - g(N)| <= |Delta g(N)|      verdict CERTIFIED(rho, N)
-        otherwise HOLD (rho = 1 gives the vacuous 0 <= |Delta g N|; 1/(1-rho) is never
+        otherwise no certificate (rho = 1 gives the vacuous 0 <= |Delta g N|; "HOLD" is
+        the narrative reading, Dr -- this file has no verdict type; 1/(1-rho) is never
         formed in the certificate; the division form `plateau_radius` is stated ONLY
         under rho < 1).
     S1-lemma  sigma_of
@@ -58,19 +59,22 @@
     D/M.55.v1  IDM-0114  discrete_floor          -> root no-go (no density), cited
     weld/E.05.v1         verdict alphabet         -> CERTIFIED / HOLD wording, cited
 
-  Why a local `RR'` and not `Require` of weld__M_60_v1.v (task rule: "if the Require chain
-  is not Q-clean, say so and define a local Record RR' with the same fields"):
-    (1) weld__M_60_v1.v line 6 is `Require Coq.Logic.Classical.` (Require only, never
-        Imported, all 43 in-file Print Assumptions Closed) -- the chain is not Q-clean by
-        the letter: the classical axioms are loaded into the environment of any file that
-        Requires it, and a later `Import` of that Module namespace would silently re-tier
-        anything using `classic` to Ax.
-    (2) IDM's own formal/verify.sh compiles with NO -Q/-R; a cross-repo `Require` of a Toledo
-        canonical file would make this IDM file un-buildable in its own arc.
-  RENAMING (stated, byte-for-byte in the field types):
+  Why a local `RR'` and not `Require` of weld__M_60_v1.v:
+    The load-bearing reason is (2): IDM's own formal/verify.sh compiles with NO -Q/-R; a
+    cross-repo `Require` of a Toledo canonical file would make this IDM file un-buildable
+    in its own arc.
+    Reason (1) as first written ("the chain is not Q-clean by the letter because
+    weld__M_60_v1.v line 6 is `Require Coq.Logic.Classical.`") is NOT load-bearing and is
+    struck (fixer pass 2026-09-18, independent refuter finding): IDM_BridgeRoundTrip.v
+    Requires that file and every one of its 23 in-file Print Assumptions printed Closed,
+    so a Require (never Imported) re-tiers nothing -- the per-theorem Print Assumptions
+    readouts are the tier evidence, not the Require list.
+  RENAMING (stated, byte-for-byte in the field types) -- RR', rseq', rreg', Req', mkRR' are
+  a renamed twin of weld/M.60.v1 (CAN-1296), NOT new objects: they are registered as an
+  OCCURRENCE under that parent (proposal PROP-BRIDGE-07), never as identifiers of a new row:
         RR'  == RR ,  rseq' == rseq ,  rreg' == rreg ,  Req' == Req   (weld__M_60_v1.v L66-70)
-        mkRR' == mkRR.  A transport `fun x => mkRR (rseq' x) (rreg' x)` is definable in any
-        file that may Require both; it is not written here (no Toledo Require in IDM files).
+        mkRR' == mkRR.  The transport to_RR / of_RR (both directions, on the nose) is
+        compiled in IDM_BridgeRoundTrip.v, which may Require both.
 
   Every identifier defined or proved in THIS file is NEW DERIVATION / PROPOSAL -- not yet in
   Toledo -- including: tailsum_delta_telescopes, tailsum_delta_zero_is_Z_M08,
@@ -78,13 +82,14 @@
   refine_stable_window, plateau_certificate_window, gap_is_abs_Delta, qpow_nonneg, qpow_le_1,
   gap_geometric, inject_nat_nonneg, inject_nat_succ, qpow_bernoulli, qpow_below_eps,
   bern_transfer, Nidx_from,
-  Nidx, Nidx_from_spec, Nidx_spec, Nidx_zero, RR', rseq', rreg', Req', Pi, Pi_certificate,
+  Nidx, Nidx_from_spec, Nidx_spec, Nidx_zero, Pi, Pi_certificate,
   Qfrac_pos, Qfrac_nonneg, tol, accept, Nmax, Nmax_accept, N_of, N_of_tol, plateau_pair,
   sigma_reg, sigma_of, sigma_readout_exact, sigma_readout_plateau, sigma_of_constant,
   const_contracts, sigma_const, sigma_const_at, Pi_replateau, Delta_geom_sum,
   geom_half_contracts, geometric_gaps_certified, harm, Delta_harm, harmonic_refutes_half.
   `plateau_certificate` is expected to be registered as an OCCURRENCE of R/M.32.v1, not a row;
   `tailsum_delta_telescopes` may itself be judged an occurrence of Z/M.08.v1 at merge.
+  RR', rseq', rreg', Req' are NOT in the NEW list: renamed twin of weld/M.60.v1 (RENAMING above).
 
   Licence routes (S1 "Tier now", never merged): the `forall k` premise of
   `plateau_certificate` / `sigma_of` is the A-PRIORI route (R/M.03.v1 / R/M.08.v1 supply it
@@ -96,7 +101,17 @@
   the modulus 1/n is a declared positive rational, indexed by positive); I4 refused (every
   sum is a finite `tailsum`, every search is bounded by `Nmax`, computed from Qarchimedean --
   stdlib, transparent); Z1 refused (g n is a node value at resolution n, never a point);
-  Z2 refused (rho = 1 is a typed HOLD, 1/(1-rho) is formed only under rho < 1).
+  Z2 / Z4 (corrected, fixer pass 2026-09-18, independent refuter finding): S1 has NO verdict
+  type in this file -- "HOLD" at rho = 1 is the narrative reading (Dr) of a vacuous
+  inequality; the typed gate is S5 (PROP_BRIDGE_03). The Definition `Nmax` below divides by
+  (1 - rho) * (1 - rho) * (1/n), and the toledo-side `beta_S1` is |Delta g N| / (1 - rho);
+  both are exported TOTAL in rho (Coq's Qdiv is total: beta_S1 g 1 N == 0 is provable and
+  beta_S1 evaluates to -1 at rho = 2 -- scratch readout chk_indep3, 2026-09-18) and are
+  meaningful only under the premise rho < 1, which every theorem that uses them carries
+  (Nmax_accept, N_of_tol, sigma_reg, contracting_beta, contracting_radius,
+  roundtrip_radius_S1, accept_certified_dQ). No ACCEPT is derivable at rho = 1; the refusal
+  of Z2 rests on those premises, not on the Definitions. Threading the guard into the data
+  is an open design item (cpg_research_journal PHASE2_COQ_LEDGER.md).
 
   Compile mapping (ruling 11b-8, live IDM worktree is the source of truth):
     cd <live IDM worktree>/formal &&

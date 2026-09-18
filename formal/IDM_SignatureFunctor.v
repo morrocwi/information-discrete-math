@@ -25,9 +25,14 @@
 
   Genesis sections instantiated (READOUT_GENESIS_CORE.md): A.8 (formation of the
   signature `Sigma_alpha = (O_alpha, Q_alpha)` and `Lambda_alpha o Sigma_alpha = I`;
-  here `Sigma` and `PK_fixes_image` / `PK_idempotent` -- the identity holds on the
-  RETAINED states lam(K), which is all A.8 can mean once q merges two states, cf.
-  the S4 NEVER clause), A.2 (domain quotient), A.7 (what P_K collapses is gone from
+  here `Sigma` instantiates the formation clause at horizon L, and `PK_fixes_image` /
+  `PK_idempotent` carry the DUAL section identity `q o lam = id` (Hsec, disclosed):
+  `Lambda o Sigma = I` holds only on the RETAINED states lam(K), and the literal A.8
+  identity on ALL states is refuted by the S4 NEVER clause whenever q merges two states
+  -- a delta recorded, not absorbed (corrected wording, fixer pass 2026-09-18: this file
+  SPECIALISES A.8, it does not restate it; whether A.8 intends the retraction or the
+  section is an open ontology item in cpg_research_journal PHASE2_COQ_LEDGER.md),
+  A.2 (domain quotient), A.7 (what P_K collapses is gone from
   the record: `InAlg` is exactly the set of readouts that never see the collapsed
   difference), A.5/CAN-008 (the record is a class, not a point:
   `sigma_class_well_defined`), IV.5 / V.20 commuting-square criterion (readout half

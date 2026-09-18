@@ -5,7 +5,7 @@
 set -u
 cd "$(dirname "$0")"
 
-FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder IDM_Schur IDM_HilbertReadout IDM_Continuum)
+FILES=(IDM_Keystone IDM_Bridge IDM_FiniteWitnesses IDM_FiniteWitnesses2 IDM_Logic IDM_FiniteWitnesses3 IDM_Matrix IDM_Harvest IDM_Calculus IDM_Certified IDM_Tropical IDM_Geometry IDM_Reduction IDM_Hilbert IDM_DeclarationBound IDM_ApproxCount IDM_Genesis IDM_ReadoutMinimality IDM_ResolvedCount IDM_EquivariantReadout IDM_Apriori IDM_SetsFunctions IDM_FirstOrder IDM_Schur IDM_HilbertReadout IDM_Continuum IDM_ReaderDomainFoundation IDM_SignatureFunctor IDM_ReadoutTower)
 
 # theorem -> file, checked for axiom-freedom
 declare -a THMS=(
@@ -203,7 +203,21 @@ declare -a THMS=(
   "radd_comm:IDM_Continuum"
   "const_gap_zero:IDM_Continuum"
   "gap_subadditive:IDM_Continuum"
+  "stable_depth_exact_future:IDM_ReaderDomainFoundation"
+  "T5_sufficiency_kernel_inclusion:IDM_ReaderDomainFoundation"
+  "PK_idempotent:IDM_SignatureFunctor"
+  "alg_iff_factors:IDM_SignatureFunctor"
+  "future_readers_in_alg:IDM_SignatureFunctor"
+  "tailsum_delta_telescopes:IDM_ReadoutTower"
+  "plateau_certificate:IDM_ReadoutTower"
+  "plateau_certificate_window:IDM_ReadoutTower"
+  "qpow_bernoulli:IDM_ReadoutTower"
+  "sigma_reg:IDM_ReadoutTower"
+  "Pi_certificate:IDM_ReadoutTower"
 )
+# IDM_BridgeRoundTrip.v is NOT listed: it Requires Toledo canonical files under the MRC
+# mapping (-Q <toledo>/coq/canonical MRC) which this plain, mapping-free script does not
+# carry; build it only by the command in its header. (fixer pass 2026-09-18)
 
 fail=0
 
