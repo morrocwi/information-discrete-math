@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "reviewed_at": "2026-09-18",
-  "scope": "Readout Bridge v0.1 (PROPOSAL, not yet in Toledo): adds formal/IDM_SignatureFunctor.v, formal/IDM_ReadoutTower.v, formal/IDM_BridgeRoundTrip.v, formal/Bridge_Seam.v (every theorem-like statement of the four files carries an in-file Print Assumptions line, 18 + 38 + 23 + 46, all 'Closed under the global context' on the recompile of 2026-09-18; no Admitted, no new Axiom/Parameter, Coq.Reals never imported), docs/READOUT_BRIDGE_THEORY.md and docs/READOUT_BRIDGE_CLOSURE.md, the new files added to formal/verify.sh (full arc run once: 29 files, 205 listed theorems axiom-free, ALL WITNESSES OK), and a one-line repair of formal/verify_reader_domain_foundation.sh (compile IDM_Matrix.v first; the reader-domain-foundation check has been failing on main since the Finite-Bottleneck RDLB merge because IDM_ReaderDomainFoundation.v now Requires IDM_Matrix). No Clay problem is claimed solved, advanced or narrowed: the bridge is a certificate schema (finite ledger -> licence -> rational radius -> round trip EXACT / WITHIN RADIUS / NEVER -> fail-closed ACCEPT/HOLD gate); unrestricted completeness of the reals stays +R-Open by design and is never a premise; the Navier-Stokes row is a declared +R-axioms instantiation outside the core typing; HOLD means insufficient certified evidence, not falsity. Author's statement: adversarially reviewed before push (refuter passes re-running the compiles; an independent pre-merge review whose findings were applied; prose-vs-formal review applied to the closure record; privacy/leak scan; AI-attribution scan).",
+  "scope": "Documentation-only: one section ('Programme map') appended at the end of AGENTS.md, pointing agents to the public routing hub github.com/morrocwi/main.hub. Existing AGENTS.md text is unchanged. No claim, theorem, status, equation, registry entry, formal source or provenance record is added, removed or modified. The hub itself holds pointers and pinned links only and states that this repository wins on any disagreement.",
   "todo": {
     "status": "reviewed-no-change",
-    "evidence": "Tracked in the programme's research journal (handoff and Coq ledger, open items with stance and falsifier); no repository TODO entry changes."
+    "evidence": "The change adds a navigation pointer only; it opens, closes and re-scopes no research TODO item."
   },
   "toledo": {
-    "status": "issue-open",
-    "evidence": "Companion registry proposal lane and the S3/S5 Coq file are in morrocwi/toledo pull request 43 (registry/proposals/discrete_continuum_bridge.json, 12 rows with codes pending the merge run, plus 8 occurrence records); no registry/CANONICAL.json entry is touched by either pull request."
+    "status": "not-required",
+    "evidence": "No mathematical object is introduced, renamed, cited or re-tiered by this change, so there is nothing to look up or register."
   },
-  "claim_effect": "formal-proof-change"
+  "claim_effect": "documentation-only"
 }
