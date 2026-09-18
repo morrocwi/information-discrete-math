@@ -8,7 +8,7 @@
 
 [![solver](https://img.shields.io/badge/unified%20solver-274%20registered%20kinds-brightgreen)](API.md)
 [![CI](https://img.shields.io/badge/CI-run%20it%20yourself-brightgreen)](.github/workflows/ci.yml)
-[![Coq](https://img.shields.io/badge/Coq-8.20%20·%20194%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
+[![Coq](https://img.shields.io/badge/Coq-8.20%20·%20205%20theorems%20axiom--free-blue?logo=coq&logoColor=white)](formal/)
 [![problems](https://img.shields.io/badge/problems-1278%20%2F%201278-e0a83e)](prove_it_full.py)
 [![release](https://img.shields.io/badge/release-v1.5.1-brightgreen)](https://github.com/morrocwi/information-discrete-math/releases/tag/v1.5.1)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
@@ -32,7 +32,7 @@ Information Discrete Mathematics
 │                                                                     eigenvectors (retained_mode.py)
 │                                                                     inertia / eigenvalue counts (inertia.py)
 ├── REST / OpenAPI         python3 -m idm.server                   — Swagger UI at 127.0.0.1:8737/docs
-├── Formal proofs          formal/*.v + formal/verify.sh           — 194 Coq theorems, axiom-free
+├── Formal proofs          formal/*.v + formal/verify.sh           — 205 Coq theorems, axiom-free
 └── Benchmarks             benchmarks/ · retained_spectral/competition/  — RCP savings, spectral speed
 ```
 
@@ -279,7 +279,7 @@ limit, series, ODE and PDE here is computed with finite, discrete, rational oper
 | **1. Be surprised (0 deps)** | `python3 prove_it_lite.py` | 8 continuum frontiers from stdlib float |
 | **2. Be surprised (precise)** | `python3 prove_it.py` | the 10 roots to 40 digits |
 | **3. See the breadth** | `python3 prove_it_full.py` | 1278 problems across 5 domains |
-| **4. Be convinced** | `bash formal/verify.sh` | **194 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)` [Toledo: Keystone], the exact FTCC bridge, the discrete calculus rules, and the exact geometric orientation predicate, and the root-design reductions (the fold engine A2 [Toledo: A2] and the decision schema A3 [Toledo: A3] generate the branch kernels). The keystone operator's **zero fibre** and the typed **HOLD floor** are machine-checked in the published, DOI-archived companion `zero-readout-certifies` (38 audited results, axiom-free) — ecosystem map: [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md). Full code table: [`docs/TOLEDO_CODES.md`](docs/TOLEDO_CODES.md) |
+| **4. Be convinced** | `bash formal/verify.sh` | **205 theorems, machine‑checked axiom‑free** in Coq 8.20 (`Print Assumptions` = *Closed under the global context*) — the keystone `B(Φ,Φ)=I(Φ)` [Toledo: Keystone], the exact FTCC bridge, the discrete calculus rules, and the exact geometric orientation predicate, and the root-design reductions (the fold engine A2 [Toledo: A2] and the decision schema A3 [Toledo: A3] generate the branch kernels). The keystone operator's **zero fibre** and the typed **HOLD floor** are machine-checked in the published, DOI-archived companion `zero-readout-certifies` (38 audited results, axiom-free) — ecosystem map: [`docs/FORMAL_COMPANIONS.md`](docs/FORMAL_COMPANIONS.md). Full code table: [`docs/TOLEDO_CODES.md`](docs/TOLEDO_CODES.md) |
 | **5. Read the details** | [`textbook/…`](textbook/INFORMATION_DISCRETE_MATHEMATICS.md) | the full derivations, tier‑tagged; [`INDEX.md`](INDEX.md) is the map |
 
 **Every claim carries an honesty tier — evaluate each on its own tier, never promote evidence across tiers:**
