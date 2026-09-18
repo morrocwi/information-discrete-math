@@ -149,7 +149,7 @@
   that list and cannot be until the arc carries the MRC mapping -- it is an assembly
   file across two repositories by the task's design, and it is built only by the command
   above.  Memory floor: one coqc at a time, `free -g` checked (available >= 3 G) before
-  it, wrapped as ANSE_HEAVY_MAX=3G anse-heavy "..."; no verify.sh, no background jobs.
+  it, run under a memory cap; no verify.sh, no background jobs.
 
   Tier: every object below is Th_coqc only where a scratch `Print Assumptions` printed
   "Closed under the global context" in front of the reader (see the stage result).

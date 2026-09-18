@@ -217,7 +217,7 @@ declare -a THMS=(
 )
 # IDM_BridgeRoundTrip.v is NOT listed: it Requires Toledo canonical files under the MRC
 # mapping (-Q <toledo>/coq/canonical MRC) which this plain, mapping-free script does not
-# carry; build it only by the command in its header. (fixer pass 2026-09-18)
+# carry; build it only by the command in its header. 
 
 fail=0
 

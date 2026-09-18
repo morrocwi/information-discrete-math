@@ -36,14 +36,14 @@ Typing (ruling 11b-1): `q_K : X → R_K` is the forward quotient (occurrence of 
 
 | Line | Statement (ASCII) | Coq (file · main identifiers) | Tier (readout) |
 |---|---|---|---|
-| **S1 LEDGER + LICENCE** | `tailsum(Δg,N,M) = g(N+M) − g(N)` exactly; `κ<1 ∧ ∀k |Δg(k+1)| ≤ κ|Δg(k)| ⟹ (1−κ)|g(N+M)−g(N)| ≤ |Δg(N)|`; tape route on one window; `σ_of g : RR` a Bishop-readout real with an *exhibited* modulus via bounded search `Nidx/N_of` | `IDM_ReadoutTower.v` · `tailsum_delta_telescopes`, `plateau_certificate` (occurrence of R/M.32.v1 `refine_stable`), `plateau_certificate_window`, `sigma_of`, `sigma_readout_exact`, `Pi`, `Pi_certificate`, `N_of_least` | Th_coqc — 50/50 Closed |
-| **S2 RETAIN** | `Σ_Q(z) := (O z, [z]_Q)`; admissible iff `DepthStable L`; `Alg_Q := {P : ker q_K ⊆ ker P}` | `IDM_SignatureFunctor.v` · `Sigma`, `sigma_respects_step`, `InAlg`, `exact_on_alg`, `alg_is_fixed_points` (occurrence of EQ-002/M.01.v1, reuses `stable_depth_exact_future`) | Th_coqc — 24/24 Closed |
+| **S1 LEDGER + LICENCE** | `tailsum(Δg,N,M) = g(N+M) − g(N)` exactly; `κ<1 ∧ ∀k |Δg(k+1)| ≤ κ|Δg(k)| ⟹ (1−κ)|g(N+M)−g(N)| ≤ |Δg(N)|`; tape route on one window; `σ_of g : RR` a Bishop-readout real with an *exhibited* modulus via bounded search `Nidx/N_of` | `IDM_ReadoutTower.v` · `tailsum_delta_telescopes`, `plateau_certificate` (occurrence of R/M.32.v1 `refine_stable`), `plateau_certificate_window`, `sigma_of`, `sigma_readout_exact`, `Pi`, `Pi_certificate`, `N_of_least` | Th_coqc — 38/38 theorem-like statements Closed in-file (the earlier 50 counted definitions, read in scratch) |
+| **S2 RETAIN** | `Σ_Q(z) := (O z, [z]_Q)`; admissible iff `DepthStable L`; `Alg_Q := {P : ker q_K ⊆ ker P}` | `IDM_SignatureFunctor.v` · `Sigma`, `sigma_respects_step`, `InAlg`, `exact_on_alg`, `alg_is_fixed_points` (occurrence of EQ-002/M.01.v1, reuses `stable_depth_exact_future`) | Th_coqc — 18/18 theorem-like statements Closed in-file (the earlier 24 counted definitions, read in scratch) |
 | **S3 RADIUS** | `r_K := ρ_K + β_K` (triangle) or `r_K² = ρ_K² + β_K²` (Pythagorean, hypothesis carried, occurrence of PROP-EPSC-17); `β_K = |Δg(N)|/(1−κ)` from S1 | `PROP_BRIDGE_03_certified_radius.v` (Toledo) · `triangle_composition`, `squared_orthogonal`, `contracting_beta`, `bridge_radius` (EPSC-08 lift) | Th_coqc — 31/31 Closed |
-| **S4 ROUND TRIP** | EXACT: `P∘Λ_K∘q_K = P ⟺ P ∈ Alg_Q`; WITHIN RADIUS: `P` L_P-Lipschitz ⟹ `|P x − P(P_K x)| ≤ L_P·r_K`; NEVER: `q_K x = q_K x', x ≠ x'` ⟹ there is no `D : R_K → X` with `D(q_K x) = x ∧ D(q_K x') = x'` (`roundtrip_never`), hence no total **left-inverse** decoder `∀y, D(q_K y) = y` (`roundtrip_never_total`) — total functions `R_K → X` exist (constants, sections); what is refuted is recovery of merged states; level 2: `R_complete` bound + definitional diagonal; fence: unrestricted completeness, LUB, trichotomy never used (+ℝ-Open) | `IDM_BridgeRoundTrip.v` · `roundtrip_exact_iff`, `roundtrip_exact_tape`, `roundtrip_radius`, `roundtrip_never`, `roundtrip_never_total`, `level2_bound`, `level2_diagonal` | Th_coqc — 23/23 Closed |
+| **S4 ROUND TRIP** | EXACT: `P∘Λ_K∘q_K = P ⟺ P ∈ Alg_Q`; WITHIN RADIUS: `P` L_P-Lipschitz ⟹ `|P x − P(P_K x)| ≤ L_P·r_K`; NEVER: `q_K x = q_K x', x ≠ x'` ⟹ there is no `D : R_K → X` with `D(q_K x) = x ∧ D(q_K x') = x'` (`roundtrip_never`), hence no total **left-inverse** decoder `∀y, D(q_K y) = y` (`roundtrip_never_total`) — total functions `R_K → X` exist (constants, sections); what is refuted is recovery of merged states; level 2: `R_complete` bound + definitional diagonal; fence: unrestricted completeness, LUB, trichotomy never used (+ℝ-Open) | `roundtrip_exact_iff` (declared in `IDM_SignatureFunctor.v`); `IDM_BridgeRoundTrip.v` · `roundtrip_exact_tape`, `roundtrip_radius`, `roundtrip_never`, `roundtrip_never_total`, `level2_bound`, `level2_diagonal` | Th_coqc — 23/23 Closed |
 | **S5 GATE** | `ACCEPT_ε(K) ⇐ cert : δ_K ≤ ε ∧ (ε−δ_K)² ≥ r_K²`; no cert ⟹ HOLD, never ACCEPT (`Verdict` has exactly two constructors; HOLD is the gate-level image of the parent alphabet's ⊥, not a third value and not 0); ACCEPT theorem, literal premises: **`0 ≤ r_K`** (`r_K_nonneg`), `d_Y(x, Λ_K(q_K x)) ≤ r_K`, `d_Y(Λ_K(q_K x), Λ_K(res_K x_{K+1})) ≤ δ_K` (`defect_cert`), `δ_K ≤ ε`, `(ε−δ_K)² ≥ r_K²`, triangle inequality on `d_Y` ⟹ `d_Y(x, Λ_K(res_K x_{K+1})) ≤ ε` (`accept_certified`); the ruling's orientation additionally declares symmetry of `d_Y` (`accept_certified_ruling_11b4`) | `PROP_BRIDGE_03_certified_radius.v` · `Certificate'`, `gate'`, `fail_closed'`, `no_certificate_holds'`, `accept_certified`, `accept_certified_ruling_11b4` | Th_coqc (in the same 31/31) |
-| **Operator seam** (instantiation of the reader O, not a core line) | `−h²Δ_h φ = L_R φ` at interior nodes as a ring identity (h² multiplied through, no division); `Σ_edges (φ_{i+1}−φ_i)² = ⟨φ, L_R φ⟩ = I_form` (Keystone); `I(φ+e_i) − I(φ) = 2(L_Rφ)_i + L_ii`; Rayleigh ceiling `λ ≤ 4` on the path (weld/M.42.v1 at d_max = 2) | `Bridge_Seam.v` · `seam_grid`, `seam_grid_stencil`, `seam_energy`, `seam_energy_names`, `seam_box`, `seam_ceiling`, `seam_ceiling_scaled` | Th_coqc — 19/19 Closed |
+| **Operator seam** (instantiation of the reader O, not a core line) | `−h²Δ_h φ = L_R φ` at interior nodes as a ring identity (h² multiplied through, no division); `Σ_edges (φ_{i+1}−φ_i)² = ⟨φ, L_R φ⟩ = I_form` (Keystone); `I(φ+e_i) − I(φ) = 2(L_Rφ)_i + L_ii`; Rayleigh ceiling `λ ≤ 4` on the path (weld/M.42.v1 at d_max = 2) | `Bridge_Seam.v` · `seam_grid`, `seam_grid_stencil`, `seam_energy`, `seam_energy_names`, `seam_box`, `seam_ceiling`, `seam_ceiling_scaled` | Th_coqc — 46/46 Closed in-file (12 headline theorems + support lemmas) |
 
-Definitions (`Obs`, `Sigma`, `PK`, `sigma_of`, `Certificate'`, …) are tier `definition`; the "one law" sentence, the ρ_K-supplier, the class ⇄ record identification, and every physical identification are `Dr`; the +ℝ-Open fence is permanent by design. Full per-identifier tables: `docs/READOUT_BRIDGE_THEORY.md` §2 and the journal's `PHASE2_COQ_LEDGER.md`.
+Definitions (`Obs`, `Sigma`, `PK`, `sigma_of`, `Certificate'`, …) are tier `definition`; the "one law" sentence, the ρ_K-supplier, the class ⇄ record identification, and every physical identification are `Dr`; the +ℝ-Open fence is permanent by design. Full per-identifier tables: `docs/READOUT_BRIDGE_THEORY.md` §2 in the information-discrete-math repository and the programme's Coq ledger (research journal, private).
 
 ---
 
@@ -51,8 +51,8 @@ Definitions (`Obs`, `Sigma`, `PK`, `sigma_of`, `Certificate'`, …) are tier `de
 
 | Check | Result (readout, 2026-09-18) |
 |---|---|
-| In-file `Print Assumptions`, five files | 24 + 50 + 31 + 23 + 19 = **147 objects, all `Closed under the global context`**; 0 hits for `Admitted|admit|Axiom|Parameter|Coq.Reals` |
-| Full-arc `formal/verify.sh` (run once, after all commits, under a 3 GB memory cap) | **29 files compiled, 207 theorems axiom-free, `ALL WITNESSES OK`** |
+| In-file `Print Assumptions`, five files (recompiled 2026-09-18 after the pre-merge review added the missing in-file lines to the first two files and to the seam's support lemmas) | 18 + 38 + 31 + 23 + 46 = **156 in-file readouts, all `Closed under the global context`** (theorem-like statements; definitions were additionally read Closed in scratch files during the build); 0 hits for `Admitted|admit|Axiom|Parameter|Coq.Reals` |
+| Full-arc `formal/verify.sh` (run once, after all commits, under a 3 GB memory cap) | **29 files compiled, 205 listed theorems axiom-free, `ALL WITNESSES OK`** (an earlier "207" was a miscount of the log) |
 | Parents' readouts (housekeeping) | PROP_EPSC_{03,05,08,17,20,21,23,39}: 13/13 Closed in-file; wrappers weld/M.63/64/68 Closed under the live IDM mapping; `R_complete` transparent (`Defined.`), diagonal by `reflexivity` |
 | Independent adversarial refuters | Phase 1: 3 (design) + critic; Phase 2: 3 (Coq truth / registry / infinity audit); Phase 2b: 2 (seam / tape). Every refuter reproduced the compiles itself. Mathematics: never refuted. Surviving findings: registry shape, wording, framing — 35 + 12 applied, 9 + 5 deferred as open items |
 | First executed test (finite_diagnostic) | exact-rational diffusion tape on a path graph (N = 8/16/32, same T): refining midpoint reader κ ≈ 0.272 → CERTIFIED; Dirichlet-energy reader κ ≈ 0.26–0.85 → CERTIFIED; non-refining sum reader κ ≈ 2 → **HOLD**; unstable dt (above h²/2) seen by any global reader κ ≈ 10⁴–10⁹ → **HOLD**. Byte-identical on three re-runs; the S1 gate also evaluated inside Coq by `vm_compute` on the same rationals |
@@ -63,7 +63,7 @@ What the tape test does **not** show (stated in the record itself): on a three-r
 
 ## 4. What is genuinely ours, what is a credited parent, and how this sits next to prior work
 
-**Ours (the delta that compiled):** the certificate schema as one protocol — retained ledger → licence → radius in ℚ → three-verdict round trip → fail-closed gate — with the NEVER clause and HOLD as first-class outcomes; `σ_of` with an exhibited modulus from a witnessed contraction; the seam as ring identities with h² multiplied through; the declaration pattern (q_K, Λ_K, res_K, (Y, d_Y, axioms per clause), A, graph, ρ_K-supplier) under which "universal" means the certificate *shape*, with existence per domain defaulting to HOLD.
+**Ours (the delta that compiled):** the certificate schema as one protocol — retained ledger → licence → radius in ℚ → three-clause (exact / within-radius / never) round trip → fail-closed gate — with the NEVER clause and HOLD as first-class outcomes; `σ_of` with an exhibited modulus from a witnessed contraction; the seam as ring identities with h² multiplied through; the declaration pattern (q_K, Λ_K, res_K, (Y, d_Y, axioms per clause), A, graph, ρ_K-supplier) under which "universal" means the certificate *shape*, with existence per domain defaulting to HOLD.
 
 **Credited parents (by code, reused not re-proved):** refine_stable R/M.32.v1, the telescopes Z/M.06/M.08, reader-domain quotient weld/M.02/M.03, kernel inclusion weld/M.64/M.68, Bishop `R_complete` weld/M.60.v1, EPSC-03/08/17 (fail-closed gate, Lipschitz lift, orthogonal composition), Keystone/M.03 (B = I), L_R/M.20–22, weld/M.41/M.42, the no-decoder theorem of Readout Genesis (PROP-BRIDGE-09).
 
@@ -104,14 +104,14 @@ Under this workspace's standing rule, none of the above is a lever for legitimac
 
 | Step | What happened | Where |
 |---|---|---|
-| Audit | Toledo (1,333 canonical rows) + IDM + Genesis searched by statement: no registered, domain-neutral, bidirectional bridge object existed; EPSC was NS-specific; round trip only PROP-EPSC-17 (Dr) | journal `HANDOFF.md` |
-| Phase 1 — design | 6 readers → 4 designs (Cauchy-readout, EPSC certificate, operator/spectral, Genesis lineage) → 3 judges → synthesis → 3 refuters + completeness critic; winner EPSC-certificate, best ideas grafted; 10 design items ruled under the readout-universe tier discipline (§11b) | `DISCRETE_CONTINUUM_BRIDGE_DESIGN_v0.1.md` |
-| Phase 2 — theory in Coq | inventory of IDM's existing round-trip machinery (46 objects) → 4 files built one at a time → housekeeping → registration → 3 refuters → fixer | `PHASE2_COQ_LEDGER.md` §1–10 |
-| Phase 2b — first tests | seam file + `N_of_least`; exact-rational tape test with FAIL controls; 2 refuters → fixer | ledger §11, `tape_test/` |
-| Incident | three OOM kills earlier the same day, caused by unbounded combinatorial search scripts of another work order running concurrently; the bridge workflows were rebuilt memory-safe (≤ 3 agents, one `coqc` at a time under a 3 GB cgroup cap, RAM reservation, no background jobs) and completed without incident | `HANDOFF.md`, crash-prevention memory |
+| Audit | Toledo (1,333 canonical rows) + IDM + Genesis searched by statement: no registered, domain-neutral, bidirectional bridge object existed; EPSC was NS-specific; round trip only PROP-EPSC-17 (Dr) | programme handoff (private journal) |
+| Phase 1 — design | 6 readers → 4 designs (Cauchy-readout, EPSC certificate, operator/spectral, Genesis lineage) → 3 judges → synthesis → 3 refuters + completeness critic; winner EPSC-certificate, best ideas grafted; 10 design items ruled under the readout-universe tier discipline (§11b) | design document (private journal) |
+| Phase 2 — theory in Coq | inventory of IDM's existing round-trip machinery (46 objects) → 4 files built one at a time → housekeeping → registration → 3 refuters → fixer | Coq ledger §1–10 (private journal) |
+| Phase 2b — first tests | seam file + `N_of_least`; exact-rational tape test with FAIL controls; 2 refuters → fixer | Coq ledger §11 and the tape record (private journal) |
+| Build discipline | every Coq build was run one `coqc` at a time under a memory cap, with no background jobs; the orchestration was rebuilt this way after an unrelated resource incident on the workstation | programme handoff |
 | Discipline | readout-not-truth; Toledo-first and the reuse pipeline (lookup by statement → Genesis section → reuse as parent → derive only the delta → label PROPOSAL); tier = own `Print Assumptions`; Open never bare; maker-checker with independent refuters before any publish; no AI attribution | workspace rules |
 
-Commits: information-discrete-math `formal/readout-bridge` (ac1df59 … 78801fd); toledo `proposals/readout-bridge` (b712d0a9 … 70620cad, PR #43); research journal `bridge/discrete-continuum-v0.1`.
+Commits: information-discrete-math `formal/readout-bridge` (ac1df59 … 78801fd); toledo `proposals/readout-bridge` (b712d0a9 … 70620cad, PR #43); research journal (private).
 
 ---
 
@@ -128,7 +128,7 @@ coqc -q -Q . MRC -R $W IDM PROP_BRIDGE_03_certified_radius.v
 cd $W/formal && coqc -q -R $W IDM -Q $T/coq/canonical MRC IDM_BridgeRoundTrip.v
 coqc -q -R $W IDM -Q $T/coq/canonical MRC Bridge_Seam.v
 bash verify.sh          # full arc, once: expect "ALL WITNESSES OK (compiled + axiom-free)"
-# tape test (journal repo): cd research/discrete_continuum_bridge/tape_test && python3 tape_test.py
+# tape test: python3 tape_test.py (script in the private research journal; its record is summarised in §3)
 ```
 
 Every theorem prints its own `Print Assumptions` at the end of its file; grep the output for `Closed under the global context`.
@@ -137,11 +137,11 @@ Every theorem prints its own `Print Assumptions` at the end of its file; grep th
 
 ## 8. Links (pinned)
 
-**Public reproducibility status (2026-09-18):** the toledo branch is public (PR #43). The information-discrete-math branch `formal/readout-bridge` exists locally at the SHA below and is **not yet pushed** (the push requires the founder's own action); until it is, §7 cannot be followed end-to-end by an outside reader. This is a known publication blocker, not an oversight. Pins: information-discrete-math `formal/readout-bridge` @ see `git log -1` of this file's commit (parents `78801fd` seam header, `f36aa37` N_of_least, `004ab91` round trip, `c54117f` tower, `ac1df59` signature functor); toledo `proposals/readout-bridge` @ `70620cad` (registry + Coq) and the docs commit carrying this file.
+**Public reproducibility status (2026-09-18):** both branches are public. information-discrete-math pull request 137 (branch `formal/readout-bridge`) carries the four IDM files, the theory document and this record; toledo pull request 43 (branch `proposals/readout-bridge`) carries `PROP_BRIDGE_03_certified_radius.v`, the registry proposal lane and a copy of this record. §7 can be followed from the two checkouts. `PROP_BRIDGE_03_certified_radius.v` Requires `IDM_ReadoutTower` from the IDM branch; it is not buildable from a toledo clone alone until the mirror re-sync.
 
-- Theory (per-identifier tables, Open ledger, reuse inventory): `docs/READOUT_BRIDGE_THEORY.md` (this repository, branch `formal/readout-bridge`)
+- Theory (per-identifier tables, Open ledger, reuse inventory): `docs/READOUT_BRIDGE_THEORY.md` in the information-discrete-math repository — <https://github.com/morrocwi/information-discrete-math/pull/137>
 - Registry proposal lane + S3/S5 Coq: <https://github.com/morrocwi/toledo/pull/43>
-- Design, rulings, ledger, tape record: research journal repository, branch `bridge/discrete-continuum-v0.1`, folder `research/discrete_continuum_bridge/`
+- Design document, rulings, Coq ledger and the executed-test records live in the programme's research journal (private); the facts a reader needs from them are restated in §3, §5 and §6 above.
 - Concept line and ontology: Readout Genesis (`READOUT_GENESIS_CORE.md`, gates A.4 / A.7 / A.8 / A.12 / A.13); tier discipline: readout_universe
 
 *Every object above: not yet in Toledo.*

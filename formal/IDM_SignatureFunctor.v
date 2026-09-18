@@ -31,7 +31,7 @@
   identity on ALL states is refuted by the S4 NEVER clause whenever q merges two states
   -- a delta recorded, not absorbed (corrected wording, fixer pass 2026-09-18: this file
   SPECIALISES A.8, it does not restate it; whether A.8 intends the retraction or the
-  section is an open ontology item in cpg_research_journal PHASE2_COQ_LEDGER.md),
+  section is an open ontology item in the programme's Coq ledger, private research journal),
   A.2 (domain quotient), A.7 (what P_K collapses is gone from
   the record: `InAlg` is exactly the set of readouts that never see the collapsed
   difference), A.5/CAN-008 (the record is a class, not a point:
@@ -90,7 +90,7 @@
   `Require Import IDM_ReaderDomainFoundation` below resolves to
   IDM.formal.IDM_ReaderDomainFoundation (the live .vo compiled under the same -R).
   Memory floor: one coqc at a time, `free -g` checked (available >= 3 G) before it,
-  wrapped as ANSE_HEAVY_MAX=3G anse-heavy "...".
+  run under a memory cap.
 
   Tier: every theorem is Th_coqc only where a scratch `Print Assumptions` printed
   "Closed under the global context" (see the build report); Section Variables /
@@ -326,3 +326,26 @@ Proof.
 Qed.
 
 End RecordedReadouts.
+
+(* In-file axiom-freedom readouts for every theorem-like statement of this file
+   (added 2026-09-18 after an independent pre-merge review found the readouts
+   had been taken in scratch files only). Expected output for each line:
+   "Closed under the global context". *)
+Print Assumptions sigma_class_refl.
+Print Assumptions sigma_respects_step.
+Print Assumptions sigma_readout_factor.
+Print Assumptions sigma_readout_factor_sig.
+Print Assumptions sigma_class_well_defined.
+Print Assumptions q_PK.
+Print Assumptions PK_idempotent.
+Print Assumptions PK_fixes_image.
+Print Assumptions exact_on_alg.
+Print Assumptions alg_is_fixed_points.
+Print Assumptions roundtrip_exact_iff.
+Print Assumptions alg_factors.
+Print Assumptions factors_in_alg.
+Print Assumptions alg_iff_factors.
+Print Assumptions inalg_is_sufficiency.
+Print Assumptions inalg_kernel_inclusion.
+Print Assumptions readers_in_alg.
+Print Assumptions future_readers_in_alg.

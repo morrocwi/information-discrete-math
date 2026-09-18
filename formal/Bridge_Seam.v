@@ -81,7 +81,7 @@
                            with h^2 multiplied through (NEW DERIVATION / PROPOSAL; the
                            registered weld/M.42 statement has no h).
 
-  NOT written (Open, stance + falsifier in cpg_research_journal PHASE2_COQ_LEDGER.md):
+  NOT written (Open, stance + falsifier in the programme's Coq ledger, private research journal):
   the tick-path x space PRODUCT-graph form (the (+1,-1) d'Alembertian) named in the
   PROP-BRIDGE-08 note_ascii -- this file fixes seam_box as the pullback identity the
   task states; the product graph is a second instantiation of the same seam.
@@ -120,7 +120,7 @@
   IDM.formal.Bridge_Seam.  `formal/verify.sh` cannot build it (it needs the MRC mapping),
   exactly as for IDM_BridgeRoundTrip.v.
   Memory floor (binding): `free -g` before every coqc, skip if available < 3 G, one coqc
-  at a time via `ANSE_HEAVY_MAX=3G anse-heavy`, never in the background, never a
+  at a time under a memory cap, never in the background, never a
   full-arc verify script in the loop.
 
   Tier: every theorem below is Th_coqc only after a scratch `Print Assumptions` printed
@@ -678,3 +678,35 @@ Print Assumptions deg_path_E.
 Print Assumptions deg_path_E_le2.
 Print Assumptions path_nodes_ok.
 Print Assumptions Sum_is_qsum.
+
+(* In-file axiom-freedom readouts for every theorem-like statement of this file
+   (added 2026-09-18 after an independent pre-merge review found the readouts
+   had been taken in scratch files only). Expected output for each line:
+   "Closed under the global context". *)
+Print Assumptions Sum_0.
+Print Assumptions Sum_S.
+Print Assumptions Sum_scale.
+Print Assumptions Lap_succ.
+Print Assumptions Lvec_succ_lt.
+Print Assumptions path_w_sym.
+Print Assumptions path_w_diag0.
+Print Assumptions path_w_S.
+Print Assumptions path_w_below.
+Print Assumptions path_w_below'.
+Print Assumptions Lap_path_interior_pointwise.
+Print Assumptions inject_nat_S.
+Print Assumptions edge_sq_S.
+Print Assumptions qform_path_one.
+Print Assumptions Lvec_path_last.
+Print Assumptions Lvec_path_step.
+Print Assumptions qform_path_step.
+Print Assumptions I_edge_unit.
+Print Assumptions I_form_path.
+Print Assumptions term41_unit.
+Print Assumptions energy41_path.
+Print Assumptions ediff42_pair.
+Print Assumptions form42_path.
+Print Assumptions Lvec_bump.
+Print Assumptions path_E_nodes.
+Print Assumptions deg42_cons.
+Print Assumptions share42_pair.

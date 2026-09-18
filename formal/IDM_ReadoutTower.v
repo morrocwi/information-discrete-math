@@ -112,14 +112,14 @@
   (Nmax_accept, N_of_tol, sigma_reg, contracting_beta, contracting_radius,
   roundtrip_radius_S1, accept_certified_dQ). No ACCEPT is derivable at rho = 1; the refusal
   of Z2 rests on those premises, not on the Definitions. Threading the guard into the data
-  is an open design item (cpg_research_journal PHASE2_COQ_LEDGER.md).
+  is an open design item (the programme's Coq ledger, private research journal).
 
   Compile mapping (ruling 11b-8, live IDM worktree is the source of truth):
     cd <live IDM worktree>/formal &&
     coqc -q -R <live IDM worktree> IDM IDM_ReadoutTower.v
   (logical name IDM.formal.IDM_ReadoutTower; `Require Import IDM_Calculus` resolves under -R,
   as in every other IDM file). Memory floor: `free -g` before each compile, skip if
-  available < 3 G, one coqc at a time via `ANSE_HEAVY_MAX=3G anse-heavy`.
+  available < 3 G, one coqc at a time under a memory cap.
 
   Tier: every theorem below is Th_coqc only after a scratch `Print Assumptions` printed
   "Closed under the global context" in front of the reader; Section hypotheses
@@ -650,3 +650,46 @@ Proof.
 Qed.
 
 Close Scope Q_scope.
+
+(* In-file axiom-freedom readouts for every theorem-like statement of this file
+   (added 2026-09-18 after an independent pre-merge review found the readouts
+   had been taken in scratch files only). Expected output for each line:
+   "Closed under the global context". *)
+Print Assumptions tailsum_delta_telescopes.
+Print Assumptions tailsum_delta_zero_is_Z_M08.
+Print Assumptions plateau_certificate.
+Print Assumptions plateau_radius.
+Print Assumptions geom_majorant_tail_window.
+Print Assumptions refine_stable_window.
+Print Assumptions plateau_certificate_window.
+Print Assumptions gap_is_abs_Delta.
+Print Assumptions qpow_nonneg.
+Print Assumptions qpow_le_1.
+Print Assumptions gap_geometric.
+Print Assumptions inject_nat_nonneg.
+Print Assumptions inject_nat_succ.
+Print Assumptions qpow_bernoulli.
+Print Assumptions qpow_below_eps.
+Print Assumptions bern_transfer.
+Print Assumptions Nidx_from_spec.
+Print Assumptions Nidx_spec.
+Print Assumptions Nidx_zero.
+Print Assumptions Pi_certificate.
+Print Assumptions Qfrac_pos.
+Print Assumptions Qfrac_nonneg.
+Print Assumptions Nmax_accept.
+Print Assumptions N_of_tol.
+Print Assumptions N_of_least.
+Print Assumptions plateau_pair.
+Print Assumptions sigma_reg.
+Print Assumptions sigma_readout_exact.
+Print Assumptions sigma_readout_plateau.
+Print Assumptions sigma_of_constant.
+Print Assumptions const_contracts.
+Print Assumptions sigma_const_at.
+Print Assumptions Pi_replateau.
+Print Assumptions Delta_geom_sum.
+Print Assumptions geom_half_contracts.
+Print Assumptions geometric_gaps_certified.
+Print Assumptions Delta_harm.
+Print Assumptions harmonic_refutes_half.
