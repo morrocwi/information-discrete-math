@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "reviewed_at": "2026-09-18",
-  "scope": "Documentation-only: one section ('Programme map') appended at the end of AGENTS.md, pointing agents to the public routing hub github.com/morrocwi/main.hub. Existing AGENTS.md text is unchanged. No claim, theorem, status, equation, registry entry, formal source or provenance record is added, removed or modified. The hub itself holds pointers and pinned links only and states that this repository wins on any disagreement.",
+  "scope": "Independent read-only re-review (2026-09-18, orchestrator's own reviewer, separate from the fixer): confirmed by direct inspection (not compilation) that (1) S1/S3/S5 and S2/S4 are NOT composed in Leaf_HeatPath.v (header lines 5-6 disclose this; no theorem statement mixes the two layers); (2) HOLD is never framed as a third value, FALSE or 0 anywhere in the current closure/theory/.v text (fix A1 verified present); (3) leaf_gate is consistently disclosed as window-local and parametric in kappa wherever cited, with two compiled disclosure Examples present (fix A2 verified present); (4) 0 hits for Admitted/admit/Axiom/Parameter/Reals/Classical in Leaf_HeatPath.v; (5) declaration count (346 theorem-like) + 2 extra Print Assumptions lines for gate/cert_dec definitions = 348, matching the claimed 348/348 exactly; (6) PROP-BRIDGE-21's tier claim (Th_coqc for theorems ABOUT finite_diagnostic numbers, never for the numbers themselves) matches the .v and docs; (7) s1c.log is absent from tracked files in the IDM worktree, and its introducing commit's presence on public origin/main was independently reproduced via `git branch -a --contains`; (8) leak scan of the closure revision 2 and the .v file: zero hits for local paths, usernames or internal tool names; (9) both ACK drafts were honest placeholders, not fabricated review claims. THEN, separately, the orchestrator itself recompiled formal/Leaf_HeatPath.v once under a memory cap (run alone in the foreground under a bounded-memory build harness, with available memory checked before it): exit 0, 348 occurrences of 'Closed under the global context', 0 axiom/classic/Reals hits, 0 Error lines. Log retained in the session scratchpad. VERDICT: READY FOR FOLLOW-UP PR, with three required steps before merge, all now done: (a) this ACK filed; (b) the follow-up PR/squash text uses the two-layer 'NOT composed' wording of finding A4, states plainly that no CI job compiles Leaf_HeatPath.v, and states that formal/verify.sh removes *.vo files as a side effect; (c) an actual coqc recompile was run by the orchestrator executing the merge (see above).",
   "todo": {
     "status": "reviewed-no-change",
-    "evidence": "The change adds a navigation pointer only; it opens, closes and re-scopes no research TODO item."
+    "evidence": "Tracked in the programme's research journal (Coq ledger, open items with stance and falsifier); no repository TODO entry changes."
   },
   "toledo": {
-    "status": "not-required",
-    "evidence": "No mathematical object is introduced, renamed, cited or re-tiered by this change, so there is nothing to look up or register."
+    "status": "issue-open",
+    "evidence": "Companion occurrence record PROP-BRIDGE-21 in the toledo proposals lane (registry/proposals/discrete_continuum_bridge.occurrences.json, follow-up pull request; no code, no registry/CANONICAL.json entry touched); proposal ROWS for N4 and the tuple-carrier objects are a registrar decision."
   },
-  "claim_effect": "documentation-only"
+  "claim_effect": "formal-proof-change"
 }
