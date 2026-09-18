@@ -1,7 +1,11 @@
 (*
-  Leaf_HeatPath.v -- the HEAT / DIFFUSION LEAF of the Discrete-Continuum Readout Bridge:
-  a domain leaf that runs S1 -> S5 end to end with quantitative certificate content (the
-  programme's Phase 3 leaf), instantiated on the exact rationals of ONE executed run (2026-09-18) of the
+  Leaf_HeatPath.v -- the HEAT / DIFFUSION LEAF of the Discrete-Continuum Readout Bridge (the
+  programme's Phase 3 leaf).  It instantiates S1, S3 and S5 on the SCALAR LEDGERS of one executed
+  run (reader layer: constant q_K, identity maps) and S2 and S4 on a SEPARATE 5-fine / 3-coarse
+  tuple grid whose data are small declared vectors, not heat states of the run.  The two layers
+  are NOT composed in Coq (the O_state / N3 chain that would link them is LEFT OUT), and every
+  ACCEPT conclusion concerns two values already witnessed on the tape.  The numbers are the
+  exact rationals of ONE executed run (2026-09-18) of the
   frozen heat-leaf protocol (explicit stepper phi <- phi - dt * L_R phi on the unit path,
   nested grids N_K = 8 * 2^K, K = 0..4, six tapes, seven readers).  Phase 3, 2026-09-18.
 
@@ -35,7 +39,8 @@
 
   PARENTS BY CODE (reused through THEIR OWN Coq objects; no private twin of any of them).
   Dotted codes (R/M.32.v1, weld/S.22.v1, ...) are canonical Toledo codes; PROP-BRIDGE-nn are
-  rows of the bridge's PROPOSAL lane, themselves not yet in Toledo (codes pending):
+  rows (01-04, 08-14, 16) or occurrence records (05-07, 15, 17-20; records, NOT rows) of the
+  bridge's PROPOSAL lane, themselves not yet in Toledo (codes pending):
     R/M.32.v1, R/M.14.v1   refine_stable / geom_majorant_tail -- through their windowed
                            forms plateau_certificate_window (PROP-BRIDGE-13), IDM_ReadoutTower
     Z/M.08.v1              the telescope behind tailsum_delta_telescopes (PROP-BRIDGE-01)
@@ -81,16 +86,18 @@
   second Toledo lookup by statement was run on 2026-09-18 over registry/CANONICAL.json (1,333
   rows) and registry/proposals/*.json -- keywords decid, boolean, Qle_bool, certificate
   builder, cert_of, prolong, restrict, padd, finite list, nth, max / sup norm, d_inf, infinity
-  norm, chebyshev, window; every hit's statement was read: the only window rows are the multiplicative ones of the bridge lane
-  (PROP-BRIDGE-13 / -17); A3/M.01-03.v1 `decide` is a bounded WITNESS search, not a
+  norm, chebyshev, window; every hit's statement was read: the only window row is the multiplicative
+  PROP-BRIDGE-13; PROP-BRIDGE-17 (an occurrence record) holds the every-k forms, including the
+  division-form plateau_radius; no WINDOWED division form is registered; A3/M.01-03.v1 `decide` is a bounded WITNESS search, not a
   certificate builder; the one infinity-norm hit is a Vandermonde conditioning number; no
   grid restriction / prolongation pair and no d_inf on tuples is registered.  Genesis
   compatibility (READOUT_GENESIS_CORE.md, through the bridge's declared sections): q53
   instantiates the reader-domain quotient of the Exact Domain Gate (A.4); Lam35 is a
   DISCLOSED section (A.8, section reading, Dr, founder ruling pending); NEVER is A.8's
   "merging must not erase history" read as "merged fine states are not recovered"; HOLD is
-  the gate-level image of the third value of A.13 Gate 2; the FAIL rows implement the
-  Fail-Able Gate Law (V.14 / VI.7).
+  the gate-level image of the parent alphabet's bottom value (Genesis A.13 Gate 2): Verdict has
+  exactly two constructors, ACCEPT and HOLD -- HOLD is not a third value, not 0 and not FALSE;
+  the FAIL rows implement the Fail-Able Gate Law (V.14 / VI.7).
 
   WHAT THE PROTOCOL DECLARES AND THIS FILE FOLLOWS.
     * Reader layer (S1 -> S3 -> S5): Y := Q, d_Y := dQ (Qabs of the difference); the ACCEPT
@@ -105,16 +112,55 @@
       padding.  No every-k lemma (plateau_radius, contracting_beta, N_of, sigma_of, ...) is
       instantiated on any padded tape in this file.
     * delta_K := dQ g_{K+1} g_K; cell ACCEPT iff delta_K <= eps and (eps - delta_K)^2 >= r_K^2.
+    * leaf_gate IS NOT LITERALLY THE PROTOCOL'S S5 GATE (found by an independent refuter,
+      2026-09-18).  The protocol licenses every S5 cell with the FULL-TAPE window certificate C5,
+      khat_5 = max(kappa_0, kappa_1, kappa_2) < 1.  leaf_gate g kappa top K eps takes ANY kappa and
+      reads the premise on the LOCAL window [K, top) only, so as a definition it can license MORE
+      than the protocol does.  The protocol's gate is the INSTANCE kappa := khat_5, and every
+      ACCEPT / HOLD cell of the licensed rows below is stated at that instance; there the two
+      agree (a premise on [K,4) at khat_5 follows from the full-tape one, and khat_5 >= 1 gives no
+      licence).  Away from that instance they DIFFER: gate_is_window_local below compiles a tape
+      with no full-tape licence at kappa = 1/2 that leaf_gate ACCEPTs at K = 1.  On the run's
+      numbers (exact-fraction model of this definition, executed 2026-09-18, tier
+      finite_diagnostic, NOT a Coq readout): at kappa := khat_5 the definition reproduces the
+      run's j*(K) on all 40 rows, both grids, K = 0,1,2; but on five rows that the run scores NO
+      LICENCE -- T-A x O_bdry (K = 1,2), T-A x O_near (K = 2), T-A x O_energy (K = 2), T-S x O_near
+      (K = 2), T-S x O_energy (K = 1,2) -- some kappa < 1 satisfies the local premise, and on each
+      of the five leaf_gate then ACCEPTs grid cells at some K.  For those rows the
+      for-every-kappa HOLD theorem shape (C5_HOLD_scored_cells) is FALSE; they can be
+      instantiated only at kappa := khat_5.  None of the five is among the seven rows below.
+      Making the licence full-tape inside leaf_cert is a design decision, left open.
+    * K = top - 1 IS EXCLUDED, AND WHY.  On the window [top-1, top) the ONLY premise index is the
+      padded one, |Delta g top| = 0 <= kappa * |Delta g (top-1)|, true for every kappa >= 0 on
+      every tape: there the padding carries the WHOLE licence, the conclusion of
+      leaf_accept_certified is dQ (g top) (g top) <= eps (vacuous), and the gate ACCEPTs at a
+      large enough eps even on an unstable tape (K3_licensed_by_padding_only below, compiled on
+      purpose).  No K = 3 cell is instantiated as a result or scored; every for-every-kappa HOLD
+      theorem below is stated for the scored cells K <= 2 ONLY.  On the windows [K,4), K <= 2,
+      the padded index k = 3 adds one premise that carries no content; the witnessed indices
+      K..2 carry the licence.
+    * ontape_K*_* theorems (named heldout_K*_* before the refuter pass) are NOT held-out
+      statements: under C5, khat_5 uses kappa_2, which reads g_4, so g_4 is inside the licence
+      window, and the conclusion dQ (g 4) (g (K+1)) <= eps is decidable directly (the
+      hold_is_not_false cells decide the same inequality).  At the C5 layer an ACCEPT theorem
+      certifies instantiation and arithmetic only and has no predictive content.  The only
+      held-out statements of this file are the C3_heldout_* / C4_heldout_* observations.
     * State layer (S2, S4): the 5-fine / 3-coarse grid with tuple carriers; shared-node
       values are COPIED by Lam35, so the section law is Leibniz and closes by reflexivity.
 
   ROWS INSTANTIATED (7 of the run's 40; the other 33 are left out, see LEFT OUT):
-    TC_near   T-C x O_near   PASS candidate, in state S, matched pair of TD_near
-    TD_near   T-D x O_near   FAIL, unstable dt: no licence at any window, HOLD everywhere
+    TC_near   T-C x O_near   PASS candidate, in state S, matched pair of TD_near (the run's
+                             pairs come from the pinned tapes T-C / T-D only; every FAIL half is
+                             a blow-up with kappa_0 >= 2.7e3, not a subtle control; two rough-datum
+                             controls are in state S; a C5 ACCEPT is a window statement whose
+                             conclusion is decidable on the tape)
+    TD_near   T-D x O_near   FAIL, unstable dt: HOLD at every scored cell K <= 2, for every
+                             kappa and every tolerance (no licence on any window [K,4), K <= 2)
     TA_mid    T-A x O_mid    closed-form class ("same reader, two regimes" with TB_mid)
     TB_mid    T-B x O_mid    the TRAP: the C3 window licence EXISTS (kappa_0 = 1/4 exactly),
                              its extrapolated ball MISSES both held-out values, C4 / C5 HOLD
-    TC_ssq    T-C x O_ssq    FAIL, non-refining reader: HOLD everywhere (forced by arithmetic)
+    TC_ssq    T-C x O_ssq    FAIL, non-refining reader: HOLD at every scored cell K <= 2
+                             (forced by arithmetic)
     TR_near   T-R x O_near   FAIL control that the gate ACCEPTS -- compiled on purpose, so that
                              this file does not look better than the run: an ACCEPT certifies
                              the ledger it is given, not the model; the run reported this first
@@ -142,8 +188,9 @@
     - the truncation device (pad beyond a held-out level m) that would turn a held-out HIT
       with a persisting premise into a window-lemma instance; held-out containments below are
       decided by computation and labelled as observations;
-    - route P (kappa_P = 1/2), the sharp form, K = 3 cells, the other 33 rows, and every
-      scoring convention of the freeze (labels, tallies, power criterion).
+    - route P (kappa_P = 1/2), the sharp form, the other 33 rows (at kappa := khat_5 only, see
+      above), and every scoring convention of the freeze (labels, tallies, power criterion);
+      K = 3 cells are excluded, not queued (padding-only licence, vacuous conclusion).
 
   Compile mapping (the live IDM worktree is the source of truth):
     cd <live IDM worktree>/formal &&
@@ -155,7 +202,8 @@
   mapping), exactly as for IDM_BridgeRoundTrip.v and Bridge_Seam.v.
   Memory note (binding): `free -g` before the coqc, skip if available < 3 G; ONE coqc, in the
   foreground, under a memory cap; never a full-arc verify script in the loop.  Proof methods:
-  vm_compute on closed rational terms, lra, lia, direct instantiation -- no search of any kind.
+  vm_compute on closed rational terms, lra, lia, direct instantiation -- no proof search; the
+  only search evaluated is the compiled bounded Nidx with bound 4 (the nidx_n* Examples).
 
   No AI is an author of this file.
 *)
@@ -319,8 +367,11 @@ Proof.
 Qed.
 
 (** The leaf's gate: delta_K := dQ g_{K+1} g_K, r_K := beta_S1 g kappa K (rho_K NOT
-    instantiated), licence on the window [K, top); the verdict is the COMPILED gate'
-    applied to the computed certificate. *)
+    instantiated), licence on the LOCAL window [K, top) for the kappa it is GIVEN; the verdict
+    is the COMPILED gate' applied to the computed certificate.  This is window-local and
+    parametric in kappa: the protocol's S5 gate is the instance kappa := khat_5 (full-tape
+    ratio); at other kappa, and at K = top - 1 (padding-only premise), it can license where the
+    protocol does not -- see the header and the two disclosure Examples after the rows. *)
 Definition leaf_delta (g : nat -> Q) (K : nat) : Q := dQ (g (S K)) (g K).
 Definition leaf_r (g : nat -> Q) (kappa : Q) (K : nat) : Q := beta_S1 g kappa K.
 
@@ -672,8 +723,8 @@ Module TC_near.
   Example gate_K0_rel_j4_ACCEPT :
     leaf_gate g khat5 4 0 (eps_rel s 4) = ACCEPT (leaf_r g khat5 0 * leaf_r g khat5 0).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K0_rel_j4 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K0_rel_j4 :
     dQ (g 4%nat) (g 1%nat) <= eps_rel s 4.
   Proof. exact (leaf_accept_certified g khat5 4 0 (eps_rel s 4) ltac:(lia) gate_K0_rel_j4_ACCEPT). Qed.
   Example gate_K0_rel_j6_HOLD :
@@ -690,8 +741,8 @@ Module TC_near.
   Example gate_K1_rel_j6_ACCEPT :
     leaf_gate g khat5 4 1 (eps_rel s 6) = ACCEPT (leaf_r g khat5 1 * leaf_r g khat5 1).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K1_rel_j6 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K1_rel_j6 :
     dQ (g 4%nat) (g 2%nat) <= eps_rel s 6.
   Proof. exact (leaf_accept_certified g khat5 4 1 (eps_rel s 6) ltac:(lia) gate_K1_rel_j6_ACCEPT). Qed.
   Example gate_K1_rel_j8_HOLD :
@@ -708,8 +759,8 @@ Module TC_near.
   Example gate_K2_rel_j8_ACCEPT :
     leaf_gate g khat5 4 2 (eps_rel s 8) = ACCEPT (leaf_r g khat5 2 * leaf_r g khat5 2).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K2_rel_j8 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K2_rel_j8 :
     dQ (g 4%nat) (g 3%nat) <= eps_rel s 8.
   Proof. exact (leaf_accept_certified g khat5 4 2 (eps_rel s 8) ltac:(lia) gate_K2_rel_j8_ACCEPT). Qed.
   Example gate_K2_rel_j10_HOLD :
@@ -726,8 +777,8 @@ Module TC_near.
   Example gate_K0_abs_j6_ACCEPT :
     leaf_gate g khat5 4 0 (eps_abs 6) = ACCEPT (leaf_r g khat5 0 * leaf_r g khat5 0).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K0_abs_j6 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K0_abs_j6 :
     dQ (g 4%nat) (g 1%nat) <= eps_abs 6.
   Proof. exact (leaf_accept_certified g khat5 4 0 (eps_abs 6) ltac:(lia) gate_K0_abs_j6_ACCEPT). Qed.
   Example gate_K0_abs_j8_HOLD :
@@ -740,8 +791,8 @@ Module TC_near.
   Example gate_K1_abs_j8_ACCEPT :
     leaf_gate g khat5 4 1 (eps_abs 8) = ACCEPT (leaf_r g khat5 1 * leaf_r g khat5 1).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K1_abs_j8 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K1_abs_j8 :
     dQ (g 4%nat) (g 2%nat) <= eps_abs 8.
   Proof. exact (leaf_accept_certified g khat5 4 1 (eps_abs 8) ltac:(lia) gate_K1_abs_j8_ACCEPT). Qed.
   Example gate_K1_abs_j10_HOLD :
@@ -754,8 +805,8 @@ Module TC_near.
   Example gate_K2_abs_j10_ACCEPT :
     leaf_gate g khat5 4 2 (eps_abs 10) = ACCEPT (leaf_r g khat5 2 * leaf_r g khat5 2).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K2_abs_j10 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K2_abs_j10 :
     dQ (g 4%nat) (g 3%nat) <= eps_abs 10.
   Proof. exact (leaf_accept_certified g khat5 4 2 (eps_abs 10) ltac:(lia) gate_K2_abs_j10_ACCEPT). Qed.
   Example gate_K2_abs_j12_HOLD :
@@ -827,7 +878,7 @@ Module TD_near.
     Qabs (Delta g 2) < Qabs (Delta g 3).
   Proof. vm_compute. reflexivity. Qed.
   (* NO LICENCE: for EVERY kappa, every scored cell K <= 2 and EVERY tolerance the leaf's gate (the compiled gate' applied to the leaf's certificate) returns HOLD -- every window [K,4) contains k = 2, where the gap grows, so no kappa <= 1 satisfies the premise.  HOLD is not FALSE. *)
-  Theorem C5_HOLD_everywhere :
+  Theorem C5_HOLD_scored_cells :
     forall (kappa : Q) (K : nat) (eps : Q), (K <= 2)%nat -> leaf_gate g kappa 4 K eps = HOLD.
   Proof. exact (leaf_gate_holds_if_gap_grows g 4 2 ltac:(lia) gap_grows_k2). Qed.
 
@@ -1012,8 +1063,8 @@ Module TA_mid.
   Example gate_K0_rel_j8_ACCEPT :
     leaf_gate g khat5 4 0 (eps_rel s 8) = ACCEPT (leaf_r g khat5 0 * leaf_r g khat5 0).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K0_rel_j8 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K0_rel_j8 :
     dQ (g 4%nat) (g 1%nat) <= eps_rel s 8.
   Proof. exact (leaf_accept_certified g khat5 4 0 (eps_rel s 8) ltac:(lia) gate_K0_rel_j8_ACCEPT). Qed.
   Example gate_K0_rel_j10_HOLD :
@@ -1030,8 +1081,8 @@ Module TA_mid.
   Example gate_K1_rel_j10_ACCEPT :
     leaf_gate g khat5 4 1 (eps_rel s 10) = ACCEPT (leaf_r g khat5 1 * leaf_r g khat5 1).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K1_rel_j10 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K1_rel_j10 :
     dQ (g 4%nat) (g 2%nat) <= eps_rel s 10.
   Proof. exact (leaf_accept_certified g khat5 4 1 (eps_rel s 10) ltac:(lia) gate_K1_rel_j10_ACCEPT). Qed.
   Example gate_K1_rel_j12_HOLD :
@@ -1048,8 +1099,8 @@ Module TA_mid.
   Example gate_K2_rel_j12_ACCEPT :
     leaf_gate g khat5 4 2 (eps_rel s 12) = ACCEPT (leaf_r g khat5 2 * leaf_r g khat5 2).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K2_rel_j12 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K2_rel_j12 :
     dQ (g 4%nat) (g 3%nat) <= eps_rel s 12.
   Proof. exact (leaf_accept_certified g khat5 4 2 (eps_rel s 12) ltac:(lia) gate_K2_rel_j12_ACCEPT). Qed.
   Example gate_K2_rel_j14_HOLD :
@@ -1066,8 +1117,8 @@ Module TA_mid.
   Example gate_K0_abs_j8_ACCEPT :
     leaf_gate g khat5 4 0 (eps_abs 8) = ACCEPT (leaf_r g khat5 0 * leaf_r g khat5 0).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K0_abs_j8 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K0_abs_j8 :
     dQ (g 4%nat) (g 1%nat) <= eps_abs 8.
   Proof. exact (leaf_accept_certified g khat5 4 0 (eps_abs 8) ltac:(lia) gate_K0_abs_j8_ACCEPT). Qed.
   Example gate_K0_abs_j10_HOLD :
@@ -1080,8 +1131,8 @@ Module TA_mid.
   Example gate_K1_abs_j10_ACCEPT :
     leaf_gate g khat5 4 1 (eps_abs 10) = ACCEPT (leaf_r g khat5 1 * leaf_r g khat5 1).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K1_abs_j10 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K1_abs_j10 :
     dQ (g 4%nat) (g 2%nat) <= eps_abs 10.
   Proof. exact (leaf_accept_certified g khat5 4 1 (eps_abs 10) ltac:(lia) gate_K1_abs_j10_ACCEPT). Qed.
   Example gate_K1_abs_j12_HOLD :
@@ -1094,8 +1145,8 @@ Module TA_mid.
   Example gate_K2_abs_j12_ACCEPT :
     leaf_gate g khat5 4 2 (eps_abs 12) = ACCEPT (leaf_r g khat5 2 * leaf_r g khat5 2).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K2_abs_j12 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K2_abs_j12 :
     dQ (g 4%nat) (g 3%nat) <= eps_abs 12.
   Proof. exact (leaf_accept_certified g khat5 4 2 (eps_abs 12) ltac:(lia) gate_K2_abs_j12_ACCEPT). Qed.
   Example gate_K2_abs_j14_HOLD :
@@ -1129,7 +1180,8 @@ End TA_mid.
     tape: free boundary, dt = 1, profile quartic; role: FAIL control (dt above the Dr bound 1/2) *)
 (*  THE TRAP (FAIL control behind a regime-blind coarse window).  The C3 window licence EXISTS and is *)
 (*  a compiled fact (khat_3 = 1/4 exactly); what catches the row is the held-out test (both values *)
-(*  OUTSIDE the extrapolated ball, by more than 10^22) and then C4 / C5: no licence, HOLD everywhere. *)
+(*  OUTSIDE the extrapolated ball, by more than 10^22) and then C4 / C5: no licence, HOLD at every *)
+(*  scored cell K <= 2. *)
 (* --------------------------------------------------------------------- *)
 Module TB_mid.
   Definition g0 : Q := (Qmake (97)%Z (128)%positive).
@@ -1193,7 +1245,7 @@ Module TB_mid.
     Qabs (Delta g 2) < Qabs (Delta g 3).
   Proof. vm_compute. reflexivity. Qed.
   (* NO LICENCE: for EVERY kappa, every scored cell K <= 2 and EVERY tolerance the leaf's gate (the compiled gate' applied to the leaf's certificate) returns HOLD -- every window [K,4) contains k = 2, where the gap grows, so no kappa <= 1 satisfies the premise.  HOLD is not FALSE. *)
-  Theorem C5_HOLD_everywhere :
+  Theorem C5_HOLD_scored_cells :
     forall (kappa : Q) (K : nat) (eps : Q), (K <= 2)%nat -> leaf_gate g kappa 4 K eps = HOLD.
   Proof. exact (leaf_gate_holds_if_gap_grows g 4 2 ltac:(lia) gap_grows_k2). Qed.
 
@@ -1206,8 +1258,9 @@ End TB_mid.
 (* --------------------------------------------------------------------- *)
 (*  T-C x O_ssq  (P13)  --  FAIL non-refining reader (instrument check, class d)
     tape: pinned boundary, dt = 1/4, profile quartic; role: PASS candidate (seam_grid rows only) *)
-(*  FAIL control, NON-REFINING reader on a stable tape (kappa_k ~ 2): HOLD everywhere.  Forced by *)
-(*  arithmetic (class d of the protocol) -- an instrument check, never evidence of certificate power. *)
+(*  FAIL control, NON-REFINING reader on a stable tape (kappa_k ~ 2): HOLD at every scored cell *)
+(*  K <= 2.  Forced by arithmetic (class d of the protocol) -- an instrument check, never evidence of *)
+(*  certificate power. *)
 (* --------------------------------------------------------------------- *)
 Module TC_ssq.
   Definition g0 : Q := (Qmake (779815)%Z (262144)%positive).
@@ -1246,7 +1299,7 @@ Module TC_ssq.
     Qabs (Delta g 2) < Qabs (Delta g 3).
   Proof. vm_compute. reflexivity. Qed.
   (* NO LICENCE: for EVERY kappa, every scored cell K <= 2 and EVERY tolerance the leaf's gate (the compiled gate' applied to the leaf's certificate) returns HOLD -- every window [K,4) contains k = 2, where the gap grows, so no kappa <= 1 satisfies the premise.  HOLD is not FALSE. *)
-  Theorem C5_HOLD_everywhere :
+  Theorem C5_HOLD_scored_cells :
     forall (kappa : Q) (K : nat) (eps : Q), (K <= 2)%nat -> leaf_gate g kappa 4 K eps = HOLD.
   Proof. exact (leaf_gate_holds_if_gap_grows g 4 2 ltac:(lia) gap_grows_k2). Qed.
 
@@ -1438,8 +1491,8 @@ Module TR_near.
   Example gate_K0_rel_j2_ACCEPT :
     leaf_gate g khat5 4 0 (eps_rel s 2) = ACCEPT (leaf_r g khat5 0 * leaf_r g khat5 0).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K0_rel_j2 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K0_rel_j2 :
     dQ (g 4%nat) (g 1%nat) <= eps_rel s 2.
   Proof. exact (leaf_accept_certified g khat5 4 0 (eps_rel s 2) ltac:(lia) gate_K0_rel_j2_ACCEPT). Qed.
   Example gate_K0_rel_j4_HOLD :
@@ -1452,8 +1505,8 @@ Module TR_near.
   Example gate_K1_rel_j2_ACCEPT :
     leaf_gate g khat5 4 1 (eps_rel s 2) = ACCEPT (leaf_r g khat5 1 * leaf_r g khat5 1).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K1_rel_j2 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K1_rel_j2 :
     dQ (g 4%nat) (g 2%nat) <= eps_rel s 2.
   Proof. exact (leaf_accept_certified g khat5 4 1 (eps_rel s 2) ltac:(lia) gate_K1_rel_j2_ACCEPT). Qed.
   Example gate_K1_rel_j4_HOLD :
@@ -1466,8 +1519,8 @@ Module TR_near.
   Example gate_K2_rel_j4_ACCEPT :
     leaf_gate g khat5 4 2 (eps_rel s 4) = ACCEPT (leaf_r g khat5 2 * leaf_r g khat5 2).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K2_rel_j4 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K2_rel_j4 :
     dQ (g 4%nat) (g 3%nat) <= eps_rel s 4.
   Proof. exact (leaf_accept_certified g khat5 4 2 (eps_rel s 4) ltac:(lia) gate_K2_rel_j4_ACCEPT). Qed.
   Example gate_K2_rel_j6_HOLD :
@@ -1480,8 +1533,8 @@ Module TR_near.
   Example gate_K0_abs_j2_ACCEPT :
     leaf_gate g khat5 4 0 (eps_abs 2) = ACCEPT (leaf_r g khat5 0 * leaf_r g khat5 0).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K0_abs_j2 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_1 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K0_abs_j2 :
     dQ (g 4%nat) (g 1%nat) <= eps_abs 2.
   Proof. exact (leaf_accept_certified g khat5 4 0 (eps_abs 2) ltac:(lia) gate_K0_abs_j2_ACCEPT). Qed.
   Example gate_K0_abs_j4_HOLD :
@@ -1494,8 +1547,8 @@ Module TR_near.
   Example gate_K1_abs_j4_ACCEPT :
     leaf_gate g khat5 4 1 (eps_abs 4) = ACCEPT (leaf_r g khat5 1 * leaf_r g khat5 1).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K1_abs_j4 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_2 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K1_abs_j4 :
     dQ (g 4%nat) (g 2%nat) <= eps_abs 4.
   Proof. exact (leaf_accept_certified g khat5 4 1 (eps_abs 4) ltac:(lia) gate_K1_abs_j4_ACCEPT). Qed.
   Example gate_K1_abs_j6_HOLD :
@@ -1508,8 +1561,8 @@ Module TR_near.
   Example gate_K2_abs_j6_ACCEPT :
     leaf_gate g khat5 4 2 (eps_abs 6) = ACCEPT (leaf_r g khat5 2 * leaf_r g khat5 2).
   Proof. vm_compute. reflexivity. Qed.
-  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (nothing about a finer level, a limit, or the model) *)
-  Theorem heldout_K2_abs_j6 :
+  (* ACCEPT ==> the finest readout ON THIS TAPE, g_4, lies within eps of g_3 (g_4 is INSIDE the C5 licence window: not a held-out statement; nothing about a finer level, a limit, or the model) *)
+  Theorem ontape_K2_abs_j6 :
     dQ (g 4%nat) (g 3%nat) <= eps_abs 6.
   Proof. exact (leaf_accept_certified g khat5 4 2 (eps_abs 6) ltac:(lia) gate_K2_abs_j6_ACCEPT). Qed.
   Example gate_K2_abs_j8_HOLD :
@@ -1782,8 +1835,28 @@ Example matched_pair_near :
   /\ (forall kappa eps, leaf_gate TD_near.g kappa 4 0 eps = HOLD).
 Proof.
   split; [ exact TC_near.gate_K0_rel_j4_ACCEPT | ].
-  intros kappa eps. exact (TD_near.C5_HOLD_everywhere kappa 0%nat eps ltac:(lia)).
+  intros kappa eps. exact (TD_near.C5_HOLD_scored_cells kappa 0%nat eps ltac:(lia)).
 Qed.
+
+(* ---- disclosures about the DEFINITION of leaf_gate (compiled on purpose; refuter pass 2026-09-18) ---- *)
+(** leaf_gate is WINDOW-LOCAL: a declared five-readout tape (not a tape of the run) whose gap GROWS at
+    k = 0 has no full-tape licence at kappa = 1/2, yet it is licensed on the local window [1,4) and
+    the gate ACCEPTs at K = 1.  The protocol's full-tape certificate C5 would give HOLD here. *)
+Definition t_local : nat -> Q := tape_of [0; 1; 3; 4; 9 # 2] (9 # 2).
+Example gate_is_window_local :
+  licence_ok t_local (1 # 2) 0 4 = false /\ licence_ok t_local (1 # 2) 1 3 = true
+  /\ leaf_gate t_local (1 # 2) 4 1 6 = ACCEPT (leaf_r t_local (1 # 2) 1 * leaf_r t_local (1 # 2) 1).
+Proof. repeat split; vm_compute; reflexivity. Qed.
+
+(** At K = top - 1 the window [3,4) has ONE premise, the padded one, true for every kappa >= 0 on every
+    tape: the UNSTABLE tape TD_near is licensed there at kappa = 0 and the gate ACCEPTs at a large
+    enough tolerance.  The conclusion of leaf_accept_certified at this cell is dQ (g 4) (g 4) <= eps,
+    vacuous.  This is why K = 3 is excluded and why C5_HOLD_scored_cells is stated for K <= 2 only. *)
+Example K3_licensed_by_padding_only :
+  licence_ok TD_near.g 0 3 1 = true
+  /\ leaf_gate TD_near.g 0 4 3 (2 * leaf_r TD_near.g 0 3 + 1)
+       = ACCEPT (leaf_r TD_near.g 0 3 * leaf_r TD_near.g 0 3).
+Proof. split; vm_compute; reflexivity. Qed.
 
 (* ===================================================================== *)
 (*  Part 3 -- state layer on the small concrete grid: S2 section law,      *)
@@ -2102,30 +2175,30 @@ Print Assumptions TC_near.r_K2_nonneg.
 Print Assumptions TC_near.delta_K2_value.
 Print Assumptions TC_near.eps_star_K2_value.
 Print Assumptions TC_near.gate_K0_rel_j4_ACCEPT.
-Print Assumptions TC_near.heldout_K0_rel_j4.
+Print Assumptions TC_near.ontape_K0_rel_j4.
 Print Assumptions TC_near.gate_K0_rel_j6_HOLD.
 Print Assumptions TC_near.too_tight_K0_rel_below_j6.
 Print Assumptions TC_near.hold_is_not_false_K0_rel_j6.
 Print Assumptions TC_near.gate_K1_rel_j6_ACCEPT.
-Print Assumptions TC_near.heldout_K1_rel_j6.
+Print Assumptions TC_near.ontape_K1_rel_j6.
 Print Assumptions TC_near.gate_K1_rel_j8_HOLD.
 Print Assumptions TC_near.too_tight_K1_rel_below_j8.
 Print Assumptions TC_near.hold_is_not_false_K1_rel_j8.
 Print Assumptions TC_near.gate_K2_rel_j8_ACCEPT.
-Print Assumptions TC_near.heldout_K2_rel_j8.
+Print Assumptions TC_near.ontape_K2_rel_j8.
 Print Assumptions TC_near.gate_K2_rel_j10_HOLD.
 Print Assumptions TC_near.too_tight_K2_rel_below_j10.
 Print Assumptions TC_near.hold_is_not_false_K2_rel_j10.
 Print Assumptions TC_near.gate_K0_abs_j6_ACCEPT.
-Print Assumptions TC_near.heldout_K0_abs_j6.
+Print Assumptions TC_near.ontape_K0_abs_j6.
 Print Assumptions TC_near.gate_K0_abs_j8_HOLD.
 Print Assumptions TC_near.too_tight_K0_abs_below_j8.
 Print Assumptions TC_near.gate_K1_abs_j8_ACCEPT.
-Print Assumptions TC_near.heldout_K1_abs_j8.
+Print Assumptions TC_near.ontape_K1_abs_j8.
 Print Assumptions TC_near.gate_K1_abs_j10_HOLD.
 Print Assumptions TC_near.too_tight_K1_abs_below_j10.
 Print Assumptions TC_near.gate_K2_abs_j10_ACCEPT.
-Print Assumptions TC_near.heldout_K2_abs_j10.
+Print Assumptions TC_near.ontape_K2_abs_j10.
 Print Assumptions TC_near.gate_K2_abs_j12_HOLD.
 Print Assumptions TC_near.too_tight_K2_abs_below_j12.
 Print Assumptions TC_near.nidx_n10.
@@ -2138,7 +2211,7 @@ Print Assumptions TD_near.C4_gap_grows_k0.
 Print Assumptions TD_near.C4_no_licence.
 Print Assumptions TD_near.gap_grows_k1.
 Print Assumptions TD_near.gap_grows_k2.
-Print Assumptions TD_near.C5_HOLD_everywhere.
+Print Assumptions TD_near.C5_HOLD_scored_cells.
 Print Assumptions TD_near.seam_tie_level0.
 Print Assumptions TA_mid.khat3_lt_1.
 Print Assumptions TA_mid.khat3_attained.
@@ -2180,30 +2253,30 @@ Print Assumptions TA_mid.r_K2_nonneg.
 Print Assumptions TA_mid.delta_K2_value.
 Print Assumptions TA_mid.eps_star_K2_value.
 Print Assumptions TA_mid.gate_K0_rel_j8_ACCEPT.
-Print Assumptions TA_mid.heldout_K0_rel_j8.
+Print Assumptions TA_mid.ontape_K0_rel_j8.
 Print Assumptions TA_mid.gate_K0_rel_j10_HOLD.
 Print Assumptions TA_mid.too_tight_K0_rel_below_j10.
 Print Assumptions TA_mid.hold_is_not_false_K0_rel_j10.
 Print Assumptions TA_mid.gate_K1_rel_j10_ACCEPT.
-Print Assumptions TA_mid.heldout_K1_rel_j10.
+Print Assumptions TA_mid.ontape_K1_rel_j10.
 Print Assumptions TA_mid.gate_K1_rel_j12_HOLD.
 Print Assumptions TA_mid.too_tight_K1_rel_below_j12.
 Print Assumptions TA_mid.hold_is_not_false_K1_rel_j12.
 Print Assumptions TA_mid.gate_K2_rel_j12_ACCEPT.
-Print Assumptions TA_mid.heldout_K2_rel_j12.
+Print Assumptions TA_mid.ontape_K2_rel_j12.
 Print Assumptions TA_mid.gate_K2_rel_j14_HOLD.
 Print Assumptions TA_mid.too_tight_K2_rel_below_j14.
 Print Assumptions TA_mid.hold_is_not_false_K2_rel_j14.
 Print Assumptions TA_mid.gate_K0_abs_j8_ACCEPT.
-Print Assumptions TA_mid.heldout_K0_abs_j8.
+Print Assumptions TA_mid.ontape_K0_abs_j8.
 Print Assumptions TA_mid.gate_K0_abs_j10_HOLD.
 Print Assumptions TA_mid.too_tight_K0_abs_below_j10.
 Print Assumptions TA_mid.gate_K1_abs_j10_ACCEPT.
-Print Assumptions TA_mid.heldout_K1_abs_j10.
+Print Assumptions TA_mid.ontape_K1_abs_j10.
 Print Assumptions TA_mid.gate_K1_abs_j12_HOLD.
 Print Assumptions TA_mid.too_tight_K1_abs_below_j12.
 Print Assumptions TA_mid.gate_K2_abs_j12_ACCEPT.
-Print Assumptions TA_mid.heldout_K2_abs_j12.
+Print Assumptions TA_mid.ontape_K2_abs_j12.
 Print Assumptions TA_mid.gate_K2_abs_j14_HOLD.
 Print Assumptions TA_mid.too_tight_K2_abs_below_j14.
 Print Assumptions TA_mid.nidx_n10.
@@ -2222,7 +2295,7 @@ Print Assumptions TB_mid.C3_persistence_refuted_g4.
 Print Assumptions TB_mid.C4_gap_grows_k1.
 Print Assumptions TB_mid.C4_no_licence.
 Print Assumptions TB_mid.gap_grows_k2.
-Print Assumptions TB_mid.C5_HOLD_everywhere.
+Print Assumptions TB_mid.C5_HOLD_scored_cells.
 Print Assumptions TB_mid.seam_tie_level0.
 Print Assumptions TC_ssq.C3_gap_grows_k0.
 Print Assumptions TC_ssq.C3_no_licence.
@@ -2230,7 +2303,7 @@ Print Assumptions TC_ssq.C4_gap_grows_k0.
 Print Assumptions TC_ssq.C4_no_licence.
 Print Assumptions TC_ssq.gap_grows_k1.
 Print Assumptions TC_ssq.gap_grows_k2.
-Print Assumptions TC_ssq.C5_HOLD_everywhere.
+Print Assumptions TC_ssq.C5_HOLD_scored_cells.
 Print Assumptions TC_ssq.seam_tie_level0.
 Print Assumptions TR_near.khat3_lt_1.
 Print Assumptions TR_near.khat3_attained.
@@ -2273,27 +2346,27 @@ Print Assumptions TR_near.r_K2_nonneg.
 Print Assumptions TR_near.delta_K2_value.
 Print Assumptions TR_near.eps_star_K2_value.
 Print Assumptions TR_near.gate_K0_rel_j2_ACCEPT.
-Print Assumptions TR_near.heldout_K0_rel_j2.
+Print Assumptions TR_near.ontape_K0_rel_j2.
 Print Assumptions TR_near.gate_K0_rel_j4_HOLD.
 Print Assumptions TR_near.too_tight_K0_rel_below_j4.
 Print Assumptions TR_near.gate_K1_rel_j2_ACCEPT.
-Print Assumptions TR_near.heldout_K1_rel_j2.
+Print Assumptions TR_near.ontape_K1_rel_j2.
 Print Assumptions TR_near.gate_K1_rel_j4_HOLD.
 Print Assumptions TR_near.too_tight_K1_rel_below_j4.
 Print Assumptions TR_near.gate_K2_rel_j4_ACCEPT.
-Print Assumptions TR_near.heldout_K2_rel_j4.
+Print Assumptions TR_near.ontape_K2_rel_j4.
 Print Assumptions TR_near.gate_K2_rel_j6_HOLD.
 Print Assumptions TR_near.too_tight_K2_rel_below_j6.
 Print Assumptions TR_near.gate_K0_abs_j2_ACCEPT.
-Print Assumptions TR_near.heldout_K0_abs_j2.
+Print Assumptions TR_near.ontape_K0_abs_j2.
 Print Assumptions TR_near.gate_K0_abs_j4_HOLD.
 Print Assumptions TR_near.too_tight_K0_abs_below_j4.
 Print Assumptions TR_near.gate_K1_abs_j4_ACCEPT.
-Print Assumptions TR_near.heldout_K1_abs_j4.
+Print Assumptions TR_near.ontape_K1_abs_j4.
 Print Assumptions TR_near.gate_K1_abs_j6_HOLD.
 Print Assumptions TR_near.too_tight_K1_abs_below_j6.
 Print Assumptions TR_near.gate_K2_abs_j6_ACCEPT.
-Print Assumptions TR_near.heldout_K2_abs_j6.
+Print Assumptions TR_near.ontape_K2_abs_j6.
 Print Assumptions TR_near.gate_K2_abs_j8_HOLD.
 Print Assumptions TR_near.too_tight_K2_abs_below_j8.
 Print Assumptions TR_near.nidx_n10.
@@ -2356,6 +2429,8 @@ Print Assumptions TR_state.nidx_n1000.
 Print Assumptions TR_state.nidx_n100000.
 Print Assumptions trap_same_C3_ratio.
 Print Assumptions matched_pair_near.
+Print Assumptions gate_is_window_local.
+Print Assumptions K3_licensed_by_padding_only.
 Print Assumptions S2_section_law.
 Print Assumptions S2_section_law_coarse.
 Print Assumptions S2_restriction_coherence.
