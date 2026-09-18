@@ -15,11 +15,22 @@
   are ONE object at every finite h.  Nothing below takes h -> 0 (I2 refused); every
   symbol is in Q / nat / a finite list; the continuum PDE is the readout, the graph
   is the state.  The spectral ceiling below is the reason a "UV divergence" is an
-  h -> 0 artefact and never a readout: at every h the spectrum of h^2 * (-Delta_h)
-  sits in [0, 4] on the path.
+  h -> 0 artefact and never a readout: at every h, every EXACT RATIONAL Rayleigh
+  value lam of h^2 * (-Delta_h) on the path satisfies lam <= 4 (seam_ceiling,
+  compiled below); the lower bound 0 <= lam is weld/M.42's rayleigh_nonneg, cited
+  here and not instantiated (fixer pass 2026-09-18: the earlier wording "the
+  spectrum sits in [0, 4]" overstated what this file compiles -- the statements
+  quantify over exact rational Rayleigh pairs, not a spectrum).
 
   Every object defined or proved in THIS file is NEW DERIVATION / PROPOSAL --
-  not yet in Toledo -- until the registrar assigns PROP-BRIDGE-08 its code.  The
+  not yet in Toledo -- until the registrar assigns PROP-BRIDGE-08 its code, with
+  ONE exception found in the fixer pass (2026-09-18, EPIS-REUSE-PIPELINE step 1
+  extended to registry/proposals/*.json): seam_energy_qform is an OCCURRENCE under
+  constant substitution w := path_w (path_w_sym, path_w_diag0) of the proposals-lane
+  row PROP-P3-LRS-LAPLACIAN-PSD-CLOSURE-01 (endogenous_laplacian_quadratic_form:
+  x^T L x == sum_{i<j} w_ij (x_i - x_j)^2 for the same `Lap` at general N, w
+  symmetric with zero diagonal; tier Th_coqc as its source states; its Coq file
+  lives in a private repository and was matched by statement only).  The
   parents are used by THEIR OWN Coq objects (no private twin of any of them):
 
     L_R/M.20.v1   IDM_Matrix.laplacian_symmetric      (used in seam_box: L = L^T)
@@ -74,13 +85,30 @@
   the tick-path x space PRODUCT-graph form (the (+1,-1) d'Alembertian) named in the
   PROP-BRIDGE-08 note_ascii -- this file fixes seam_box as the pullback identity the
   task states; the product graph is a second instantiation of the same seam.
+  NAME NOTE (fixer pass 2026-09-18): the registry row's note_ascii used the name
+  `seam_box` for that product-graph form; in THIS file `seam_box` denotes the
+  pullback identity (c) below and nothing else.  Whether the compiled theorem is
+  renamed (e.g. seam_pullback) or the product-graph form gets its own name is a
+  founder / registrar decision, not made here; the row now states the compiled
+  meaning.
 
   Reuse pipeline (EPIS-REUSE-PIPELINE steps 1-2, recorded): Toledo lookup by statement
-  2026-09-18 -- the [1,-2,1] = L_R identity exists only as weld/M.41 laplacian_stencil
-  (on Q -> Q, no graph), the energy identity only as Keystone/M.03 (edge list, no
-  operator), the ceiling only as weld/M.42 (no h); no canonical object states the
-  operator/energy/box identities for `Lap` against those parents -> the delta is the
-  seam itself.  Genesis: instantiates the Face-8 operator reader (design section 4
+  2026-09-18 over registry/CANONICAL.json -- the [1,-2,1] = L_R identity exists only
+  as weld/M.41 laplacian_stencil (on Q -> Q, no graph), the energy identity only as
+  Keystone/M.03 (edge list, no operator), the ceiling only as weld/M.42 (no h); no
+  canonical object states the operator/energy/box identities for `Lap` against those
+  parents.  Fixer pass, same day, lookup extended to registry/proposals/*.json: the
+  Lap-vs-edge-sum identity IS stated there at general N (PROP-P3-LRS-LAPLACIAN-PSD-
+  CLOSURE-01, see above) -> seam_energy_qform is its occurrence, not a new object;
+  no proposals-lane match was found for the stencil identity (seam_grid,
+  seam_grid_D2, seam_grid_stencil), the I_form link (seam_energy, seam_energy_names),
+  the pullback identity (seam_box, seam_box_path) or the h^2-scaled ceiling
+  (seam_ceiling_scaled) -> those are the delta.  Two local twins, disclosed:
+  Sum_scale (three lines; = weld__M_42_v1.SpectralCeiling.qsum_scale, since Sum and
+  qsum are convertible by Sum_is_qsum) and edge_sq (the induction-friendly Sum form
+  of the edge ledger; = SpectralCeiling.form (path_E m) = weld__M_41_v1.energy
+  (path_edges m) = I_form by seam_energy_names) -- neither carries theorem content
+  of its own.  Genesis: instantiates the Face-8 operator reader (design section 4
   item 2), root SignBridge made exact (the sign is a theorem here, not a convention).
 
   Compile mapping (ruling 11b-8: the live IDM worktree is the source of truth):
@@ -127,6 +155,8 @@ Proof. reflexivity. Qed.
 Lemma Sum_S : forall n f, Sum (S n) f = Sum n f + f n.
 Proof. reflexivity. Qed.
 
+(* local twin of weld__M_42_v1.SpectralCeiling.qsum_scale (Sum and qsum are the same
+   fixpoint, Sum_is_qsum below); kept local so section 0 needs no MRC object *)
 Lemma Sum_scale : forall n (c : Q) (f : nat -> Q),
   Sum n (fun k => c * f k) == c * Sum n f.
 Proof.
@@ -337,7 +367,10 @@ Fixpoint path_E (m : nat) : list (nat * nat) :=
   | S k => (k, S k) :: path_E k
   end.
 
-(* the edge ledger: Sum over the m edges of the squared retained difference *)
+(* the edge ledger: Sum over the m edges of the squared retained difference
+   (a local twin in Sum form -- equal to SpectralCeiling.form (path_E m) phi,
+   weld__M_41_v1.energy (path_edges m) phi and I_form phi (path_edges m) by
+   seam_energy_names; no theorem content of its own) *)
 Definition edge_sq (phi : nat -> Q) (m : nat) : Q :=
   Sum m (fun i => (phi (S i) - phi i) * (phi (S i) - phi i)).
 
@@ -397,7 +430,11 @@ Proof.
   rewrite Lvec_path_last. cbv beta. ring.
 Qed.
 
-(* <phi, L_R phi> on the path with m edges = the edge ledger, every m *)
+(* <phi, L_R phi> on the path with m edges = the edge ledger, every m.
+   OCCURRENCE (fixer pass 2026-09-18), not a new object: the proposals-lane row
+   PROP-P3-LRS-LAPLACIAN-PSD-CLOSURE-01 states x^T L x == sum_{i<j} w_ij (x_i - x_j)^2
+   for the same Lap at general N (w symmetric, zero diagonal); this is that statement
+   under w := path_w.  Own readout kept (independent proof by induction on m). *)
 Theorem seam_energy_qform : forall m phi, qform (S m) path_w phi == edge_sq phi m.
 Proof.
   intros m phi. induction m as [| k IH].
