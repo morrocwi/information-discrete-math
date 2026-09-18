@@ -83,7 +83,8 @@
   gap_geometric, inject_nat_nonneg, inject_nat_succ, qpow_bernoulli, qpow_below_eps,
   bern_transfer, Nidx_from,
   Nidx, Nidx_from_spec, Nidx_spec, Nidx_zero, Pi, Pi_certificate,
-  Qfrac_pos, Qfrac_nonneg, tol, accept, Nmax, Nmax_accept, N_of, N_of_tol, plateau_pair,
+  Qfrac_pos, Qfrac_nonneg, tol, accept, Nmax, Nmax_accept, N_of, N_of_tol, N_of_least
+  (Phase 2b, 2026-09-18: "least" as an exported identifier, Open ledger 19), plateau_pair,
   sigma_reg, sigma_of, sigma_readout_exact, sigma_readout_plateau, sigma_of_constant,
   const_contracts, sigma_const, sigma_const_at, Pi_replateau, Delta_geom_sum,
   geom_half_contracts, geometric_gaps_certified, harm, Delta_harm, harmonic_refutes_half.
@@ -501,6 +502,19 @@ Section SigmaOf.
     destruct (Nidx_spec (accept n) (Nmax n) (Nmax_accept n)) as [H1 _].
     change (Qle_bool (Qabs (Delta g (Nidx (accept n) (Nmax n)))) ((1 - rho) * (1 # n)) = true) in H1.
     apply Qle_bool_iff. exact H1.
+  Qed.
+
+  (** N_of_least: the word "least" as an exported identifier (Open ledger item 19,
+      Phase 2b, 2026-09-18) -- below N_of n the tape gap is NOT within tolerance.
+      From Nidx_spec's third conjunct (P k = false for every k < Nidx P bound) and the
+      Bool/Prop bridge Qle_bool_iff; nothing else. *)
+  Lemma N_of_least : forall (n : positive) (k : nat),
+    (k < N_of n)%nat -> ~ (Qabs (Delta g k) <= tol n).
+  Proof.
+    intros n k Hk Hle. unfold N_of in Hk.
+    destruct (Nidx_spec (accept n) (Nmax n) (Nmax_accept n)) as [_ [_ H3]].
+    specialize (H3 k Hk). unfold accept in H3.
+    rewrite (proj2 (Qle_bool_iff _ _) Hle) in H3. discriminate.
   Qed.
 
   (** S1 at a pair of tape indices a <= b (occurrence of plateau_certificate). *)
