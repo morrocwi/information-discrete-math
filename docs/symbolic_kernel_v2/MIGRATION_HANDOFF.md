@@ -1,7 +1,7 @@
 # Handoff — P1.7 migration planning (ultracode run)
 
 **Written before launching the migration-planning Workflow, so a fresh AI can resume if this session dies.**
-Date: 2026-07-27, Bangkok. Repo `/home/yaoharee-lt/ANSE.ASIA/information-discrete-math`, branch `main` (green: full suite 183 passed).
+Date: 2026-07-27, Bangkok. Repo this repository's root, branch `main` (green: full suite 183 passed).
 
 ## Where we are
 

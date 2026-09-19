@@ -385,11 +385,11 @@ completeness step is, already covered by the existing ℝ/completeness row.
 ---
 
 **Files read for this synthesis (none modified):**
-`/home/yaoharee-lt/ANSE.ASIA/information-discrete-math/HILBERT_MATHEMATICAL_CORE_ROADMAP.md`,
-`/home/yaoharee-lt/ANSE.ASIA/information-discrete-math/plugins/information-discrete-math/skills/information-discrete-math/SKILL.md`,
-`/home/yaoharee-lt/ANSE.ASIA/information-discrete-math/idm/solve.py`,
-`/home/yaoharee-lt/ANSE.ASIA/information-discrete-math/idm/exact.py`,
-`/home/yaoharee-lt/ANSE.ASIA/information-discrete-math/formal/IDM_Matrix.v`.
+`HILBERT_MATHEMATICAL_CORE_ROADMAP.md`,
+`plugins/information-discrete-math/skills/information-discrete-math/SKILL.md`,
+`idm/solve.py`,
+`idm/exact.py`,
+`formal/IDM_Matrix.v`.
 
 This is a **design synthesis only** — no `idm/hilbert.py`, `idm/hilbert_open.py`, or
 `formal/IDM_Hilbert.v` file has been created. It is the handoff spec for Phase H1
