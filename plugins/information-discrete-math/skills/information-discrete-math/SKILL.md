@@ -21,6 +21,17 @@ appearance is a finite retained difference (a *readout*, rational/discrete); the
 guard that keeps continuum concepts from being smuggled into your math, plus the machine-checked
 discrete ladder they are replaced by.
 
+> **Efficiency note (measured, not a relaxation of the mandatory-load rule):** this SKILL.md file
+> itself is 126 lines (~2.9k tokens, cl100k_base) and is sufficient on its own for routine use — the
+> table, checklist, and ladder below cover the concepts you will hit most of the time. The full
+> treatise (`textbook/INFORMATION_DISCRETE_MATHEMATICS.md`, 2245 lines / ~55.6k tokens, linked again
+> at the bottom of this file) should only be opened when you need to (a) find a SPECIFIC numbered axiom or
+> theorem by its name/tier, (b) resolve a genuine tier dispute (is this `Th_coqc` or `Dr`?), or
+> (c) handle a concept that is genuinely absent from the contaminated-concept table above. **This
+> does NOT relax the mandatory-load rule for the floor itself** — this SKILL.md must still always be
+> loaded/consulted before any math/physics/geometry work; only the much larger *textbook* is not
+> required every time.
+
 ## The one commitment (tier: Dr — a stance, not a proof classical math is wrong)
 
 > **Everything an agency ever reads is a finite retained difference `δ_R` — a readout, rational and
@@ -120,6 +131,35 @@ injected — not to deny that the continuum is a coherent, useful readout when h
 ## The full treatise
 
 For the complete foundation — every axiom (RDL logic, RD1–RD9), definition, and major theorem from the retained difference up to the continuum-as-readout and the information operator, each tier-tagged with machine-checked witnesses — see the textbook `textbook/INFORMATION_DISCRETE_MATHEMATICS.md` in this repo.
+
+## ⚠️ Fail-closed trip-wire: if the Skill tool doesn't surface this skill
+
+**Real bug observed live in a prior session (2026-08-13):** a Skill-tool invocation of
+`information-discrete-math` failed with "Unknown skill", and this skill was **absent from that
+session's own available-skills listing even though it was enabled in `~/.claude/settings.json`**
+(`information-discrete-math@yaoharee-lahtee-math`). The qualified form
+`information-discrete-math:information-discrete-math` was the working invocation in that case, but
+the underlying failure mode — enabled-but-not-listed — can recur under other names/paths.
+
+**Correct fallback (fail-closed — absence from the listing is never license to skip the floor):**
+
+1. Try the Skill tool with the qualified name `information-discrete-math:information-discrete-math`
+   first (the bare `information-discrete-math` name has been observed to throw "Unknown skill" even
+   when the plugin is enabled).
+2. If that also fails, or this skill is simply absent from the session's available-skills listing,
+   **Read this file directly from disk** instead of skipping the discipline. In the plugin cache the
+   path is `~/.claude/plugins/cache/yaoharee-lahtee-math/information-discrete-math/<version>/skills/information-discrete-math/SKILL.md`;
+   in the source repo it is
+   `~/ANSE.ASIA/information-discrete-math/plugins/information-discrete-math/skills/information-discrete-math/SKILL.md`.
+   If neither resolves, read the treatise's own introductory sections in
+   `textbook/INFORMATION_DISCRETE_MATHEMATICS.md` before doing any math work — do not proceed
+   un-gated.
+3. **Log which path fired** (skill-tool vs. direct-read, and which of the two forms above) in the
+   session's own scratchpad/notes, so a repeat occurrence becomes visible across sessions instead of
+   being silently rediscovered from scratch each time.
+
+This is fail-closed: the skill being missing from a listing is a tooling fact to route around and
+report, never a reason to write math without the discrete-readout discipline.
 
 ---
 *Developed by **Yaoharee Lahtee**. Information Discrete Math — readout-not-truth applied to the
