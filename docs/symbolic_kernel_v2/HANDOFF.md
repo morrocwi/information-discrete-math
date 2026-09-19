@@ -1,7 +1,7 @@
 # Handoff — IDM Symbolic Kernel v2 (ultracode design run)
 
 **Written before launching the ultracode Workflow, so a fresh AI can resume if this session dies.**
-Date: 2026-07-27, Bangkok. Repo: `/home/yaoharee-lt/ANSE.ASIA/information-discrete-math` (`morrocwi/information-discrete-math`), branch `main`.
+Date: 2026-07-27, Bangkok. Repo: this repository's root (`morrocwi/information-discrete-math`), branch `main`.
 
 ## What is being attempted, and why (founder's own request)
 
@@ -36,7 +36,7 @@ A Workflow that: (Ground) maps the current `idm` symbolic state factually → (D
 ## How to resume
 
 - **Workflow run ID: `wf_280faa5e-7a7`** (launched 2026-07-27). Script:
-  `~/.claude/projects/-home-yaoharee-lt-ANSE-ASIA-information-discrete-math/8b2f7d4f-a9d2-454d-bf0c-68f2c732d997/workflows/scripts/idm-symbolic-kernel-v2-design-wf_280faa5e-7a7.js`.
+  a session workflow-script file (not part of this repository).
   Resume with `Workflow({scriptPath, resumeFromRunId: "wf_280faa5e-7a7"})`. Inspect the run's `journal.jsonl` (in its transcript dir) before assuming cached results are non-empty. Check `docs/symbolic_kernel_v2/` for design docs already written by the main loop.
 - Todolist: tasks **#14** (this design run) and **#15–#23** (the six pillars + migrate + Phase 2 + Phase 3).
 

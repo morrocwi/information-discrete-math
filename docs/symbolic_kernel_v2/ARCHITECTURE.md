@@ -1,4 +1,4 @@
-The merged architecture document is complete. File: `/tmp/user/1000/claude-1000/-home-yaoharee-lt-ANSE-ASIA/8b2f7d4f-a9d2-454d-bf0c-68f2c732d997/scratchpad/IDM_SYMBOLIC_KERNEL_V2_MERGED.md`
+The merged architecture document is complete. File: a session scratchpad file (not part of this repository)
 
 Full content below, verbatim, as the deliverable.
 
