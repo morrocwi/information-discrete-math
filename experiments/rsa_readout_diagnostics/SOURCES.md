@@ -25,6 +25,23 @@ thesis, practitioner documentation, or established open-source implementation
 **What was NOT done this pass (disclosed limitation):** no full paper was read
 end-to-end; no source code of CADO-NFS/msieve was read directly (only README/docs
 summaries via search); no additional search rounds beyond the 8 above were run. If a
-deeper confirmation of Candidate Gap 1 is wanted, the next step is reading
+deeper confirmation of Residual Question 1 is wanted, the next step is reading
 CADO-NFS/msieve source (polynomial-selection and sieving modules) directly, not
 further web search.
+
+**UPDATE — Phase 3B did exactly that.** See `PHASE3B_CODE_AUDIT.md` for the full
+write-up; provenance record for the code-level claims below.
+
+| # | Repository | Commit | Path | Function/class | Behavior (from reading the body, not the name) | Production or test? |
+|---|---|---|---|---|---|---|
+| 9 | github.com/cado-nfs/cado-nfs | `6bcda7ce141afe4d9c409ec4ad8b6358162f21fc` | `sieve/las-norms.cpp`, `sieve/las-choose-sieve-area.cpp` | `sieve_range_adjust::adjust_with_estimated_yield()` | Numerically integrates an analytic norm-size estimate over ~24 candidate sieve-rectangle geometries per special-q, before sieving it; picks best-estimated shape. Predictive, not observed-execution feedback. | Production code path, but gated behind non-default `adjust_strategy>=2` (default is 0, per `sieve/las-siever-config.hpp` line 39; shown commented in example configs) |
+| 10 | github.com/cado-nfs/cado-nfs | `6bcda7ce...` | `scripts/opal-test/las_run.py` | `LasRunner`, `last_report` | Uses just-observed relation yield from a completed benchmark sieve run to size the next test batch's special-q range (`q_inc`) | **TEST/TUNING infrastructure (OPAL parameter-optimization harness), NOT production** |
+| 11 | github.com/cado-nfs/cado-nfs | `6bcda7ce...` | `scripts/cadofactor/cadotask.py` | `Duplicates2Task.update_ratio()`, `SievingTask.request_more_relations()` | Computes observed unique/total relation ratio from just-completed deduplication; uses it to size how many MORE raw relations to request via a `WANT_MORE_RELATIONS` notification | **Production** (this file is the real end-user orchestration driver) |
+| 12 | github.com/cado-nfs/cado-nfs | `6bcda7ce...` | `scripts/cadofactor/cadotask.py` | `SievingTask` main loop (`enough_work_received`, `qnext` advancement) | Issues work units advancing one special-q pointer; accumulates relations unconditionally per unit; checks only the GLOBAL running total against target. No per-unit yield inspection found. | Production |
+| 13 | github.com/cado-nfs/cado-nfs | `6bcda7ce...` | `sieve/las.cpp` | special-q abandonment logic | Abandons a special-q only on memory-budget overflow or geometric/skew validity failure — never on observed yield underperformance | Production |
+
+**Method for #9–13:** `gh search code` (GitHub code search across the real
+repository) to locate the claimed function, followed by `curl` of the raw file
+content at the pinned commit and direct reading of the function body and its
+call sites — not keyword-matching alone, per the review's explicit warning against
+inferring purpose from a function's name.

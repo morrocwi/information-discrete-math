@@ -17,7 +17,7 @@ depth limitation, not hidden).
 |---|---|---|---|---|
 | **Murphy's E-score polynomial selection** (NFS/GNFS) | Candidate polynomial's coefficients, root properties mod small primes, size properties — computed WITHOUT sieving | Rank candidate polynomials by E(F) score, descending | Select/commit sieving effort only to top-ranked polynomials | Maximize expected relation yield per unit sieve cost, minimize matrix dimension |
 
-**Overlap severity: NEAR-IDENTICAL.** This is a cheap, pre-computed proxy signal
+**Overlap severity: HIGH architectural overlap; different information source (predictive structural score, not observed-execution feedback)** — corrected per Phase 3B code audit (`PHASE3B_CODE_AUDIT.md`), which found CADO-NFS's own `adjust_with_estimated_yield` is the SAME category (predictive, pre-sieve estimate), reinforcing that this layer's classical norm is predictive routing, distinct from the observed-execution-feedback question this project actually cares about most. This is a cheap, pre-computed proxy signal
 that predicts downstream yield BEFORE paying the expensive sieve cost, then routes
 computational effort accordingly — structurally the same shape as the
 main.hub-inspired routing sketch (`s_t -> cheap signal -> a_t -> avoid paying full
@@ -62,7 +62,7 @@ demonstrated as a live within-run adaptive loop in the sources reviewed.
 |---|---|---|---|---|
 | **Single/double large-prime variation** | Residual cofactor size after trial-division against the factor base | If residual ≤ 1 or 2 factors in (B, B²], accept as a PARTIAL relation instead of discarding | Retain partial relation; later combine matching partials (cycle-finding) into full relations | Increase usable relation yield "at no extra cost" beyond what full trial division already produced |
 
-**Overlap severity: NEAR-IDENTICAL** to any state-dependent
+**Overlap severity: adjacent classical design space / HIGH conceptual overlap** (corrected per Phase 3B audit point 9 — the two mechanisms share a state-dependent framing but differ in semantics: RSA-08 certifies a safe DROP, large-prime variation RETAINS partial information for later combination) to any state-dependent
 accept/certify/retain-partial-information hypothesis (directly adjacent to our
 BLOCKED RSA-08 DropSafe family and to the general "retain vs. discard based on
 current state" framing). Documented: "It is always better to use the single
@@ -141,9 +141,9 @@ reviewed so far** — not "novel," not "unexplored," given the limited search de
 
 ---
 
-## D. Candidate Gaps (max 3, per review point 24 cap)
+## D. Residual Questions (max 3, per review point 24 cap)
 
-### Candidate Gap 1 — Live within-run yield-feedback polynomial re-ranking
+### Residual Question 1 — Live within-run yield-feedback polynomial re-ranking
 
 - **Gap:** using observed relation yield *during* sieving of polynomial P₁ to decide
   whether to abandon P₁ early (even though Murphy's E ranked it well) in favor of a
@@ -161,7 +161,7 @@ reviewed so far** — not "novel," not "unexplored," given the limited search de
   documentation around CADO-NFS/msieve states plainly that "predicting in advance the
   yield for a range of (a,b) pairs is hard" — a direct admission from
   implementation-adjacent sources that Murphy's E-style pre-screening is imperfect,
-  not a solved problem. This strengthens (does not confirm) Candidate Gap 1's
+  not a solved problem. This strengthens (does not confirm) Residual Question 1's
   plausibility: if yield prediction were already easy/solved, there would be little
   room for a live-feedback correction to add value. Source: [CADO-NFS/msieve README/talk material](https://magix.lix.polytechnique.fr/magix/magixalix/slides/magix_thome.pdf).
   No source reviewed (this pass) describes a live within-run feedback mechanism that
@@ -181,7 +181,7 @@ reviewed so far** — not "novel," not "unexplored," given the limited search de
   single `x²-N`), which is more than a region split but far short of a production
   SIQS/MPQS implementation.
 
-### Candidate Gap 2 — None identified with an engineering cost below MEDIUM
+### Residual Question 2 — None identified with an engineering cost below MEDIUM
 
 No other candidate gap survived the overlap audit above with a plausible headroom
 story: Layer C/D (large-prime variation) is near-identical classical machinery;
@@ -205,7 +205,7 @@ $$
 near-identical mechanisms for 3 of the 4 layers we hypothesized about (candidate
 scoring, state-dependent partial-information retention, downstream filtering) —
 this is NOT a "dense literature therefore stop thinking" closure (review point 22
-explicitly forbids that); a specific residual question (Candidate Gap 1) survives
+explicitly forbids that); a specific residual question (Residual Question 1) survives
 the overlap audit with a stated cheap-ish falsifier and a real, not fabricated,
 structural difference (Murphy's E gives genuine polynomial-level structural signal,
 unlike the noise-dominated single-polynomial region choice we already tested and

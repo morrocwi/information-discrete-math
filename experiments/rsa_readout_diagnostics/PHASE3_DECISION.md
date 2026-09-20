@@ -1,5 +1,16 @@
 # Phase 3 decision record
 
+**Superseded/refined by Phase 3B (see `PHASE3B_CODE_AUDIT.md`):** direct CADO-NFS
+source-code tracing (not web-search summaries) confirmed real production
+observed-execution feedback exists at GLOBAL/BATCH granularity
+(`update_ratio`/`request_more_relations` in `scripts/cadofactor/cadotask.py`) — the
+broad framing of Phase 3's open question is now CLOSED AS CLASSICAL. What remains
+open is narrower: fine-grained (per-polynomial/per-special-q, own-yield-triggered)
+abandon-and-reallocate, not found in three traced code regions but not exhaustively
+ruled out (Polysel*Task scheduling and msieve remain unread). The HOLD verdict below
+still stands, now on stronger, code-verified grounds.
+
+
 **Question:** is there reason to build a multi-polynomial (MPQS/SIQS-style) harness?
 
 **Answer: HOLD.**

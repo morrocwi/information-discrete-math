@@ -155,6 +155,37 @@ reading CADO-NFS/msieve implementation source directly, not building a new harne
 if a deeper literature/source read still finds nothing, THEN a MEDIUM-cost
 2-polynomial synthetic test would be the justified next experiment.
 
+## Phase 3B result (`PHASE3B_CODE_AUDIT.md`) — primary-source code audit, not web summaries
+
+Direct inspection of CADO-NFS source (github.com/cado-nfs/cado-nfs, commit
+`6bcda7ce`) — actual function bodies and call chains, not search summaries —
+confirmed:
+- `adjust_with_estimated_yield()` is real, in the production sieving executable's
+  code path, but is a **predictive** (pre-sieve, model-based) mechanism, and is
+  **NOT the default strategy** (`adjust_strategy=0` by default; the estimated-yield
+  path requires `adjust_strategy>=2`, shown commented-out in example configs).
+- A genuine **production, observed-execution-feedback** mechanism exists:
+  `Duplicates2Task.update_ratio()` / `SievingTask.request_more_relations()` in
+  `scripts/cadofactor/cadotask.py` uses the ACTUALLY-MEASURED duplicate-relation
+  ratio from completed work to size how much MORE sieving to request. **This closes
+  the broad "does classical practice use observed feedback to route future
+  acquisition?" question as CLASSICAL** — but only at GLOBAL/BATCH granularity
+  (total yield rate → total additional work), not per-polynomial or per-special-q.
+- Tracing `sieve/las.cpp`'s special-q loop found special-q abandonment is triggered
+  by memory-budget/geometric-validity checks, never by yield underperformance.
+- **Residual Question 1, re-narrowed:** does a production implementation abandon or
+  reallocate away from a SPECIFIC in-progress polynomial/special-q based on ITS OWN
+  observed yield, before its work is finished? Not identified across three
+  independently-traced code regions — genuinely narrower than Phase 3's original
+  framing, not a search-depth artifact preserved to keep the question alive.
+  **Verdict remains HOLD**, on stronger evidence; cheapest next step is reading two
+  more specific code regions (Polysel*Task scheduling, msieve), still cheaper than
+  building a 2-polynomial harness.
+- Retrospective correction applied: Murphy's E-score and large-prime-variation
+  overlap wording downgraded from "near-identical" to "high overlap, different
+  information source" / "adjacent design space" respectively, per the more precise
+  taxonomy this audit required.
+
 ## Documented next steps (proposed, NOT yet executed under this commit)
 
 An external review of this log proposed a more disciplined follow-up program before
