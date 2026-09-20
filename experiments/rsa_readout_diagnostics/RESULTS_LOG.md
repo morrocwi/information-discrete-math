@@ -378,6 +378,17 @@ any mechanism is generated there.
 - [Root optimization of polynomials in the number field sieve](https://arxiv.org/pdf/1212.1958)
 - [The Quadratic Sieve Factoring Algorithm (Landquist)](https://www.cs.virginia.edu/crab/QFS_Simple.pdf)
 
+**Provenance correction (Phase 3 audit, per review point 31):** the quoted phrase
+above ("the collection of smooth values is overwhelmingly the most time-consuming
+stage...") was a WebSearch-tool synthesized summary, not a verbatim quote confirmed
+from a specific named paper's text — it should have been flagged as paraphrase, not
+quotation. It is now independently, more directly corroborated in Phase 3 (see
+`PRIOR_ART_MAP.md`/`SOURCES.md`) by a practitioner-adjacent source (CADO-NFS material)
+stating plainly "NFS computation time is mostly spent on sieving" — closer to a
+primary/implementer-level claim. The underlying finding stands; the citation
+discipline for the first version did not meet this project's own bar and is corrected
+here rather than left uncorrected.
+
 ---
 
 ## Entry 008 — Track C, Entry 1: Layer A Oracle Headroom for readout-conditioned routing

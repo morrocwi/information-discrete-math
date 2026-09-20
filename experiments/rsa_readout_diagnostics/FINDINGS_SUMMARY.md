@@ -128,6 +128,33 @@ time choices that the current single-polynomial harness does not have, and
 fabricating one to give a policy "something to route between" is explicitly out of
 bounds.
 
+## Phase 3 result — Classical Adaptive Map, Engineering Verdict: HOLD
+
+Deep literature mapping (see `PRIOR_ART_MAP.md`, `SOURCES.md`, `PHASE3_DECISION.md`),
+using field vocabulary only (never "IDM"), found that classical adaptive factoring
+practice already implements near-identical mechanisms for most of what this project's
+routing hypothesis was reaching for:
+- **Murphy's E-score polynomial ranking** (NFS/GNFS, Murphy 1999) — a cheap,
+  pre-computed structural score that routes sieve effort to promising candidates
+  before paying the expensive cost. **Near-identical overlap** with the core routing
+  hypothesis.
+- **Single/double large-prime variation** — a state-dependent partial-relation
+  acceptance rule closely related to the RSA-08 family (retrospective attribution
+  correction logged).
+- **Singleton/clique removal + structured Gaussian elimination** — mature classical
+  downstream filtering, independently confirmed cost-irrelevant by this project's own
+  Entry 010 (0.006%–0.068% ceiling).
+
+One narrow, specific question survived 3 rounds of negative search: whether classical
+practice uses **live, within-run yield feedback** to re-rank/abandon a polynomial
+mid-sieve, as distinct from Murphy's E's pre-computed score — not confirmed present or
+absent in the sources reviewed (a practitioner-adjacent source admits yield
+prediction "is hard," which keeps this question open rather than closed).
+**Engineering verdict: HOLD** (not YES, not NO) — the cheap-enough next step is
+reading CADO-NFS/msieve implementation source directly, not building a new harness;
+if a deeper literature/source read still finds nothing, THEN a MEDIUM-cost
+2-polynomial synthetic test would be the justified next experiment.
+
 ## Documented next steps (proposed, NOT yet executed under this commit)
 
 An external review of this log proposed a more disciplined follow-up program before
