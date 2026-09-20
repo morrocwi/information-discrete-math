@@ -1,0 +1,145 @@
+# IDM–RSA readout-conditioned factoring diagnostics — findings summary
+
+**Status banner:** everything referenced here (`PROP-IDM-RSA-01`..`08` and the
+routing-architecture sketch) is **PROPOSAL / SKETCH — NOT CANONICAL**, per Toledo's
+`EQUATION_SOURCE_POLICY.md` gate `TG-RFG-01`. Nothing here is registered in Toledo, no
+intended slot (`A3/M.15–20.v1`, `A2/M.29–30.v1`) has been assigned. This directory is a
+disposable diagnostic log, not a Toledo submission, not a paper, not a claim of a new
+factoring algorithm.
+
+**Scope:** these are smoke-test-scale numerical experiments (single machine, pure
+Python, seconds-to-minutes runtime per trial), not a production cryptanalysis effort.
+Sample sizes are small (2–3 instances per test, semiprimes of 27–40 bits). Nothing here
+should be read as evidence about real-world RSA key sizes.
+
+Full entry-by-entry log: [`RESULTS_LOG.md`](./RESULTS_LOG.md) (8 entries). This file is
+the condensed positive/negative summary requested for quick review.
+
+---
+
+## Positive findings
+
+1. **Methodology cross-check passed.** Our own empirical measurement — that
+   smooth-relation acquisition (sieving) dominates total factoring cost (93.3–99.9% in
+   our harness) — independently matches the published literature ("the collection of
+   smooth values is overwhelmingly the most time-consuming stage of both MPQS and the
+   Number Field Sieve"). This gives confidence the measurement approach itself is sound
+   (Entry 006, 007).
+2. **Two self-caught measurement errors, corrected before being reported as findings**
+   (the process working as intended, not a clean result but a positive sign about the
+   discipline used):
+   - A cost model that summed division-ops and certificate-ops as equal units was
+     wrong by ≈33× (measured via `timeit`); correcting it made an existing negative
+     result (RSA-08) *more* negative, not less — i.e. the correction was applied
+     honestly, not in whichever direction was convenient (Entry 004).
+   - An apparent 27.8% "routing headroom" signal was traced to an under-sensitive
+     verification threshold before being reported as a finding, and vanished (0.8%) once
+     fixed — an explicit example of catching a spurious signal before it propagated
+     into an "IDM has content" claim (Entry 008).
+3. **Reusable calibration data produced:** empirical, machine-specific cost ratios (1
+   modular-exponentiation round ≈ 33× one division op; 1 sieve-array update ≈ 0.8× one
+   division op) that any follow-up work on this line can reuse instead of re-deriving.
+4. **A concrete, well-known classical optimization was quantified rather than assumed:**
+   QR (quadratic-residue) factor-base restriction cuts division work 3.6×–5.2× in our
+   harness — useful as a calibrated floor for any future comparison, even though it is
+   fully classical (Entry 005).
+5. **Every negative result below is falsifiable and reproducible**, not just asserted:
+   each has a named script, a stated method, and (where relevant) a stated reason *why*
+   it failed, not just *that* it failed — satisfying the project's "failure must
+   generate a constraint for the next hypothesis" discipline.
+
+## Negative findings (no computational advantage found)
+
+1. **`PROP-IDM-RSA-08` (DropSafe / Safe-Drop Criterion) — BLOCKED.** In every tested
+   form (exact certificate, safety-traded/bounded certificate, and a gate-conditional
+   "Generation-2" variant), the mechanism cost 2.8×–32.7× more (calibrated) than the
+   classical numeric-threshold heuristic it was meant to beat. No valid batching
+   mechanism exists for primality certification across distinct moduli in the tested
+   scheme, closing off the most promising remaining lever (Entries 001, 004).
+2. **`PROP-IDM-RSA-04` (Retain-Recompute-Resolve Gate) — FALSIFIED (DRIFT), not merely
+   vacuous.** Built from real pipeline states (not hand-constructed counterexamples),
+   the claimed implication failed under both a coarse cost-counter reading and a richer
+   local-parity-vector reading, in all tested instances (Entry 002).
+3. **`PROP-IDM-RSA-05` (Total Computational Cost Fold) — no advantage shown in the
+   tested instance.** The specific retain/recompute tradeoff tested (parity vs. full
+   exponent storage in Dixon's method) was too lopsided (the combining subset was ~1/50
+   the size of the full relation set) for cost-aware selection to ever disagree with
+   naive storage-minimization (Entry 003).
+4. **Region-choice routing ("readout-conditioned computational routing," narrowest
+   testable form) — LOW HEADROOM SIGNAL, not a confirmed structural zero.** An
+   omniscient retrospective oracle choosing which pre-sieved region to search first
+   saved almost nothing (0.8%) over the naive fixed schedule in the one instance
+   completed, plausibly because the naive schedule already searches the highest-yield
+   region (closest to √N) first — but this is n=1, not yet a distribution, and is
+   logged as a **DROP CANDIDATE pending a proper held-out study (20–50 instances,
+   frozen parameters)**, not a settled BLOCK (Entry 008, corrected).
+5. **Sieve-efficiency mechanism space — HOLD, not attempted, flagged high-risk.** The
+   dominant cost component (sieving) is exactly the target of 30+ years of dense,
+   specific classical technique (SIQS polynomial-switching, large-prime variation,
+   lattice/special-q sieving, polynomial root optimization). No mechanism was proposed
+   here because the risk of reinventing one of these under new vocabulary was judged too
+   high without deeper literature engagement first (Entry 007).
+
+## Explicitly open / not yet tested (neither confirmed nor closed)
+
+- **Family B5 — utility-conditioned relation retention/feedback** ("smooth ≠ useful";
+  does the current retained-relation/dependency state usefully inform what to search
+  for next?). Flagged as a genuinely different axis from everything tested above, but
+  not yet attacked — also has dense classical prior art (singleton removal, structured
+  Gaussian elimination, relation filtering) that must be checked first.
+- **Real MPQS/SIQS-style polynomial-switching headroom.** The routing test above only
+  measured headroom for choosing a region within ONE polynomial — a deliberately weak
+  proxy. Testing genuine polynomial-switching headroom needs a materially larger
+  implementation (true multiple-polynomial sieving) than this session's smoke-test
+  scale supports.
+- **`PROP-IDM-RSA-01` (Factor Certificate Readout) and `PROP-IDM-RSA-06`/`07`**
+  (classical congruence-of-squares / Dixon parity-vector steps, used here only as
+  infrastructure) were not independently attacked as hypotheses — `01`'s parent-lineage
+  to Toledo was flagged as weak/unresolved and never revisited; `06`/`07` were always
+  treated as disclosed classical baseline machinery, not IDM claims.
+
+## Corrected overclaims (caught before publication, logged not hidden)
+
+- **Entry 008's original verdict** stated region-routing headroom as "≈0%, structurally
+  settled" from a single completed instance. Corrected to "low headroom signal, drop
+  candidate — not yet a confirmed block" pending a real distribution study.
+- **A chat-relayed Lens Note** described RSA-05 (Entry 003) as having "proved" that
+  full exponent vectors are unnecessary until nullspace selection. Corrected to
+  "observed sufficient in the tested construction" — Entry 003 is one empirical
+  comparison on 2 instances, not a proof, and should never have been described as one.
+
+## Documented next steps (proposed, NOT yet executed under this commit)
+
+An external review of this log proposed a more disciplined follow-up program before
+any further mechanism is generated, summarized here for continuity but not run in this
+commit (running it is a substantially larger compute/time investment than a
+smoke-test-scale session, needs explicit go-ahead):
+1. **Phase 1 — cheap closure first:** freeze all region-routing parameters and rerun
+   the oracle-headroom test on 20–50 held-out semiprime instances to get a real
+   distribution (median/mean/quartiles/tail) instead of n=1, before any engineering.
+2. **Phase 2 — B5 oracle-first test:** define relation-utility oracles (Δrank,
+   dependency membership, contribution to required nullity — explicitly retrospective,
+   never usable online) and measure END-TO-END pipeline headroom (acquisition + filter
+   + linear algebra + reconstruct), not just relation-count reduction.
+3. **Phase 3 — deeper prior-art mapping** of real adaptive classical mechanisms
+   (SIQS polynomial switching, special-q scheduling, large-prime variants, adaptive
+   interval strategies) as (state → decision → cost/yield objective) tables, not just
+   named citations.
+4. **Phase 4 — residual headroom**, `H_residual = C_classical_adaptive - C_oracle`,
+   distinct from naive headroom `H_naive = C_fixed - C_oracle` — since a classical
+   adaptive baseline may already capture most of the naive-vs-oracle gap.
+5. **Phase 5 — engineering decision gate:** only build a true multi-polynomial
+   MPQS/SIQS instrumentation harness if `H_residual` is large enough, on the held-out
+   distribution, to justify the engineering cost — explicitly NOT before that.
+
+## Bottom line
+
+Across every mechanism family actually tested at this session's scale, **no
+computational advantage for the IDM framing over classical factoring practice was
+observed** — several formulations reduce to classical technique (sometimes
+undisclosed in the original proposal text), and one (RSA-04) is an outright false
+claim under its natural reading. Two threads remain genuinely open but require
+substantially more engineering than a smoke test to evaluate honestly. This is
+reported as the current, falsifiable state of the evidence, not as a final closure of
+the IDM research programme as a whole (per the reuse-pipeline discipline: a tested
+hypothesis family failing is not evidence against untested families).
