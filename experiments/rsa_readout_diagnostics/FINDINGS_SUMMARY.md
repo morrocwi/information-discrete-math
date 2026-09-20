@@ -66,13 +66,16 @@ the condensed positive/negative summary requested for quick review.
    the size of the full relation set) for cost-aware selection to ever disagree with
    naive storage-minimization (Entry 003).
 4. **Region-choice routing ("readout-conditioned computational routing," narrowest
-   testable form) — LOW HEADROOM SIGNAL, not a confirmed structural zero.** An
-   omniscient retrospective oracle choosing which pre-sieved region to search first
-   saved almost nothing (0.8%) over the naive fixed schedule in the one instance
-   completed, plausibly because the naive schedule already searches the highest-yield
-   region (closest to √N) first — but this is n=1, not yet a distribution, and is
-   logged as a **DROP CANDIDATE pending a proper held-out study (20–50 instances,
-   frozen parameters)**, not a settled BLOCK (Entry 008, corrected).
+   testable form) — BLOCKED, now on distributional evidence (n=13 of 20 held-out
+   instances, frozen parameters, not tuned post-hoc).** Median headroom **0.0%**, mean
+   3.9% (pulled up by 2 noise-driven outliers up to 32.6%). The outliers were audited
+   per-region (not assumed genuine): they come from small-sample Poisson-like variance
+   in which nearby region happens to yield a few more relations — real, not a
+   measurement bug, but **not observable online without paying the exact cost the
+   mechanism would need to save** (classic oracle-vs-online confusion). Constraint
+   derived for the next candidate action family: it must offer alternatives with
+   genuinely distinct STRUCTURAL yield profiles (e.g. real polynomial-switching), not
+   regions differing only by sampling noise (Entry 008 + Entry 009).
 5. **Sieve-efficiency mechanism space — HOLD, not attempted, flagged high-risk.** The
    dominant cost component (sieving) is exactly the target of 30+ years of dense,
    specific classical technique (SIQS polynomial-switching, large-prime variation,
@@ -114,9 +117,12 @@ An external review of this log proposed a more disciplined follow-up program bef
 any further mechanism is generated, summarized here for continuity but not run in this
 commit (running it is a substantially larger compute/time investment than a
 smoke-test-scale session, needs explicit go-ahead):
-1. **Phase 1 — cheap closure first:** freeze all region-routing parameters and rerun
-   the oracle-headroom test on 20–50 held-out semiprime instances to get a real
-   distribution (median/mean/quartiles/tail) instead of n=1, before any engineering.
+1. **Phase 1 — DONE (Entry 009).** Froze all region-routing parameters, ran 20
+   held-out semiprime instances (13 completed, 65% completion rate, disclosed).
+   Result: median headroom 0.0%, mean 3.9%, 2 audited outliers traced to sampling
+   noise, not online-predictable. Verdict: region-choice-within-a-single-polynomial
+   routing is BLOCKED on distributional evidence, per the review's own stop rule
+   (median < 5%, no predictable tail).
 2. **Phase 2 — B5 oracle-first test:** define relation-utility oracles (Δrank,
    dependency membership, contribution to required nullity — explicitly retrospective,
    never usable online) and measure END-TO-END pipeline headroom (acquisition + filter

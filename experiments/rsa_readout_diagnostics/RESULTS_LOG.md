@@ -456,3 +456,56 @@ sufficient in the tested construction"** (empirical tier), not "proved." Logged 
 as a caught overclaim, not silently corrected.
 
 ---
+
+## Entry 009 — Phase 1: Oracle Headroom DISTRIBUTION (n=20 held-out instances, closing Entry 008's n=1 gap)
+
+**Why:** Entry 008's "≈0%" verdict from a single instance was flagged (correctly) as
+overreaching — a distribution study was required before treating region-choice routing
+as closed.
+
+**Frozen parameters (declared before running, never adjusted after seeing output):**
+`PRIME_LIMIT=300, MARGIN=4, K_REGIONS=10, REGION_WIDTH=4000, SLACK_BITS=6` (the
+already-corrected value from Entry 008, not a new tune), semiprimes = product of two
+random ~17-bit primes, `N_INSTANCES=20`, `SEED=20260920` (fixed, reproducible).
+
+**Result:** 13/20 instances completed (65% completion rate — disclosed, not hidden;
+7 instances were INCONCLUSIVE under the frozen window, not retried with a wider one).
+Headroom distribution over the 13 complete instances: **min=0.0%, Q1=0.0%,
+median=0.0%, Q3=0.4%, mean=3.9%, max=32.6%.** 7 of 13 instances showed exactly 0.0%
+headroom.
+
+**Outlier audit (per review point 4 — every outlier is a suspect before it's a
+discovery), on the two instances >15% (32.6% and 16.2%):** per-region breakdown of the
+32.6% instance shows region 0 (closest to √N) yielding 27 relations vs. 4–11 for other
+regions (confirms the same classical explanation as Entry 008 — proximity to √N
+dominates). The oracle's actual saving over naive came from a SECOND-ORDER effect: the
+naive schedule (index order 0,1,2,...) collected slightly more relations than strictly
+needed by continuing past the target inside region 2, while the oracle picked the
+next-best-yielding region (region 4, yield 11) instead of the next-index region
+(region 1/2, yield 9–10) and stopped exactly at target. This is **real, not a
+threshold/measurement bug** (verified against the same corrected `SLACK_BITS=6`), but
+it is **small-sample Poisson-like noise in per-region smoothness counts**, not a
+structural, predictable pattern — which region gets lucky varies instance to instance
+and is only knowable after paying the sieve+verify cost the mechanism would need to
+avoid paying. This is exactly the "oracle confusion" failure mode flagged in the
+review (retrospective knowledge ≠ online-observable signal).
+
+**Verdict: Layer A/B closure for this action family, now on a real distribution, not
+n=1.** Median headroom 0%, mean pulled up by noise-driven outliers that are not
+online-predictable without incurring the cost they'd save. Per the review's own stop
+rule (`median(H) < 5%` and no online-predictable tail pattern → HOLD/BLOCK without
+building a policy): **region-choice-within-a-single-polynomial routing is BLOCKED
+under the tested model, on distributional evidence.** Constraint for any next
+candidate action family (per review point 19): it must offer alternatives with
+genuinely distinct STRUCTURAL yield profiles (e.g. real polynomial-switching, where
+different polynomials have different, in-principle-computable discriminant/root
+properties) — not regions whose yield differs only by sampling noise around the same
+underlying process.
+
+**Claim ceiling:** `empirical`, n=13 complete of 20 attempted, one fixed bit-size
+regime (~34-bit N), one machine. Not claimed to generalize to other bit sizes or to
+real multi-polynomial action spaces.
+
+**Artifacts:** `phase1_headroom_distribution.py` (scratchpad → repo).
+
+---
