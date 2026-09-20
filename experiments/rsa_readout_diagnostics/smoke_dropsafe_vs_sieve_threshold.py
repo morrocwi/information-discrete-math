@@ -7,6 +7,13 @@ STATUS BANNER (mandatory, per Toledo EQUATION_SOURCE_POLICY.md / TG-RFG-01):
   A3/M.20.v1 is a reservation target, not an assigned code. Nothing in this script's
   output may be cited as a canonical Toledo equation or a proved theorem.
 
+CORRECTION (code review, 2026-09-20): the "certificate" below is Miller-Rabin, a
+PROBABILISTIC primality test with a bounded, nonzero false-positive rate -- NOT a
+deterministic proof. Comments/output below describing it as "exact," "proof-carrying,"
+or "provably safe" mean "safe conditional on the Miller-Rabin result being correct,"
+not "mathematically proven with certainty." "0 false rejects observed" is the accurate
+claim; "proven error bound = 0" was not and has been corrected in the printed output.
+
 WHAT THIS TESTS
   The bottleneck identified in prior smoke tests is smooth-relation ACQUISITION, not
   gcd or linear algebra. The exact question this script targets (per the 2026-09-20
@@ -315,8 +322,14 @@ def main():
         savings_d_total = 100 * (1 - total_d / result['FULL']['div_ops'])
         print(f"HEURISTIC total-op savings vs FULL: {savings_h:.1f}%  "
               f"(false_rejects={h['false_rejects']}, NO error bound stated)")
+        # BUGFIX (code review, 2026-09-20): the certificate is Miller-Rabin, a
+        # PROBABILISTIC primality test (bounded, nonzero false-positive rate),
+        # not a deterministic proof -- "PROVEN error bound = 0" overstated the
+        # guarantee. Corrected to describe what was actually observed.
         print(f"DROPSAFE(exact) TOTAL savings vs FULL: {savings_d_total:.1f}%  "
-              f"(false_rejects={d['false_rejects']}, PROVEN error bound = 0)")
+              f"(false_rejects={d['false_rejects']} observed; Miller-Rabin is "
+              f"probabilistic, not a deterministic proof -- see calibrate_costs.py "
+              f"for the round count used)")
         print(f"DROPSAFE(exact) total ops ({total_d}) vs HEURISTIC total ops ({total_h}): "
               f"{'DROPSAFE cheaper' if total_d < total_h else 'HEURISTIC cheaper or tied'}")
 

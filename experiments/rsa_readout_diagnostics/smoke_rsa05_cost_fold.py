@@ -146,7 +146,12 @@ def run_cost_fold_test(N, factor_base, needed_margin=4, seed=7, max_candidates=2
     # cost (C_build) -- excluded from the delta since it does not depend on
     # the retention policy. Only C_retain and C_recompute differ.
     bits_per_parity_slot = 1
-    bits_per_full_slot = max(2, max(max(row) for row in full_exponent_store).bit_length() + 1)
+    # BUGFIX (code review, 2026-09-20): bit_length(X) bits already suffice to
+    # represent any value in [0, X] -- the extra "+ 1" here systematically
+    # inflated retain_bits_full by one bit per slot on every trial, biasing
+    # the reported crossover_alpha and the "PARITY saves N bits" headline
+    # figure further in PARITY's favor than the true bit-accounting supports.
+    bits_per_full_slot = max(2, max(max(row) for row in full_exponent_store).bit_length())
 
     retain_bits_parity = target_relations * fb_size * bits_per_parity_slot
     retain_bits_full = target_relations * fb_size * bits_per_full_slot

@@ -25,7 +25,9 @@ division ops + certificate (modular-exponentiation) ops, counted separately, nev
 aggregated in a way that hides which channel paid.
 
 **Result (3 trials, N ≈ 10^8, 10^10, 10^12; 3000–6000 candidates each):**
-- DROPSAFE-exact: 0/0/0 false rejects (provably safe, as designed) — but total ops
+- DROPSAFE-exact: 0/0/0 false rejects (safe *conditional on the Miller-Rabin result
+  being correct* — Miller-Rabin is probabilistic, not a proof; see the corrected
+  wording note at the end of this entry) — but total ops
   (div+cert) were **178,883 / 79,699 / 355,189**, all *higher* than HEURISTIC's
   **63,800 / 17,064 / 262,462** on the same inputs. DROPSAFE-exact never won.
 - HEURISTIC itself false-rejected 5 genuinely-smooth candidates in the N≈10^10 trial
@@ -43,13 +45,22 @@ aggregated in a way that hides which channel paid.
 
 **Conclusion:** PROP-IDM-RSA-08, in every tested formalization (exact and
 safety-traded), costs more total work than the classical heuristic it was meant to beat,
-even though it is provably safer. It does not deliver the claimed computational
+even though it is safer (conditional on Miller-Rabin's result, not a proof — see
+correction below). It does not deliver the claimed computational
 advantage in this test. Consistent with the earlier structural finding that RSA-08
 reduces to a known classical implementation trick ("early abort with a primality
 check"). **Reported as DRIFT, not re-tuned to hide the result.**
 
 **Artifacts:** `smoke_dropsafe_vs_sieve_threshold.py` (scratchpad). Raw run output not
 separately saved; script is deterministic (seeded) and reproducible on demand.
+
+**Correction (independent code review, 2026-09-20):** this entry's original wording
+("provably safe," "provably safer") overstated the guarantee — the underlying
+certificate is Miller-Rabin, a probabilistic primality test with a bounded, nonzero
+false-positive rate, not a deterministic proof. The accurate claim is "0 false rejects
+observed" across the tested sample, which is what the numbers above actually show.
+This does not change the DRIFT verdict (DropSafe still costs more either way) but the
+safety-side framing was corrected, not just the speed-side numbers.
 
 ---
 
@@ -588,5 +599,111 @@ filtering (large-prime variants, singleton removal) that this harness never
 implemented.
 
 **Artifacts:** `phase2a_b5a_ceiling.py` (scratchpad → repo).
+
+---
+
+## Entry 011 — Independent code review (PR #143, post-merge) + bugfixes
+
+**Why this entry exists:** PR #143 was merged (2026-09-20) before an independent
+review ran. A `/code-review high` pass was launched afterward specifically to apply
+this project's own maker-checker discipline retroactively (self-review by the same
+agent that wrote the code does not count as an independent check). It found 8 real
+issues, ranked by severity. All 8 are fixed here, on a follow-up branch/PR. Every fix
+is disclosed below with before/after numbers — nothing is silently corrected.
+
+### Findings and fixes
+
+1. **Crash bug (`phase2a_b5a_ceiling.py`):** used `gf2_nullspace_subset()`'s return
+   value without a `None`-check, unlike the sibling script that calls the same
+   function. Would `TypeError` on any instance with no nontrivial GF(2) nullspace.
+   **Fixed:** now returns `None`/INCONCLUSIVE, matching the sibling script.
+2. **Oracle not provably optimal (`track_c_entry1_oracle_headroom.py`,
+   `phase1_headroom_distribution.py`):** the "oracle" schedule sorted regions by
+   yield-density and took them greedily — not optimal for 0/1 region selection
+   (counterexample: a high-density-but-small region plus a needed second region can
+   cost more than one larger region alone). **Fixed:** replaced with an exact 0/1
+   knapsack-style DP (`_min_cost_to_reach_target`) over the small region count
+   (K≤15). **Rerun with the fix:**
+   - Track C single-instance headroom (N≈10^10): **0.8% → 2.8%** (greedy had
+     *understated* achievable headroom, the opposite direction from the earlier
+     27.8%-artifact scare — still far below the 5% threshold).
+   - Phase 1 distribution (n=13 complete of 20): **median 0.0% → 1.21%**, **mean
+     3.93% → 4.47%**. Q1/Q3 also shift up slightly (0.0%/0.4% → 0.0%/1.87%). The two
+     audited outliers (32.6%, 16.2%) are UNCHANGED (greedy already found the optimum
+     for those two specific instances).
+   - **Verdict unchanged:** median (1.21%) is still well under the pre-declared 5%
+     stop-rule threshold, and the tail is still not online-predictable (same
+     sampling-noise mechanism identified in Entry 009). Region-choice-within-a-
+     single-polynomial routing remains **BLOCKED** on distributional evidence — the
+     bug affected the precision of the numbers, not the qualitative conclusion.
+3. **Overclaimed safety wording ("provably safe" / "PROVEN error bound = 0"):**
+   DropSafe's certificate is Miller-Rabin, a probabilistic test with a bounded,
+   nonzero false-positive rate — not a deterministic proof. **Fixed:** all printed
+   output and log wording in Entries 001/004 and the two `smoke_*.py` scripts now
+   say "0 false rejects observed" / "safe conditional on the Miller-Rabin result,"
+   not "proven"/"provably." Does not change the DRIFT/BLOCK verdicts (DropSafe still
+   costs more than the classical baseline either way).
+4. **False methodology claim (`phase2a_b5a_ceiling.py` docstring):** claimed a real
+   timed `math.gcd` call was included in `C_downstream`, but `math` was never
+   imported and `.gcd(` was never called — the claim was false, not just imprecise.
+   **Fixed:** `math.gcd` is now actually measured (100k-rep `timeit`-style average)
+   and included. **Rerun with the fix:** `C_gcd` measured at 0.05–0.11 μs per
+   instance — negligible next to acquisition (tens of thousands of μs), so
+   `H_B5a^max` moved only from **[0.006%, 0.068%] → [0.006%, 0.066%]**. **Verdict
+   unchanged: BLOCK B5a.** The Toledo proposals registered from this entry
+   (`action-family-oracle-ceiling-universal-gain-bound` and its corollary) cite
+   these numbers as a *concrete first application example*, not as their content —
+   the proposed theorem/corollary statements themselves do not change; only the
+   worked example's precision improves marginally.
+5. **RNG reseeded every call (`phase1_headroom_distribution.py`):**
+   `is_probable_prime()` constructed a fresh `random.Random(12345)` on every call
+   instead of drawing from one continuously-advancing seeded stream, weakening the
+   intended independent-witness property of the 20-round Miller-Rabin check across
+   different candidates. **Fixed:** the RNG is now seeded once at module scope.
+   Overall run reproducibility (fixed `SEED=20260920` for the semiprime generation)
+   is unaffected; this only affects primality-witness independence within a run.
+6. **Off-by-one bit accounting (`smoke_rsa05_cost_fold.py`):**
+   `bits_per_full_slot` added a gratuitous `+ 1` beyond `bit_length()`, which already
+   suffices to represent the value. **Fixed:** removed the extra bit. **Rerun with
+   the fix:** `crossover_alpha` (the exchange rate at which q_FULL would start
+   winning) moved from **≈130–195 → ≈86–130** — still 4+ orders of magnitude above
+   any realistic bit-vs-division-op cost ratio tested (0.001–10). **Verdict
+   unchanged:** RSA-05 still shows no advantage in the tested instance.
+7. **Non-normalized comparison (`track_b_entry1_qr_filter.py`):** the headline
+   "3.64×–5.23× fewer division operations" figure compared UNFILTERED reaching its
+   own (larger) target against QR-FILTERED reaching its own (smaller) target,
+   conflating per-candidate waste with simply needing more relations. **Fixed:**
+   added a per-relation-found normalized cost metric that isolates the filtering
+   effect alone. **Rerun with the fix:** the isolated per-relation ratio is
+   **2.13×–2.99×** — smaller than the original conflated 3.64×–5.23× figure, but
+   still a real, positive classical effect. Verdict unchanged (CLASSICAL, no IDM
+   content claimed at this boundary either way).
+8. **Uniform-unit modpow cost counting (Miller-Rabin `ops_counter['cert']`,
+   `smoke_dropsafe_vs_sieve_threshold.py`/`smoke_rsa08_gen2_staged.py`):** every
+   `pow()` call inside one Miller-Rabin round (the expensive first call vs. cheaper
+   subsequent squarings) is counted as one uniform "cert" unit, while
+   `calibrate_costs.py` calibrated the div-vs-modpow weight using only a single
+   full-size modpow. **Disclosed, not fully re-engineered this pass:** a full fix
+   needs decomposing per-call cost by operand bit-length, a larger recalibration
+   across three scripts. Direction of the bias (per the reviewer): this makes
+   DropSafe/STAGED look *more expensive* than reality, which would only strengthen
+   the existing BLOCK verdict if corrected — so the qualitative conclusion is not at
+   risk, but the exact multiplier (2.8×–32.7×) should be read as an upper bound on
+   the true gap pending a proper recalibration, not an exact figure. Logged as a
+   known limitation, not swept under.
+
+### What this entry does NOT change
+
+No family verdict changes: RSA-08 (BLOCK), RSA-04 (DRIFT), RSA-05 (no advantage
+shown), region-choice routing (BLOCK, now with corrected but still-robust numbers),
+B5a (BLOCK), B5b (HOLD), Phase 3 findings (unaffected — no bug found in the
+CADO-NFS/msieve code-audit scripts, which contain no numerical claims of this kind).
+The two Toledo proposals registered from Entry 010 remain valid as stated; their
+worked-example numbers are updated slightly (0.068%→0.066% max) but the theorem and
+corollary statements themselves were never numeric claims about this specific
+instance and are unaffected.
+
+**Artifacts:** all fixes applied directly to the existing scripts (no new files);
+see the follow-up PR to `morrocwi/information-discrete-math` for the diff.
 
 ---

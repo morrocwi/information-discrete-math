@@ -17,6 +17,19 @@ the condensed positive/negative summary requested for quick review.
 
 ---
 
+## Post-merge correction round (Entry 011) — independent code review, 8 bugs fixed
+
+An independent `/code-review high` pass on PR #143, run AFTER merge (self-review by
+the same agent that wrote the code does not satisfy this project's own maker-checker
+rule), found 8 real bugs — one crash bug, one algorithm that wasn't provably optimal
+(understating headroom), one false methodology claim (an uncalled `gcd`), one RNG
+reuse bug, one off-by-one, one non-normalized comparison, and two overclaimed-safety
+wording issues. All 8 are fixed; see `RESULTS_LOG.md` Entry 011 for full detail.
+**No family verdict changed** — every affected number moved modestly (e.g. Phase 1's
+median headroom 0.0%→1.21%, still far under the 5% stop-rule threshold) and every
+BLOCK/DRIFT/HOLD verdict in this document is unaffected. Read this as the discipline
+this whole project has modeled throughout working correctly on its own output too.
+
 ## Positive findings
 
 1. **Methodology cross-check passed.** Our own empirical measurement — that
@@ -40,7 +53,7 @@ the condensed positive/negative summary requested for quick review.
    modular-exponentiation round ≈ 33× one division op; 1 sieve-array update ≈ 0.8× one
    division op) that any follow-up work on this line can reuse instead of re-deriving.
 4. **A concrete, well-known classical optimization was quantified rather than assumed:**
-   QR (quadratic-residue) factor-base restriction cuts division work 3.6×–5.2× in our
+   QR (quadratic-residue) factor-base restriction cuts division work 2.1x-3.0x per relation found (corrected, normalized figure -- see Entry 011; the raw, non-normalized figure was 3.6x-5.2x) in our
    harness — useful as a calibrated floor for any future comparison, even though it is
    fully classical (Entry 005).
 5. **Every negative result below is falsifiable and reproducible**, not just asserted:
@@ -67,7 +80,7 @@ the condensed positive/negative summary requested for quick review.
    naive storage-minimization (Entry 003).
 4. **Region-choice routing ("readout-conditioned computational routing," narrowest
    testable form) — BLOCKED, now on distributional evidence (n=13 of 20 held-out
-   instances, frozen parameters, not tuned post-hoc).** Median headroom **0.0%**, mean
+   instances, frozen parameters, not tuned post-hoc).** Median headroom **1.21%** (corrected via an exact-optimal oracle, see Entry 011; originally reported as 0.0% under a greedy, not provably optimal, oracle), mean
    3.9% (pulled up by 2 noise-driven outliers up to 32.6%). The outliers were audited
    per-region (not assumed genuine): they come from small-sample Poisson-like variance
    in which nearby region happens to yield a few more relations — real, not a
@@ -115,7 +128,7 @@ the condensed positive/negative summary requested for quick review.
 
 A retrospective oracle allowed to make post-acquisition relation filtering/linear-
 algebra/reconstruction cost exactly zero (a strict upper bound under the "B5a" action
-family — it may not touch acquisition itself) could save at most **0.006%–0.068%** of
+family — it may not touch acquisition itself) could save at most **0.006%-0.066%** (corrected to include an actually-measured gcd cost, see Entry 011) of
 end-to-end pipeline cost, measured across 3/3 instances with real timed downstream
 cost (GF(2) elimination + reconstruction), not an estimate. This is because
 downstream cost is 3–4 orders of magnitude smaller than acquisition cost in every
@@ -143,7 +156,7 @@ routing hypothesis was reaching for:
   correction logged).
 - **Singleton/clique removal + structured Gaussian elimination** — mature classical
   downstream filtering, independently confirmed cost-irrelevant by this project's own
-  Entry 010 (0.006%–0.068% ceiling).
+  Entry 010 (0.006%-0.066% ceiling, corrected -- see Entry 011).
 
 One narrow, specific question survived 3 rounds of negative search: whether classical
 practice uses **live, within-run yield feedback** to re-rank/abandon a polynomial
@@ -190,11 +203,11 @@ confirmed:
 ## stale, listing completed phases as "not yet executed")
 
 1. **Phase 1 — DONE (Entry 009).** 20 held-out semiprime instances (13 completed,
-   disclosed 65% rate). Median headroom 0.0%, mean 3.9%, 2 audited outliers traced
+   disclosed 65% rate). Median headroom 1.21% (corrected, see Entry 011), mean 4.5%, 2 audited outliers traced
    to sampling noise, not online-predictable. **BLOCK** region-choice-within-a-
    single-polynomial routing, on distributional evidence.
 2. **Phase 2A — DONE (Entry 010).** B5a analytical ceiling: even a perfect
-   post-acquisition retrospective oracle could save at most 0.006–0.068% of
+   post-acquisition retrospective oracle could save at most 0.006-0.066% (corrected, see Entry 011) of
    end-to-end cost across 3/3 instances (real timed measurement). **BLOCK B5a.**
    B5b left **HOLD** — no genuine structurally-distinct acquisition-time action
    choice exists in the current harness to route between.

@@ -30,6 +30,16 @@ import random
 import statistics
 
 
+# BUGFIX (code review, 2026-09-20): a fresh `random.Random(12345)` was being
+# constructed INSIDE is_probable_prime() on every call, so every call reset to
+# the same starting seed instead of drawing from a continuously-advancing
+# stream -- witness sequences across different candidates were not
+# independently random (they were the same underlying deterministic stream,
+# only reshaped by each n's bound), weakening the intended independent-witness
+# soundness of the round count. Seeded once at module scope instead.
+_MR_RNG = random.Random(12345)
+
+
 def is_probable_prime(n, rounds=20):
     if n < 2:
         return False
@@ -40,7 +50,7 @@ def is_probable_prime(n, rounds=20):
     while d % 2 == 0:
         d //= 2
         r += 1
-    rng = random.Random(12345)
+    rng = _MR_RNG
     for _ in range(rounds):
         a = rng.randrange(2, n - 1)
         x = pow(a, d, n)
@@ -132,6 +142,31 @@ N_INSTANCES = 20
 SEED = 20260920
 
 
+def _min_cost_to_reach_target(regions, target_relations):
+    """Exact minimum-cost 0/1 selection of regions reaching >= target_relations,
+    via DP over achievable (capped) relation counts. Not a greedy heuristic --
+    see track_c_entry1_oracle_headroom.py's identical helper for the
+    counterexample this replaces (code review, 2026-09-20)."""
+    INF = float('inf')
+    dp_cost = [INF] * (target_relations + 1)
+    dp_cost[0] = 0
+    dp_count = [0] * (target_relations + 1)
+    for r in regions:
+        rel, cost = r['relations_found'], r['cost']
+        new_cost = dp_cost[:]
+        new_count = dp_count[:]
+        for j in range(target_relations + 1):
+            if dp_cost[j] == INF:
+                continue
+            nj = min(target_relations, j + rel)
+            candidate = dp_cost[j] + cost
+            if candidate < new_cost[nj]:
+                new_cost[nj] = candidate
+                new_count[nj] = dp_count[j] + 1
+        dp_cost, dp_count = new_cost, new_count
+    return dp_cost[target_relations], dp_count[target_relations]
+
+
 def run_one_instance(N):
     root = int(N ** 0.5)
     all_odd = sieve_primes(PRIME_LIMIT)[1:]
@@ -159,15 +194,11 @@ def run_one_instance(N):
         if acc >= target:
             break
 
-    def density(r):
-        return r['relations_found'] / max(1, r['cost'])
-
-    acc, oracle_cost = 0, 0
-    for r in sorted(regions, key=density, reverse=True):
-        oracle_cost += r['cost']
-        acc += r['relations_found']
-        if acc >= target:
-            break
+    # BUGFIX (code review, 2026-09-20): replaced greedy sort-by-density
+    # selection (not provably optimal for 0/1 region selection -- see the
+    # counterexample and exact fix in track_c_entry1_oracle_headroom.py's
+    # `_min_cost_to_reach_target`) with the same exact 0/1 DP.
+    oracle_cost, _oracle_regions_used = _min_cost_to_reach_target(regions, target)
 
     headroom = 1 - (oracle_cost / naive_cost) if naive_cost > 0 else 0.0
     return {'status': 'COMPLETE', 'headroom': headroom, 'naive_cost': naive_cost,

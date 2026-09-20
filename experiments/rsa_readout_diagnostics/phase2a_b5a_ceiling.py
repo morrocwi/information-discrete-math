@@ -27,6 +27,7 @@ review's own Phase 2A explicitly permits skipping that machinery if this cheap c
 already answers the question.
 """
 
+import math
 import time
 from smoke_rsa05_cost_fold import sieve_primes, full_trial_divide, gf2_nullspace_subset
 
@@ -69,16 +70,37 @@ def ceiling_for(N, prime_limit, margin=4, search_cap=2_000_000):
     t1 = time.perf_counter()
     C_la = (t1 - t0) / reps
 
+    if subset is None:
+        # BUGFIX (code review, 2026-09-20): the sibling script
+        # (smoke_rsa05_cost_fold.py) already checks for this; this script did
+        # not, and would crash with a TypeError on any instance where the
+        # collected relations have no nontrivial GF(2) nullspace subset.
+        # Report INCONCLUSIVE, matching the sibling script's convention,
+        # instead of crashing.
+        return None
+
     recompute_ops = sum(full_trial_divide(r_values[i], fb)[2] for i in subset)
     C_recon = recompute_ops * W_DIV
 
-    C_downstream = C_la + C_recon
+    # BUGFIX (code review, 2026-09-20): the module docstring claimed a real
+    # timed gcd call was included in C_downstream "for completeness," but no
+    # gcd was ever imported or called -- this was a false claim about the
+    # methodology. Now actually measured, not just claimed.
+    gcd_reps = 100_000
+    t0 = time.perf_counter()
+    for _ in range(gcd_reps):
+        math.gcd(r_values[subset[0]] if subset else 1, N)
+    t1 = time.perf_counter()
+    C_gcd = (t1 - t0) / gcd_reps
+
+    C_downstream = C_la + C_recon + C_gcd
     C_total = C_acquire + C_downstream
     H_max = 1 - C_acquire / C_total
     return {
         'N': N, 'fb_size': len(fb), 'relations': target,
         'C_acquire_us': C_acquire * 1e6, 'C_la_us': C_la * 1e6,
-        'C_recon_us': C_recon * 1e6, 'H_B5a_max_pct': H_max * 100,
+        'C_recon_us': C_recon * 1e6, 'C_gcd_us': C_gcd * 1e6,
+        'H_B5a_max_pct': H_max * 100,
     }
 
 
@@ -96,7 +118,8 @@ def main():
         else:
             print(f"N={r['N']}: fb_size={r['fb_size']} relations={r['relations']}  "
                   f"C_acquire={r['C_acquire_us']:.1f}us  C_la={r['C_la_us']:.2f}us  "
-                  f"C_recon={r['C_recon_us']:.2f}us  H_B5a_max={r['H_B5a_max_pct']:.4f}%")
+                  f"C_recon={r['C_recon_us']:.2f}us  C_gcd={r['C_gcd_us']:.4f}us  "
+                  f"H_B5a_max={r['H_B5a_max_pct']:.4f}%")
 
     complete = [r for r in results if r]
     print("\n" + "=" * 78)
