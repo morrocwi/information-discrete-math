@@ -111,6 +111,23 @@ the condensed positive/negative summary requested for quick review.
   "observed sufficient in the tested construction" — Entry 003 is one empirical
   comparison on 2 instances, not a proof, and should never have been described as one.
 
+## Phase 2A result (Entry 010) — B5a analytical ceiling, BLOCKED
+
+A retrospective oracle allowed to make post-acquisition relation filtering/linear-
+algebra/reconstruction cost exactly zero (a strict upper bound under the "B5a" action
+family — it may not touch acquisition itself) could save at most **0.006%–0.068%** of
+end-to-end pipeline cost, measured across 3/3 instances with real timed downstream
+cost (GF(2) elimination + reconstruction), not an estimate. This is because
+downstream cost is 3–4 orders of magnitude smaller than acquisition cost in every
+instance. **BLOCK B5a** — no oracle hierarchy (O0–O3) needed to confirm further; the
+analytical ceiling alone answers the question decisively, below the pre-declared 5%
+stop-rule threshold. Derived constraint: any further mechanism must intervene
+upstream in acquisition itself (motivating "B5b," feedback-conditioned acquisition),
+but B5b is HOLD, not started — it needs genuinely structurally distinct acquisition-
+time choices that the current single-polynomial harness does not have, and
+fabricating one to give a policy "something to route between" is explicitly out of
+bounds.
+
 ## Documented next steps (proposed, NOT yet executed under this commit)
 
 An external review of this log proposed a more disciplined follow-up program before

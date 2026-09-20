@@ -509,3 +509,73 @@ real multi-polynomial action spaces.
 **Artifacts:** `phase1_headroom_distribution.py` (scratchpad → repo).
 
 ---
+
+## Entry 010 — Phase 2A: B5a cheap analytical ceiling (no oracle hierarchy built)
+
+**Lens Note:** terminal readout is `1<g<N, g|N` (a valid factor certificate), NOT
+"reached nullspace" or "matrix rank threshold" — those are necessary machinery, not
+terminal success (per review point 9). B5a's action family: a retrospective oracle
+that may keep/drop/reorder ALREADY-ACQUIRED relations only — it may NOT touch
+acquisition, factor-base, or polynomial choice (per review point 11, oracle power must
+match the tested family, or the result is inflated).
+
+**Question (the only load-bearing one):** if this oracle made downstream cost
+(filter + linear algebra + reconstruction + terminal gcd) exactly ZERO, how much of
+END-TO-END pipeline cost would that save? `H_B5a^max = 1 - C_acquire / (C_acquire +
+C_downstream)`.
+
+**Method:** `phase2a_b5a_ceiling.py`. `C_acquire` measured identically to Entries
+003/005 (real QR-filtered trial-division acquisition to target relations).
+`C_downstream` = REAL timed wall-clock cost of (a) `gf2_nullspace_subset` (the same
+unmodified, classical, no-novelty-claimed GF(2) elimination from Entry 003) on the
+actual collected relations, 30-rep average, plus (b) real recompute cost on the found
+subset, plus (c) a timed `gcd` call. Not estimated — measured.
+
+**Result (3/3 instances complete):**
+
+| N | C_acquire | C_downstream (LA+recon) | H_B5a^max |
+|---|---|---|---|
+| ≈10^12 | 48,912 μs | 7.8 μs | 0.016% |
+| ≈10^8  | 60,696 μs | 3.6 μs | 0.006% |
+| ≈10^10 | 14,683 μs | 10.0 μs | 0.068% |
+
+Downstream cost is 3–4 orders of magnitude smaller than acquisition cost in every
+tested instance. Even a PERFECT downstream oracle could not save a practically
+meaningful fraction of total pipeline cost.
+
+**Verdict: BLOCK B5a.** Max observed ceiling (0.068%) is far below the pre-declared
+5% stop-rule threshold — decisively enough that building the full O0/O1/O2/O3 oracle
+hierarchy (rank/nullity/factor oracles) the review specified was judged unnecessary;
+the analytical ceiling already answers the question (per review point 4's own
+allowance: "this may kill B5-posthoc without building anything"). No claim of "IDM
+advantage" is made anywhere in this entry, per review point 25 — this is a
+retrospective upper-bound calculation, nothing more.
+
+**Constraint derived for the next hypothesis (per review point 18):** since
+acquisition dominates cost by 3–4 orders of magnitude in every instance tested so far
+(Entries 006, 009, 010 all agree), **any next mechanism must intervene UPSTREAM, in
+the acquisition process itself, before the dominant cost is paid** — post-hoc
+relation filtering/reordering (B5a) cannot matter regardless of how clever the
+selection rule is. This motivates B5b (feedback-conditioned acquisition) as the
+logical next candidate, not because "we still want to try something," but because the
+cost map forces it.
+
+**B5b status: HOLD, not started.** Per review points 19–20: B5b requires genuinely
+structurally distinct acquisition-time action choices — and Entries 008/009 already
+established that the current single-polynomial harness's only available choice
+(which region to sieve next) has near-zero exploitable structure (it's sampling
+noise, not a real branch point). Fabricating an artificial choice to give B5b
+"something to route between" is explicitly forbidden (review point 8/failure mode
+"choice fabrication"). A genuine B5b action space (e.g. real polynomial switching)
+requires the Phase 3 (deep prior-art mapping) and Phase 4 (residual-headroom-vs-
+classical-adaptive-baseline) work first — not yet done — before any engineering
+investment in a larger harness is justified.
+
+**Claim ceiling:** `empirical`, n=3/3 complete, same fixed bit-size regime as prior
+entries. Not claimed to generalize to larger N or to pipelines with non-trivial
+filtering (large-prime variants, singleton removal) that this harness never
+implemented.
+
+**Artifacts:** `phase2a_b5a_ceiling.py` (scratchpad → repo).
+
+---
