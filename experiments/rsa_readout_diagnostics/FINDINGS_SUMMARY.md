@@ -186,32 +186,35 @@ confirmed:
   information source" / "adjacent design space" respectively, per the more precise
   taxonomy this audit required.
 
-## Documented next steps (proposed, NOT yet executed under this commit)
+## Phase status (synced to actual current state — corrected, this was previously
+## stale, listing completed phases as "not yet executed")
 
-An external review of this log proposed a more disciplined follow-up program before
-any further mechanism is generated, summarized here for continuity but not run in this
-commit (running it is a substantially larger compute/time investment than a
-smoke-test-scale session, needs explicit go-ahead):
-1. **Phase 1 — DONE (Entry 009).** Froze all region-routing parameters, ran 20
-   held-out semiprime instances (13 completed, 65% completion rate, disclosed).
-   Result: median headroom 0.0%, mean 3.9%, 2 audited outliers traced to sampling
-   noise, not online-predictable. Verdict: region-choice-within-a-single-polynomial
-   routing is BLOCKED on distributional evidence, per the review's own stop rule
-   (median < 5%, no predictable tail).
-2. **Phase 2 — B5 oracle-first test:** define relation-utility oracles (Δrank,
-   dependency membership, contribution to required nullity — explicitly retrospective,
-   never usable online) and measure END-TO-END pipeline headroom (acquisition + filter
-   + linear algebra + reconstruct), not just relation-count reduction.
-3. **Phase 3 — deeper prior-art mapping** of real adaptive classical mechanisms
-   (SIQS polynomial switching, special-q scheduling, large-prime variants, adaptive
-   interval strategies) as (state → decision → cost/yield objective) tables, not just
-   named citations.
-4. **Phase 4 — residual headroom**, `H_residual = C_classical_adaptive - C_oracle`,
-   distinct from naive headroom `H_naive = C_fixed - C_oracle` — since a classical
-   adaptive baseline may already capture most of the naive-vs-oracle gap.
-5. **Phase 5 — engineering decision gate:** only build a true multi-polynomial
-   MPQS/SIQS instrumentation harness if `H_residual` is large enough, on the held-out
-   distribution, to justify the engineering cost — explicitly NOT before that.
+1. **Phase 1 — DONE (Entry 009).** 20 held-out semiprime instances (13 completed,
+   disclosed 65% rate). Median headroom 0.0%, mean 3.9%, 2 audited outliers traced
+   to sampling noise, not online-predictable. **BLOCK** region-choice-within-a-
+   single-polynomial routing, on distributional evidence.
+2. **Phase 2A — DONE (Entry 010).** B5a analytical ceiling: even a perfect
+   post-acquisition retrospective oracle could save at most 0.006–0.068% of
+   end-to-end cost across 3/3 instances (real timed measurement). **BLOCK B5a.**
+   B5b left **HOLD** — no genuine structurally-distinct acquisition-time action
+   choice exists in the current harness to route between.
+3. **Phase 3 / 3B / 3C — DONE** (`PRIOR_ART_MAP.md`, `PHASE3B_CODE_AUDIT.md`,
+   `PHASE3C_FINAL_AUDIT.md`). Deep literature mapping plus direct primary-source
+   code audits of CADO-NFS AND msieve (two independent established
+   implementations, five production/near-production code regions traced by
+   call-chain, not keyword search). **Verdict: predictive routing = CLASSICAL;
+   coarse (global/batch) observed-feedback routing = CLASSICAL, confirmed in both
+   codebases; downstream filtering = CLASSICAL and independently cost-small
+   (Entry 010); fine-grained own-unit observed-yield corrective routing
+   (Residual Question 1, frozen wording) = NOT IDENTIFIED in either codebase →
+   RESIDUAL HEADROOM CANDIDATE**, not a novelty claim.
+4. **Phase 4 — residual headroom estimation — NOT YET DONE, next gate.**
+   `H_residual = C_classical_adaptive - C_oracle`, distinct from naive headroom —
+   needs a cheap (analytical-first, per Entry 010's own method) estimate before any
+   engineering, not a 2-polynomial harness as the first move.
+5. **Phase 5 — engineering decision gate — NOT YET DONE, gated behind Phase 4.**
+   Only build a true multi-polynomial MPQS/SIQS instrumentation harness if
+   `H_residual` is large enough to justify the cost — explicitly not before that.
 
 ## Bottom line
 

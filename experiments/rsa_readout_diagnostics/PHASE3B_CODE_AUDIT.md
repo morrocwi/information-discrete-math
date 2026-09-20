@@ -160,51 +160,13 @@ re-open that framing.
 > unit — before its allocated work is finished — based on ITS OWN observed
 > underperformance, for cost/yield reasons?
 
-**Status: not identified in the primary-source implementations reviewed this
-pass** — three independently-traced production code regions checked directly
-(`las-choose-sieve-area.cpp`/`las-norms.cpp`'s per-special-q geometry code,
-`las.cpp`'s special-q abandonment logic, and `cadotask.py`'s
-`SievingTask`/`Duplicates2Task` classes), all showing either predictive
-(non-observed) routing, resource-safety abandonment (non-yield-triggered), or
-GLOBAL-granularity (not per-unit) observed feedback. **Remaining unread:** the
-`Polysel1Task`/`Polysel2Task` polynomial-selection scheduling classes in
-`cadotask.py`, and msieve's equivalent code entirely — disclosed as open items, not
-treated as a completed negative. This is now a **RESIDUAL HEADROOM CANDIDATE**, not a
-novelty claim, and not yet a fully "destroyed" question — the search was narrowed by
-real evidence across three separate code paths, not preserved by narrowing
-definitions to dodge falsification (per review point 31's rule).
+**Status at end of Phase 3B: not identified in the four CADO-NFS code regions
+traced directly this pass** (A1: `las-choose-sieve-area.cpp`/`las-norms.cpp`
+per-special-q geometry code; A3: `cadotask.py`'s `SievingTask`/`Duplicates2Task`;
+A4a: `las.cpp`'s special-q abandonment logic). **Still open at end of Phase 3B:**
+`Polysel1Task`/`Polysel2Task` (CADO's polynomial-selection scheduling) and msieve
+entirely — closed in Phase 3C, see `PHASE3C_FINAL_AUDIT.md`.
 
----
-
-## F. Verdict
-
-$$
-\boxed{\textbf{HOLD}}
-$$
-
-**Not NO:** the fine-grained (polynomial/special-q-level, own-yield-triggered
-abandon-and-reallocate) mechanism was not found in the specific code paths traced,
-but the search was not exhaustive (the actual C++ special-q iteration/scheduling
-loop in `las.cpp` and the polynomial-selection task classes remain unread this
-pass) — closing this as NO would be a search-depth-driven false closure, exactly
-what review point 31 forbids.
-
-**Not YES-TO-PHASE-4:** the specific residual question has a real, narrow,
-operational definition now (huge progress from Phase 3's vaguer framing), but (a)
-the broad version of the question this project actually cared about (does classical
-practice ALREADY do state→estimate→route computational effort before paying cost?)
-is now answered YES at multiple layers (Murphy's E predictive routing, GLOBAL
-observed-feedback resizing) — the remaining sliver is specifically about
-FINE-GRAINED, mid-execution, own-unit-triggered abandonment, a narrower question
-than the project started with; (b) reading two more specific code regions
-(`las.cpp`'s scheduling loop, `Polysel*Task`) is strictly cheaper than building a
-2-polynomial harness and has not been done yet.
-
-**Next step (reading, not building):** trace `sieve/las.cpp`'s special-q iteration
-loop and the `Polysel1Task`/`Polysel2Task` classes in `cadotask.py` for any
-per-polynomial or per-special-q yield-triggered reallocation before concluding
-Residual Question 1 either way. If that also comes up empty, Residual Question 1
-graduates to a genuine residual-headroom candidate worth a cheap 2-polynomial
-falsifier (Phase 4). If found, close as CLASSICAL and redirect the research question
-to "does any additional observable state improve an already-adaptive classical
-controller" (per review point 28), a categorically different and harder hypothesis.
+**(Superseded — see `PHASE3C_FINAL_AUDIT.md` for the Phase 3 FINAL verdict.)** This
+section is left as a historical record of the state of evidence at the end of
+Phase 3B specifically; it is not the final word on Residual Question 1.
