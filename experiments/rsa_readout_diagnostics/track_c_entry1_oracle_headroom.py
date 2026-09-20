@@ -110,6 +110,31 @@ def sieve_region(N, factor_base, roots_per_prime, region_start, width, slack_bit
     }
 
 
+def _min_cost_to_reach_target(regions, target_relations):
+    """Exact minimum-cost 0/1 selection of regions reaching >= target_relations,
+    via DP over achievable (capped) relation counts. Returns (min_cost,
+    number_of_regions_used_in_the_optimal_solution). Exact, not a heuristic --
+    replaces the earlier greedy sort-by-density approximation (see caller)."""
+    INF = float('inf')
+    dp_cost = [INF] * (target_relations + 1)
+    dp_cost[0] = 0
+    dp_count = [0] * (target_relations + 1)
+    for r in regions:
+        rel, cost = r['relations_found'], r['cost']
+        new_cost = dp_cost[:]
+        new_count = dp_count[:]
+        for j in range(target_relations + 1):
+            if dp_cost[j] == INF:
+                continue
+            nj = min(target_relations, j + rel)
+            candidate = dp_cost[j] + cost
+            if candidate < new_cost[nj]:
+                new_cost[nj] = candidate
+                new_count[nj] = dp_count[j] + 1
+        dp_cost, dp_count = new_cost, new_count
+    return dp_cost[target_relations], dp_count[target_relations]
+
+
 def run_instance(N, prime_limit, K, width, target_relations):
     root = int(N ** 0.5)
     all_odd = sieve_primes(prime_limit)[1:]
@@ -139,20 +164,22 @@ def run_instance(N, prime_limit, K, width, target_relations):
         if acc >= target_relations:
             break
 
-    # Oracle: sort by yield density (relations per unit cost), descending
-    def yield_density(r):
-        return r['relations_found'] / max(1, r['cost'])
-
-    oracle_order = sorted(regions, key=yield_density, reverse=True)
-    acc = 0
-    oracle_cost = 0
-    oracle_regions_used = 0
-    for r in oracle_order:
-        oracle_cost += r['cost']
-        acc += r['relations_found']
-        oracle_regions_used += 1
-        if acc >= target_relations:
-            break
+    # Oracle: TRUE minimum-cost subset selection via 0/1 DP over achievable
+    # relation counts, NOT a greedy sort-by-yield-density heuristic.
+    #
+    # BUGFIX (code review, 2026-09-20): the original "oracle" here sorted
+    # regions by relations/cost density and took them greedily. That is not
+    # provably optimal for this 0/1-selection problem -- a counterexample:
+    # region A (relations=1, cost=1, density=1.0) and region B
+    # (relations=10, cost=15, density=0.667), target=10: greedy takes A
+    # first (still short of target), then must also take B, total cost=16;
+    # but taking B ALONE reaches target at cost=15. The greedy version
+    # could report a worse-than-optimal "oracle" cost, UNDERSTATING true
+    # achievable headroom -- the opposite direction of overclaiming, but
+    # still wrong, and it silently contradicted this script's own claim
+    # that the oracle result is optimal. Fixed with an exact 0/1 knapsack-
+    # style DP (K is small, <=15 regions, so this is cheap and exact).
+    oracle_cost, oracle_regions_used = _min_cost_to_reach_target(regions, target_relations)
 
     headroom = 1 - (oracle_cost / naive_cost) if naive_cost > 0 else 0.0
 

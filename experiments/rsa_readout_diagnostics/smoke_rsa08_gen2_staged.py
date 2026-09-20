@@ -29,6 +29,12 @@ is reported honestly if it fails to beat HEURISTIC too -- this is an attempt
 to find computational content in the IDM programme's general readout-
 conditioned pruning idea, not a defense of RSA-08's original formulation.
 
+CORRECTION (code review, 2026-09-20): "certificate," "certified-prime," and
+"exactly as safe" below all mean "safe conditional on the underlying
+Miller-Rabin result being correct" -- Miller-Rabin is a PROBABILISTIC test
+with a bounded, nonzero false-positive rate, not a deterministic proof.
+"Zero false rejects (observed)" is the accurate claim.
+
 PROPOSAL-adjacent scratch mechanism, not itself a Toledo object, not registered,
 not canonical. No git mutation, no Toledo registration.
 """

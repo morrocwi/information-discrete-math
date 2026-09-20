@@ -106,6 +106,21 @@ def run(N, prime_limit, margin=4):
           f"{ratio_cand:.2f}x more candidates examined than QR-FILTERED "
           f"to reach ITS OWN (larger) target.")
 
+    # BUGFIX (code review, 2026-09-20): the raw ratio above conflates two
+    # distinct effects -- (a) per-candidate wasted division work against a
+    # larger factor base, and (b) simply needing MORE relations because the
+    # unfiltered target is ~2x larger (target = fb_size + margin, and the
+    # unfiltered factor base is ~2x the filtered one). Report the
+    # per-relation-found cost too, which isolates effect (a) alone and is
+    # the fairer "is QR filtering itself worth it" comparison.
+    unfiltered_cost_per_relation = r_unfiltered['total_div_ops'] / target_unfiltered
+    filtered_cost_per_relation = r_filtered['total_div_ops'] / target_filtered
+    ratio_per_relation = unfiltered_cost_per_relation / filtered_cost_per_relation
+    print(f"  Per-relation-found division cost: UNFILTERED={unfiltered_cost_per_relation:.1f}  "
+          f"QR-FILTERED={filtered_cost_per_relation:.1f}  "
+          f"(UNFILTERED is {ratio_per_relation:.2f}x more expensive PER RELATION, "
+          f"isolating the filtering effect from the target-size difference)")
+
 
 def main():
     print("=" * 78)
